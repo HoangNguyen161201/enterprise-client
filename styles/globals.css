@@ -3,11 +3,55 @@
     font-weight: 400;
 }
 
+/* container */
 .screen-full {
     width: 100%;
     height: 100vh
 }
 
+/* justify content */
 .justify-center {
     justify-content: center;
+}
+
+/* color */
+
+.color-red {
+    color: rgb(248, 123, 123)
+}
+
+/* font */
+
+.font-1 {
+    font-size: 14px;
+}
+
+.font-2 {
+    font-size: 16px;
+}
+
+.font-3 {
+    font-size: 20px;
+}
+
+.font-4 {
+    font-size: 24px;
+}
+
+.font-5 {
+    font-size: 30px;
+}
+
+.font-6 {
+    font-size: 38px;
+}
+
+
+/* input */
+.ant-input-affix-wrapper {
+    border-radius: 5px !important;
+}
+
+.ant-select-selector {
+    border-radius: 5px !important;
 }
