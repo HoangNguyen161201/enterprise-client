@@ -1,14 +1,17 @@
 import axios from 'axios';
+import { IPropsFetchData } from '../models';
+
+//Config default axios
+axios.defaults.withCredentials = true;
 
 //Post api
-export const postData = async (url: string, body: any, token: string | undefined = '') => {
+export const postData = async ({ url, body, token = '' }: IPropsFetchData) => {
   return await axios
     .post(url, body, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: token,
       },
-      withCredentials: true,
     })
     .then((data) => {
       return data.data;
@@ -16,46 +19,43 @@ export const postData = async (url: string, body: any, token: string | undefined
 };
 
 //Put api
-export const putData = async (url: string, body: any, token: string | undefined = '') => {
+export const putData = async ({ url, body, token = '' }: IPropsFetchData) => {
   return await axios
     .put(url, body, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: token,
       },
-      withCredentials: true,
     })
-    .then((data) => {
-      return data.data;
+    .then((result) => {
+      return result.data;
     });
 };
 
 //Get api
-export const getData = async (url: string, token: string | undefined = '') => {
+export const getData = async ({ url, token = '' }: IPropsFetchData) => {
   return await axios
     .get(url, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: token,
       },
-      withCredentials: true,
     })
-    .then((data) => {
-      return data.data;
+    .then((result) => {
+      return result.data;
     });
 };
 
 //Delete api
-export const deleteData = async (url: string, token: string | undefined = '') => {
+export const deleteData = async ({ url, token = '' }: IPropsFetchData) => {
   return await axios
     .get(url, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: token,
       },
-      withCredentials: true,
     })
-    .then((data) => {
-      return data.data;
+    .then((result) => {
+      return result.data;
     });
 };
