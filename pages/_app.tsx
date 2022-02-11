@@ -1,12 +1,19 @@
 import '../styles/globals.css';
+import 'antd/dist/antd.variable.min.css';
 import { AppPropsWithLayout } from '../models/layoutType';
 import { EmptyLayout } from '../components/layouts';
-import 'antd/dist/antd.variable.min.css';
 import { ConfigProvider } from 'antd';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import {QueryClientProvider, QueryClient} from 'react-query'
+import {ReactQueryDevtools} from 'react-query/devtools'
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+  
+  // create layout
   const Layout = Component.getLayout || EmptyLayout;
+
+  // Create a client
+  const [queryClient] = useState(new QueryClient()) 
   useEffect(() => {
     ConfigProvider.config({
       theme: {
@@ -16,7 +23,10 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   }, []);
   return (
     <Layout>
-      <Component {...pageProps} />
+      <QueryClientProvider client={queryClient}>
+        <Component {...pageProps} />
+        <ReactQueryDevtools position='bottom-right'/>
+      </QueryClientProvider>
     </Layout>
   );
 }

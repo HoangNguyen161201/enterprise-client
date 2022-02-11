@@ -26,7 +26,7 @@ export const putData = async ({ url, body, token = '' }: IPropsFetchData) => {
         'Content-Type': 'application/json',
         Authorization: token,
       },
-    })
+    }) 
     .then((result) => {
       return result.data;
     });
