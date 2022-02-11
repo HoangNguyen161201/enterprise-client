@@ -2,3 +2,12 @@
     font-family: 'Montserrat', sans-serif;
     font-weight: 400;
 }
+
+.screen-full {
+    width: 100%;
+    height: 100vh
+}
+
+.justify-center {
+    justify-content: center;
+}
