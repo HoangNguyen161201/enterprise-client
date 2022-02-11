@@ -10,12 +10,13 @@ const userModel = require('../models/userModel');
 const userController = {
   create: catchAsyncError(async (req, res) => {
     //Get infor user to create
-    const { name, email, password, cf_password } = req.body;
+    const { name, email, password, cf_password, role } = req.body;
 
     //Check valid infor sign up
     const errMsg = validSignUp({
       name,
       email,
+      role,
       password,
       cf_password,
     });
@@ -43,6 +44,7 @@ const userController = {
     const NewUser = new userModel({
       name,
       email,
+      role,
       password: passwordHash,
       cf_password,
     });
