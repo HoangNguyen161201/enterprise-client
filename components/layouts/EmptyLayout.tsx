@@ -1,9 +1,5 @@
-import { NextLayout } from "../../models/layoutType"
+import { NextLayout } from '../../models/layoutType';
 
-export const EmptyLayout: NextLayout = ({children})=> {
-  return (
-    <div>
-        {children}
-    </div>
-  )
-}
+export const EmptyLayout: NextLayout = ({ children }) => {
+  return <div>{children}</div>;
+};

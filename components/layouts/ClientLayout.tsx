@@ -1,11 +1,10 @@
-import { NextLayout } from "../../models/layoutType"
+import { NextLayout } from '../../models/layoutType';
 
-
-export const ClientLayout: NextLayout = ({children}) => {
+export const ClientLayout: NextLayout = ({ children }) => {
   return (
-      <div>
-        thus
-          {children}
-      </div>
-  )
-}
+    <div>
+      thus
+      {children}
+    </div>
+  );
+};

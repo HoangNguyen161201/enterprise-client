@@ -1,0 +1,22 @@
+[
+    {
+        "role": "admin",
+        "email": "admin@gmail.com",
+        "password": "admin123"
+    },
+    {
+        "role": "staff",
+        "email": "staff@gmail.com",
+        "password": "staff123"
+    },
+    {
+        "role": "qa_manager",
+        "email": "QAManager@gmail.com",
+        "password": "QAManager123"
+    },
+    {
+        "role": "qa_coordinator",
+        "email": "QACoordinator@gmail.com",
+        "password": "QACoordinator123"
+    }
+]
