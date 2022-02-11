@@ -6,7 +6,7 @@ const index: NextPage = () => {
   return (
     <div>
       <Button type="primary" id={'button'}>
-        Enter with me
+        Enter with me aahfafdfdfs
       </Button>
       <Button type="default" id={'button'}>
         Enter with me
