@@ -7,10 +7,23 @@ import { validateLogin } from '../utils/validate';
 import { Input, Select } from '../components/elements';
 import Accounts from '../DataAccount.json';
 import CopyAcc from '../components/elements/CopyAcc';
+import { useMutation } from 'react-query';
+import { AxiosError } from 'axios';
+import { postData } from '../utils/fetchData';
 
 const login: NextPageWithLayout = () => {
+  const mutationLogin = useMutation<ILogin, AxiosError, ILogin>((dataForm) => {
+    return postData({
+      url: '/api/auth/login',
+      body: dataForm,
+    });
+  }, {
+    onSuccess: (data)=> {
+      console.log(data)
+    }
+  });
 
-  // setting form 
+  // setting form
   const formSetting = useForm<ILogin>({
     resolver: yupResolver(validateLogin),
     defaultValues: {
@@ -22,6 +35,7 @@ const login: NextPageWithLayout = () => {
 
   const onSubmit = (values: ILogin) => {
     console.log(values);
+    mutationLogin.mutate(values);
   };
 
   const handleSetAcc = ({ email, role, password }: ILogin) => {
