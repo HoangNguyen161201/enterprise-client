@@ -1,16 +1,42 @@
-const express = require('express')
+require('dotenv').config();
 
-const PORT = 4000
-const app = express()
+const express = require('express');
+const PORT = process.env.PORT || 4000;
+const db = require('./configs/connectDb');
+const cookieParser = require('cookie-parser');
+const cors = require('cors');
+const mainRouter = require('./routes/mainRouter');
 
-app.get('/', (req, res)=> {
-    res.send('nguyen quang hoang')
-})
+//Connect database
+db();
 
-app.get('/hello', (req, res)=> {
-    res.send('hello')
-})
+//Create app server
+const app = express();
 
-app.listen(PORT, ()=> {
-    console.log(`http://localhost:${PORT}`)
-})
+//Config middleware
+app.use(express.json());
+app.use(express.urlencoded());
+app.use(cookieParser());
+app.use(
+  cors({
+    origin: 'http://localhost/3000',
+    methods: 'POST, GET, PATCH, PUT, DELETE',
+    credentials: true,
+  })
+);
+
+//Routes
+mainRouter(app);
+
+//Handle error catch async
+app.use((req, res) => {
+  return res.status(500).json({
+    err: 'Something went wrong.',
+    statusCode: 500,
+  });
+});
+
+//Server listen PORT
+app.listen(PORT, () => {
+  console.log(`Server listen at http://localhost/${PORT}`);
+});
