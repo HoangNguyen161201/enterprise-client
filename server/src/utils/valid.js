@@ -1,4 +1,4 @@
-const validSignUp = ({ name, email, password, cf_password }) => {
+const validSignUp = ({ name, email, role, password, cf_password }) => {
   //Check exist data
   if (!name || !email || !password) {
     return 'Please add all fields.';
@@ -9,8 +9,19 @@ const validSignUp = ({ name, email, password, cf_password }) => {
     return 'Invalid emails.';
   }
 
-  //Check length of password
+  //Check enum role
+  if (
+    role !== 'staff' &&
+    role !== 'admin' &&
+    role !== 'qa_manager' &&
+    role !== 'qa_coordinator' &&
+    role !== 'department_manager'
+  ) {
+    return 'Invalid role';
+  }
+
   if (password.length < 6) {
+    //Check length of password
     return 'Password must be at least 6 characters.';
   }
 
