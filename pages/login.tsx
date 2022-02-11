@@ -1,5 +1,5 @@
 import { NextPageWithLayout } from '../models';
-import { Button } from 'antd';
+import { Row, Col, Space } from 'antd';
 import Head from 'next/head';
 
 const login: NextPageWithLayout = () => {
@@ -8,9 +8,10 @@ const login: NextPageWithLayout = () => {
       <Head>
         <title> Login </title>
       </Head>
-      <div>
-        <Button>nguyen</Button>
-      </div>
+
+      <Space className="screen-full justify-center" align="center">
+        <div>nguyen</div>
+      </Space>
     </>
   );
 };
