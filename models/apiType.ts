@@ -3,4 +3,12 @@ export interface IPropsFetchData {
     body?: any
     token?: string
   }
+
+export interface IAccessToken {
+  status: string | number
+  accessToken: {
+    token: string
+  }
+  msg: string
+}
   

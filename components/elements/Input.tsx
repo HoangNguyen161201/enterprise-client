@@ -1,10 +1,10 @@
-import React from 'react';
+import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import { Input as AntInput, Space } from 'antd';
-import { IInput } from '../../models';
-import { EyeInvisibleOutlined, EyeTwoTone, UserOutlined } from '@ant-design/icons';
+import React from 'react';
 import { Controller } from 'react-hook-form';
+import { IInput } from '../../models';
 
-export const Input = ({ type = 'text', formSetting, name, label, placeholder }: IInput) => {
+export const Input = ({ type = 'text', formSetting, name, label, placeholder, icon }: IInput) => {
   const {
     formState: { errors },
     control,
@@ -28,7 +28,7 @@ export const Input = ({ type = 'text', formSetting, name, label, placeholder }: 
             return (
               <AntInput.Password
                 {...field}
-                prefix={<UserOutlined color="blue" />}
+                prefix={icon}
                 placeholder={placeholder || ''}
                 iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
               />
@@ -38,7 +38,7 @@ export const Input = ({ type = 'text', formSetting, name, label, placeholder }: 
             <AntInput
               id="radius-10"
               {...field}
-              prefix={<UserOutlined color="blue" />}
+              prefix={icon}
               type={type}
               placeholder={placeholder || ''}
             />
