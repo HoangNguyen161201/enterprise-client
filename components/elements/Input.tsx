@@ -1,10 +1,16 @@
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
-import { Input as AntInput, Space } from 'antd';
-import React from 'react';
+import { AutoComplete, Input as AntInput, Space } from 'antd';
+import React, { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { IInput } from '../../models';
 
 export const Input = ({ type = 'text', formSetting, name, label, placeholder, icon }: IInput) => {
+  const [options, setOptions] = useState([{ value: '@gmail.com' }]);
+
+  const handleSearch = (value: string) => {
+    setOptions([{ value: value + '@gmail.com' }]);
+  };
+
   const {
     formState: { errors },
     control,
@@ -34,14 +40,16 @@ export const Input = ({ type = 'text', formSetting, name, label, placeholder, ic
               />
             );
           }
+
           return (
-            <AntInput
-              id="radius-10"
+            <AutoComplete
               {...field}
-              prefix={icon}
-              type={type}
-              placeholder={placeholder || ''}
-            />
+              style={{ width: '100%' }}
+              onSearch={handleSearch}
+              options={options}
+            >
+              <AntInput prefix={icon} type={type} placeholder={placeholder || ''} />
+            </AutoComplete>
           );
         }}
       />

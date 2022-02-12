@@ -1,10 +1,13 @@
 import { NextLayout } from '../../models/layoutType';
+import Footer from '../elements/Footer';
+import Header from '../elements/Header';
 
 export const ClientLayout: NextLayout = ({ children }) => {
   return (
     <div>
-      thus
-      {children}
+      <Header />
+        {children}
+      <Footer />
     </div>
   );
 };
