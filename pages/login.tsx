@@ -1,18 +1,23 @@
-import { ILogin, NextPageWithLayout } from '../models';
-import { Button, Space, message } from 'antd';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Button, message, Space } from 'antd';
+import { AxiosError } from 'axios';
 import Head from 'next/head';
 import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { validateLogin } from '../utils/validate';
-import { Input, Select } from '../components/elements';
-import Accounts from '../DataAccount.json';
-import CopyAcc from '../components/elements/CopyAcc';
 import { useMutation } from 'react-query';
-import { AxiosError } from 'axios';
+import { Input, Select } from '../components/elements';
+import CopyAcc from '../components/elements/CopyAcc';
+import Accounts from '../DataAccount.json';
+import { ILogin, NextPageWithLayout } from '../models';
+import { getAccessToken } from '../queries';
 import { postData } from '../utils/fetchData';
+import { validateLogin } from '../utils/validate';
 
 const login: NextPageWithLayout = () => {
-  const mutationLogin = useMutation<ILogin, AxiosError, ILogin>((dataForm) => {
+
+  const {data, refetch} = getAccessToken()
+
+  //  call api to get accessToken
+  const mutationLogin = useMutation<{accessToken: string}, AxiosError, ILogin>((dataForm) => {
     return postData({
       url: '/api/auth/login',
       body: dataForm,
@@ -20,6 +25,10 @@ const login: NextPageWithLayout = () => {
   }, {
     onSuccess: (data)=> {
       console.log(data)
+      refetch()
+    },
+    onError: (error)=> {
+      console.log(error.response?.data)
     }
   });
 
@@ -96,7 +105,7 @@ const login: NextPageWithLayout = () => {
                 name={'role'}
               />
             </Space>
-            <Button
+            <Button loading={mutationLogin.isLoading}
               style={{
                 borderRadius: 5,
               }}
@@ -113,7 +122,7 @@ const login: NextPageWithLayout = () => {
               }}
             >
               {Accounts.map((acc) => (
-                <CopyAcc acc={acc} handleSetAcc={handleSetAcc} />
+                <CopyAcc key={acc.role} acc={acc} handleSetAcc={handleSetAcc} />
               ))}
             </Space>
           </Space>
