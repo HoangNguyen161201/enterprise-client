@@ -3,7 +3,7 @@ import { createContext } from 'react';
 //Types
 interface IGlobalConttextProps {
   children: any
-  huy: string
+  hoang: string
   [index: string]: any
 }
 
