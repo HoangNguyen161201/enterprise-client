@@ -28,14 +28,6 @@ app.use(
 //Routes
 mainRouter(app);
 
-//Handle error catch async
-app.use((req, res) => {
-  return res.status(500).json({
-    err: 'Something went wrong.',
-    statusCode: 500,
-  });
-});
-
 //Server listen PORT
 app.listen(PORT, () => {
   console.log(`Server listen at http://localhost/${PORT}`);
