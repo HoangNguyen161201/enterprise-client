@@ -10,4 +10,10 @@ departmentRouter.post('/', departmentController.create);
 
 departmentRouter.put('/:id', departmentController.update);
 
+departmentRouter.delete('/:id', departmentController.delete);
+
+departmentRouter.get('/:id', departmentController.getDetail);
+
+departmentRouter.get('/', departmentController.getAll);
+
 module.exports = departmentRouter;
