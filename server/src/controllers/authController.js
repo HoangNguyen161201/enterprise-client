@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const { createAccessToken, createRefreshToken } = require('../utils/generateToken');
 
 //Import middleware
-const catchAsyncError = require('../middlewares/catchAsyncError');
+const catchAsyncError = require('../helpers/catchAsyncError');
 
 //Import model
 const userModel = require('../models/userModel');

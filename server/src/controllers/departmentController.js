@@ -1,5 +1,5 @@
 //import middleware
-const catchAsyncError = require('../middlewares/catchAsyncError');
+const catchAsyncError = require('../helpers/catchAsyncError');
 
 //import model
 const departmentModel = require('../models/departmentModel');
