@@ -2,7 +2,9 @@ import { createContext } from 'react';
 
 //Types
 interface IGlobalConttextProps {
-  children: any;
+  children: any
+  huy: string
+  [index: string]: any
 }
 
 //Create context
