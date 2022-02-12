@@ -13,7 +13,7 @@ export const config = {
 //Create server proxy
 const proxy = httpProxy.createProxyServer();
 
-export default function handler(req: NextApiRequest, res: NextApiResponse<any>) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   //Check method
   if (req.method !== 'POST') {
     return res.status(400).json({
@@ -21,7 +21,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<any>) 
     });
   }
 
-  console.log(req.body)
+  console.log('hoang nguyen quang', process.env.API_URL)
 
   //Return promise
   return new Promise((resolve) => {
@@ -47,6 +47,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<any>) 
 
       proxyRes.on('end', function () {
         try {
+          console.log(body)
           const { accessToken, refreshToken, status, msg, err, statusCode } = JSON.parse(body);
 
           if (status === 'success') {
@@ -63,6 +64,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<any>) 
               msg,
               err,
             });
+          } else {
+            ;(res as NextApiResponse).status(400).json(body)
+            resolve(true);
           }
         } catch (error) {
           ;(res as NextApiResponse).status(500).json({
