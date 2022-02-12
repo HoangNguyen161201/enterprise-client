@@ -1,3 +1,4 @@
+import { UnlockOutlined, UserOutlined } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button, message, Space } from 'antd';
 import { AxiosError } from 'axios';
@@ -7,7 +8,7 @@ import { useMutation } from 'react-query';
 import { Input, Select } from '../components/elements';
 import CopyAcc from '../components/elements/CopyAcc';
 import Accounts from '../DataAccount.json';
-import { ILogin, NextPageWithLayout } from '../models';
+import { IAccessToken, ILogin, NextPageWithLayout } from '../models';
 import { getAccessToken } from '../queries';
 import { postData } from '../utils/fetchData';
 import { validateLogin } from '../utils/validate';
@@ -17,14 +18,18 @@ const login: NextPageWithLayout = () => {
   const {data, refetch} = getAccessToken()
 
   //  call api to get accessToken
-  const mutationLogin = useMutation<{accessToken: string}, AxiosError, ILogin>((dataForm) => {
+  const mutationLogin = useMutation<IAccessToken, AxiosError, ILogin>((dataForm) => {
     return postData({
       url: '/api/auth/login',
       body: dataForm,
     }); 
   }, {
     onSuccess: (data)=> {
-      console.log(data)
+      if(data.status == 'success') {
+        message.success({
+          content: data.msg
+        })
+      }
       refetch()
     },
     onError: (error)=> {
@@ -90,6 +95,7 @@ const login: NextPageWithLayout = () => {
                 formSetting={formSetting}
                 name={'email'}
                 type="text"
+                icon={<UserOutlined style={{color: 'gray'}}/>}
               />
               <Input
                 label="Password"
@@ -97,6 +103,7 @@ const login: NextPageWithLayout = () => {
                 formSetting={formSetting}
                 name={'password'}
                 type="password"
+                icon={<UnlockOutlined style={{color: 'gray'}}/>}
               />
               <Select
                 label="Role"
