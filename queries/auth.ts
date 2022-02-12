@@ -1,7 +1,7 @@
 import { useQuery } from 'react-query';
 import { getData } from '../utils/fetchData';
 
-export const getAccessToken = () => {
+export const getCurrentUser = () => {
   return useQuery('accessToken', () => {
     return getData({url: '/api/auth/accesstoken'});
   }, {
