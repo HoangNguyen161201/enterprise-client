@@ -6,6 +6,7 @@ const catchAsyncError = require('../middlewares/catchAsyncError');
 
 //Import model
 const userModel = require('../models/userModel');
+const { findById } = require('../models/userModel');
 
 const userController = {
   create: catchAsyncError(async (req, res) => {
@@ -56,6 +57,51 @@ const userController = {
       statusCode: 200,
     });
   }),
-};
+  update: catchAsyncError(async (req, res) => {
+    //get id from query
+    const { id } = req.params;
+    console.log(req.body)
 
+    //check user exist in system
+    const user = await userModel.findById(id);
+
+    if (!user)
+      return res.status(400).json({
+        err: 'The User is does not exist',
+        statusCode: 400,
+      });
+  //update data by id
+    await userModel.findByIdAndUpdate(id, req.body);
+
+    res.status(200).json({
+      statusCode: 200,
+      msg: 'Update Success',
+    });
+  }),
+  delete: catchAsyncError(async (req, res) => {
+    const { id } = req.params;
+
+    //check user exist in system
+    const user = await userModel.findById(id);
+
+    if (!user)
+    return res.status(400).json({
+      err: 'The User is does not exist',
+      statusCode: 400,
+    });
+
+    //delete user by id
+    await userModel.findByIdAndDelete(id, req.body)
+
+    res.status(200).json({
+      statusCode: 200,
+      msg: 'Delete Success',
+    });
+  }),
+
+
+    
+    
+  
+};
 module.exports = userController;
