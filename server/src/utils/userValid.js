@@ -4,6 +4,11 @@ const validSignUp = ({ name, email, role, password, cf_password }) => {
     return 'Please add all fields.';
   }
 
+  if (name.length < 3) {
+    //Check length of name
+    return 'Name must be at least 3 characters.';
+  }
+
   //Check valid email
   if (!validateEmail(email)) {
     return 'Invalid emails.';
@@ -31,6 +36,34 @@ const validSignUp = ({ name, email, role, password, cf_password }) => {
   }
 };
 
+const validUpdate = ({ name, email, role }) => {
+  if (!name || !email || !role) {
+    return 'Please add all fields.';
+  }
+
+  if (name.length < 3) {
+    //Check length of name
+    return 'Name must be at least 3 characters.';
+  }
+  
+  //Check valid email
+  if (!validateEmail(email)) {
+    return 'Invalid emails.';
+  }
+
+  //Check enum role
+  if (
+    role !== 'staff' &&
+    role !== 'admin' &&
+    role !== 'qa_manager' &&
+    role !== 'qa_coordinator' &&
+    role !== 'department_manager'
+  ) {
+    return 'Invalid role';
+  }
+
+};
+
 //Check valid email functionmuy
 function validateEmail(email) {
   const res =
@@ -38,4 +71,7 @@ function validateEmail(email) {
   return res.test(String(email).toLowerCase());
 }
 
-module.exports = validSignUp;
+module.exports = {
+  validSignUp,
+  validUpdate,
+};
