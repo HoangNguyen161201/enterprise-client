@@ -1,3 +1,5 @@
 export * from './Input'
 export * from './Select'
 export * from './CopyAcc'
+export * from './Header'
+export * from './Footer'

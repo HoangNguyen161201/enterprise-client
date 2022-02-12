@@ -22,14 +22,14 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     });
   }, []);
   return (
-    <Layout>
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <Layout>
         <GlobalContextProvider>
           <Component {...pageProps} />
         </GlobalContextProvider>
-        <ReactQueryDevtools position="bottom-right" />
-      </QueryClientProvider>
-    </Layout>
+      </Layout>
+      <ReactQueryDevtools position="bottom-right" />
+    </QueryClientProvider>
   );
 }
 

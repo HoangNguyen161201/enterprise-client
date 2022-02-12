@@ -14,15 +14,15 @@ const GlobalContext = createContext({});
 function GlobalContextProvider({ children }: IGlobalConttextProps) {
   const { refetch } = getCurrentUser();
   const value = {};
-  const {push} = useRouter()
+  const { push } = useRouter();
   useEffect(() => {
     const firstLogin = localStorage.getItem('first-login');
     if (firstLogin === 'true') {
       console.log('nguyen quanghoa');
       refetch();
       push('/', undefined, {
-          shallow: true
-      })
+        shallow: true,
+      });
     }
   }, []);
 
