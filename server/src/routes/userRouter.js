@@ -13,4 +13,9 @@ userRouter.put('/:id', userController.update)
 
 userRouter.delete('/:id', userController.delete)
 
+ // / get
+userRouter.get('/', userController.getAll)
+// /:id get                   
+userRouter.get('/:id', userController.getDetail)
+
 module.exports = userRouter

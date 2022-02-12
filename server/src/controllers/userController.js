@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const validSignUp = require('../utils/valid');
+const userValid = require('../utils/userValid');
 
 //Import middleware
 const catchAsyncError = require('../helpers/catchAsyncError');
@@ -14,7 +14,7 @@ const userController = {
     const { name, email, password, cf_password, role } = req.body;
 
     //Check valid infor sign up
-    const errMsg = validSignUp({
+    const errMsg = userValid.validSignUp({
       name,
       email,
       role,
@@ -57,10 +57,13 @@ const userController = {
       statusCode: 200,
     });
   }),
+
   update: catchAsyncError(async (req, res) => {
     //get id from query
     const { id } = req.params;
-    console.log(req.body)
+
+    //get info update
+    const { name, email, role } = req.body;
 
     //check user exist in system
     const user = await userModel.findById(id);
@@ -70,14 +73,26 @@ const userController = {
         err: 'The User is does not exist',
         statusCode: 400,
       });
-  //update data by id
-    await userModel.findByIdAndUpdate(id, req.body);
 
-    res.status(200).json({
+    //valid info update
+    const errorValid = userValid.validUpdate({ name, email, role });
+
+    //Check exist error
+    if (errorValid)
+      return res.status(400).json({
+        statusCode: 400,
+        err: errorValid,
+      });
+
+    //update data by id
+    await userModel.findByIdAndUpdate(id, {name, email, role});
+
+    return res.status(200).json({
       statusCode: 200,
       msg: 'Update Success',
     });
   }),
+
   delete: catchAsyncError(async (req, res) => {
     const { id } = req.params;
 
@@ -85,23 +100,42 @@ const userController = {
     const user = await userModel.findById(id);
 
     if (!user)
-    return res.status(400).json({
-      err: 'The User is does not exist',
-      statusCode: 400,
-    });
+      return res.status(400).json({
+        err: 'The User is does not exist',
+        statusCode: 400,
+      });
 
     //delete user by id
-    await userModel.findByIdAndDelete(id, req.body)
+    await userModel.findByIdAndDelete(id, req.body);
 
-    res.status(200).json({
+    return res.status(200).json({
       statusCode: 200,
       msg: 'Delete Success',
     });
   }),
 
+  getAll: catchAsyncError(async (req, res) => {
+    const users = await userModel.find({}).select("-password");
+    return res.status(200).json({
+      statusCode: 200,
+      msg: 'Get all users success',
+      users,
+    });
+  }),
 
-    
-    
-  
+  getDetail: catchAsyncError(async (req, res) => {
+    const { id } = req.params;
+    const user = await userModel.findById(id).select("-password");
+    if (!user)
+      return res.status(400).json({
+        err: 'The User is does not exist',
+        statusCode: 400,
+      });
+    return res.status(200).json({
+      statusCode: 200,
+      msg: 'Get user success',
+      user,
+    });
+  }),
 };
 module.exports = userController;
