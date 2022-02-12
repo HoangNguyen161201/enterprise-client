@@ -10,5 +10,6 @@ export interface IAccessToken {
     token: string
   }
   msg: string
+  [index: string]: any
 }
   
