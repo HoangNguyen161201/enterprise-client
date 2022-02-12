@@ -21,6 +21,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<any>) 
     });
   }
 
+  console.log(req.body)
+
   //Return promise
   return new Promise((resolve) => {
     const cookies = new Cookies(req, res);
