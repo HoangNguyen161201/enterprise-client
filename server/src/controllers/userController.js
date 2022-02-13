@@ -85,7 +85,7 @@ const userController = {
       });
 
     //update data by id
-    await userModel.findByIdAndUpdate(id, {name, email, role});
+    await userModel.findByIdAndUpdate(id, { name, email, role });
 
     return res.status(200).json({
       statusCode: 200,
@@ -115,7 +115,7 @@ const userController = {
   }),
 
   getAll: catchAsyncError(async (req, res) => {
-    const users = await userModel.find({}).select("-password");
+    const users = await userModel.find({}).select('-password');
     return res.status(200).json({
       statusCode: 200,
       msg: 'Get all users success',
@@ -125,7 +125,7 @@ const userController = {
 
   getDetail: catchAsyncError(async (req, res) => {
     const { id } = req.params;
-    const user = await userModel.findById(id).select("-password");
+    const user = await userModel.findById(id).select('-password');
     if (!user)
       return res.status(400).json({
         err: 'The User is does not exist',
@@ -135,6 +135,22 @@ const userController = {
       statusCode: 200,
       msg: 'Get user success',
       user,
+    });
+  }),
+  getRole: catchAsyncError(async (req, res) => {
+    const { role } = req.params;
+    const errMsg = userValid.validFilter({ role });
+
+    if (errMsg)
+      return res.status(400).json({
+        err: errMsg,
+        statusCode: 400,
+      });
+    const users = await userModel.find({ role });
+    return res.status(200).json({
+      statusCode: 200,
+      msg: 'Get user success',
+      users,
     });
   }),
 };
