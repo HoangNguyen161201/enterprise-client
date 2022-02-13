@@ -7,15 +7,16 @@ const userController = require('../controllers/userController');
 const userRouter = express.Router();
 
 //Handle user routes
-userRouter.post('/', userController.create)
+userRouter.post('/', authorization(['admin', 'qa_manager']), userController.create);
 
-userRouter.put('/:id', userController.update)
+userRouter.put('/:id', authorization(['admin', 'qa_manager']), userController.update);
 
-userRouter.delete('/:id', userController.delete)
+userRouter.delete('/:id', authorization(['admin', 'qa_manager']), userController.delete);
 
- // / get
-userRouter.get('/', userController.getAll)
-// /:id get                   
-userRouter.get('/:id', userController.getDetail)
+userRouter.get('/', authorization(['admin', 'qa_manager']), userController.getAll);
 
-module.exports = userRouter
+userRouter.get('/role/:role', authorization(['admin', 'qa_manager']), userController.getRole);
+
+userRouter.get('/:id', authorization(['admin', 'qa_manager']), userController.getDetail);
+
+module.exports = userRouter;
