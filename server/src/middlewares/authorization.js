@@ -12,31 +12,45 @@ const authHelper = (roles) => {
       if (!token)
         return res.status(401).json({
           status: false,
-          msg: 'You must login first.',
+          statusCode: 401,
+          err: 'You must login first.',
         });
 
       //Decode token
-      const { id } = await jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, {
+      const { id, exp } = await jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, {
         ignoreExpiration: true,
       });
 
+      //Check time token
+      var timeLiveToken = new Date(exp * 1000);
+      var dateNow = new Date();
+      if (timeLiveToken < dateNow)
+        return res.status(401).json({
+          status: false,
+          statusCode: 401,
+          err: 'You must login first.',
+        });
+
       //Get user token
       const user = await userModel.findById(id).select('-password');
+      console.log(user);
 
       //Check role
       const isMatchRole = roles.includes(user.role);
 
       if (!isMatchRole)
-        res.status(401).json({
+        return res.status(401).json({
           status: false,
-          msg: 'Not have permission to perform this action.',
+          statusCode: 401,
+          err: 'Not have permission to perform this action.',
         });
 
       return next();
     } catch (error) {
       res.status(401).json({
         status: false,
-        msg: 'Sorry, you must provide a valid token.',
+        statusCode: 401,
+        err: 'Sorry, you must provide a valid token.',
       });
     }
   };
