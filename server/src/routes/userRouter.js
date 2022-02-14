@@ -6,6 +6,9 @@ const userController = require('../controllers/userController');
 //Create user router
 const userRouter = express.Router();
 
+//Import middleware
+const authorization = require('../middlewares/authorization')
+
 //Handle user routes
 userRouter.post('/', authorization(['admin', 'qa_manager']), userController.create);
 

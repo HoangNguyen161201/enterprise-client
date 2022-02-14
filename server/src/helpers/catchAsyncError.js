@@ -49,7 +49,7 @@ const handleCatchError = (func) => {
 
       //Res error
       res.status(statusCode).json({
-        msg: message,
+        err: message,
         statusCode,
       });
     });
