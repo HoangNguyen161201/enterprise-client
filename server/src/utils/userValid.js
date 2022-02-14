@@ -45,7 +45,7 @@ const validUpdate = ({ name, email, role }) => {
     //Check length of name
     return 'Name must be at least 3 characters.';
   }
-  
+
   //Check valid email
   if (!validateEmail(email)) {
     return 'Invalid emails.';
@@ -61,7 +61,14 @@ const validUpdate = ({ name, email, role }) => {
   ) {
     return 'Invalid role';
   }
+};
 
+//Role Valid User
+
+const validFilter = ({ role }) => {
+  if (role !== 'staff' && role !== 'qa_cooordinator' && role !== 'department_manager') {
+    return 'Invalid role';
+  }
 };
 
 //Check valid email functionmuy
@@ -74,4 +81,5 @@ function validateEmail(email) {
 module.exports = {
   validSignUp,
   validUpdate,
+  validFilter,
 };
