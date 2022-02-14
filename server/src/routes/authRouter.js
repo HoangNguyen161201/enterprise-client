@@ -16,4 +16,7 @@ authRouter.post('/logout', authController.logout);
 //Handle get access token API
 authRouter.get('/accesstoken', authController.getaccesstoken);
 
+//Handle to reset password
+authRouter.post('/smtpResetPass', authController.smtpResetPass);
+
 module.exports = authRouter;

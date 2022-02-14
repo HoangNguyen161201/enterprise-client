@@ -1,12 +1,13 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { createAccessToken, createRefreshToken } = require('../utils/generateToken');
+const { createAccessToken, createRefreshToken, createActiveToken } = require('../utils/generateToken');
 
 //Import middleware
 const catchAsyncError = require('../helpers/catchAsyncError');
 
 //Import model
 const userModel = require('../models/userModel');
+const sendEmail = require('../utils/sendEmail');
 
 const authController = {
   login: catchAsyncError(async (req, res) => {
@@ -111,6 +112,30 @@ const authController = {
       statusCode: 200,
     });
   }),
+
+  smtpResetPass: catchAsyncError(async (req, res) => {
+    const {email} = req.body
+    const user = await userModel.findOne({
+      email
+    }).select('-password')
+    if(!user) return res.status(401).json({
+      err: 'Email not exists',
+      statusCode: 401,
+    });
+
+    const active_token = await createActiveToken ({
+      id: user._id,
+    }); 
+
+    const url = `${process.env.URL_CLIENT}/reset-password/${active_token.token}`
+
+    await sendEmail({email, url})
+    return res.json({
+      status: 'success',
+      msg: 'Check your email to reset password',
+      statusCode: 200,
+    })
+  })
 };
 
 module.exports = authController;
