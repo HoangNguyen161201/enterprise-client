@@ -85,7 +85,7 @@ const login: NextPageWithLayout = () => {
         <form
           onSubmit={formSetting.handleSubmit(onSubmit)}
           style={{
-            width: 340,
+            width: 400,
             padding: 20,
             border: '2px solid #009F9D',
             borderRadius: 10,

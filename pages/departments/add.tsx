@@ -5,7 +5,7 @@ import { AxiosError } from 'axios';
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
-import { Input } from '../../components/elements';
+import { Input, TextArea } from '../../components/elements';
 import { ClientLayout } from '../../components/layouts';
 import { IDepartment } from '../../models';
 import { NextPageWithLayout } from '../../models/layoutType';
@@ -73,12 +73,10 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
               type="text"
               icon={<FileTextOutlined />}
             />
-            <Input
+            <TextArea
               name="description"
               label="Description"
               formSetting={formSetting}
-              placeholder="Enter department description"
-              type="text"
             />
             <div
               style={{
