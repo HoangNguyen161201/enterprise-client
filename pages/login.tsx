@@ -4,9 +4,9 @@ import { Button, Divider, message, Space } from 'antd';
 import { AxiosError } from 'axios';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { useForm } from 'react-hook-form';
-import { useMutation } from 'react-query';
+import { useRouter as UseRouter} from 'next/router';
+import { useForm as UseForm } from 'react-hook-form';
+import { useMutation as UseMutation } from 'react-query';
 import { Input, Select } from '../components/elements';
 import CopyAcc from '../components/elements/CopyAcc';
 import Accounts from '../DataAccount.json';
@@ -16,12 +16,12 @@ import { postData } from '../utils/fetchData';
 import { validateLogin } from '../utils/validate';
 
 const login: NextPageWithLayout = () => {
-  const { data, refetch } = getCurrentUser();
+  const { refetch } = getCurrentUser();
 
-  const { push } = useRouter();
+  const { push } = UseRouter();
 
   //  call api to get accessToken
-  const mutationLogin = useMutation<IAccessToken, AxiosError, ILogin>(
+  const mutationLogin = UseMutation<IAccessToken, AxiosError, ILogin>(
     (dataForm) => {
       return postData({
         url: '/api/auth/login',
@@ -50,7 +50,7 @@ const login: NextPageWithLayout = () => {
   );
 
   // setting form
-  const formSetting = useForm<ILogin>({
+  const formSetting = UseForm<ILogin>({
     resolver: yupResolver(validateLogin),
     defaultValues: {
       email: '',
@@ -126,19 +126,25 @@ const login: NextPageWithLayout = () => {
                 name={'role'}
               />
             </Space>
-            <Space size={10} direction="vertical">
+            <Space size={10} direction="horizontal" style={{
+              alignItems: 'space-between',
+              justifyContent: 'space-between',
+              display: 'flex'
+            }}>
               <Button
+              size='large'
                 loading={mutationLogin.isLoading}
                 style={{
                   borderRadius: 5,
+                  fontSize: 16
                 }}
                 htmlType="submit"
                 type="primary"
               >
                 Login
               </Button>
-              <Link href={'/'}>
-                <a className="font-1 color-3">Forget your password?</a>
+              <Link href={'/recover_password'}>
+                <a className="font-1 color-3">Forget password?</a>
               </Link>
             </Space>
           </Space>

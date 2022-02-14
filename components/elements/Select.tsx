@@ -25,7 +25,7 @@ export const Select = ({ formSetting, name, label, placeholder }: IInput) => {
         control={control}
         render={({ field }) => {
           return (
-            <AntSelect
+            <AntSelect size='large'
               style={{
                 width: '100%',
                 borderRadius: '10px !important',
