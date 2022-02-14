@@ -35,6 +35,7 @@ export const Input = ({ type = 'text', formSetting, name, label, placeholder, ic
               <AntInput.Password
                 {...field}
                 prefix={icon}
+                size='large'
                 placeholder={placeholder || ''}
                 iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
               />
@@ -48,7 +49,7 @@ export const Input = ({ type = 'text', formSetting, name, label, placeholder, ic
               onSearch={handleSearch}
               options={options}
             >
-              <AntInput prefix={icon} type={type} placeholder={placeholder || ''} />
+              <AntInput size='large' prefix={icon} type={type} placeholder={placeholder || ''} />
             </AutoComplete>
           );
         }}
