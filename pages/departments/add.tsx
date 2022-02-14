@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
 import { Input } from '../../components/elements';
 import { ClientLayout } from '../../components/layouts';
-import { IDepartment, ILogin } from '../../models';
+import { IDepartment } from '../../models';
 import { NextPageWithLayout } from '../../models/layoutType';
 import { postData, validateAddDepartment } from '../../utils';
 
@@ -86,7 +86,7 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
                 justifyContent: 'end',
               }}
             >
-              <Button htmlType="submit" type="primary">
+              <Button loading={mutationAddDepartment.isLoading} htmlType="submit" type="primary">
                 Add
               </Button>
             </div>
