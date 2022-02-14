@@ -14,3 +14,8 @@ export interface ILogin {
     password: string
     role: string
 }
+
+export interface IDepartment {
+    name: string,
+    description: string
+}
