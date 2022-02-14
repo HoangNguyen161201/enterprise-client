@@ -33,6 +33,9 @@ export const Input = ({ type = 'text', formSetting, name, label, placeholder, ic
           if (type == 'password') {
             return (
               <AntInput.Password
+                style={{
+                  width: "100%"
+                }}
                 {...field}
                 prefix={icon}
                 size='large'
