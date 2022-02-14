@@ -35,16 +35,16 @@ const handleCatchError = (func) => {
 
       //Handling wrong JWT error
       if (nameError === 'JsonWebTokenError') {
-        const message = `JSON Web Token is invalid. Try Again!!!`;
+        const messageError = `JSON Web Token is invalid. Try Again!!!`;
         statusCode = 400;
-        message = message;
+        message = messageError;
       }
 
       //Handling Expored JWT error
       if (nameError === 'TokenExpiredError') {
-        const message = `JSON Web Token is invalid. Try Again!!!`;
+        const messageError = `JSON Web Token is invalid. Try Again!!!`;
         statusCode = 400;
-        message = message;
+        message = messageError;
       }
 
       //Res error
