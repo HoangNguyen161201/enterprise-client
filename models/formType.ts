@@ -16,6 +16,11 @@ export interface ILogin {
 }
 
 export interface IDepartment {
-    name: string,
+    name: string
     description: string
+}
+
+export interface IResetPass {
+    password: string
+    passwordConfirm: string
 }
