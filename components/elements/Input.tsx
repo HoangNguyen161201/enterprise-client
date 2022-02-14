@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { IInput } from '../../models';
 
-export const Input = ({ type = 'text', formSetting, name, label, placeholder, icon }: IInput) => {
+export const Input = ({ type = 'text', formSetting, name, label, placeholder, icon, require = true }: IInput) => {
   const [options, setOptions] = useState([{ value: '@gmail.com' }]);
 
   const handleSearch = (value: string) => {
@@ -17,14 +17,11 @@ export const Input = ({ type = 'text', formSetting, name, label, placeholder, ic
   } = formSetting;
   return (
     <Space
-      style={{
-        minWidth: 300,
-      }}
       direction="vertical"
       size={'small'}
     >
       <span className="font-2">
-        {label} <span className="color-red">*</span>
+        {label} {require && <span className="color-red">*</span>}
       </span>
       <Controller
         name={name}
@@ -33,6 +30,9 @@ export const Input = ({ type = 'text', formSetting, name, label, placeholder, ic
           if (type == 'password') {
             return (
               <AntInput.Password
+                style={{
+                  width: "100%"
+                }}
                 {...field}
                 prefix={icon}
                 size='large'

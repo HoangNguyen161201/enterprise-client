@@ -5,7 +5,7 @@ import { AppProps } from "next/app";
 // Custom type for layout
 
 export type NextLayout = NextPage<{
-    children: ReactElement
+    children: ReactElement 
 }>
 
 export type NextPageWithLayout = NextPage & {

@@ -18,8 +18,12 @@ userRouter.delete('/:id', authorization(['admin', 'qa_manager']), userController
 
 userRouter.get('/', authorization(['admin', 'qa_manager']), userController.getAll);
 
-userRouter.get('/role/:role', authorization(['admin', 'qa_manager']), userController.getRole);
+userRouter.get('/role/:role', userController.getRole);
 
 userRouter.get('/:id', authorization(['admin', 'qa_manager']), userController.getDetail);
+
+userRouter.post('/assign', userController.assignDepartment);
+
+userRouter.post('/assignmany', userController.manyAssignDepartment);
 
 module.exports = userRouter;

@@ -6,7 +6,7 @@ const catchAsyncError = require('../helpers/catchAsyncError');
 
 //Import model
 const userModel = require('../models/userModel');
-const { findById } = require('../models/userModel');
+const departmentModel = require('../models/departmentModel');
 
 const userController = {
   create: catchAsyncError(async (req, res) => {
@@ -137,8 +137,12 @@ const userController = {
       user,
     });
   }),
+
   getRole: catchAsyncError(async (req, res) => {
     const { role } = req.params;
+    const { hasDepartment } = req.query;
+
+    //Valid role
     const errMsg = userValid.validFilter({ role });
 
     if (errMsg)
@@ -146,12 +150,131 @@ const userController = {
         err: errMsg,
         statusCode: 400,
       });
+
     const users = await userModel.find({ role });
+
+    //Initial user response
+    let usersRes = users;
+
+    //Chech user has department
+    switch (hasDepartment) {
+      case 'no':
+        usersRes = users.map((user) => {
+          if (!user.departmentId) {
+            return users;
+          }
+        });
+        break;
+
+      case 'yes':
+        usersRes = users.map((user) => {
+          if (user.department_id) {
+            return users;
+          }
+        });
+        break;
+
+      default:
+        break;
+    }
+
     return res.status(200).json({
       statusCode: 200,
       msg: 'Get user success',
-      users,
+      users: usersRes,
     });
+  }),
+
+  assignDepartment: catchAsyncError(async (req, res) => {
+    {
+      const { userId, departmentId } = req.body;
+
+      //Check exist user
+      const user = await userModel.findById(userId);
+
+      if (!user)
+        return res.status(400).json({
+          err: `User ${userId} not exist in system.`,
+          statusCode: 400,
+        });
+
+      //Check exist department
+      const department = await departmentModel.findById(departmentId);
+      if (!department)
+        return res.status(400).json({
+          err: `Department ${departmentId} not exist in system.`,
+          statusCode: 400,
+        });
+
+      //Check user assigned other department
+      if (user.department_id && user.department_id !== departmentId) {
+        return res.status(400).json({
+          err: `This user ${userId} has been assigned to another department.`,
+          statusCode: 400,
+        });
+      }
+
+      //Check user assigned this department
+      const userCheckAssigned = await userModel.findOne({
+        role: user.role,
+        department_id: departmentId,
+      });
+      if (userCheckAssigned) {
+        return res.status(400).json({
+          err: `There is already a ${user.role} assigned to the department ${departmentId}.`,
+          statusCode: 400,
+        });
+      }
+
+      //Update user department
+      user.department_id = department._id;
+      await user.save();
+
+      return res.status(200).json({
+        statusCode: 200,
+        msg: 'Assigned success.',
+      });
+    }
+  }),
+
+  manyAssignDepartment: catchAsyncError(async (req, res) => {
+    {
+      const { users, departmentId } = req.body;
+      console.log(departmentId);
+
+      //Check exist department
+      const department = await departmentModel.findById(departmentId);
+      if (!department)
+        return res.status(400).json({
+          err: `Department ${departmentId} not exist in system.`,
+          statusCode: 400,
+        });
+
+      for (let index = 0; index < users.length; index++) {
+        const userId = users[index];
+
+        //Check exist user
+        const user = await userModel.findById(userId);
+
+        if (!user)
+          return res.status(400).json({
+            err: `User ${userId} not exist in system.`,
+            statusCode: 400,
+          });
+
+        //Check user assigned department
+        if (!user.department_id) {
+          //Update user department
+          user.department_id = department._id;
+          await user.save();
+        }
+      }
+
+      return res.status(200).json({
+        statusCode: 200,
+        msg: 'Assigned success.',
+      });
+    }
   }),
 };
 module.exports = userController;
