@@ -114,25 +114,59 @@ const authController = {
   }),
 
   smtpResetPass: catchAsyncError(async (req, res) => {
-    const {email} = req.body
+    const { email } = req.body
     const user = await userModel.findOne({
       email
     }).select('-password')
-    if(!user) return res.status(401).json({
+    if (!user) return res.status(401).json({
       err: 'Email not exists',
       statusCode: 401,
     });
 
-    const active_token = await createActiveToken ({
+    const active_token = await createActiveToken({
       id: user._id,
-    }); 
+    });
 
     const url = `${process.env.URL_CLIENT}/reset-password/${active_token.token}`
 
-    await sendEmail({email, url})
-    return res.json({
+    await sendEmail({ email, url })
+    return res.status(200).json({
       status: 'success',
       msg: 'Check your email to reset password',
+      statusCode: 200,
+    })
+  }),
+
+  // reset password
+  resetPassword: catchAsyncError(async (req, res) => {
+    const { activeToken, password, confirmPassword } = req.body
+    if (!validatePassword(password)) return res.status(400).json({
+      err: 'Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character',
+      statusCode: 400,
+    });
+
+    if (password != confirmPassword) return res.status(400).json({
+      err: 'Password not match',
+      statusCode: 400,
+    });
+
+    const passwordHash = await bcrypt.hash(password, 12);
+
+    const { id } = await jwt.verify(activeToken, process.env.ACTIVE_TOKEN_SECRET)
+
+    // find user by id and update
+    const user = await userModel.findById(id)
+    if(!user) return res.status(400).json({
+      err: 'User not exist',
+      statusCode: 400,
+    });
+
+    await userModel.findByIdAndUpdate(id, {
+      password: passwordHash
+    })
+
+    return res.status(200).json({
+      msg: 'Reset password successfully',
       statusCode: 200,
     })
   })
