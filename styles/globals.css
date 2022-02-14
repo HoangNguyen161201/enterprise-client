@@ -72,3 +72,7 @@
 .ant-select-selector {
     border-radius: 5px !important;
 }
+
+.ant-space-vertical {
+    width: 100%;
+}
