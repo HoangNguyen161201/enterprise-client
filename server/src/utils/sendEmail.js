@@ -17,7 +17,7 @@ let mailOptions = ({email, url})=> ({
     from: `"Website hoang huy trong " <${process.env.USER_EMAIL}>`, 
       to: email, 
       subject: "Reset your password", 
-      text: "hoang dep trai nhat", 
+      text: "click active token to reset password", 
       html: `<div style='position: relative'></div><div style='padding: 30px; border: 3px solid #07456F; border-radius: 10px; max-width: 400px; position: absolute; top: 50%; left: 50% ; margin: auto'><h1 style='padding-bottom: 30px; color: black'>Resset password:</h1><a href='${url}' style='text-decoration: none ; cursor: pointer; text-align: center;background: #009F9D; padding: 15px; color: white; cursor: pointer; font-size: 16px; border-radius: 5px;  margin-left: 28%'>Reset your password</a><p style='margin-top: 45px; color: black'>If this button can not active, you can click link below:</p><a href='${url}'>${url}</a></div>`
 })
 
