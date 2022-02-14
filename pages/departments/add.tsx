@@ -107,9 +107,17 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     } as HeadersInit,
   });
 
-  console.log(res);
-  
-  
+  const data = await res.json();
+
+  console.log(res, data);
+
+  //Check role
+  if (data.user.role !== 'admin') {
+    return {
+      notFound: true
+    };
+  }
+
   //Redirect login page when error
   if (res.status !== 200) {
     return {
@@ -121,6 +129,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   return {
-    props: {},
+    props: {
+      
+    },
   };
 };
