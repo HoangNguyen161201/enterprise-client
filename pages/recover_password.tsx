@@ -15,6 +15,9 @@ export default function recover_password() {
     (email) => {
       return postData({
         url: 'api/auth/smtpResetPass',
+        body: {
+          email
+        }
       });
     },
     {
