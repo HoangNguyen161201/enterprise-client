@@ -8,6 +8,7 @@ const catchAsyncError = require('../helpers/catchAsyncError');
 //Import model
 const userModel = require('../models/userModel');
 const sendEmail = require('../utils/sendEmail');
+const { validatePassword } = require('../utils/userValid');
 
 const authController = {
   login: catchAsyncError(async (req, res) => {
@@ -139,7 +140,9 @@ const authController = {
 
   // reset password
   resetPassword: catchAsyncError(async (req, res) => {
+    console.log('fgdfgdfgdfg')
     const { activeToken, password, confirmPassword } = req.body
+    console.log(activeToken)
     if (!validatePassword(password)) return res.status(400).json({
       err: 'Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character',
       statusCode: 400,
@@ -152,16 +155,24 @@ const authController = {
 
     const passwordHash = await bcrypt.hash(password, 12);
 
-    const { id } = await jwt.verify(activeToken, process.env.ACTIVE_TOKEN_SECRET)
+    const data = await jwt.verify(activeToken, process.env.ACTIVE_TOKEN_SECRET, {
+      ignoreExpiration: true,
+    })
+
+    if (new Date() >= new Date(data.exp * 1000)) return res.status(400).json({
+      err: 'Some thing went wrong! Please request mail reset password again at login page',
+      statusCode: 400,
+    });
 
     // find user by id and update
-    const user = await userModel.findById(id)
-    if(!user) return res.status(400).json({
+    const user = await userModel.findById(data.id)
+    console.log(user)
+    if (!user) return res.status(400).json({
       err: 'User not exist',
       statusCode: 400,
     });
 
-    await userModel.findByIdAndUpdate(id, {
+    await userModel.findByIdAndUpdate(data.id, {
       password: passwordHash
     })
 
