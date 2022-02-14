@@ -1,4 +1,5 @@
 import { Button, message, Layout, Space, Typography } from 'antd';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { useMutation } from 'react-query';
@@ -53,7 +54,11 @@ export default function HeaderComponent() {
           >
             CMS
           </span>
-          <Button type="primary">Login</Button>
+          <Button type="primary">
+            <Link href={'/login'} passHref>
+              <a>Login</a>
+            </Link>
+          </Button>
         </Space>
       </Header>
       {/* <Button
