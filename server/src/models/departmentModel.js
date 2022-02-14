@@ -4,11 +4,30 @@ const mongoose = require('mongoose');
 const departmentSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true
+    required: true,
   },
   description: {
     type: String,
     required: true,
+  },
+  staffs: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users',
+      unique: true,
+    },
+  ],
+  qa_manager: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'users',
+  },
+  qa_coordinator: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'users',
+  },
+  department_manager: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'users',
   },
   root: {
     type: Boolean,

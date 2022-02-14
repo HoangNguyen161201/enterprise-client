@@ -3,6 +3,7 @@ const catchAsyncError = require('../helpers/catchAsyncError');
 
 //import model
 const departmentModel = require('../models/departmentModel');
+const userModel = require('../models/userModel');
 
 //import other
 const departmentValid = require('../utils/departmentValid');
@@ -12,7 +13,6 @@ const departmentController = {
   create: catchAsyncError(async (req, res) => {
     //Get infor add department
     const { name, description } = req.body;
-    console.log(name, description);
 
     //Valid infor add
     const errorValid = departmentValid.createUpdateValid({
@@ -92,7 +92,7 @@ const departmentController = {
     //Get all departments
     const departments = await departmentModel.find({});
 
-    res.status(200).json({
+    return res.status(200).json({
       msg: 'Get all departments success',
       departments,
       statusCode: 200,
@@ -101,14 +101,98 @@ const departmentController = {
 
   getDetail: catchAsyncError(async (req, res) => {
     //Get id for get detail
-    const {id} = req.params;
+    const { id } = req.params;
 
     //Get detail department
     const department = await departmentModel.findById(id);
 
-    res.status(200).json({
+    return res.status(200).json({
       msg: `Get detail department ${id} success`,
       department,
+      statusCode: 200,
+    });
+  }),
+
+  assign: catchAsyncError(async (req, res) => {
+    //Get id department for assign
+    const { id } = req.params;
+
+    //Get data to assign
+    const { staffs: newStaffs, qa_coordinator, department_manager } = req.body;
+    
+    ///Get detail department and check exist
+    const department = await departmentModel.findById(id);
+    const { staffs: oldStaffs } = department;
+    if (!department)
+    return res.status(400).json({
+      msg: 'This department does not exist in the system.',
+      statusCode: 400,
+    });
+    
+    //Assign staffs
+    for (let index = 0; index < newStaffs.length; index++) {
+      const idStaff = newStaffs[index];
+      const user = await userModel.find({
+        _id: idStaff,
+        role: 'staff',
+      });
+      //Check role staff
+      if (!user) {
+        return res.status(400).json({
+          msg: `Invalid ${idStaff} staff cannot be assign.`,
+          statusCode: 400,
+        });
+      }
+      
+      //Check length old array staff
+      if (oldStaffs.length === 0) {
+        await departmentModel.findOneAndUpdate({ _id: id }, { $push: { staffs: user._id } });
+      } else {
+        //Check exist staff
+        let checkExistStaff = false;
+        for (let index = 0; index < oldStaffs.length; index++) {
+          const idStaffOld = oldStaffs[index];
+          if (user._id.equals(idStaffOld)) {
+            checkExistStaff = true;
+            break;
+          }
+        }
+        if (!checkExistStaff) {
+          //Add staff
+          await departmentModel.findOneAndUpdate({ _id: id }, { $push: { staffs: user._id } });
+        }
+      }
+    }
+    
+    //Assign qa_coordinator
+    const qaCoordinator = await userModel.findOne({
+      _id: qa_coordinator,
+      role: 'qa_coordinator',
+    });
+        
+    console.log(qaCoordinator._id);
+    //Check exist qa_coordinator
+    if (qaCoordinator) {
+      await departmentModel.findByIdAndUpdate(id, {
+        qa_coordinator: qaCoordinator._id,
+      });
+    }
+
+    //Assign qa_coordinator
+    const departmentManager = await userModel.findOne({
+      _id: department_manager,
+      role: 'department_manager',
+    });
+
+    //Check exist qa_coordinator
+    if (departmentManager) {
+      await departmentModel.findByIdAndUpdate(id, {
+        department_manager: departmentManager._id,
+      });
+    }
+
+    return res.status(200).json({
+      msg: `Assign success.`,
       statusCode: 200,
     });
   }),

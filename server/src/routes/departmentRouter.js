@@ -11,12 +11,15 @@ const authorization = require('../middlewares/authorization');
 
 departmentRouter.post('/', authorization(['admin', 'qa_manager']), departmentController.create);
 
-departmentRouter.put('/:id', departmentController.update);
+departmentRouter.get('/', authorization(['admin', 'qa_manager']), departmentController.getAll);
 
-departmentRouter.delete('/:id', departmentController.delete);
+departmentRouter.put('/:id', authorization(['admin', 'qa_manager']), departmentController.update);
 
-departmentRouter.get('/:id', departmentController.getDetail);
+departmentRouter.delete('/:id',authorization(['admin', 'qa_manager']), departmentController.delete);
 
-departmentRouter.get('/', departmentController.getAll);
+departmentRouter.get('/:id', authorization(['admin', 'qa_manager']), departmentController.getDetail);
+
+departmentRouter.post('/:id/assign', authorization(['admin', 'qa_manager']), departmentController.assign);
+
 
 module.exports = departmentRouter;
