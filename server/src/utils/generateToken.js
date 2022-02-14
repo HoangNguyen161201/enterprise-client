@@ -12,7 +12,7 @@ const createAccessToken = async (payload) => {
 
 //Generate active token
 const createActiveToken = async (payload) => {
-  const token = jwt.sign(payload, process.env.ACTIVE_TOKEN_SECRET, { expiresIn: '14m' });
+  const token = jwt.sign(payload, process.env.ACTIVE_TOKEN_SECRET, { expiresIn: '30m' });
   const { exp } = jwt.verify(token, process.env.ACTIVE_TOKEN_SECRET, { ignoreExpiration: true });
   return {
     token,
