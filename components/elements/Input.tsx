@@ -17,9 +17,6 @@ export const Input = ({ type = 'text', formSetting, name, label, placeholder, ic
   } = formSetting;
   return (
     <Space
-      style={{
-        minWidth: 300,
-      }}
       direction="vertical"
       size={'small'}
     >
