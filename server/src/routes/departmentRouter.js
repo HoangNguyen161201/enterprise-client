@@ -11,7 +11,7 @@ const authorization = require('../middlewares/authorization');
 
 departmentRouter.post('/', authorization(['admin', 'qa_manager']), departmentController.create);
 
-departmentRouter.get('/', authorization(['admin', 'qa_manager']), departmentController.getAll);
+departmentRouter.get('/', departmentController.getAll);
 
 departmentRouter.put('/:id', authorization(['admin', 'qa_manager']), departmentController.update);
 
