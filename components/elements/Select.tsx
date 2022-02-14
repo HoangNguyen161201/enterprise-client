@@ -3,7 +3,7 @@ import { Space, Select as AntSelect } from 'antd';
 import { IInput } from '../../models';
 import { Controller } from 'react-hook-form';
 
-export const Select = ({ formSetting, name, label, placeholder }: IInput) => {
+export const Select = ({ formSetting, name, label, placeholder, require = true }: IInput) => {
   const { Option } = AntSelect;
   const {
     formState: { errors },
@@ -18,7 +18,7 @@ export const Select = ({ formSetting, name, label, placeholder }: IInput) => {
       size={'small'}
     >
       <span className="font-2">
-        {label} <span className="color-red">*</span>
+        {label} {require && <span className="color-red">*</span>}
       </span>
       <Controller
         name={name}
