@@ -2,10 +2,11 @@ import { FileTextOutlined } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Breadcrumb, Button, Card, message, Space } from 'antd';
 import { AxiosError } from 'axios';
+import { GetServerSideProps } from 'next';
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
-import { Input } from '../../components/elements';
+import { Input, TextArea } from '../../components/elements';
 import { ClientLayout } from '../../components/layouts';
 import { IDepartment } from '../../models';
 import { NextPageWithLayout } from '../../models/layoutType';
@@ -73,13 +74,7 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
               type="text"
               icon={<FileTextOutlined />}
             />
-            <Input
-              name="description"
-              label="Description"
-              formSetting={formSetting}
-              placeholder="Enter department description"
-              type="text"
-            />
+            <TextArea name="description" label="Description" formSetting={formSetting} />
             <div
               style={{
                 display: 'flex',
@@ -101,4 +96,31 @@ export default AddDepartment;
 
 AddDepartment.getLayout = function getLayout({ children }) {
   return <ClientLayout>{children}</ClientLayout>;
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  //Check login
+  const res = await fetch('http://localhost:3000/api/auth/accesstoken', {
+    method: 'GET',
+    headers: {
+      cookie: context.req.headers.cookie,
+    } as HeadersInit,
+  });
+
+  console.log(res);
+  
+  
+  //Redirect login page when error
+  if (res.status !== 200) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
 };
