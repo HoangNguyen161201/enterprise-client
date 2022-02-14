@@ -76,3 +76,8 @@
 .ant-space-vertical {
     width: 100%;
 }
+
+.ant-result-subtitle {
+    color: gray !important;
+    max-width: 500px;
+}
