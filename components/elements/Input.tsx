@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { IInput } from '../../models';
 
-export const Input = ({ type = 'text', formSetting, name, label, placeholder, icon, require = true }: IInput) => {
+export const Input = ({ type = 'text', formSetting, name, label, placeholder, disable, icon, require = true }: IInput) => {
   const [options, setOptions] = useState([{ value: '@gmail.com' }]);
 
   const handleSearch = (value: string) => {
@@ -34,6 +34,7 @@ export const Input = ({ type = 'text', formSetting, name, label, placeholder, ic
                   width: "100%"
                 }}
                 {...field}
+                disabled = {disable}
                 prefix={icon}
                 size='large'
                 placeholder={placeholder || ''}
@@ -48,6 +49,7 @@ export const Input = ({ type = 'text', formSetting, name, label, placeholder, ic
               style={{ width: '100%' }}
               onSearch={handleSearch}
               options={options}
+              disabled = {disable}
             >
               <AntInput size='large' prefix={icon} type={type} placeholder={placeholder || ''} />
             </AutoComplete>
