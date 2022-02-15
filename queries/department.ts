@@ -5,10 +5,13 @@ export const getDetailDepartment = (id: string) => {
     return useQuery(
       ['department', id],
       () => {
-        return getData({ url: `/api/departments//${id}` });
+        return getData({ url: `/api/departments/${id}` });
       },
       {
-        enabled: false
+        enabled: false,
+        onError: (err)=> {
+          console.log('co loi')
+        }
       }
     );
   };
