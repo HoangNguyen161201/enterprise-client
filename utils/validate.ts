@@ -22,3 +22,18 @@ export const validateAddDepartment = yup.object({
     .required('Please enter department description')
     .min(20, 'Department names should be at least 20 characters'),
 });
+
+export const validateResetPass = yup.object({
+  password: yup
+    .string()
+    .required('Please Enter your password')
+    .matches(
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
+      'Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character'
+    ),
+  passwordConfirm: yup
+    .string()
+    .label('Password Confirm')
+    .required()
+    .oneOf([yup.ref('password')], 'Passwords does not match')
+});
