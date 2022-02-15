@@ -8,7 +8,7 @@ const handleCatchError = (func) => {
 
     asynFunc.catch((error) => {
       let statusCode = 500;
-      let message = 'Something went wromt';
+      let message = 'Something went wrong';
       //Define error
       //Handle castError
       const nameError = error.name;
@@ -21,8 +21,8 @@ const handleCatchError = (func) => {
 
       //Handling Mongoose validation Error
       if (nameError === 'ValidationError') {
-        const message = Object.values(err.errors).map((value) => value.message)[0];
-        message = message;
+        const messageError = Object.values(error.errors).map((value) => value.message)[0];
+        message = messageError;
         statusCode = 400;
       }
 
@@ -35,16 +35,16 @@ const handleCatchError = (func) => {
 
       //Handling wrong JWT error
       if (nameError === 'JsonWebTokenError') {
-        const message = `JSON Web Token is invalid. Try Again!!!`;
+        const messageError = `JSON Web Token is invalid. Try Again!!!`;
         statusCode = 400;
-        message = message;
+        message = messageError;
       }
 
       //Handling Expored JWT error
       if (nameError === 'TokenExpiredError') {
-        const message = `JSON Web Token is invalid. Try Again!!!`;
+        const messageError = `JSON Web Token is invalid. Try Again!!!`;
         statusCode = 400;
-        message = message;
+        message = messageError;
       }
 
       //Res error
