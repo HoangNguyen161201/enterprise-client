@@ -119,16 +119,16 @@ const departmentController = {
 
     //Get data to assign
     const { staffs: newStaffs, qa_coordinator, department_manager } = req.body;
-    
+
     ///Get detail department and check exist
     const department = await departmentModel.findById(id);
     const { staffs: oldStaffs } = department;
     if (!department)
-    return res.status(400).json({
-      msg: 'This department does not exist in the system.',
-      statusCode: 400,
-    });
-    
+      return res.status(400).json({
+        msg: 'This department does not exist in the system.',
+        statusCode: 400,
+      });
+
     //Assign staffs
     for (let index = 0; index < newStaffs.length; index++) {
       const idStaff = newStaffs[index];
@@ -143,7 +143,7 @@ const departmentController = {
           statusCode: 400,
         });
       }
-      
+
       //Check length old array staff
       if (oldStaffs.length === 0) {
         await departmentModel.findOneAndUpdate({ _id: id }, { $push: { staffs: user._id } });
@@ -163,13 +163,13 @@ const departmentController = {
         }
       }
     }
-    
+
     //Assign qa_coordinator
     const qaCoordinator = await userModel.findOne({
       _id: qa_coordinator,
       role: 'qa_coordinator',
     });
-        
+
     console.log(qaCoordinator._id);
     //Check exist qa_coordinator
     if (qaCoordinator) {

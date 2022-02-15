@@ -230,6 +230,10 @@ const userController = {
       user.department_id = department._id;
       await user.save();
 
+      //Update count users of department
+      department.count_users = ++department.count_users;
+      await department.save();
+
       return res.status(200).json({
         statusCode: 200,
         msg: 'Assigned success.',
@@ -240,7 +244,9 @@ const userController = {
   manyAssignDepartment: catchAsyncError(async (req, res) => {
     {
       const { users, departmentId } = req.body;
-      console.log(departmentId);
+
+      //Number user assign
+      let countUsersAssign = 0;
 
       //Check exist department
       const department = await departmentModel.findById(departmentId);
@@ -267,8 +273,13 @@ const userController = {
           //Update user department
           user.department_id = department._id;
           await user.save();
+          countUsersAssign = ++countUsersAssign;
         }
       }
+
+      //Update count users of department
+      department.count_users = department.count_users + countUsersAssign;
+      await department.save();
 
       return res.status(200).json({
         statusCode: 200,
