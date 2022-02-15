@@ -1,17 +1,16 @@
-import { Breadcrumb, Card, Input, Space, Table, Tag } from 'antd';
-import * as React from 'react';
-import { ClientLayout } from '../../components/layouts';
-import { NextPageWithLayout } from '../../models/layoutType';
-import { useState } from 'react';
-import { GetServerSideProps } from 'next';
-import { ColumnsType } from 'antd/lib/table';
 import {
   DeleteOutlined,
   EditOutlined,
   ProfileOutlined,
   SearchOutlined,
-  UsergroupAddOutlined,
+  UsergroupAddOutlined
 } from '@ant-design/icons';
+import { Breadcrumb, Card, Input, Space, Table, Tag } from 'antd';
+import { ColumnsType } from 'antd/lib/table';
+import { GetServerSideProps } from 'next';
+import * as React from 'react';
+import { ClientLayout } from '../../components/layouts';
+import { NextPageWithLayout } from '../../models/layoutType';
 import { getDetailDepartment } from '../../queries';
 
 export interface IAddDepartmentProps {}
