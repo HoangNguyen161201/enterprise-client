@@ -10,7 +10,7 @@ import {
   EditOutlined,
   ProfileOutlined,
   SearchOutlined,
-  UsergroupAddOutlined,
+  UsergroupAddOutlined
 } from '@ant-design/icons';
 import { getAllDepartments, getCurrentUser, getDetailDepartment } from '../../queries';
 
