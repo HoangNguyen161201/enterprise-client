@@ -18,11 +18,7 @@ function GlobalContextProvider({ children }: IGlobalConttextProps) {
   useEffect(() => {
     const firstLogin = localStorage.getItem('first-login');
     if (firstLogin === 'true') {
-      console.log('nguyen quanghoa');
       refetch();
-      push('/', undefined, {
-        shallow: true,
-      });
     }
   }, []);
 
