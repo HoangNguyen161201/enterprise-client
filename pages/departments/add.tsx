@@ -94,9 +94,7 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
 
 export default AddDepartment;
 
-AddDepartment.getLayout = function getLayout({ children }) {
-  return <ClientLayout>{children}</ClientLayout>;
-};
+AddDepartment.getLayout = ClientLayout;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   //Check login
@@ -114,7 +112,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   //Check role
   if (data.user.role !== 'admin') {
     return {
-      notFound: true
+      notFound: true,
     };
   }
 
@@ -129,8 +127,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   return {
-    props: {
-      
-    },
+    props: {},
   };
 };
