@@ -15,11 +15,20 @@ departmentRouter.get('/', departmentController.getAll);
 
 departmentRouter.put('/:id', authorization(['admin', 'qa_manager']), departmentController.update);
 
-departmentRouter.delete('/:id',authorization(['admin', 'qa_manager']), departmentController.delete);
+departmentRouter.delete(
+  '/:id',
+  authorization(['admin', 'qa_manager']),
+  departmentController.delete
+);
 
-departmentRouter.get('/:id', authorization(['admin', 'qa_manager']), departmentController.getDetail);
+departmentRouter.delete('/deletemany', departmentController.deleteMany);
 
-departmentRouter.post('/:id/assign', authorization(['admin', 'qa_manager']), departmentController.assign);
+departmentRouter.get('/:id', departmentController.getDetail);
 
+departmentRouter.post(
+  '/:id/assign',
+  authorization(['admin', 'qa_manager']),
+  departmentController.assign
+);
 
 module.exports = departmentRouter;
