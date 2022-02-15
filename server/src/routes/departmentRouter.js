@@ -9,7 +9,7 @@ const departmentRouter = express.Router();
 //Import middleware
 const authorization = require('../middlewares/authorization');
 
-departmentRouter.post('/', authorization(['admin', 'qa_manager']), departmentController.create);
+departmentRouter.post('/', departmentController.create);
 
 departmentRouter.get('/', departmentController.getAll);
 

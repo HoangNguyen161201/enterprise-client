@@ -16,7 +16,7 @@ userRouter.put('/:id', authorization(['admin', 'qa_manager']), userController.up
 
 userRouter.delete('/:id', authorization(['admin', 'qa_manager']), userController.delete);
 
-userRouter.get('/', authorization(['admin', 'qa_manager']), userController.getAll);
+userRouter.get('/', userController.getAll);
 
 userRouter.get('/role/:role', userController.getRole);
 
