@@ -10,17 +10,22 @@ import { Input, TextArea } from '../../components/elements';
 import { ClientLayout } from '../../components/layouts';
 import { IDepartment } from '../../models';
 import { NextPageWithLayout } from '../../models/layoutType';
+import { getCurrentUser } from '../../queries';
 import { postData, validateAddDepartment } from '../../utils';
 
 export interface IAddDepartmentProps {}
 
 const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
-  //  call api to get accessToken
+  //Get access token
+  const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
+
+  //  call api to add deartment
   const mutationAddDepartment = useMutation<any, AxiosError, IDepartment>(
     (dataForm) => {
       return postData({
         url: '/api/departments',
         body: dataForm,
+        token: dataUser?.accessToken.token,
       });
     },
     {
@@ -37,6 +42,15 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
     }
   );
 
+  //Check exist and show error
+  React.useEffect(() => {
+    if (errorGetUser) {
+      message.error({
+        content: errorGetUser.response?.data.err,
+      });
+    }
+  }, [errorGetUser]);
+
   // setting form
   const formSetting = useForm<{ name: string; description: string }>({
     resolver: yupResolver(validateAddDepartment),
@@ -46,9 +60,20 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
     },
   });
 
-  const onSubmit = ({ name, description }: { name: string; description: string }) => {
+  const onSubmit = async ({ name, description }: { name: string; description: string }) => {
+    //Refetch again let get accesstoken pass to api
+    await dataUserRefetch();
+
     //Post add data department
     mutationAddDepartment.mutate({ name, description });
+  };
+
+  //Clear data update
+  const onClearData = () => {
+    formSetting.reset({
+      name: '',
+      description: '',
+    });
   };
 
   return (
@@ -61,7 +86,7 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
 
       <Card
         title="Add Department"
-        extra={<a href="#">Clear</a>}
+        extra={<a href="#" onClick={onClearData}>Clear</a>}
         style={{ width: '100%', marginTop: '20px' }}
       >
         <form onSubmit={formSetting.handleSubmit(onSubmit)}>

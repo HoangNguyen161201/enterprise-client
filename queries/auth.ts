@@ -1,11 +1,12 @@
+import { AxiosError } from 'axios';
 import { useQuery } from 'react-query';
 import { getData } from '../utils/fetchData';
 
 export const getCurrentUser = () => {
-  return useQuery(
+  return useQuery <any, AxiosError>(
     'accessToken',
-    () => {
-      return getData({ url: '/api/auth/accesstoken' });
+    async () => {
+      return await getData({ url: '/api/auth/accesstoken' });
     },
     {
       enabled: false,
