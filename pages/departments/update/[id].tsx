@@ -26,16 +26,16 @@ const UpdateDepartmetn: NextPageWithLayout = (props: IUpdateDepartmetnProps) => 
   const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
 
   //Get old data department
-  const { error, data: dataDepartment } = getDetailDepartment(
+  const { error: errorDepartment, data: dataDepartment } = getDetailDepartment(
     id as string,
     dataUser?.accessToken.token
   );
 
-  //Check exist and show error
+  //Check exist and show error get data department
   useEffect(() => {
-    if (error) {
+    if (errorDepartment) {
       message.error({
-        content: error.response?.data.err,
+        content: errorDepartment.response?.data.err,
       });
     }
 
@@ -44,9 +44,16 @@ const UpdateDepartmetn: NextPageWithLayout = (props: IUpdateDepartmetnProps) => 
         content: errorGetUser.response?.data.err,
       });
     }
-  }, [error]);
+  }, [errorDepartment]);
 
-  console.log(dataDepartment?.department.name);
+  //Check exist and show error get data user - access token
+  useEffect(() => {
+    if (errorGetUser) {
+      message.error({
+        content: errorGetUser.response?.data.err,
+      });
+    }
+  }, [errorGetUser]);
 
   // setting form
   const formSetting = useForm<{ id: string; name: string; description: string }>({

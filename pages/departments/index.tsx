@@ -1,4 +1,4 @@
-import { Breadcrumb, Card, Input, Space, Table, Tag } from 'antd';
+import { Breadcrumb, Card, Input, message, Space, Table, Tag } from 'antd';
 import * as React from 'react';
 import { ClientLayout } from '../../components/layouts';
 import { NextPageWithLayout } from '../../models/layoutType';
@@ -12,11 +12,38 @@ import {
   SearchOutlined,
   UsergroupAddOutlined,
 } from '@ant-design/icons';
-import { getDetailDepartment } from '../../queries';
+import { getAllDepartments, getCurrentUser, getDetailDepartment } from '../../queries';
 
 export interface IAddDepartmentProps {}
 
 const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
+  //Get access token
+  const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
+  React.useEffect(() => {
+    dataUserRefetch();
+  }, []);
+
+  //Get data all departments
+  const { error: errorDepartments, data: dataDepartments } = getAllDepartments(dataUser?.accessToken.token);
+
+  //Check exist and show error  get data departments
+  React.useEffect(() => {
+    if(errorDepartments){
+      message.error({
+        content: errorDepartments.response?.data.err
+      })
+    }
+  }, [errorDepartments])
+
+  //Check exist and show error  get data user - accesstoken
+  React.useEffect(() => {
+    if(errorGetUser){
+      message.error({
+        content: errorGetUser.response?.data.err
+      })
+    }
+  }, [errorGetUser])
+
   const dataSource = [
     {
       key: 1,
@@ -67,7 +94,7 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
         />
       ),
       onFilter: (value, record) => record.name.includes(value),
-      filterIcon: <SearchOutlined />
+      filterIcon: <SearchOutlined />,
     },
     {
       title: 'root',
@@ -124,11 +151,6 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
     },
   ];
 
-  const { data, error } = getDetailDepartment('fddf');
-  React.useEffect(() => {
-    console.log(data, error);
-  }, [data, error]);
-
   return (
     <>
       <Breadcrumb>
@@ -149,7 +171,6 @@ export default AddDepartment;
 AddDepartment.getLayout = ClientLayout;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  console.log(context.req.headers.cookie);
   const res = await fetch('http://localhost:3000/api/auth/accesstoken', {
     method: 'GET',
     headers: {
