@@ -12,16 +12,16 @@ export default function UpdateDepartmetn(props: IUpdateDepartmetnProps) {
   } = useRouter();
 
   //Get old data department
-  const { refetch, isError, error, data } = getDetailDepartment(id as string);
+  const { isError, error, data } = getDetailDepartment(id as string);
 
-  refetch();
+  useEffect(()=> {
+      if(error) {
+        message.error({
+            content: error.response?.data.err
+        })
+      }
+  }, [error])
 
-  //Check exist error and show erro
-  useEffect(() => {
-    if (isError) {
-      message.error('This is an error message');
-      console.log(error);
-    }
-  }, [isError]);
+
   return <div>{data && data}</div>;
 }

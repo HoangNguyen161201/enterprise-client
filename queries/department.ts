@@ -1,14 +1,17 @@
+import { AxiosError } from 'axios';
 import {useQuery} from 'react-query'
 import { getData } from '../utils';
 
 export const getDetailDepartment = (id: string) => {
-    return useQuery(
+    return useQuery<any, AxiosError>(
       ['department', id],
-      () => {
-        return getData({ url: `/api/departments//${id}` });
+      async () => {
+        return await getData({ url: `/api/departments/${id}` });
       },
       {
-        enabled: false
+          retry: 1,
+          refetchOnWindowFocus: false,
+          refetchOnMount: false,
       }
     );
   };
