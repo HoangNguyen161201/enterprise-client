@@ -79,8 +79,46 @@ const departmentController = {
         statusCode: 400,
       });
 
+    if (department.root)
+      return res.status(400).json({
+        msg: 'The root department could not be deleted.',
+        statusCode: 400,
+      });
+
     //Check exist department and update
     await departmentModel.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      msg: 'Deleted department success.',
+      statusCode: 200,
+    });
+  }),
+
+  deleteMany: catchAsyncError(async (req, res) => {
+    const { departments } = req.body;
+
+    for (let index = 0; index < departments.length; index++) {
+      //Get id of department to delete
+      const departmentId = departments[0]._id[index]
+
+      //Check exist department
+      const department = await departmentModel.findById(departmentId);
+
+      if (!department)
+        return res.status(400).json({
+          msg: `Department ${department.name} does not exist in the system.`,
+          statusCode: 400,
+        });
+
+      if (department.root)
+        return res.status(400).json({
+          msg: `The root department ${department.name} could not be deleted.`,
+          statusCode: 400,
+        });
+
+      //Check exist department and delete
+      await departmentModel.findByIdAndDelete(id);
+    }
 
     return res.status(200).json({
       msg: 'Deleted department success.',
@@ -106,9 +144,43 @@ const departmentController = {
     //Get detail department
     const department = await departmentModel.findById(id);
 
+    //Get QA manager
+    const qa_manager = await userModel.findOne({
+      role: 'qa_manager',
+      department_id: department._id,
+    });
+
+    //Get QA coordinator
+    const qa_coordinator = await userModel.findOne({
+      role: 'qa_coordinator',
+      department_id: department._id,
+    });
+
+    //Get department manager
+    const department_manager = await userModel.findOne({
+      role: 'department_manager',
+      department_id: department._id,
+    });
+
+    //Get staffs
+    const staffs = await userModel.find({
+      role: 'staff',
+      department_id: department._id,
+    });
+
+    const departmentRes = {
+      name: department.name,
+      description: department.description,
+      count_users: department.count_users,
+      qa_manager,
+      qa_coordinator,
+      department_manager,
+      staffs,
+    };
+
     return res.status(200).json({
       msg: `Get detail department ${id} success`,
-      department,
+      department: departmentRes,
       statusCode: 200,
     });
   }),
