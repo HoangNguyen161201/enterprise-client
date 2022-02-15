@@ -97,31 +97,50 @@ const departmentController = {
   deleteMany: catchAsyncError(async (req, res) => {
     const { departments } = req.body;
 
+    let countDepartmentsRoot = 0;
+    let countDepartmentsHasUsers = 0;
+
     for (let index = 0; index < departments.length; index++) {
+      let canDelete = true;
+
       //Get id of department to delete
-      const departmentId = departments[0]._id[index]
+      const departmentId = departments[index];
+      console.log(departmentId);
 
       //Check exist department
       const department = await departmentModel.findById(departmentId);
 
       if (!department)
         return res.status(400).json({
-          msg: `Department ${department.name} does not exist in the system.`,
+          msg: `Department ${departmentId} does not exist in the system.`,
           statusCode: 400,
         });
 
-      if (department.root)
-        return res.status(400).json({
-          msg: `The root department ${department.name} could not be deleted.`,
-          statusCode: 400,
-        });
+      //Check root
+      if (department.root) {
+        canDelete = false;
+        countDepartmentsRoot = ++countDepartmentsRoot;
+      }
 
-      //Check exist department and delete
-      await departmentModel.findByIdAndDelete(id);
+      //Check number user
+      const users = await userModel.find({
+        department_id: department._id,
+      });
+      if (users.length !== 0) {
+        countDepartmentsHasUsers = ++countDepartmentsHasUsers;
+      }
+
+      //Check can delele
+      if (canDelete) {
+        //Check exist department and delete
+        await departmentModel.findByIdAndDelete(departmentId);
+      }
     }
 
     return res.status(200).json({
-      msg: 'Deleted department success.',
+      msg: `Deleted departments success!
+      ${countDepartmentsRoot} root departments that cannot be deleted.
+      ${countDepartmentsHasUsers} root departments has users cannot be deleted.`,
       statusCode: 200,
     });
   }),
