@@ -26,6 +26,8 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
   //Get data all departments
   const { error: errorDepartments, data: dataDepartments } = getAllDepartments(dataUser?.accessToken.token);
 
+  // test ui client push
+
   //Check exist and show error  get data departments
   React.useEffect(() => {
     if(errorDepartments){
