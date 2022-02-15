@@ -16,6 +16,7 @@ export interface ILogin {
 }
 
 export interface IDepartment {
+    id?: string
     name: string
     description: string
 }
