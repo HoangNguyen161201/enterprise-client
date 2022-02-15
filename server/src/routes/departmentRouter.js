@@ -15,13 +15,14 @@ departmentRouter.get('/', departmentController.getAll);
 
 departmentRouter.put('/:id', authorization(['admin', 'qa_manager']), departmentController.update);
 
+departmentRouter.delete('/deletemany', departmentController.deleteMany);
+
 departmentRouter.delete(
   '/:id',
   authorization(['admin', 'qa_manager']),
   departmentController.delete
 );
 
-departmentRouter.delete('/deletemany', departmentController.deleteMany);
 
 departmentRouter.get('/:id', departmentController.getDetail);
 
