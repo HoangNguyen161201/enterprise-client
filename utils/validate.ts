@@ -23,6 +23,11 @@ export const validateAddDepartment = yup.object({
     .min(20, 'Department names should be at least 20 characters'),
 });
 
+export const validateAssignDepartment = yup.object({
+  qa_manager: yup.string().required('Please select qa manager'),
+  qa_coordinator: yup.string().required('Please select qa coordinator'),
+});
+
 export const validateResetPass = yup.object({
   password: yup
     .string()
@@ -35,5 +40,5 @@ export const validateResetPass = yup.object({
     .string()
     .label('Password Confirm')
     .required()
-    .oneOf([yup.ref('password')], 'Passwords does not match')
+    .oneOf([yup.ref('password')], 'Passwords does not match'),
 });
