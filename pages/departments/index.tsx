@@ -6,8 +6,9 @@ import {
   SearchOutlined,
   UsergroupAddOutlined,
 } from '@ant-design/icons';
-import { Breadcrumb, Card, Input, message, Popconfirm, Space, Table, Tag } from 'antd';
+import { Breadcrumb, Button, Card, Input, message, Popconfirm, Space, Table, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import { AxiosError } from 'axios';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -15,16 +16,23 @@ import { useMutation } from 'react-query';
 import { ClientLayout } from '../../components/layouts';
 import { NextPageWithLayout } from '../../models/layoutType';
 import { getAllDepartments, getCurrentUser } from '../../queries';
-import { deleteData } from '../../utils';
+import { deleteData, postData } from '../../utils';
 
 export interface IAddDepartmentProps {}
 
 const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
+  // get all departments
   const [departments, setDepartments] = useState<any>([]);
+
+  // departments select
+  const [departmentsSl, setDepartmentsSl] = useState<any>(null);
+
+  // set loading when delete department, delete all departments
   const [isLoadingDl, setIsLoadingDl] = useState({
     key: '',
     isLoading: false,
   });
+  const [isLoadingDlAll, setIsLoadingDlAll] = useState(false);
   //Get access token
   const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
 
@@ -32,9 +40,8 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
   const { error: errorDepartments, data, refetch } = getAllDepartments(dataUser?.accessToken.token);
 
   // delete department
-  const handleDl = useMutation(
+  const handleDl = useMutation<any, AxiosError, any>(
     (id: string) => {
-      console.log(id);
       return deleteData({ url: `/api/departments/${id}`, token: dataUser?.accessToken.token });
     },
     {
@@ -44,7 +51,34 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
         refetch();
       },
       onError: (error) => {
-        console.log(error);
+        const data = error.response?.data;
+        message.error(data.err);
+        setIsLoadingDl({ key: '', isLoading: false });
+      },
+    }
+  );
+
+  // delete department
+  const handleDlAll = useMutation<any, AxiosError, any>(
+    (Ids) => {
+      return postData({
+        url: `/api/departments/deletemany`,
+        token: dataUser?.accessToken.token,
+        body: { departments: Ids },
+      });
+    },
+    {
+      onSuccess: (data) => {
+        message.success(data.msg);
+        setIsLoadingDlAll(false);
+        setDepartmentsSl(null);
+        refetch();
+      },
+      onError: (error) => {
+        const data = error.response?.data;
+        message.error(data.err);
+        setIsLoadingDlAll(false);
+        setDepartmentsSl(null);
       },
     }
   );
@@ -144,13 +178,13 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
       title: 'detail',
       dataIndex: 'detail',
       key: 'detail',
-      render: (value) => <ProfileOutlined style={{ color: '#07456F' }} />,
+      render: () => <ProfileOutlined style={{ color: '#07456F' }} />,
     },
     {
       title: 'Assign',
       dataIndex: 'assign',
       key: 'assign',
-      render: (value) => <UsergroupAddOutlined style={{ color: '#07456F' }} />,
+      render: () => <UsergroupAddOutlined style={{ color: '#07456F' }} />,
     },
     {
       title: 'Update',
@@ -211,9 +245,53 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
         <Breadcrumb.Item>All Departments</Breadcrumb.Item>
       </Breadcrumb>
 
-      <Card title="All Departments" style={{ width: '100%', marginTop: '20px' }}>
+      <Card
+        extra={[
+          <Popconfirm
+            disabled={departmentsSl == null}
+            icon={
+              <QuestionCircleOutlined
+                style={{
+                  color: '#07456F',
+                }}
+              />
+            }
+            title="Are you sure?"
+            okButtonProps={{
+              onClick: async () => {
+                await dataUserRefetch();
+                setIsLoadingDlAll(true);
+                handleDlAll.mutate(departmentsSl);
+              },
+              loading: isLoadingDlAll,
+            }}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button disabled={departmentsSl == null} type="link">
+              Remove all
+            </Button>
+          </Popconfirm>,
+        ]}
+        title="All Departments"
+        style={{ width: '100%', marginTop: '20px' }}
+      >
         <Space direction="vertical" size={20}></Space>
-        <Table style={{ overflowX: 'auto' }} dataSource={departments} columns={columns} />
+        <Table
+          rowSelection={{
+            type: 'checkbox',
+            getCheckboxProps: (record) => ({
+              disabled: record.root,
+            }),
+            onChange: (selectedRowKeys) => {
+              if (selectedRowKeys.length == 0) return setDepartmentsSl(null);
+              return setDepartmentsSl(selectedRowKeys);
+            },
+          }}
+          style={{ overflowX: 'auto' }}
+          dataSource={departments}
+          columns={columns}
+        />
       </Card>
     </>
   );
