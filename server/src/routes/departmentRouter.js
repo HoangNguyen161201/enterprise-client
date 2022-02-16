@@ -15,7 +15,7 @@ departmentRouter.get('/', departmentController.getAll);
 
 departmentRouter.put('/:id', authorization(['admin', 'qa_manager']), departmentController.update);
 
-departmentRouter.delete('/deletemany', departmentController.deleteMany);
+departmentRouter.post('/delete-many', departmentController.deleteMany);
 
 departmentRouter.delete(
   '/:id',

@@ -1,6 +1,6 @@
 * {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 400;
+    font-family: 'Raleway', sans-serif;
+    letter-spacing: 1px;
 }
 
 
@@ -80,4 +80,13 @@
 .ant-result-subtitle {
     color: gray !important;
     max-width: 500px;
+}
+
+.ant-table-cell {
+    font-size: 16px;
+}
+
+.ant-card-head-title {
+    font-size: 20px;
+    font-weight: 600;
 }
