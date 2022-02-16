@@ -287,5 +287,28 @@ const userController = {
       });
     }
   }),
+
+  removeAssignDepartment: catchAsyncError(async (req, res) => {
+    {
+      const { userId } = req.body;
+
+      //Check exist user
+      const user = await userModel.findById(userId);
+      if (!user)
+        return res.status(400).json({
+          err: `User ${userId} not exist in system.`,
+          statusCode: 400,
+        });
+
+      //Remove user out of department
+      user.department_id = null;
+      await user.save();
+
+      return res.status(200).json({
+        statusCode: 200,
+        msg: 'Remove user out of department success.',
+      });
+    }
+  }),
 };
 module.exports = userController;

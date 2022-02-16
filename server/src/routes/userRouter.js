@@ -26,4 +26,6 @@ userRouter.post('/assign', userController.assignDepartment);
 
 userRouter.post('/assignmany', userController.manyAssignDepartment);
 
+userRouter.post('/removeassign', userController.removeAssignDepartment);
+
 module.exports = userRouter;
