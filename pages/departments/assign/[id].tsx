@@ -1,4 +1,3 @@
-//Import
 import { EyeOutlined, FileTextOutlined } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Breadcrumb, Button, Card, Col, message, Row, Space } from 'antd';
@@ -8,16 +7,24 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Input, Select, TextArea } from '../../../components/elements';
 import { ClientLayout } from '../../../components/layouts';
-import { IOptionSelect, NextPageWithLayout } from '../../../models';
-import { getCurrentUser, getDetailDepartment, getUsersNotDepartment, getUsersRoleDepartment } from '../../../queries';
+import { IOptionSelect, IUsersNotDepartment, NextPageWithLayout } from '../../../models';
+import {
+  getCurrentUser,
+  getDetailDepartment,
+  getUsersNotDepartment,
+  getUsersRoleDepartment,
+} from '../../../queries';
 import { validateAddDepartment } from '../../../utils';
 
 export interface IAssignDepartmentProps {}
 
 const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => {
   //State
-  const [listQACoordinators, setListQACoordinators] = useState<IOptionSelect[]>([]);
-  const [listDepartmentManagers, setListDepartmentManagers] = useState<IOptionSelect[]>([]);
+  const [userNotDepartment, setUserNotDepartment] = useState<IUsersNotDepartment>({
+    staffs: [],
+    QACoordinators: [],
+    DepartmentManagers: [],
+  });
 
   //Get id from router to get old data
   const {
@@ -36,10 +43,10 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
     dataUser?.accessToken.token
   );
 
-    //Get list users not have department
-    const { error: errorUsersNotDPM, data: dataUsersnotDPM } = getUsersNotDepartment(
-      dataUser?.accessToken.token
-    );
+  //Get list users not have department
+  const { error: errorUsersNotDPM, data: dataUsersnotDPM } = getUsersNotDepartment(
+    dataUser?.accessToken.token
+  );
 
   //Check exist and show error
   useEffect(() => {
@@ -57,8 +64,6 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
       });
     }
   }, [errorUsersNotDPM]);
-  // df
-  // df
 
   useEffect(() => {
     if (errorDepartment) {
@@ -67,6 +72,42 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
       });
     }
   }, [errorDepartment]);
+
+  //Set list user not department
+  useEffect(() => {
+    if (dataUsersnotDPM) {
+      const { departmentManagers, QACoordinators, staffs } = dataUsersnotDPM;
+      const optionStaffs = staffs?.map((staff) => {
+        return {
+          label: staff.email,
+          value: staff._id,
+        };
+      });
+
+      const optionQACoordinator = QACoordinators?.map((QACoordinator) => {
+        return {
+          label: QACoordinator.email,
+          value: QACoordinator._id,
+        };
+      });
+
+      const optionDepartmentManagers = departmentManagers?.map((departmentManager) => {
+        return {
+          label: departmentManager.email,
+          value: departmentManager._id,
+        };
+      });
+
+      setUserNotDepartment({
+        staffs: optionStaffs,
+        QACoordinators: optionQACoordinator,
+        DepartmentManagers: optionDepartmentManagers,
+      });
+    }
+  }, [dataUsersnotDPM]);
+
+  console.log(userNotDepartment);
+  
 
   // setting form
   const formSetting = useForm<{ name: string; description: string }>({
@@ -83,7 +124,7 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
   };
 
   console.log(dataUsersnotDPM);
-  
+
   return (
     <>
       <Breadcrumb>

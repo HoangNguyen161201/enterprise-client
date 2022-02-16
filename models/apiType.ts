@@ -28,3 +28,12 @@ export interface IDepartment extends ICommon {
   }>
   [index: string]: any
 }
+
+export interface IUser {
+  _id: any;
+  name: string,
+  role: string,
+  root: boolean,
+  email: string,
+  [index: string]: any
+}
