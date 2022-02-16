@@ -36,8 +36,8 @@ export default function HeaderComponent() {
         style={{
           padding: '0px 40px',
           backgroundColor: 'white',
-          boxShadow: '0px 10px 15px -3px rgba(0,0,0,0.1)',
           zIndex: '1',
+          borderBottom: '1px solid #efefef'
         }}
       >
         <Space
