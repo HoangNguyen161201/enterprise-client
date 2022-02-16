@@ -140,7 +140,7 @@ const userController = {
 
   getRole: catchAsyncError(async (req, res) => {
     const { role } = req.params;
-    const { hasDepartment } = req.query;
+    const { department } = req.query;
 
     //Valid role
     const errMsg = userValid.validFilter({ role });
@@ -157,10 +157,10 @@ const userController = {
     let usersRes = users;
 
     //Chech user has department
-    switch (hasDepartment) {
+    switch (department) {
       case 'no':
         usersRes = users.map((user) => {
-          if (!user.departmentId) {
+          if (!user.department_id) {
             return users;
           }
         });
