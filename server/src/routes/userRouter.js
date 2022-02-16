@@ -6,8 +6,10 @@ const userController = require('../controllers/userController');
 //Create user router
 const userRouter = express.Router();
 
+const authorization = require('../middlewares/authorization');
+
 //Handle user routes
-userRouter.post('/', authorization(['admin', 'qa_manager']), userController.create);
+userRouter.post('/',  userController.create);
 
 userRouter.put('/:id', authorization(['admin', 'qa_manager']), userController.update);
 

@@ -10,10 +10,10 @@ const { findById } = require('../models/userModel');
 
 const userController = {
   create: catchAsyncError(async (req, res) => {
-    //Get infor user to create
-    const { name, email, password, cf_password, role } = req.body;
-
-    //Check valid infor sign up
+    //Get info user to create
+    const { name, email, password, cf_password, role, avatar } = req.body;
+    
+    //Check valid info sign up
     const errMsg = userValid.validSignUp({
       name,
       email,
@@ -21,12 +21,13 @@ const userController = {
       password,
       cf_password,
     });
-
+    console.log({ name, email, password, cf_password, role });
+    
     if (errMsg)
-      return res.status(400).json({
-        err: errMsg,
-        statusCode: 400,
-      });
+    return res.status(400).json({
+      err: errMsg,
+      statusCode: 400,
+    });
 
     //Check email exist in system
     const user = await userModel.findOne({
@@ -41,6 +42,12 @@ const userController = {
     //Hash Password
     const passwordHash = await bcrypt.hash(password, 12);
 
+    //Avatar
+    const avatarUser = avatar || {
+      public_id: '',
+      url: `https://avatars.dicebear.com/api/avataaars/${name}.svg`,
+    }
+
     //Create and save new user
     const NewUser = new userModel({
       name,
@@ -48,6 +55,7 @@ const userController = {
       role,
       password: passwordHash,
       cf_password,
+      avatar: avatarUser
     });
 
     await NewUser.save();
