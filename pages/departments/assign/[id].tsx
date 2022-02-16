@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form';
 import { Input, Select, TextArea } from '../../../components/elements';
 import { ClientLayout } from '../../../components/layouts';
 import { NextPageWithLayout } from '../../../models';
-import { getCurrentUser, getDetailDepartment } from '../../../queries';
+import { getCurrentUser, getDetailDepartment, getUsersRoleDepartment } from '../../../queries';
 import { validateAddDepartment } from '../../../utils';
 
 export interface IAssignDepartmentProps {}
@@ -32,6 +32,30 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
     dataUser?.accessToken.token
   );
 
+  //Get staff not have department
+  const { error: errorStaffs, data: dataStaffs } = getUsersRoleDepartment(
+    'staff',
+    'no',
+    dataUser?.accessToken.token
+  );
+
+  //Get qa coordinator not have department
+  const { error: errorQACoordinators, data: dataQACoordinators } = getUsersRoleDepartment(
+    'qa_coordinator',
+    'no',
+    dataUser?.accessToken.token
+  );
+
+  //Get qa manager not have department
+  const { error: errorDepartmentManagers, data: dataDepartmentManagers } = getUsersRoleDepartment(
+    'department_manager',
+    'no',
+    dataUser?.accessToken.token
+  );
+
+  console.log(dataDepartment, dataStaffs, dataQACoordinators, dataDepartmentManagers);
+  
+
   //Check exist and show error
   React.useEffect(() => {
     if (errorGetUser) {
@@ -48,6 +72,30 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
       });
     }
   }, [errorDepartment]);
+
+  React.useEffect(() => {
+    if (errorStaffs) {
+      message.error({
+        content: errorStaffs.response?.data.err,
+      });
+    }
+  }, [errorStaffs]);
+
+  React.useEffect(() => {
+    if (errorQACoordinators) {
+      message.error({
+        content: errorQACoordinators.response?.data.err,
+      });
+    }
+  }, [errorQACoordinators]);
+
+  React.useEffect(() => {
+    if (errorDepartmentManagers) {
+      message.error({
+        content: errorDepartmentManagers.response?.data.err,
+      });
+    }
+  }, [errorDepartmentManagers]);
 
   // setting form
   const formSetting = useForm<{ name: string; description: string }>({
