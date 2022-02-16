@@ -49,7 +49,7 @@ export const getData = async ({ url, token = '' }: IPropsFetchData) => {
 //Delete api
 export const deleteData = async ({ url, token = '' }: IPropsFetchData) => {
   return await axios
-    .get(url, {
+    .delete(url, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: token,

@@ -17,3 +17,14 @@ export interface IAccessToken extends ICommon {
   }
   [index: string]: any
 }
+
+export interface IDepartment extends ICommon {
+  departments: Array<{
+    _id: string
+    name: string
+    description: string
+    root: boolean
+    count_users: number
+  }>
+  [index: string]: any
+}
