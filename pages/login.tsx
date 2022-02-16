@@ -4,22 +4,48 @@ import { Button, Divider, message, Space } from 'antd';
 import { AxiosError } from 'axios';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useRouter as UseRouter} from 'next/router';
+import { useRouter as UseRouter } from 'next/router';
+import { useMemo } from 'react';
 import { useForm as UseForm } from 'react-hook-form';
 import { useMutation as UseMutation } from 'react-query';
 import { Input, Select } from '../components/elements';
 import CopyAcc from '../components/elements/CopyAcc';
 import Accounts from '../DataAccount.json';
-import { IAccessToken, ILogin, NextPageWithLayout } from '../models';
+import { IAccessToken, ILogin, IOptionSelect, NextPageWithLayout } from '../models';
 import { getCurrentUser } from '../queries';
 import { postData } from '../utils/fetchData';
 import { validateLogin } from '../utils/validate';
 
 const login: NextPageWithLayout = () => {
-  
   const { refetch } = getCurrentUser();
 
   const { push } = UseRouter();
+
+  const options = useMemo<IOptionSelect[]>(
+    () => [
+      {
+        value: 'admin',
+        label: 'Admin',
+      },
+      {
+        value: 'staff',
+        label: 'Staff',
+      },
+      {
+        value: 'qa_manager',
+        label: 'QA_Manager',
+      },
+      {
+        value: 'qa_coordinator',
+        label: 'QA_Coordinator',
+      },
+      {
+        value: 'department_manager',
+        label: 'Department_manager',
+      },
+    ],
+    []
+  );
 
   //  call api to get accessToken
   const mutationLogin = UseMutation<IAccessToken, AxiosError, ILogin>(
@@ -123,20 +149,25 @@ const login: NextPageWithLayout = () => {
                 label="Role"
                 placeholder="Enter your role"
                 formSetting={formSetting}
-                name={'role'}
+                name="role"
+                data={options}
               />
             </Space>
-            <Space size={10} direction="horizontal" style={{
-              alignItems: 'space-between',
-              justifyContent: 'space-between',
-              display: 'flex'
-            }}>
+            <Space
+              size={10}
+              direction="horizontal"
+              style={{
+                alignItems: 'space-between',
+                justifyContent: 'space-between',
+                display: 'flex',
+              }}
+            >
               <Button
-              size='large'
+                size="large"
                 loading={mutationLogin.isLoading}
                 style={{
                   borderRadius: 5,
-                  fontSize: 16
+                  fontSize: 16,
                 }}
                 htmlType="submit"
                 type="primary"

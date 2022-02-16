@@ -1,9 +1,9 @@
 import React from 'react';
 import { Space, Select as AntSelect } from 'antd';
-import { IInput } from '../../models';
+import { IInput, IOptionSelect } from '../../models';
 import { Controller } from 'react-hook-form';
 
-export const Select = ({ formSetting, name, label, placeholder, require = true }: IInput) => {
+export const Select = ({ formSetting, name, label, placeholder, require = true, data }: IInput) => {
   const { Option } = AntSelect;
   const {
     formState: { errors },
@@ -33,11 +33,9 @@ export const Select = ({ formSetting, name, label, placeholder, require = true }
               {...field}
               placeholder={placeholder || ''}
             >
-              <Option value="admin">Admin</Option>
-              <Option value="staff">Staff</Option>
-              <Option value="qa_manager">QA_Manager</Option>
-              <Option value="qa_coordinator">QA_Coordinator</Option>
-              <Option value="department_manager">department_manager</Option>
+              {
+                data && data.map((option: IOptionSelect, key: number)=> <Option key={key} value={option.value}>{option.label}</Option>)
+              }
             </AntSelect>
           );
         }}
