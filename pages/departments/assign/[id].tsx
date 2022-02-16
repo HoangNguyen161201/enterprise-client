@@ -38,26 +38,11 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
     dataUser?.accessToken.token
   );
 
-  //Get staff not have department
-  const { error: errorStaffs, data: dataStaffs } = getUsersRoleDepartment(
-    'staff',
-    'no',
-    dataUser?.accessToken.token
-  );
-
-  //Get qa coordinator not have department
-  const { error: errorQACoordinators, data: dataQACoordinators } = getUsersRoleDepartment(
-    'qa_coordinator',
-    'no',
-    dataUser?.accessToken.token
-  );
-
-  //Get qa manager not have department
-  const { error: errorDepartmentManagers, data: dataDepartmentManagers } = getUsersRoleDepartment(
-    'department_manager',
-    'no',
-    dataUser?.accessToken.token
-  );
+    //Get list users not have department
+    const { error: errorUsersNotDPM, data: dataUsersnotDPM } = getDetailDepartment(
+      id as string,
+      dataUser?.accessToken.token
+    );
 
   //Check exist and show error
   useEffect(() => {
@@ -76,96 +61,6 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
     }
   }, [errorDepartment]);
 
-  useEffect(() => {
-    if (errorStaffs) {
-      message.error({
-        content: errorStaffs.response?.data.err,
-      });
-    }
-  }, [errorStaffs]);
-
-  useEffect(() => {
-    if (errorQACoordinators) {
-      message.error({
-        content: errorQACoordinators.response?.data.err,
-      });
-    }
-  }, [errorQACoordinators]);
-
-  useEffect(() => {
-    if (errorDepartmentManagers) {
-      message.error({
-        content: errorDepartmentManagers.response?.data.err,
-      });
-    }
-  }, [errorDepartmentManagers]);
-
-  console.log();
-  
-
-  //Set list qa coordinator
-//   useEffect(() => {
-//     if (dataDepartment && dataDepartment.department && dataDepartment.department.qa_coordinator) {
-//       let newListQACorrdinators: IOptionSelect[] = [];
-//       if (
-//         dataQACoordinators &&
-//         dataQACoordinators.users &&
-//         dataQACoordinators.users?.length !== 0
-//       ) {
-//         dataQACoordinators.users.map((user) => {
-//           if (user) {
-//             newListQACorrdinators.push({
-//               value: user._id,
-//               label: user.email,
-//             });
-//           }
-//         });
-//       }
-
-//       setListQACoordinators([
-//         {
-//           value: dataDepartment.department.qa_coordinator._id,
-//           label: dataDepartment.department.qa_coordinator.email,
-//         },
-//         ...newListQACorrdinators,
-//       ]);
-//     }
-//   }, [dataDepartment, dataQACoordinators]);
-
-  //Set list department manager
-//   useEffect(() => {
-//     if (
-//       dataDepartment &&
-//       dataDepartment.department &&
-//       dataDepartment.department.department_manager
-//     ) {
-//       let newListDepartmentManager: IOptionSelect[] = [];
-//       if (
-//         dataDepartmentManagers &&
-//         dataDepartmentManagers.users &&
-//         dataDepartmentManagers.users?.length !== 0
-//       ) {
-//         dataDepartmentManagers.users.map((user) => {
-//           if (user) {
-//             newListDepartmentManager.push({
-//               value: user._id,
-//               label: user.email,
-//             });
-//           }
-//         });
-//       }
-
-//       setListDepartmentManagers([
-//         {
-//           value: dataDepartment.department.department_manager._id,
-//           label: dataDepartment.department.department_manager.email,
-//         },
-//         ...newListDepartmentManager,
-//       ]);
-//     }
-//   }, [dataDepartment, dataDepartmentManagers]);
-
-
   // setting form
   const formSetting = useForm<{ name: string; description: string }>({
     resolver: yupResolver(validateAddDepartment),
@@ -180,6 +75,8 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
     await dataUserRefetch();
   };
 
+  console.log(dataUsersnotDPM);
+  
   return (
     <>
       <Breadcrumb>
