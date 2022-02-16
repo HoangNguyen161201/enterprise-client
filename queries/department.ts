@@ -1,5 +1,6 @@
 import { AxiosError } from 'axios';
 import { useQuery } from 'react-query';
+import { IDepartment } from '../models/apiType';
 import { getData } from '../utils';
 
 export const getDetailDepartment = (id: string, accessToken: string) => {
@@ -18,7 +19,7 @@ export const getDetailDepartment = (id: string, accessToken: string) => {
 };
 
 export const getAllDepartments = (accessToken: string) => {
-  return useQuery<any, AxiosError>(
+  return useQuery<IDepartment, AxiosError>(
     ['departments'],
     async () => {
       return await getData({ url: `/api/departments`, token: accessToken });

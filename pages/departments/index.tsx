@@ -1,83 +1,96 @@
-import { Breadcrumb, Card, Input, message, Space, Table, Tag } from 'antd';
-import * as React from 'react';
-import { ClientLayout } from '../../components/layouts';
-import { NextPageWithLayout } from '../../models/layoutType';
-import { useState } from 'react';
-import { GetServerSideProps } from 'next';
-import { ColumnsType } from 'antd/lib/table';
 import {
   DeleteOutlined,
   EditOutlined,
   ProfileOutlined,
+  QuestionCircleOutlined,
   SearchOutlined,
-  UsergroupAddOutlined
+  UsergroupAddOutlined,
 } from '@ant-design/icons';
-import { getAllDepartments, getCurrentUser, getDetailDepartment } from '../../queries';
+import { Breadcrumb, Card, Input, message, Popconfirm, Space, Table, Tag } from 'antd';
+import { ColumnsType } from 'antd/lib/table';
+import { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import { useMutation } from 'react-query';
+import { ClientLayout } from '../../components/layouts';
+import { NextPageWithLayout } from '../../models/layoutType';
+import { getAllDepartments, getCurrentUser } from '../../queries';
+import { deleteData } from '../../utils';
 
 export interface IAddDepartmentProps {}
 
 const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
+  const [departments, setDepartments] = useState<any>([]);
+  const [isLoadingDl, setIsLoadingDl] = useState({
+    key: '',
+    isLoading: false,
+  });
   //Get access token
   const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
-  React.useEffect(() => {
+
+  //Get data all departments
+  const { error: errorDepartments, data, refetch } = getAllDepartments(dataUser?.accessToken.token);
+
+  // delete department
+  const handleDl = useMutation(
+    (id: string) => {
+      console.log(id);
+      return deleteData({ url: `/api/departments/${id}`, token: dataUser?.accessToken.token });
+    },
+    {
+      onSuccess: (data) => {
+        message.success(data.msg);
+        setIsLoadingDl({ key: '', isLoading: false });
+        refetch();
+      },
+      onError: (error) => {
+        console.log(error);
+      },
+    }
+  );
+
+  useEffect(() => {
     dataUserRefetch();
   }, []);
 
-  //Get data all departments
-  const { error: errorDepartments, data: dataDepartments } = getAllDepartments(dataUser?.accessToken.token);
-
-  // test ui client push
+  useEffect(() => {
+    if (data) {
+      const newDepartments = data.departments.map((department) => {
+        const { _id, name, count_users, root } = department;
+        return {
+          key: _id,
+          name,
+          root,
+          count_users,
+          detail: 'dfd',
+          update: `/departments/update/${_id}`,
+          remove: _id,
+          assign: 'dfs',
+        };
+      });
+      setDepartments(newDepartments);
+    }
+  }, [data]);
 
   //Check exist and show error  get data departments
-  React.useEffect(() => {
-    if(errorDepartments){
+  useEffect(() => {
+    if (errorDepartments) {
       message.error({
-        content: errorDepartments.response?.data.err
-      })
+        content: errorDepartments.response?.data.err,
+      });
     }
-  }, [errorDepartments])
+  }, [errorDepartments]);
 
   //Check exist and show error  get data user - accesstoken
-  React.useEffect(() => {
-    if(errorGetUser){
+  useEffect(() => {
+    if (errorGetUser) {
       message.error({
-        content: errorGetUser.response?.data.err
-      })
+        content: errorGetUser.response?.data.err,
+      });
     }
-  }, [errorGetUser])
+  }, [errorGetUser]);
 
-  const dataSource = [
-    {
-      key: 1,
-      name: 'nguyen quang hoang',
-      root: true,
-      staff: 24,
-      detail: 'dfd',
-      update: 'dfdf',
-      remove: 'dfdfd',
-      assign: 'dfs',
-    },
-    {
-      key: 2,
-      name: 'nguyen quang huy',
-      root: false,
-      staff: 40,
-      detail: 'dfd',
-      update: 'dfdf',
-      remove: 'dfdfd',
-      assign: 'dfs',
-    },
-    {
-      key: 3,
-      name: 'nguyen quang huy 111',
-      root: false,
-      staff: 40,
-      detail: 'dfd',
-      update: 'dfdf',
-      remove: 'dfdfd',
-      assign: 'dfs',
-    },
-  ];
+  const { push } = useRouter();
 
   const columns: ColumnsType<any> = [
     {
@@ -121,8 +134,8 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
     },
     {
       title: 'staffs (count)',
-      dataIndex: 'staff',
-      key: 'staff',
+      dataIndex: 'count_users',
+      key: 'count_users',
       sorter: (a, b) => {
         return a.staff - b.staff;
       },
@@ -143,13 +156,51 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
       title: 'Update',
       dataIndex: 'update',
       key: 'update',
-      render: (value) => <EditOutlined style={{ color: '#1890ff' }} />,
+      render: (value) => (
+        <EditOutlined
+          onClick={() => push(value, undefined, { shallow: true })}
+          style={{ color: '#1890ff' }}
+        />
+      ),
     },
     {
       title: 'Delete',
       dataIndex: 'remove',
       key: 'remove',
-      render: (value) => <DeleteOutlined style={{ color: 'red' }} />,
+      render: (value, record) => {
+        if (!record.root)
+          return (
+            <Popconfirm
+              icon={
+                <QuestionCircleOutlined
+                  style={{
+                    color: '#07456F',
+                  }}
+                />
+              }
+              title="Are you sure?"
+              okButtonProps={{
+                onClick: async () => {
+                  await dataUserRefetch();
+                  setIsLoadingDl((state) => ({
+                    ...state,
+                    isLoading: true,
+                  }));
+                  handleDl.mutate(value);
+                },
+                loading: isLoadingDl.isLoading,
+              }}
+              okText="Yes"
+              cancelText="No"
+            >
+              <DeleteOutlined
+                onClick={() => setIsLoadingDl({ key: record.key, isLoading: false })}
+                style={{ color: 'red' }}
+              />
+            </Popconfirm>
+          );
+        return '';
+      },
     },
   ];
 
@@ -162,7 +213,7 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
 
       <Card title="All Departments" style={{ width: '100%', marginTop: '20px' }}>
         <Space direction="vertical" size={20}></Space>
-        <Table style={{ overflowX: 'auto' }} dataSource={dataSource} columns={columns} />
+        <Table style={{ overflowX: 'auto' }} dataSource={departments} columns={columns} />
       </Card>
     </>
   );

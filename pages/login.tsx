@@ -16,6 +16,7 @@ import { postData } from '../utils/fetchData';
 import { validateLogin } from '../utils/validate';
 
 const login: NextPageWithLayout = () => {
+  
   const { refetch } = getCurrentUser();
 
   const { push } = UseRouter();
@@ -75,7 +76,6 @@ const login: NextPageWithLayout = () => {
       content: 'Copy account success',
     });
   };
-
   return (
     <>
       <Head>
