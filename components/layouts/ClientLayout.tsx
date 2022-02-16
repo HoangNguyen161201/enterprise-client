@@ -19,7 +19,10 @@ export const ClientLayout: NextLayout = ({ children }) => {
 
   return (
     <>
-      <Layout>
+      <Layout style={{
+        maxWidth: 1600,
+        marginInline: 'auto'
+      }}>
         <Header />
         <Content
           style={{

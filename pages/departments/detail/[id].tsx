@@ -4,6 +4,7 @@ import { Breadcrumb, Card, Col, message, Row, Space } from 'antd';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import * as React from 'react';
+import FieldCard from '../../../components/elements/FieldCard';
 import { ClientLayout } from '../../../components/layouts';
 import { NextPageWithLayout } from '../../../models';
 import { getCurrentUser, getDetailDepartment } from '../../../queries';
@@ -57,173 +58,41 @@ const DetailDepartment: NextPageWithLayout = (props: IDetailDepartmentProps) => 
       </Breadcrumb>
 
       <Card title="View Detail Department" style={{ width: '100%', marginTop: '20px' }}>
-        <Row gutter={20}>
-          <Col
-            xs={24}
-            xl={12}
-            style={{
-              marginTop: '10px',
-            }}
-          >
-            <p>ID Department</p>
-            <Space
-              style={{
-                borderRadius: '4px',
-                background: '#07456F10',
-                width: '100%',
-                padding: '10px 20px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <span>{dataDepartment ? dataDepartment.department._id : ''}</span>
-            </Space>
-          </Col>
-          <Col
-            xs={24}
-            xl={12}
-            style={{
-              marginTop: '10px',
-            }}
-          >
-            <p>Department Manager</p>
-            <Space
-              style={{
-                borderRadius: '4px',
-                background: '#07456F10',
-                width: '100%',
-                padding: '10px 20px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <span>
-                {dataDepartment
-                  ? dataDepartment.department_manager
-                    ? dataDepartment.department_manager.email
-                    : 'None'
-                  : ''}
-              </span>
+        <h2>Information:</h2>
+        <Row gutter={[30, 20]}>
+          <FieldCard
+            label="ID Department"
+            content={dataDepartment ? dataDepartment.department._id : ''}
+          />
+          <FieldCard
+            view={dataDepartment?.department_manager ? true : false}
+            label="Department Manager"
+            content={
+              dataDepartment?.department_manager?.email
+                ? dataDepartment.department_manager.email
+                : ''
+            }
+          />
+          <FieldCard
+            view={dataDepartment?.qa_coordinator ? true : false}
+            label="QA Coordinator"
+            content={
+              dataDepartment?.qa_coordinator?.email ? dataDepartment?.qa_coordinator?.email : ''
+            }
+          />
+          <FieldCard
+            view={dataDepartment?.qa_manager ? true : false}
+            label="QA Manager"
+            content={dataDepartment?.qa_manager?.email ? dataDepartment?.qa_manager?.email : ''}
+          />
 
-              {dataDepartment && dataDepartment.department_manager && (
-                <EyeOutlined
-                  style={{
-                    fontSize: '15px',
-                    color: '#009F90',
-                  }}
-                />
-              )}
-            </Space>
-          </Col>
+          <FieldCard xs={24} xl={24}
+            view={dataDepartment?.qa_coordinator ? true : false}
+            label="Description"
+            content={dataDepartment ? dataDepartment.department.description : ''}
+          />
         </Row>
-
-        <Row gutter={20}>
-          <Col
-            xs={24}
-            xl={12}
-            style={{
-              marginTop: '10px',
-            }}
-          >
-            <p>QA Coordinator</p>
-            <Space
-              style={{
-                borderRadius: '4px',
-                background: '#07456F10',
-                width: '100%',
-                padding: '10px 20px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <span>
-                {dataDepartment
-                  ? dataDepartment.qa_coordinator
-                    ? dataDepartment.qa_coordinator.email
-                    : 'None'
-                  : ''}
-              </span>
-
-              {dataDepartment && dataDepartment.qa_coordinator && (
-                <EyeOutlined
-                  style={{
-                    fontSize: '15px',
-                    color: '#009F90',
-                  }}
-                />
-              )}
-            </Space>
-          </Col>
-          <Col
-            xs={24}
-            xl={12}
-            style={{
-              marginTop: '10px',
-            }}
-          >
-            <p>QA Manager</p>
-            <Space
-              style={{
-                borderRadius: '4px',
-                background: '#07456F10',
-                width: '100%',
-                padding: '10px 20px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <span>
-                {dataDepartment
-                  ? dataDepartment.qa_manager
-                    ? dataDepartment.qa_manager.email
-                    : 'None'
-                  : ''}
-              </span>
-              {dataDepartment && dataDepartment.qa_coordinator && (
-                <EyeOutlined
-                  style={{
-                    fontSize: '15px',
-                    color: '#009F90',
-                  }}
-                />
-              )}
-            </Space>
-          </Col>
-        </Row>
-
-        <Row gutter={20}>
-          <Col
-            xs={24}
-            style={{
-              marginTop: '10px',
-            }}
-          >
-            <p>Description</p>
-            <Space
-              style={{
-                borderRadius: '4px',
-                background: '#07456F10',
-                width: '100%',
-                padding: '10px 20px',
-              }}
-            >
-              <span>{dataDepartment ? dataDepartment.department.description : ''}</span>
-
-              {dataDepartment && dataDepartment.qa_coordinator && (
-                <EyeOutlined
-                  style={{
-                    fontSize: '15px',
-                    color: '#009F90',
-                  }}
-                />
-              )}
-            </Space>
-          </Col>
-        </Row>
+        <h2>Staffs</h2>
       </Card>
     </>
   );
@@ -245,7 +114,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const data = await res.json();
 
   console.log(res, data);
-  
+
   //Redirect login page when error
   if (res.status !== 200) {
     return {
@@ -262,7 +131,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       notFound: true,
     };
   }
-
 
   return {
     props: {},

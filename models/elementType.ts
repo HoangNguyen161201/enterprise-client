@@ -9,3 +9,11 @@ export interface IOptionSelect {
     label: any
     value: any
 }
+
+export interface IFieldCard {
+    label: string
+    content: string
+    view?: boolean
+    xs?: number
+    xl?: number
+}

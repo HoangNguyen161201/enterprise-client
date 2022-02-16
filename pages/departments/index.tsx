@@ -96,7 +96,7 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
           name,
           root,
           count_users,
-          detail: 'dfd',
+          detail: '',
           update: `/departments/update/${_id}`,
           remove: _id,
           assign: 'dfs',
@@ -178,7 +178,7 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
       title: 'detail',
       dataIndex: 'detail',
       key: 'detail',
-      render: () => <ProfileOutlined style={{ color: '#07456F' }} />,
+      render: (_,record) => <ProfileOutlined onClick={() => push(`/departments/detail/${record.key}`, undefined, { shallow: true })} style={{ color: '#07456F' }} />,
     },
     {
       title: 'Assign',
