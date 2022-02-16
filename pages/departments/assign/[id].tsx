@@ -1,25 +1,19 @@
 import {
-  EyeOutlined,
-  FileTextOutlined,
+  PlusOutlined,
   UserAddOutlined,
   UsergroupAddOutlined,
+  UserOutlined,
   UserSwitchOutlined,
 } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Breadcrumb, Button, Card, Col, message, Row, Space } from 'antd';
-import { GetServerSideProps } from 'next';
+import { Breadcrumb, Card, Col, message, Row, Space } from 'antd';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Input, Select, TextArea } from '../../../components/elements';
+import ButtonAssign from '../../../components/elements/ButtonAssign';
 import { ClientLayout } from '../../../components/layouts';
-import { IOptionSelect, IUsersNotDepartment, NextPageWithLayout } from '../../../models';
-import {
-  getCurrentUser,
-  getDetailDepartment,
-  getUsersNotDepartment,
-  getUsersRoleDepartment,
-} from '../../../queries';
+import { IUsersNotDepartment, NextPageWithLayout } from '../../../models';
+import { getCurrentUser, getDetailDepartment, getUsersNotDepartment } from '../../../queries';
 import { validateAddDepartment } from '../../../utils';
 
 export interface IAssignDepartmentProps {}
@@ -139,47 +133,38 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
         <Breadcrumb.Item>Assign Department</Breadcrumb.Item>
       </Breadcrumb>
 
-      <Card
-        title="Assign Department"
-        style={{ width: '100%', marginTop: '20px' }}
-        actions={[<UserAddOutlined />, <UserSwitchOutlined />, <UsergroupAddOutlined />]}
-      >
+      <Card title="Assign Department" style={{ width: '100%', marginTop: '20px' }}>
         <form onSubmit={formSetting.handleSubmit(onSubmit)}>
           <Space direction="vertical" size={20}>
-            <Row gutter={[20, 20]}>
-              <Col xs={24} xl={12}>
-                <Input
-                  name="name"
-                  label="Name"
-                  formSetting={formSetting}
-                  placeholder="Enter department name"
-                  type="text"
-                  icon={<FileTextOutlined />}
-                />
-              </Col>
-
-              <Col xs={24} xl={12}>
-                <Input
-                  name="name"
-                  label="Name"
-                  formSetting={formSetting}
-                  placeholder="Enter department name"
-                  type="text"
-                  icon={<FileTextOutlined />}
-                />
-              </Col>
+            <Row>
+              <ButtonAssign
+                title="Staff"
+                subTitle="03 People"
+                color="#009F9D"
+                Icon={UsergroupAddOutlined}
+                xs={24}
+                lg={12}
+                xl={8}
+              />
+              <ButtonAssign
+                title="QA Coordinator"
+                subTitle="03 People"
+                color="#07456F"
+                Icon={UserSwitchOutlined}
+                xs={24}
+                lg={12}
+                xl={8}
+              />
+              <ButtonAssign
+                title="Manager"
+                subTitle="03 People"
+                color="#0F0A3C"
+                Icon={UserAddOutlined}
+                xs={24}
+                lg={12}
+                xl={8}
+              />
             </Row>
-
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'end',
-              }}
-            >
-              <Button htmlType="submit" type="primary">
-                Save
-              </Button>
-            </div>
           </Space>
         </form>
       </Card>
