@@ -140,7 +140,6 @@ const userController = {
 
   getRole: catchAsyncError(async (req, res) => {
     const { role } = req.params;
-    const { department } = req.query;
 
     //Valid role
     const errMsg = userValid.validFilter({ role });
@@ -153,35 +152,35 @@ const userController = {
 
     const users = await userModel.find({ role });
 
-    //Initial user response
-    let usersRes = users;
+    return res.status(200).json({
+      statusCode: 200,
+      msg: 'Get user success',
+      users: users,
+    });
+  }),
 
-    //Chech user has department
-    switch (department) {
-      case 'no':
-        usersRes = users.map((user) => {
-          if (!user.department_id) {
-            return users;
-          }
-        });
-        break;
+  getNotDepartment: catchAsyncError(async (req, res) => {
+    const staffs = await userModel.find({
+      role: 'staff',
+      department_id: undefined,
+    });
 
-      case 'yes':
-        usersRes = users.map((user) => {
-          if (user.department_id) {
-            return users;
-          }
-        });
-        break;
+    const QACoordinators = await userModel.find({
+      role: 'qa_coordinator',
+      department_id: undefined,
+    });
 
-      default:
-        break;
-    }
+    const departmentManagers = await userModel.find({
+      role: 'department_manager',
+      department_id: undefined,
+    });
 
     return res.status(200).json({
       statusCode: 200,
       msg: 'Get user success',
-      users: usersRes,
+      staffs,
+      QACoordinators,
+      departmentManagers
     });
   }),
 
