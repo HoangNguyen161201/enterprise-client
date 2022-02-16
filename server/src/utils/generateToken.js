@@ -10,6 +10,16 @@ const createAccessToken = async (payload) => {
   };
 };
 
+//Generate active token
+const createActiveToken = async (payload) => {
+  const token = jwt.sign(payload, process.env.ACTIVE_TOKEN_SECRET, { expiresIn: '30m' });
+  const { exp } = jwt.verify(token, process.env.ACTIVE_TOKEN_SECRET, { ignoreExpiration: true });
+  return {
+    token,
+    exp,
+  };
+};
+
 //Generate refresh token
 const createRefreshToken = async (payload) => {
   const token = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
@@ -23,4 +33,5 @@ const createRefreshToken = async (payload) => {
 module.exports = {
   createAccessToken,
   createRefreshToken,
+  createActiveToken
 };

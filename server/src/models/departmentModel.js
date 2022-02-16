@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const departmentSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true
+    required: true,
   },
   description: {
     type: String,
@@ -14,6 +14,10 @@ const departmentSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  count_users: {
+    type: Number,
+    default: 0
+  }
 });
 
 module.exports = mongoose.model('departments', departmentSchema);

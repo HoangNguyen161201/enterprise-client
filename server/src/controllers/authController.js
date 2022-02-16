@@ -1,12 +1,14 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { createAccessToken, createRefreshToken } = require('../utils/generateToken');
+const { createAccessToken, createRefreshToken, createActiveToken } = require('../utils/generateToken');
 
 //Import middleware
 const catchAsyncError = require('../helpers/catchAsyncError');
 
 //Import model
 const userModel = require('../models/userModel');
+const sendEmail = require('../utils/sendEmail');
+const { validatePassword } = require('../utils/userValid');
 
 const authController = {
   login: catchAsyncError(async (req, res) => {
@@ -111,6 +113,74 @@ const authController = {
       statusCode: 200,
     });
   }),
+
+  smtpResetPass: catchAsyncError(async (req, res) => {
+    const { email } = req.body
+    const user = await userModel.findOne({
+      email
+    }).select('-password')
+    if (!user) return res.status(401).json({
+      err: 'Email not exists',
+      statusCode: 401,
+    });
+
+    const active_token = await createActiveToken({
+      id: user._id,
+    });
+
+    const url = `${process.env.URL_CLIENT}/reset-password/${active_token.token}`
+
+    await sendEmail({ email, url })
+    return res.status(200).json({
+      status: 'success',
+      msg: 'Check your email to reset password',
+      statusCode: 200,
+    })
+  }),
+
+  // reset password
+  resetPassword: catchAsyncError(async (req, res) => {
+    console.log('fgdfgdfgdfg')
+    const { activeToken, password, confirmPassword } = req.body
+    console.log(activeToken)
+    if (!validatePassword(password)) return res.status(400).json({
+      err: 'Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character',
+      statusCode: 400,
+    });
+
+    if (password != confirmPassword) return res.status(400).json({
+      err: 'Password not match',
+      statusCode: 400,
+    });
+
+    const passwordHash = await bcrypt.hash(password, 12);
+
+    const data = await jwt.verify(activeToken, process.env.ACTIVE_TOKEN_SECRET, {
+      ignoreExpiration: true,
+    })
+
+    if (new Date() >= new Date(data.exp * 1000)) return res.status(400).json({
+      err: 'Some thing went wrong! Please request mail reset password again at login page',
+      statusCode: 400,
+    });
+
+    // find user by id and update
+    const user = await userModel.findById(data.id)
+    console.log(user)
+    if (!user) return res.status(400).json({
+      err: 'User not exist',
+      statusCode: 400,
+    });
+
+    await userModel.findByIdAndUpdate(data.id, {
+      password: passwordHash
+    })
+
+    return res.status(200).json({
+      msg: 'Reset password successfully',
+      statusCode: 200,
+    })
+  })
 };
 
 module.exports = authController;

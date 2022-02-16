@@ -1,18 +1,10 @@
-import { NextPage } from 'next';
-import { Button } from 'antd';
-import 'antd/dist/antd.variable.min.css';
+import { ClientLayout } from "../components/layouts";
+import { NextPageWithLayout } from "../models";
 
-const index: NextPage = () => {
-  return (
-    <div>
-      <Button type="primary" id={'button'}>
-        Enter with me aahfafdfdfs
-      </Button>
-      <Button type="default" id={'button'}>
-        Enter with me
-      </Button>
-    </div>
-  );
+const index: NextPageWithLayout = () => {
+    return <div>nguyen quang hoang</div>;
 };
+
+index.getLayout = ClientLayout;
 
 export default index;

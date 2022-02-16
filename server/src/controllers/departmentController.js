@@ -3,6 +3,7 @@ const catchAsyncError = require('../helpers/catchAsyncError');
 
 //import model
 const departmentModel = require('../models/departmentModel');
+const userModel = require('../models/userModel');
 
 //import other
 const departmentValid = require('../utils/departmentValid');
@@ -12,7 +13,6 @@ const departmentController = {
   create: catchAsyncError(async (req, res) => {
     //Get infor add department
     const { name, description } = req.body;
-    console.log(name, description);
 
     //Valid infor add
     const errorValid = departmentValid.createUpdateValid({
@@ -79,6 +79,12 @@ const departmentController = {
         statusCode: 400,
       });
 
+    if (department.root)
+      return res.status(400).json({
+        msg: 'The root department could not be deleted.',
+        statusCode: 400,
+      });
+
     //Check exist department and update
     await departmentModel.findByIdAndDelete(id);
 
@@ -88,11 +94,62 @@ const departmentController = {
     });
   }),
 
+  deleteMany: catchAsyncError(async (req, res) => {
+    const { departments } = req.body;
+
+    let countDepartmentsRoot = 0;
+    let countDepartmentsHasUsers = 0;
+
+    for (let index = 0; index < departments.length; index++) {
+      let canDelete = true;
+
+      //Get id of department to delete
+      const departmentId = departments[index];
+      console.log(departmentId);
+
+      //Check exist department
+      const department = await departmentModel.findById(departmentId);
+
+      if (!department)
+        return res.status(400).json({
+          msg: `Department ${departmentId} does not exist in the system.`,
+          statusCode: 400,
+        });
+
+      //Check root
+      if (department.root) {
+        canDelete = false;
+        countDepartmentsRoot = ++countDepartmentsRoot;
+      }
+
+      //Check number user
+      const users = await userModel.find({
+        department_id: department._id,
+      });
+      if (users.length !== 0) {
+        countDepartmentsHasUsers = ++countDepartmentsHasUsers;
+      }
+
+      //Check can delele
+      if (canDelete) {
+        //Check exist department and delete
+        await departmentModel.findByIdAndDelete(departmentId);
+      }
+    }
+
+    return res.status(200).json({
+      msg: `Deleted departments success!
+      ${countDepartmentsRoot} root departments that cannot be deleted.
+      ${countDepartmentsHasUsers} root departments has users cannot be deleted.`,
+      statusCode: 200,
+    });
+  }),
+
   getAll: catchAsyncError(async (req, res) => {
     //Get all departments
     const departments = await departmentModel.find({});
 
-    res.status(200).json({
+    return res.status(200).json({
       msg: 'Get all departments success',
       departments,
       statusCode: 200,
@@ -101,14 +158,133 @@ const departmentController = {
 
   getDetail: catchAsyncError(async (req, res) => {
     //Get id for get detail
-    const {id} = req.params;
+    const { id } = req.params;
 
     //Get detail department
     const department = await departmentModel.findById(id);
 
-    res.status(200).json({
+    //Get QA manager
+    const qa_manager = await userModel.findOne({
+      role: 'qa_manager',
+      department_id: department._id,
+    });
+
+    //Get QA coordinator
+    const qa_coordinator = await userModel.findOne({
+      role: 'qa_coordinator',
+      department_id: department._id,
+    });
+
+    //Get department manager
+    const department_manager = await userModel.findOne({
+      role: 'department_manager',
+      department_id: department._id,
+    });
+
+    //Get staffs
+    const staffs = await userModel.find({
+      role: 'staff',
+      department_id: department._id,
+    });
+
+    const departmentRes = {
+      _id: department._id,
+      name: department.name,
+      description: department.description,
+      count_users: department.count_users,
+      qa_manager,
+      qa_coordinator,
+      department_manager,
+      staffs,
+    };
+
+    return res.status(200).json({
       msg: `Get detail department ${id} success`,
-      department,
+      department: departmentRes,
+      statusCode: 200,
+    });
+  }),
+
+  assign: catchAsyncError(async (req, res) => {
+    //Get id department for assign
+    const { id } = req.params;
+
+    //Get data to assign
+    const { staffs: newStaffs, qa_coordinator, department_manager } = req.body;
+
+    ///Get detail department and check exist
+    const department = await departmentModel.findById(id);
+    const { staffs: oldStaffs } = department;
+    if (!department)
+      return res.status(400).json({
+        msg: 'This department does not exist in the system.',
+        statusCode: 400,
+      });
+
+    //Assign staffs
+    for (let index = 0; index < newStaffs.length; index++) {
+      const idStaff = newStaffs[index];
+      const user = await userModel.find({
+        _id: idStaff,
+        role: 'staff',
+      });
+      //Check role staff
+      if (!user) {
+        return res.status(400).json({
+          msg: `Invalid ${idStaff} staff cannot be assign.`,
+          statusCode: 400,
+        });
+      }
+
+      //Check length old array staff
+      if (oldStaffs.length === 0) {
+        await departmentModel.findOneAndUpdate({ _id: id }, { $push: { staffs: user._id } });
+      } else {
+        //Check exist staff
+        let checkExistStaff = false;
+        for (let index = 0; index < oldStaffs.length; index++) {
+          const idStaffOld = oldStaffs[index];
+          if (user._id.equals(idStaffOld)) {
+            checkExistStaff = true;
+            break;
+          }
+        }
+        if (!checkExistStaff) {
+          //Add staff
+          await departmentModel.findOneAndUpdate({ _id: id }, { $push: { staffs: user._id } });
+        }
+      }
+    }
+
+    //Assign qa_coordinator
+    const qaCoordinator = await userModel.findOne({
+      _id: qa_coordinator,
+      role: 'qa_coordinator',
+    });
+
+    console.log(qaCoordinator._id);
+    //Check exist qa_coordinator
+    if (qaCoordinator) {
+      await departmentModel.findByIdAndUpdate(id, {
+        qa_coordinator: qaCoordinator._id,
+      });
+    }
+
+    //Assign qa_coordinator
+    const departmentManager = await userModel.findOne({
+      _id: department_manager,
+      role: 'department_manager',
+    });
+
+    //Check exist qa_coordinator
+    if (departmentManager) {
+      await departmentModel.findByIdAndUpdate(id, {
+        department_manager: departmentManager._id,
+      });
+    }
+
+    return res.status(200).json({
+      msg: `Assign success.`,
       statusCode: 200,
     });
   }),

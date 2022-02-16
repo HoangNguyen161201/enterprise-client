@@ -5,12 +5,11 @@ const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-
   },
   email: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
   },
   password: {
     type: String,
@@ -30,6 +29,11 @@ const userSchema = new mongoose.Schema({
       public_id: String,
       url: String,
     },
+  },
+  department_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'departments',
+    default: null
   },
 });
 

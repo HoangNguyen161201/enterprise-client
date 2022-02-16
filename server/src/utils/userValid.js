@@ -66,12 +66,12 @@ const validUpdate = ({ name, email, role }) => {
 //Role Valid User
 
 const validFilter = ({ role }) => {
-  if (role !== 'staff' && role !== 'qa_cooordinator' && role !== 'department_manager') {
+  if (role !== 'staff' && role !== 'qa_coordinator' && role !== 'department_manager') {
     return 'Invalid role';
   }
 };
 
-//Check valid email functionmuy
+//Check valid email function
 function validateEmail(email) {
   const res =
     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -83,3 +83,18 @@ module.exports = {
   validUpdate,
   validFilter,
 };
+
+//Check valid password
+function validatePassword(password) {
+  const res =
+  /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
+  return res.test(String(password).toLowerCase());
+}
+
+module.exports = {
+  validSignUp,
+  validUpdate,
+  validFilter,
+  validatePassword
+};
+

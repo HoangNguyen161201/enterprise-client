@@ -6,6 +6,7 @@ const db = require('./configs/connectDb');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const mainRouter = require('./routes/mainRouter');
+const sendMail = require('./utils/sendEmail')
 
 //Connect database
 db();
