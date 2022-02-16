@@ -10,7 +10,7 @@ const userRouter = express.Router();
 const authorization = require('../middlewares/authorization')
 
 //Handle user routes
-userRouter.post('/', authorization(['admin', 'qa_manager']), userController.create);
+userRouter.post('/', userController.create);
 
 userRouter.put('/:id', authorization(['admin', 'qa_manager']), userController.update);
 
@@ -20,12 +20,15 @@ userRouter.get('/', userController.getAll);
 
 userRouter.get('/role/:role', userController.getRole);
 
+userRouter.get('/not-department', userController.getNotDepartment);
+
 userRouter.get('/:id', authorization(['admin', 'qa_manager']), userController.getDetail);
 
 userRouter.post('/assign', userController.assignDepartment);
 
-userRouter.post('/assignmany', userController.manyAssignDepartment);
+userRouter.post('/assign-many', userController.manyAssignDepartment);
 
-userRouter.post('/removeassign', userController.removeAssignDepartment);
+userRouter.post('/remove-assign', userController.removeAssignDepartment);
+
 
 module.exports = userRouter;
