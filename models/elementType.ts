@@ -6,6 +6,6 @@ export interface ICopyAcc {
 }
 
 export interface IOptionSelect {
-    label: string
-    value: string
+    label: any
+    value: any
 }

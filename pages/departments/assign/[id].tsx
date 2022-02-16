@@ -4,17 +4,21 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Breadcrumb, Button, Card, Col, message, Row, Space } from 'antd';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import * as React from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Input, Select, TextArea } from '../../../components/elements';
 import { ClientLayout } from '../../../components/layouts';
-import { NextPageWithLayout } from '../../../models';
+import { IOptionSelect, NextPageWithLayout } from '../../../models';
 import { getCurrentUser, getDetailDepartment, getUsersRoleDepartment } from '../../../queries';
 import { validateAddDepartment } from '../../../utils';
 
 export interface IAssignDepartmentProps {}
 
 const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => {
+  //State
+  const [listQACoordinators, setListQACoordinators] = useState<IOptionSelect[]>([]);
+  const [listDepartmentManagers, setListDepartmentManagers] = useState<IOptionSelect[]>([]);
+
   //Get id from router to get old data
   const {
     query: { id },
@@ -22,7 +26,7 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
 
   //Get access token
   const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
-  React.useEffect(() => {
+  useEffect(() => {
     dataUserRefetch();
   }, []);
 
@@ -53,11 +57,8 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
     dataUser?.accessToken.token
   );
 
-  console.log(dataDepartment, dataStaffs, dataQACoordinators, dataDepartmentManagers);
-  
-
   //Check exist and show error
-  React.useEffect(() => {
+  useEffect(() => {
     if (errorGetUser) {
       message.error({
         content: errorGetUser.response?.data.err,
@@ -65,7 +66,7 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
     }
   }, [errorGetUser]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (errorDepartment) {
       message.error({
         content: errorDepartment.response?.data.err,
@@ -73,7 +74,7 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
     }
   }, [errorDepartment]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (errorStaffs) {
       message.error({
         content: errorStaffs.response?.data.err,
@@ -81,7 +82,7 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
     }
   }, [errorStaffs]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (errorQACoordinators) {
       message.error({
         content: errorQACoordinators.response?.data.err,
@@ -89,13 +90,79 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
     }
   }, [errorQACoordinators]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (errorDepartmentManagers) {
       message.error({
         content: errorDepartmentManagers.response?.data.err,
       });
     }
   }, [errorDepartmentManagers]);
+
+  console.log();
+  
+
+  //Set list qa coordinator
+//   useEffect(() => {
+//     if (dataDepartment && dataDepartment.department && dataDepartment.department.qa_coordinator) {
+//       let newListQACorrdinators: IOptionSelect[] = [];
+//       if (
+//         dataQACoordinators &&
+//         dataQACoordinators.users &&
+//         dataQACoordinators.users?.length !== 0
+//       ) {
+//         dataQACoordinators.users.map((user) => {
+//           if (user) {
+//             newListQACorrdinators.push({
+//               value: user._id,
+//               label: user.email,
+//             });
+//           }
+//         });
+//       }
+
+//       setListQACoordinators([
+//         {
+//           value: dataDepartment.department.qa_coordinator._id,
+//           label: dataDepartment.department.qa_coordinator.email,
+//         },
+//         ...newListQACorrdinators,
+//       ]);
+//     }
+//   }, [dataDepartment, dataQACoordinators]);
+
+  //Set list department manager
+//   useEffect(() => {
+//     if (
+//       dataDepartment &&
+//       dataDepartment.department &&
+//       dataDepartment.department.department_manager
+//     ) {
+//       let newListDepartmentManager: IOptionSelect[] = [];
+//       if (
+//         dataDepartmentManagers &&
+//         dataDepartmentManagers.users &&
+//         dataDepartmentManagers.users?.length !== 0
+//       ) {
+//         dataDepartmentManagers.users.map((user) => {
+//           if (user) {
+//             newListDepartmentManager.push({
+//               value: user._id,
+//               label: user.email,
+//             });
+//           }
+//         });
+//       }
+
+//       setListDepartmentManagers([
+//         {
+//           value: dataDepartment.department.department_manager._id,
+//           label: dataDepartment.department.department_manager.email,
+//         },
+//         ...newListDepartmentManager,
+//       ]);
+//     }
+//   }, [dataDepartment, dataDepartmentManagers]);
+
 
   // setting form
   const formSetting = useForm<{ name: string; description: string }>({
@@ -111,7 +178,6 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
     await dataUserRefetch();
   };
 
-//   'qa_manager', 'qa_coordinator'
   return (
     <>
       <Breadcrumb>
@@ -125,10 +191,7 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
         <form onSubmit={formSetting.handleSubmit(onSubmit)}>
           <Space direction="vertical" size={20}>
             <Row gutter={[20, 20]}>
-              <Col
-                xs={24}
-                xl={12}
-              >
+              <Col xs={24} xl={12}>
                 <Input
                   name="name"
                   label="Name"
@@ -139,10 +202,7 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
                 />
               </Col>
 
-              <Col
-                xs={24}
-                xl={12}
-              >
+              <Col xs={24} xl={12}>
                 <Input
                   name="name"
                   label="Name"
