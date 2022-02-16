@@ -11,7 +11,7 @@ import { ColumnsType } from 'antd/lib/table';
 import { AxiosError } from 'axios';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect as UseEffect, useState as UseState} from 'react';
 import { useMutation } from 'react-query';
 import { ClientLayout } from '../../components/layouts';
 import { NextPageWithLayout } from '../../models/layoutType';
@@ -22,17 +22,17 @@ export interface IAddDepartmentProps {}
 
 const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
   // get all departments
-  const [departments, setDepartments] = useState<any>([]);
+  const [departments, setDepartments] = UseState<any>([]);
 
   // departments select
-  const [departmentsSl, setDepartmentsSl] = useState<any>(null);
+  const [departmentsSl, setDepartmentsSl] = UseState<any>(null);
 
   // set loading when delete department, delete all departments
-  const [isLoadingDl, setIsLoadingDl] = useState({
+  const [isLoadingDl, setIsLoadingDl] = UseState({
     key: '',
     isLoading: false,
   });
-  const [isLoadingDlAll, setIsLoadingDlAll] = useState(false);
+  const [isLoadingDlAll, setIsLoadingDlAll] = UseState(false);
   //Get access token
   const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
 
@@ -83,11 +83,11 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
     }
   );
 
-  useEffect(() => {
+  UseEffect(() => {
     dataUserRefetch();
   }, []);
 
-  useEffect(() => {
+  UseEffect(() => {
     if (data) {
       const newDepartments = data.departments.map((department) => {
         const { _id, name, count_users, root } = department;
@@ -107,7 +107,7 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
   }, [data]);
 
   //Check exist and show error  get data departments
-  useEffect(() => {
+  UseEffect(() => {
     if (errorDepartments) {
       message.error({
         content: errorDepartments.response?.data.err,
@@ -116,7 +116,7 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
   }, [errorDepartments]);
 
   //Check exist and show error  get data user - accesstoken
-  useEffect(() => {
+  UseEffect(() => {
     if (errorGetUser) {
       message.error({
         content: errorGetUser.response?.data.err,
@@ -247,7 +247,7 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
 
       <Card
         extra={[
-          <Popconfirm
+          <Popconfirm key={'delete'}
             disabled={departmentsSl == null}
             icon={
               <QuestionCircleOutlined
