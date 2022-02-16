@@ -54,6 +54,15 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
   }, [errorGetUser]);
 
   useEffect(() => {
+    if (errorUsersNotDPM) {
+      message.error({
+        content: errorUsersNotDPM.response?.data.err,
+      });
+    }
+  }, [errorUsersNotDPM]);
+  // df
+
+  useEffect(() => {
     if (errorDepartment) {
       message.error({
         content: errorDepartment.response?.data.err,
