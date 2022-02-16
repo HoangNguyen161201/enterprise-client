@@ -32,3 +32,18 @@ export const getAllDepartments = (accessToken: string) => {
     }
   );
 };
+
+export const getUsersNotDepartment = (accessToken: string) => {
+  return useQuery<any, AxiosError>(
+    ['users', 'not-department'],
+    async () => {
+      return await getData({ url: `/api/users/not-department`, token: accessToken });
+    },
+    {
+      enabled: !!accessToken,
+      retry: 1,
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+    }
+  );
+};

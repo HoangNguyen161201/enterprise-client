@@ -34,29 +34,11 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
     dataUser?.accessToken.token
   );
 
-  //Get staff not have department
-  const { error: errorStaffs, data: dataStaffs } = getUsersRoleDepartment(
-    'staff',
-    'no',
-    dataUser?.accessToken.token
-  );
-
-  //Get qa coordinator not have department
-  const { error: errorQACoordinators, data: dataQACoordinators } = getUsersRoleDepartment(
-    'qa_coordinator',
-    'no',
-    dataUser?.accessToken.token
-  );
-
-  //Get qa manager not have department
-  const { error: errorDepartmentManagers, data: dataDepartmentManagers } = getUsersRoleDepartment(
-    'department_manager',
-    'no',
-    dataUser?.accessToken.token
-  );
-
-  console.log(dataDepartment, dataStaffs, dataQACoordinators, dataDepartmentManagers);
-  
+    //Get list users not have department
+    const { error: errorUsersNotDPM, data: dataUsersnotDPM } = getDetailDepartment(
+      id as string,
+      dataUser?.accessToken.token
+    );
 
   //Check exist and show error
   React.useEffect(() => {
@@ -68,36 +50,20 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
   }, [errorGetUser]);
 
   React.useEffect(() => {
+    if (errorUsersNotDPM) {
+      message.error({
+        content: errorUsersNotDPM.response?.data.err,
+      });
+    }
+  }, [errorUsersNotDPM]);
+
+  React.useEffect(() => {
     if (errorDepartment) {
       message.error({
         content: errorDepartment.response?.data.err,
       });
     }
   }, [errorDepartment]);
-
-  React.useEffect(() => {
-    if (errorStaffs) {
-      message.error({
-        content: errorStaffs.response?.data.err,
-      });
-    }
-  }, [errorStaffs]);
-
-  React.useEffect(() => {
-    if (errorQACoordinators) {
-      message.error({
-        content: errorQACoordinators.response?.data.err,
-      });
-    }
-  }, [errorQACoordinators]);
-
-  React.useEffect(() => {
-    if (errorDepartmentManagers) {
-      message.error({
-        content: errorDepartmentManagers.response?.data.err,
-      });
-    }
-  }, [errorDepartmentManagers]);
 
   // setting form
   const formSetting = useForm<{ name: string; description: string }>({
@@ -113,7 +79,8 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
     await dataUserRefetch();
   };
 
-//   'qa_manager', 'qa_coordinator'
+  console.log(dataUsersnotDPM);
+  
   return (
     <>
       <Breadcrumb>
