@@ -1,9 +1,8 @@
 //Import
-import { EyeOutlined } from '@ant-design/icons';
-import { Breadcrumb, Card, Col, message, Row, Space } from 'antd';
+import { Breadcrumb, Card, message, Row } from 'antd';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import * as React from 'react';
+import { useEffect as UseEffect } from 'react';
 import FieldCard from '../../../components/elements/FieldCard';
 import { ClientLayout } from '../../../components/layouts';
 import { NextPageWithLayout } from '../../../models';
@@ -19,7 +18,7 @@ const DetailDepartment: NextPageWithLayout = (props: IDetailDepartmentProps) => 
 
   //Get access token
   const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
-  React.useEffect(() => {
+  UseEffect(() => {
     dataUserRefetch();
   }, []);
 
@@ -30,7 +29,7 @@ const DetailDepartment: NextPageWithLayout = (props: IDetailDepartmentProps) => 
   );
 
   //Check exist and show error
-  React.useEffect(() => {
+  UseEffect(() => {
     if (errorGetUser) {
       message.error({
         content: errorGetUser.response?.data.err,
@@ -38,7 +37,7 @@ const DetailDepartment: NextPageWithLayout = (props: IDetailDepartmentProps) => 
     }
   }, [errorGetUser]);
 
-  React.useEffect(() => {
+  UseEffect(() => {
     if (errorDepartment) {
       message.error({
         content: errorDepartment.response?.data.err,

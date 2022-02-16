@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
 import { Input, TextArea } from '../../components/elements';
 import { ClientLayout } from '../../components/layouts';
-import { IDepartment } from '../../models';
+import { IDepartment, IDepartmentForm } from '../../models';
 import { NextPageWithLayout } from '../../models/layoutType';
 import { getCurrentUser } from '../../queries';
 import { postData, validateAddDepartment } from '../../utils';
@@ -20,7 +20,7 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
   const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
 
   //  call api to add deartment
-  const mutationAddDepartment = useMutation<any, AxiosError, IDepartment>(
+  const mutationAddDepartment = useMutation<any, AxiosError, IDepartmentForm>(
     (dataForm) => {
       return postData({
         url: '/api/departments',

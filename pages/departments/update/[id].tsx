@@ -3,16 +3,16 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Breadcrumb, Button, Card, message, Space } from 'antd';
 import { AxiosError } from 'axios';
 import { GetServerSideProps } from 'next';
-import { useRouter } from 'next/router';
-import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useRouter as UseRouter } from 'next/router';
+import { useEffect as UseEffect } from 'react';
+import { useForm as UseForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
 import { Input, TextArea } from '../../../components/elements';
 import { ClientLayout } from '../../../components/layouts';
-import { IDepartment, NextPageWithLayout } from '../../../models';
+import { IDepartmentForm, NextPageWithLayout } from '../../../models';
 import { getCurrentUser } from '../../../queries';
 import { getDetailDepartment } from '../../../queries/department';
-import { postData, putData, validateAddDepartment } from '../../../utils';
+import { putData, validateAddDepartment } from '../../../utils';
 
 export interface IUpdateDepartmetnProps {}
 
@@ -20,7 +20,7 @@ const UpdateDepartmetn: NextPageWithLayout = (props: IUpdateDepartmetnProps) => 
   //Get id from router to get old data
   const {
     query: { id },
-  } = useRouter();
+  } = UseRouter();
 
   //Get access token
   const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
@@ -32,7 +32,7 @@ const UpdateDepartmetn: NextPageWithLayout = (props: IUpdateDepartmetnProps) => 
   );
 
   //Check exist and show error get data department
-  useEffect(() => {
+  UseEffect(() => {
     if (errorDepartment) {
       message.error({
         content: errorDepartment.response?.data.err,
@@ -47,7 +47,7 @@ const UpdateDepartmetn: NextPageWithLayout = (props: IUpdateDepartmetnProps) => 
   }, [errorDepartment]);
 
   //Check exist and show error get data user - access token
-  useEffect(() => {
+  UseEffect(() => {
     if (errorGetUser) {
       message.error({
         content: errorGetUser.response?.data.err,
@@ -56,7 +56,7 @@ const UpdateDepartmetn: NextPageWithLayout = (props: IUpdateDepartmetnProps) => 
   }, [errorGetUser]);
 
   // setting form
-  const formSetting = useForm<{ id: string; name: string; description: string }>({
+  const formSetting = UseForm<{ id: string; name: string; description: string }>({
     resolver: yupResolver(validateAddDepartment),
     defaultValues: {
       id: id as string,
@@ -66,7 +66,7 @@ const UpdateDepartmetn: NextPageWithLayout = (props: IUpdateDepartmetnProps) => 
   });
 
   //reset Initial value update data from when have old data department
-  useEffect(() => {
+  UseEffect(() => {
     if (dataDepartment) {
       formSetting.reset({
         id: id as string,
@@ -77,7 +77,7 @@ const UpdateDepartmetn: NextPageWithLayout = (props: IUpdateDepartmetnProps) => 
   }, [dataDepartment]);
 
   //  call api to add deartment
-  const mutationUpdateDepartment = useMutation<any, AxiosError, IDepartment>(
+  const mutationUpdateDepartment = useMutation<any, AxiosError, IDepartmentForm>(
     (dataForm) => {
       return putData({
         url: `/api/departments/${dataForm.id}`,

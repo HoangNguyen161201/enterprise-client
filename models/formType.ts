@@ -15,7 +15,7 @@ export interface ILogin {
     role: string
 }
 
-export interface IDepartment {
+export interface IDepartmentForm {
     id?: string
     name: string
     description: string

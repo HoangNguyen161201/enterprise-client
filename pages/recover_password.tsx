@@ -4,16 +4,16 @@ import { Button, message, Result, Space } from 'antd';
 import { AxiosError } from 'axios';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useMutation } from 'react-query';
+import { useState as UseState } from 'react';
+import { useForm as UseForm } from 'react-hook-form';
+import { useMutation as UseMutation } from 'react-query';
 import { Input } from '../components/elements';
 import { postData, validateRecoverPass } from '../utils';
 
 export default function recover_password() {
-  const [isSMTP, setIsSMTP] = useState(false);
+  const [isSMTP, setIsSMTP] = UseState(false);
   // call api to reset password by email
-  const recoverPass = useMutation<any, AxiosError, string>(
+  const recoverPass = UseMutation<any, AxiosError, string>(
     (email) => {
       return postData({
         url: 'api/auth/smtpResetPass',
@@ -39,7 +39,7 @@ export default function recover_password() {
   );
 
   // setting form
-  const formSetting = useForm<{ email: string }>({
+  const formSetting = UseForm<{ email: string }>({
     resolver: yupResolver(validateRecoverPass),
     defaultValues: {
       email: '',
@@ -73,7 +73,7 @@ export default function recover_password() {
             title="Check your email to reset password"
             subTitle="Thanks. If there's an account associated with this email address, we'll send the password reset instructions."
             extra={[
-              <Space size={15}>
+              <Space key={'/login'} size={15}>
                 <ArrowLeftOutlined
                   style={{
                     color: '#009F9D',
@@ -120,7 +120,7 @@ export default function recover_password() {
                   color: 'gray',
                 }}
               >
-                Don't worry, we will email you to recover your password.
+                Don&apos;t worry, we will email you to recover your password.
               </span>
             </Space>
             <form
