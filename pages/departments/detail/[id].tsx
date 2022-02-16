@@ -75,7 +75,7 @@ const DetailDepartment: NextPageWithLayout = (props: IDetailDepartmentProps) => 
                 alignItems: 'center',
               }}
             >
-              <span>3245465756867967</span>
+              <span>{dataDepartment ? dataDepartment.department._id : ''}</span>
             </Space>
           </Col>
           <Col
@@ -85,7 +85,7 @@ const DetailDepartment: NextPageWithLayout = (props: IDetailDepartmentProps) => 
               marginTop: '10px',
             }}
           >
-            <p>ID Department</p>
+            <p>Department Manager</p>
             <Space
               style={{
                 borderRadius: '4px',
@@ -97,13 +97,22 @@ const DetailDepartment: NextPageWithLayout = (props: IDetailDepartmentProps) => 
                 alignItems: 'center',
               }}
             >
-              <span>3245465756867967</span>
-              <EyeOutlined
-                style={{
-                  fontSize: '15px',
-                  color: '#009F90',
-                }}
-              />
+              <span>
+                {dataDepartment
+                  ? dataDepartment.department_manager
+                    ? dataDepartment.department_manager.email
+                    : 'None'
+                  : ''}
+              </span>
+
+              {dataDepartment && dataDepartment.department_manager && (
+                <EyeOutlined
+                  style={{
+                    fontSize: '15px',
+                    color: '#009F90',
+                  }}
+                />
+              )}
             </Space>
           </Col>
         </Row>
@@ -116,7 +125,7 @@ const DetailDepartment: NextPageWithLayout = (props: IDetailDepartmentProps) => 
               marginTop: '10px',
             }}
           >
-            <p>ID Department</p>
+            <p>QA Coordinator</p>
             <Space
               style={{
                 borderRadius: '4px',
@@ -128,13 +137,22 @@ const DetailDepartment: NextPageWithLayout = (props: IDetailDepartmentProps) => 
                 alignItems: 'center',
               }}
             >
-              <span>3245465756867967</span>
-              <EyeOutlined
-                style={{
-                  fontSize: '15px',
-                  color: '#009F90',
-                }}
-              />
+              <span>
+                {dataDepartment
+                  ? dataDepartment.qa_coordinator
+                    ? dataDepartment.qa_coordinator.email
+                    : 'None'
+                  : ''}
+              </span>
+
+              {dataDepartment && dataDepartment.qa_coordinator && (
+                <EyeOutlined
+                  style={{
+                    fontSize: '15px',
+                    color: '#009F90',
+                  }}
+                />
+              )}
             </Space>
           </Col>
           <Col
@@ -144,7 +162,7 @@ const DetailDepartment: NextPageWithLayout = (props: IDetailDepartmentProps) => 
               marginTop: '10px',
             }}
           >
-            <p>ID Department</p>
+            <p>QA Manager</p>
             <Space
               style={{
                 borderRadius: '4px',
@@ -156,13 +174,51 @@ const DetailDepartment: NextPageWithLayout = (props: IDetailDepartmentProps) => 
                 alignItems: 'center',
               }}
             >
-              <span>3245465756867967</span>
-              <EyeOutlined
-                style={{
-                  fontSize: '15px',
-                  color: '#009F90',
-                }}
-              />
+              <span>
+                {dataDepartment
+                  ? dataDepartment.qa_manager
+                    ? dataDepartment.qa_manager.email
+                    : 'None'
+                  : ''}
+              </span>
+              {dataDepartment && dataDepartment.qa_coordinator && (
+                <EyeOutlined
+                  style={{
+                    fontSize: '15px',
+                    color: '#009F90',
+                  }}
+                />
+              )}
+            </Space>
+          </Col>
+        </Row>
+
+        <Row gutter={20}>
+          <Col
+            xs={24}
+            style={{
+              marginTop: '10px',
+            }}
+          >
+            <p>Description</p>
+            <Space
+              style={{
+                borderRadius: '4px',
+                background: '#07456F10',
+                width: '100%',
+                padding: '10px 20px',
+              }}
+            >
+              <span>{dataDepartment ? dataDepartment.department.description : ''}</span>
+
+              {dataDepartment && dataDepartment.qa_coordinator && (
+                <EyeOutlined
+                  style={{
+                    fontSize: '15px',
+                    color: '#009F90',
+                  }}
+                />
+              )}
             </Space>
           </Col>
         </Row>
