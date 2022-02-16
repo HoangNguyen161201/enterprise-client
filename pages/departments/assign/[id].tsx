@@ -1,4 +1,10 @@
-import { EyeOutlined, FileTextOutlined } from '@ant-design/icons';
+import {
+  EyeOutlined,
+  FileTextOutlined,
+  UserAddOutlined,
+  UsergroupAddOutlined,
+  UserSwitchOutlined,
+} from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Breadcrumb, Button, Card, Col, message, Row, Space } from 'antd';
 import { GetServerSideProps } from 'next';
@@ -107,7 +113,6 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
   }, [dataUsersnotDPM]);
 
   console.log(userNotDepartment);
-  
 
   // setting form
   const formSetting = useForm<{ name: string; description: string }>({
@@ -134,7 +139,11 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
         <Breadcrumb.Item>Assign Department</Breadcrumb.Item>
       </Breadcrumb>
 
-      <Card title="Assign Department" style={{ width: '100%', marginTop: '20px' }}>
+      <Card
+        title="Assign Department"
+        style={{ width: '100%', marginTop: '20px' }}
+        actions={[<UserAddOutlined />, <UserSwitchOutlined />, <UsergroupAddOutlined />]}
+      >
         <form onSubmit={formSetting.handleSubmit(onSubmit)}>
           <Space direction="vertical" size={20}>
             <Row gutter={[20, 20]}>
