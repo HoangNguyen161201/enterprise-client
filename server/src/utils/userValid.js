@@ -66,7 +66,7 @@ const validUpdate = ({ name, email, role }) => {
 //Role Valid User
 
 const validFilter = ({ role }) => {
-  if (role !== 'staff' && role !== 'qa_cooordinator' && role !== 'department_manager') {
+  if (role !== 'staff' && role !== 'qa_coordinator' && role !== 'department_manager') {
     return 'Invalid role';
   }
 };
