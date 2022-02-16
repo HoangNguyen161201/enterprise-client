@@ -1,6 +1,7 @@
 //Import
 import { EyeOutlined } from '@ant-design/icons';
 import { Breadcrumb, Card, Col, message, Row, Space } from 'antd';
+import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import * as React from 'react';
 import { ClientLayout } from '../../../components/layouts';
@@ -231,3 +232,39 @@ const DetailDepartment: NextPageWithLayout = (props: IDetailDepartmentProps) => 
 DetailDepartment.getLayout = ClientLayout;
 
 export default DetailDepartment;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  //Check login
+  const res = await fetch('http://localhost:3000/api/auth/accesstoken', {
+    method: 'GET',
+    headers: {
+      cookie: context.req.headers.cookie,
+    } as HeadersInit,
+  });
+
+  const data = await res.json();
+
+  console.log(res, data);
+  
+  //Redirect login page when error
+  if (res.status !== 200) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+  }
+
+  //Check role
+  if (data.user.role !== 'admin') {
+    return {
+      notFound: true,
+    };
+  }
+
+
+  return {
+    props: {},
+  };
+};
