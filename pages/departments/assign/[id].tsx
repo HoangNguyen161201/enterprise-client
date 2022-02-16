@@ -1,14 +1,12 @@
 import {
-  PlusOutlined,
   UserAddOutlined,
   UsergroupAddOutlined,
-  UserOutlined,
-  UserSwitchOutlined,
+  UserSwitchOutlined
 } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Breadcrumb, Card, Col, message, Row, Space } from 'antd';
+import { Breadcrumb, Card, message, Row, Space } from 'antd';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect as UseEffect, useState as UseState } from 'react';
 import { useForm } from 'react-hook-form';
 import ButtonAssign from '../../../components/elements/ButtonAssign';
 import { ClientLayout } from '../../../components/layouts';
@@ -20,7 +18,7 @@ export interface IAssignDepartmentProps {}
 
 const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => {
   //State
-  const [userNotDepartment, setUserNotDepartment] = useState<IUsersNotDepartment>({
+  const [userNotDepartment, setUserNotDepartment] = UseState<IUsersNotDepartment>({
     staffs: [],
     QACoordinators: [],
     DepartmentManagers: [],
@@ -33,7 +31,7 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
 
   //Get access token
   const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
-  useEffect(() => {
+  UseEffect(() => {
     dataUserRefetch();
   }, []);
 
@@ -49,7 +47,7 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
   );
 
   //Check exist and show error
-  useEffect(() => {
+  UseEffect(() => {
     if (errorGetUser) {
       message.error({
         content: errorGetUser.response?.data.err,
@@ -57,7 +55,7 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
     }
   }, [errorGetUser]);
 
-  useEffect(() => {
+  UseEffect(() => {
     if (errorUsersNotDPM) {
       message.error({
         content: errorUsersNotDPM.response?.data.err,
@@ -65,7 +63,7 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
     }
   }, [errorUsersNotDPM]);
 
-  useEffect(() => {
+  UseEffect(() => {
     if (errorDepartment) {
       message.error({
         content: errorDepartment.response?.data.err,
@@ -74,7 +72,7 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
   }, [errorDepartment]);
 
   //Set list user not department
-  useEffect(() => {
+  UseEffect(() => {
     if (dataUsersnotDPM) {
       const { departmentManagers, QACoordinators, staffs } = dataUsersnotDPM;
       const optionStaffs = staffs?.map((staff) => {

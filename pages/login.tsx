@@ -5,7 +5,7 @@ import { AxiosError } from 'axios';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter as UseRouter } from 'next/router';
-import { useMemo } from 'react';
+import { useMemo as UseMemo } from 'react';
 import { useForm as UseForm } from 'react-hook-form';
 import { useMutation as UseMutation } from 'react-query';
 import { Input, Select } from '../components/elements';
@@ -21,7 +21,7 @@ const login: NextPageWithLayout = () => {
 
   const { push } = UseRouter();
 
-  const options = useMemo<IOptionSelect[]>(
+  const options = UseMemo<IOptionSelect[]>(
     () => [
       {
         value: 'admin',
