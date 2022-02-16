@@ -9,10 +9,10 @@ import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
 import { Input, TextArea } from '../../../components/elements';
 import { ClientLayout } from '../../../components/layouts';
-import { IDepartment, NextPageWithLayout } from '../../../models';
+import { IDepartmentForm, NextPageWithLayout } from '../../../models';
 import { getCurrentUser } from '../../../queries';
 import { getDetailDepartment } from '../../../queries/department';
-import { postData, putData, validateAddDepartment } from '../../../utils';
+import { putData, validateAddDepartment } from '../../../utils';
 
 export interface IUpdateDepartmetnProps {}
 
@@ -77,7 +77,7 @@ const UpdateDepartmetn: NextPageWithLayout = (props: IUpdateDepartmetnProps) => 
   }, [dataDepartment]);
 
   //  call api to add deartment
-  const mutationUpdateDepartment = useMutation<any, AxiosError, IDepartment>(
+  const mutationUpdateDepartment = useMutation<any, AxiosError, IDepartmentForm>(
     (dataForm) => {
       return putData({
         url: `/api/departments/${dataForm.id}`,
