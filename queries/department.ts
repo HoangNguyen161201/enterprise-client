@@ -1,7 +1,15 @@
 import { AxiosError } from 'axios';
 import { useQuery } from 'react-query';
-import { IDepartment } from '../models/apiType';
+import { IDepartment, IUser } from '../models/apiType';
 import { getData } from '../utils';
+
+//Interface
+interface IResUsersNotDepartments {
+  staffs?: IUser[],
+  QACoordinators?: IUser[],
+  departmentManagers?: IUser[],
+  [index: string]: any
+}
 
 export const getDetailDepartment = (id: string, accessToken: string) => {
   return useQuery<any, AxiosError>(
@@ -23,6 +31,21 @@ export const getAllDepartments = (accessToken: string) => {
     ['departments'],
     async () => {
       return await getData({ url: `/api/departments`, token: accessToken });
+    },
+    {
+      enabled: !!accessToken,
+      retry: 1,
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+    }
+  );
+};
+
+export const getUsersNotDepartment = (accessToken: string) => {
+  return useQuery<IResUsersNotDepartments, AxiosError>(
+    ['users', 'not-department'],
+    async () => {
+      return await getData({ url: `/api/users/not-department`, token: accessToken });
     },
     {
       enabled: !!accessToken,

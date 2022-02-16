@@ -33,6 +33,7 @@ const userSchema = new mongoose.Schema({
   department_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'departments',
+    default: null
   },
 });
 
