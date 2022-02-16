@@ -19,6 +19,8 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
   const {
     query: { id },
   } = useRouter();
+  console.log(id);
+  
 
   //Get access token
   const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
