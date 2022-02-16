@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form';
 import { Input, Select, TextArea } from '../../../components/elements';
 import { ClientLayout } from '../../../components/layouts';
 import { IOptionSelect, NextPageWithLayout } from '../../../models';
-import { getCurrentUser, getDetailDepartment, getUsersRoleDepartment } from '../../../queries';
+import { getCurrentUser, getDetailDepartment, getUsersNotDepartment, getUsersRoleDepartment } from '../../../queries';
 import { validateAddDepartment } from '../../../utils';
 
 export interface IAssignDepartmentProps {}
@@ -39,8 +39,7 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
   );
 
     //Get list users not have department
-    const { error: errorUsersNotDPM, data: dataUsersnotDPM } = getDetailDepartment(
-      id as string,
+    const { error: errorUsersNotDPM, data: dataUsersnotDPM } = getUsersNotDepartment(
       dataUser?.accessToken.token
     );
 
