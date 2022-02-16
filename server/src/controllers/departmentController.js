@@ -188,6 +188,7 @@ const departmentController = {
     });
 
     const departmentRes = {
+      _id: department._id,
       name: department.name,
       description: department.description,
       count_users: department.count_users,
