@@ -23,7 +23,8 @@ export const TextArea = ({ formSetting, name, label, require = true }: IInput) =
             size="large"
             style={{
                 width: '100%',
-                minHeight: '100px'
+                minHeight: '100px',
+                borderRadius: 5
             }}
           />
         )}

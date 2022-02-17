@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
 import { Input, TextArea } from '../../components/elements';
 import { ClientLayout } from '../../components/layouts';
-import { IDepartment, IDepartmentForm } from '../../models';
+import { IDepartmentForm } from '../../models';
 import { NextPageWithLayout } from '../../models/layoutType';
 import { getCurrentUser } from '../../queries';
 import { postData, validateAddDepartment } from '../../utils';

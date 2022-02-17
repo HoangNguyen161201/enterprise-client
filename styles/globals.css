@@ -9,7 +9,7 @@
     height: 100vh
 }
 
-body::before{
+.layout::before {
     content: 'CMS';
     font-weight: bold;
     font-size: 25rem;
@@ -18,15 +18,16 @@ body::before{
     left: 0;
     color: #CDFFEB60;
     animation: upDown 10s linear infinite;
-    animation-direction: alternate-reverse; 
-    letter-spacing: 10px; 
+    animation-direction: alternate-reverse;
+    letter-spacing: 10px;
 }
 
 @keyframes upDown {
     from {
         bottom: -100px;
-    left: 0;
+        left: 0;
     }
+
     to {
         bottom: -200px;
         left: 0;

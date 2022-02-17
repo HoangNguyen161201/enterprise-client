@@ -11,12 +11,12 @@ import { ColumnsType } from 'antd/lib/table';
 import { AxiosError } from 'axios';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import { useEffect as UseEffect, useState as UseState} from 'react';
+import { useEffect as UseEffect, useMemo, useState as UseState } from 'react';
 import { useMutation } from 'react-query';
 import { ClientLayout } from '../../components/layouts';
 import { NextPageWithLayout } from '../../models/layoutType';
 import { getAllDepartments, getCurrentUser } from '../../queries';
-import {  deleteData, postData } from '../../utils';
+import { deleteData, postData } from '../../utils';
 import { column } from '../../utils/configTB';
 
 export interface IAddDepartmentProps {}
@@ -98,9 +98,9 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
           root,
           count_users,
           detail: '',
-          update: `/departments/update/${_id}`,
-          remove: _id,
-          assign: 'dfs',
+          update: '',
+          remove: '',
+          assign: '',
         };
       });
       setDepartments(newDepartments);
@@ -127,11 +127,9 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
 
   const { push } = useRouter();
 
-  const columns: ColumnsType<any> = [
+  const columns = useMemo<ColumnsType<any>>(()=> [
     {
-      title: 'name',
-      dataIndex: 'name',
-      key: 'name',
+      ...column({ title: 'name' }),
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
         <Input
           placeholder="Search"
@@ -147,9 +145,7 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
       filterIcon: <SearchOutlined />,
     },
     {
-      title: 'root',
-      dataIndex: 'root',
-      key: 'root',
+      ...column({ title: 'root' }),
       render: (value: boolean) => (
         <>{value == true ? <Tag color="green">true</Tag> : <Tag color="red">false</Tag>}</>
       ),
@@ -168,36 +164,41 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
       },
     },
     {
-      ...column({title: 'staffs (count)', dataIndex: 'count_users', key: 'count_users '}),
-      title: 'staffs (count)',
-      dataIndex: 'count_users',
-      key: 'count_users',
+      ...column({ title: 'staffs (count)', dataIndex: 'count_users', key: 'count_users ' }),
       sorter: (a, b) => {
         return a.staff - b.staff;
       },
     },
     {
-      ...column({title: 'detail'}),
-      render: (_,record) => <ProfileOutlined onClick={() => push(`/departments/detail/${record.key}`, undefined, { shallow: true })} style={{ color: '#07456F' }} />,
+      ...column({ title: 'detail' }),
+      render: (_, record) => (
+        <ProfileOutlined
+          onClick={() => push(`/departments/detail/${record.key}`, undefined, { shallow: true })}
+          style={{ color: '#07456F' }}
+        />
+      ),
     },
     {
-      ...column({title: 'assign'}),
-      render: (_, record) => <UsergroupAddOutlined onClick={() => push(`/departments/assign/${record.key}`, undefined, { shallow: true })} style={{ color: '#07456F' }} />,
+      ...column({ title: 'assign' }),
+      render: (_, record) => (
+        <UsergroupAddOutlined
+          onClick={() => push(`/departments/assign/${record.key}`, undefined, { shallow: true })}
+          style={{ color: '#07456F' }}
+        />
+      ),
     },
     {
-      ...column({title: 'update'}),
-      render: (value) => (
+      ...column({ title: 'update' }),
+      render: (_,record) => (
         <EditOutlined
-          onClick={() => push(value, undefined, { shallow: true })}
+          onClick={() => push(`/departments/update/${record.key}`, undefined, { shallow: true })}
           style={{ color: '#1890ff' }}
         />
       ),
     },
     {
-      title: 'Delete',
-      dataIndex: 'remove',
-      key: 'remove',
-      render: (value, record) => {
+      ...column({ title: 'remove' }),
+      render: (_, record) => {
         if (!record.root)
           return (
             <Popconfirm
@@ -216,7 +217,7 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
                     ...state,
                     isLoading: true,
                   }));
-                  handleDl.mutate(value);
+                  handleDl.mutate(record.key);
                 },
                 loading: isLoadingDl.isLoading,
               }}
@@ -232,7 +233,7 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
         return '';
       },
     },
-  ];
+  ], [])
 
   return (
     <>
@@ -243,7 +244,8 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
 
       <Card
         extra={[
-          <Popconfirm key={'delete'}
+          <Popconfirm
+            key={'delete'}
             disabled={departmentsSl == null}
             icon={
               <QuestionCircleOutlined

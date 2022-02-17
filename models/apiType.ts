@@ -49,7 +49,14 @@ export interface IDetailDepartment extends ICommon {
     name: string
     description: string
     count_users: number
-    staffs: IUser[]
+    staffs: Array<IUser>
     [index: string]: any
   }
+}
+
+export interface IResUsersNotDepartments {
+  staffs?: IUser[];
+  QACoordinators?: IUser[];
+  departmentManagers?: IUser[];
+  [index: string]: any;
 }

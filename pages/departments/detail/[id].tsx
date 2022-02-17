@@ -17,7 +17,6 @@ export interface IDetailDepartmentProps {
 
 const DetailDepartment: NextPageWithLayout = ({ detailDepartment }: IDetailDepartmentProps) => {
   const {query} = useRouter()
-  console.log(detailDepartment)
 
   const [isShow, setIsShow] = useState(false);
   //Get id from router to get old data
@@ -209,7 +208,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   const detailDepartment: IDetailDepartment = await fetch(
-    `http://localhost:3000//api/departments/${context.query.id}`,
+    `http://localhost:3000/api/departments/${context.query.id}`,
     {
       method: 'GET',
       headers: {

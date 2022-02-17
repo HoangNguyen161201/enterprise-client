@@ -1,14 +1,15 @@
-import '../styles/globals.css';
-import 'antd/dist/antd.variable.min.css';
-import { AppPropsWithLayout } from '../models/layoutType';
-import { EmptyLayout } from '../components/layouts';
 import { ConfigProvider } from 'antd';
+import 'antd/dist/antd.variable.min.css';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { QueryClientProvider, QueryClient } from 'react-query';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
+import { EmptyLayout } from '../components/layouts';
 import { GlobalContextProvider } from '../contextApi/globalContext';
+import { AppPropsWithLayout } from '../models/layoutType';
+import '../styles/globals.css';
 
-function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+function MyApp({ Component, pageProps, router }: AppPropsWithLayout) {
   // create layout
   const Layout = Component.getLayout || EmptyLayout;
 
@@ -21,11 +22,16 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
       },
     });
   }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <Layout>
         <GlobalContextProvider>
-          <Component {...pageProps} />
+          <AnimatePresence exitBeforeEnter>
+            <motion.div animate={{opacity: 1, y: 0, x:0}} key={router.route} initial={{opacity: 0, y: -50}} exit={{opacity: 0, x: 250, transition:{duration: 0.7}}}>
+              <Component {...pageProps}/>
+            </motion.div>
+          </AnimatePresence>
         </GlobalContextProvider>
       </Layout>
       <ReactQueryDevtools position="bottom-right" />
