@@ -1,18 +1,19 @@
-import {
-  UserAddOutlined,
-  UsergroupAddOutlined,
-  UserSwitchOutlined
-} from '@ant-design/icons';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { Breadcrumb, Card, message, Row, Space } from 'antd';
+import { UserAddOutlined, UsergroupAddOutlined, UserSwitchOutlined } from '@ant-design/icons';
+import { Breadcrumb, Button, Card, message, Row, Space } from 'antd';
+import { AxiosError } from 'axios';
 import { useRouter } from 'next/router';
-import { useEffect as UseEffect, useState as UseState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useEffect as UseEffect, useState, useState as UseState } from 'react';
+import { useMutation } from 'react-query';
 import ButtonAssign from '../../../components/elements/ButtonAssign';
 import { ClientLayout } from '../../../components/layouts';
-import { IUsersNotDepartment, NextPageWithLayout } from '../../../models';
+import {
+  IAssignUsers,
+  IDepartmentForm,
+  IUsersNotDepartment,
+  NextPageWithLayout,
+} from '../../../models';
 import { getCurrentUser, getDetailDepartment, getUsersNotDepartment } from '../../../queries';
-import { validateAddDepartment } from '../../../utils';
+import { postData } from '../../../utils';
 
 export interface IAssignDepartmentProps {}
 
@@ -36,15 +37,18 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
   }, []);
 
   //Get detail data department
-  const { error: errorDepartment, data: dataDepartment } = getDetailDepartment(
-    id as string,
-    dataUser?.accessToken.token
-  );
+  const {
+    error: errorDepartment,
+    data: dataDepartment,
+    refetch: dataDepartmentRefetch,
+  } = getDetailDepartment(id as string, dataUser?.accessToken.token);
 
   //Get list users not have department
-  const { error: errorUsersNotDPM, data: dataUsersnotDPM } = getUsersNotDepartment(
-    dataUser?.accessToken.token
-  );
+  const {
+    error: errorUsersNotDPM,
+    data: dataUsersnotDPM,
+    refetch: dataUsersnotDPMRefetch,
+  } = getUsersNotDepartment(dataUser?.accessToken.token);
 
   //Check exist and show error
   UseEffect(() => {
@@ -104,23 +108,84 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
     }
   }, [dataUsersnotDPM]);
 
-  console.log(userNotDepartment);
-
-  // setting form
-  const formSetting = useForm<{ name: string; description: string }>({
-    resolver: yupResolver(validateAddDepartment),
-    defaultValues: {
-      name: '',
-      description: '',
+  //Mutation assign
+  //Mutation Assign one user
+  const mutationAssignOneUser = useMutation<any, AxiosError, IAssignUsers>(
+    ({ userId, departmentId }) => {
+      return postData({
+        url: `/api/users/assign`,
+        body: {
+          userId,
+          departmentId,
+        },
+        token: dataUser?.accessToken.token,
+      });
     },
-  });
+    {
+      onSuccess: (data) => {
+        message.success({
+          content: data.msg,
+        });
 
-  const onSubmit = async ({ name, description }: { name: string; description: string }) => {
-    //Refetch again let get accesstoken pass to api
-    await dataUserRefetch();
+        //Refetch get data
+        dataDepartmentRefetch();
+        dataUsersnotDPMRefetch();
+      },
+      onError: (error) => {
+        message.error({
+          content: error.response?.data.err || 'Assign user false.',
+        });
+      },
+    }
+  );
+
+  //Mutation Assign one user
+  const mutationAssignManyUsers = useMutation<any, AxiosError, IAssignUsers>(
+    ({ users, departmentId }) => {
+      return postData({
+        url: `/api/users/assign-many`,
+        body: {
+          users,
+          departmentId,
+        },
+        token: dataUser?.accessToken.token,
+      });
+    },
+    {
+      onSuccess: (data) => {
+        message.success({
+          content: data.msg,
+        });
+        
+        //Refetch get data
+        dataDepartmentRefetch();
+        dataUsersnotDPMRefetch();
+      },
+      onError: (error) => {
+        message.error({
+          content: error.response?.data.err || 'Assign users false.',
+        });
+      },
+    }
+  );
+
+  //Function on assign one user
+  const onAssignOneUser = ({ userId, departmentId }: IAssignUsers) => {
+    //Get data user again to get access token
+    dataUserRefetch();
+
+    //Call mutation active with api to assign one user
+    mutationAssignOneUser.mutate({ userId, departmentId });
   };
 
-  console.log(dataUsersnotDPM);
+  //Function on assign many users
+  const onAssignManyUsers = ({ users, departmentId }: IAssignUsers) => {
+    //Get data user again to get access token
+    dataUserRefetch();
+
+    //Call mutation active with api to assign many users
+    mutationAssignManyUsers.mutate({ users, departmentId });
+  };
 
   return (
     <>
@@ -132,41 +197,54 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
       </Breadcrumb>
 
       <Card title="Assign Department" style={{ width: '100%', marginTop: '20px' }}>
-        <form onSubmit={formSetting.handleSubmit(onSubmit)}>
-          <Space direction="vertical" size={20}>
-            <Row>
-              <ButtonAssign
-                title="Staff"
-                subTitle={`${
-                  dataDepartment?.department?.staffs ? dataDepartment?.department?.staffs.length : 0
-                } People`}
-                color="#009F9D"
-                Icon={UsergroupAddOutlined}
-                xs={24}
-                lg={12}
-                xl={8}
-              />
-              <ButtonAssign
-                title="QA Coordinator"
-                subTitle={`${dataDepartment?.department?.qa_coordinator ? 1 : 0} People`}
-                color="#07456F"
-                Icon={UserSwitchOutlined}
-                xs={24} 
-                lg={12}
-                xl={8}
-              />
-              <ButtonAssign
-                title="Manager"
-                subTitle={`${dataDepartment?.department?.department_manager ? 1 : 0} People`}
-                color="#0F0A3C"
-                Icon={UserAddOutlined}
-                xs={24}
-                lg={12}
-                xl={8}
-              />
-            </Row>
-          </Space>
-        </form>
+        <Space direction="vertical" size={20}>
+          <Row>
+            <ButtonAssign
+              title="Staff"
+              subTitle={`${
+                dataDepartment?.department?.staffs ? dataDepartment?.department?.staffs.length : 0
+              } People`}
+              color="#009F9D"
+              Icon={UsergroupAddOutlined}
+              role="Staff"
+              dataUsers={userNotDepartment.staffs}
+              assignType="many"
+              handleOk={onAssignManyUsers}
+              departmentId={dataDepartment?.department?._id}
+              xs={24}
+              lg={12}
+              xl={8}
+            />
+            <ButtonAssign
+              title="QA Coordinator"
+              subTitle={`${dataDepartment?.department?.qa_coordinator ? 1 : 0} People`}
+              color="#07456F"
+              Icon={UserSwitchOutlined}
+              role="QA Coordinator"
+              dataUsers={userNotDepartment.QACoordinators}
+              assignType="one"
+              handleOk={onAssignOneUser}
+              departmentId={dataDepartment?.department?._id}
+              xs={24}
+              lg={12}
+              xl={8}
+            />
+            <ButtonAssign
+              title="Manager"
+              subTitle={`${dataDepartment?.department?.department_manager ? 1 : 0} People`}
+              color="#0F0A3C"
+              role="Department Manager"
+              Icon={UserAddOutlined}
+              dataUsers={userNotDepartment.DepartmentManagers}
+              assignType="one"
+              handleOk={onAssignOneUser}
+              departmentId={dataDepartment?.department?._id}
+              xs={24}
+              lg={12}
+              xl={8}
+            />
+          </Row>
+        </Space>
       </Card>
     </>
   );

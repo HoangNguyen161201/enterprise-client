@@ -1,16 +1,48 @@
 import { PlusOutlined, UserOutlined } from '@ant-design/icons';
-import { Col, Space } from 'antd';
+import { Button, Col, Modal, Select, Space } from 'antd';
 import * as React from 'react';
+import { IAssignUsers, IOptionSelect } from '../../models';
 
 export interface IButtonAssignProps {
   color: string;
   Icon: any;
   title: string;
   subTitle: string;
-  [index: string]: any
+  [index: string]: any;
+  role: string;
+  dataUsers: IOptionSelect[] | undefined;
+  handleOk: ({}: IAssignUsers) => void;
+  assignType: 'one' | 'many';
+  departmentId: string;
 }
 
-export default function ButtonAssign({ color, Icon, title, subTitle, ...props }: IButtonAssignProps) {
+const { Option } = Select;
+
+export default function ButtonAssign({
+  color,
+  Icon,
+  title,
+  subTitle,
+  role,
+  dataUsers,
+  assignType,
+  handleOk,
+  departmentId,
+  ...props
+}: IButtonAssignProps) {
+  const [isModalVisible, setIsModalVisible] = React.useState(false);
+  const [dataSelect, setDataSelect] = React.useState<string | string[]>(
+    assignType === 'one' ? '' : []
+  );
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
   return (
     <Col
       span={8}
@@ -82,6 +114,7 @@ export default function ButtonAssign({ color, Icon, title, subTitle, ...props }:
           }}
         >
           <Space
+            onClick={showModal}
             style={{
               width: '30px',
               height: '30px',
@@ -89,7 +122,8 @@ export default function ButtonAssign({ color, Icon, title, subTitle, ...props }:
               display: 'flex',
               justifyContent: 'center',
               borderRadius: '5px',
-              boxShadow: "5px 5px 10px  rgba(0,0,0,0.1)"
+              boxShadow: '5px 5px 10px  rgba(0,0,0,0.1)',
+              cursor: 'pointer',
             }}
           >
             <PlusOutlined
@@ -100,6 +134,51 @@ export default function ButtonAssign({ color, Icon, title, subTitle, ...props }:
           </Space>
         </Space>
       </Space>
+
+      <Modal
+        style={{
+          borderRadius: '10px',
+        }}
+        title={title}
+        visible={isModalVisible}
+        onOk={() => {
+          handleOk(
+            assignType === 'one'
+              ? {
+                  userId: dataSelect,
+                  departmentId: departmentId,
+                }
+              : {
+                  users: dataSelect,
+                  departmentId: departmentId,
+                }
+          );
+
+          setIsModalVisible(false);
+
+          setDataSelect(assignType === 'one' ? '' : []);
+        }}
+        onCancel={handleCancel}
+        okText={'Assign'}
+        okButtonProps={{ disabled: dataUsers?.length !== 0 ? false : true }}
+      >
+        <Select
+          value={dataSelect}
+          mode={assignType === 'many' ? 'multiple' : undefined}
+          showSearch
+          style={{ width: '100%' }}
+          placeholder="Search to Select"
+          optionFilterProp="children"
+          onChange={(e) => setDataSelect(e)}
+        >
+          {dataUsers &&
+            dataUsers.map((user) => (
+              <Option key={user.value} value={user.value}>
+                {user.label}
+              </Option>
+            ))}
+        </Select>
+      </Modal>
     </Col>
   );
 }
