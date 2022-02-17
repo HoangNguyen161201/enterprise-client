@@ -12,7 +12,7 @@ import {
   IUsersNotDepartment,
   NextPageWithLayout,
 } from '../../../models';
-import { getCurrentUser, getDetailDepartment, getUsersNotDepartment } from '../../../queries';
+import { getAllDepartments, getCurrentUser, getDetailDepartment, getUsersNotDepartment } from '../../../queries';
 import { postData } from '../../../utils';
 
 export interface IAssignDepartmentProps {}
@@ -35,6 +35,9 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
   UseEffect(() => {
     dataUserRefetch();
   }, []);
+
+   //Queries get data all departments => refetch when have assign users
+   const {refetch: dataAllDepartmentsRefetch} = getAllDepartments(dataUser?.accessToken.token)
 
   //Get detail data department
   const {
@@ -130,6 +133,7 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
         //Refetch get data
         dataDepartmentRefetch();
         dataUsersnotDPMRefetch();
+        dataAllDepartmentsRefetch();
       },
       onError: (error) => {
         message.error({
@@ -160,6 +164,7 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
         //Refetch get data
         dataDepartmentRefetch();
         dataUsersnotDPMRefetch();
+        dataAllDepartmentsRefetch();
       },
       onError: (error) => {
         message.error({

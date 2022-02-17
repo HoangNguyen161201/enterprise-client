@@ -37,7 +37,7 @@ export default function User({ image, name, role, xs, sm, lg, xl }: IStaff) {
           src={image}
         />
         <Space direction="vertical" size={0} style={{marginTop: 10}}>
-          <h2 className="font-3">{name}</h2>
+          <h2 className="font-2">{name}</h2>
           <Space
             style={{
               display: 'flex',
