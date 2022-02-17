@@ -123,9 +123,11 @@ const departmentController = {
       }
 
       //Check number user
-      const users = await userModel.find({
-        department_id: department._id,
-      });
+      const users = await userModel
+        .find({
+          department_id: department._id,
+        })
+        .select('-password');
       if (users.length !== 0) {
         countDepartmentsHasUsers = ++countDepartmentsHasUsers;
       }
@@ -163,29 +165,117 @@ const departmentController = {
     //Get detail department
     const department = await departmentModel.findById(id);
 
+    //Check exist department
+    if (!department)
+      return res.status(400).json({
+        err: 'Department not exist in the system.',
+        statusCode: 400,
+      });
+
     //Get QA manager
-    const qa_manager = await userModel.findOne({
-      role: 'qa_manager',
-      department_id: department._id,
-    });
+    const qa_manager = await userModel
+      .findOne({
+        role: 'qa_manager',
+        department_id: department._id,
+      })
+      .select('-password');
 
     //Get QA coordinator
-    const qa_coordinator = await userModel.findOne({
-      role: 'qa_coordinator',
-      department_id: department._id,
-    });
+    const qa_coordinator = await userModel
+      .findOne({
+        role: 'qa_coordinator',
+        department_id: department._id,
+      })
+      .select('-password');
 
     //Get department manager
-    const department_manager = await userModel.findOne({
-      role: 'department_manager',
-      department_id: department._id,
-    });
+    const department_manager = await userModel
+      .findOne({
+        role: 'department_manager',
+        department_id: department._id,
+      })
+      .select('-password');
 
     //Get staffs
-    const staffs = await userModel.find({
-      role: 'staff',
-      department_id: department._id,
+    const staffs = await userModel
+      .find({
+        role: 'staff',
+        department_id: department._id,
+      })
+      .select('-password');
+
+    const departmentRes = {
+      _id: department._id,
+      name: department.name,
+      description: department.description,
+      count_users: department.count_users,
+      qa_manager,
+      qa_coordinator,
+      department_manager,
+      staffs,
+    };
+
+    return res.status(200).json({
+      msg: `Get detail department ${id} success`,
+      department: departmentRes,
+      statusCode: 200,
     });
+  }),
+
+  getDetailByUser: catchAsyncError(async (req, res) => {
+    //Get Id user
+    const { id } = req.params;
+
+    //Check exist user
+    const user = await userModel.findById(id).populate('department_id').select('-password');
+
+    if (!user)
+      return res.status(400).json({
+        err: 'User not exist in the system.',
+        statusCode: 400,
+      });
+
+    //Check exist department
+    if (!user.department_id)
+      return res.status(400).json({
+        err: 'User not assigned any department.',
+        statusCode: 400,
+      });
+
+    //Get id department
+    const department = user.department_id;
+
+    //Get QA manager
+    const qa_manager = await userModel
+      .findOne({
+        role: 'qa_manager',
+        department_id: department._id,
+      })
+      .select('-password');
+
+    //Get QA coordinator
+    const qa_coordinator = await userModel
+      .findOne({
+        role: 'qa_coordinator',
+        department_id: department._id,
+      })
+      .select('-password');
+
+    //Get department manager
+    const department_manager = await userModel
+      .findOne({
+        role: 'department_manager',
+        department_id: department._id,
+      })
+      .select('-password');
+
+    //Get staffs
+    const staffs = await userModel
+      .find({
+        role: 'staff',
+        department_id: department._id,
+      })
+      .select('-password');
 
     const departmentRes = {
       _id: department._id,
@@ -224,10 +314,12 @@ const departmentController = {
     //Assign staffs
     for (let index = 0; index < newStaffs.length; index++) {
       const idStaff = newStaffs[index];
-      const user = await userModel.find({
-        _id: idStaff,
-        role: 'staff',
-      });
+      const user = await userModel
+        .find({
+          _id: idStaff,
+          role: 'staff',
+        })
+        .select('-password');
       //Check role staff
       if (!user) {
         return res.status(400).json({
@@ -257,10 +349,12 @@ const departmentController = {
     }
 
     //Assign qa_coordinator
-    const qaCoordinator = await userModel.findOne({
-      _id: qa_coordinator,
-      role: 'qa_coordinator',
-    });
+    const qaCoordinator = await userModel
+      .findOne({
+        _id: qa_coordinator,
+        role: 'qa_coordinator',
+      })
+      .select('-password');
 
     console.log(qaCoordinator._id);
     //Check exist qa_coordinator
@@ -271,10 +365,12 @@ const departmentController = {
     }
 
     //Assign qa_coordinator
-    const departmentManager = await userModel.findOne({
-      _id: department_manager,
-      role: 'department_manager',
-    });
+    const departmentManager = await userModel
+      .findOne({
+        _id: department_manager,
+        role: 'department_manager',
+      })
+      .select('-password');
 
     //Check exist qa_coordinator
     if (departmentManager) {
