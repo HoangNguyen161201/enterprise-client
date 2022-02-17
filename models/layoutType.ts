@@ -8,7 +8,7 @@ export type NextLayout = NextPage<{
     children: ReactElement 
 }>
 
-export type NextPageWithLayout = NextPage & {
+export type NextPageWithLayout = NextPage<any> & {
     getLayout?: NextLayout
 }
 

@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios';
 import { useQuery } from 'react-query';
-import { IDepartment, IUser } from '../models/apiType';
+import { IDepartment, IUser, IDetailDepartment } from '../models/apiType';
 import { getData } from '../utils';
 
 //Interface
@@ -11,7 +11,7 @@ interface IResUsersNotDepartments {
   [index: string]: any
 }
 
-export const getDetailDepartment = (id: string, accessToken: string) => {
+export const getDetailDepartment = (id: string, accessToken: string, initial: IDetailDepartment) => {
   return useQuery<any, AxiosError>(
     ['department', id],
     async () => {
@@ -22,6 +22,7 @@ export const getDetailDepartment = (id: string, accessToken: string) => {
       retry: 1,
       refetchOnWindowFocus: false,
       refetchOnMount: false,
+      initialData: initial
     }
   );
 };

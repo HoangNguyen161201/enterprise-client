@@ -5,6 +5,7 @@ import Header from '../elements/Header';
 import { useState } from 'react';
 import { MenuOutlined } from '@ant-design/icons';
 import Drawer from '../elements/Drawer';
+import Marquee from 'react-fast-marquee'
 
 export const ClientLayout: NextLayout = ({ children }) => {
   const [visible, setVisible] = useState(false);
