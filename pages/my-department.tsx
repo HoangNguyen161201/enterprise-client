@@ -16,8 +16,8 @@ export interface IDetailDepartmentProps {
 }
 
 const DetailDepartment: NextPageWithLayout = ({ detailMyDepartment }: IDetailDepartmentProps) => {
-    console.log(detailMyDepartment);
-    
+  console.log(detailMyDepartment);
+
   const { query } = useRouter();
 
   //Is show button load more
@@ -57,12 +57,10 @@ const DetailDepartment: NextPageWithLayout = ({ detailMyDepartment }: IDetailDep
     <>
       <Breadcrumb>
         <Breadcrumb.Item>Home</Breadcrumb.Item>
-        <Breadcrumb.Item>Departments</Breadcrumb.Item>
-        <Breadcrumb.Item>All Departments</Breadcrumb.Item>
-        <Breadcrumb.Item>View Detail Department</Breadcrumb.Item>
+        <Breadcrumb.Item>My Department</Breadcrumb.Item>
       </Breadcrumb>
 
-      <Card title="View Detail Department" style={{ width: '100%', marginTop: '20px' }}>
+      <Card title="View My Department" style={{ width: '100%', marginTop: '20px' }}>
         <h2 className="font-3">Information:</h2>
         <Row gutter={[30, 20]}>
           <FieldCard
@@ -206,12 +204,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
-  console.log("gsdfgsd", data.user);
-  
+  //Check user assigned department
+  if (!data.user.department_id) {
+    return {
+      props: {
+        detailMyDepartment: null,
+      },
+    };
+  }
 
   //Get department by current user
   const detailMyDepartment: IDetailDepartment = await fetch(
-    `http://localhost:3000/api/departments/user/${data?.user?._id}`,
+    `http://localhost:3000/api/departments/user/${data.user._id}`,
     {
       method: 'GET',
       headers: {
