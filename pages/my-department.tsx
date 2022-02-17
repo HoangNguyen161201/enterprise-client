@@ -18,7 +18,7 @@ export interface IDetailDepartmentProps {
 const DetailDepartment: NextPageWithLayout = ({ detailMyDepartment }: IDetailDepartmentProps) => {
   const { query } = useRouter();
 
-  //Is show button load more user
+  //Is show button load more
   const [isShow, setIsShow] = useState(false);
 
   //Get access token

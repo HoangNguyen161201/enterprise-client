@@ -84,9 +84,6 @@ function validatePassword(password) {
   return res.test(String(password).toLowerCase());
 }
 
-<<<<<<< HEAD
-
-=======
 //Check valid assign one user to department
 const validAssignOneUser = ({ userId, departmentId }) => {
   //Check exist data
@@ -102,7 +99,6 @@ const validAssignManyUsers = ({ users, departmentId }) => {
     return 'Please add all fields.';
   }
 };
->>>>>>> e91496d985e8cc606836013ceb692725431d7aa3
 
 module.exports = {
   validSignUp,
