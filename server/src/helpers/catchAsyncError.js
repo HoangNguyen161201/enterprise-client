@@ -14,7 +14,6 @@ const handleCatchError = (func) => {
       const nameError = error.name;
       console.log(nameError);
       if (nameError === 'CastError') {
-        console.log('sdfds');
         message = `Resource not found.`;
         statusCode = 400;
       }

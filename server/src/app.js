@@ -31,5 +31,5 @@ mainRouter(app);
 
 //Server listen PORT
 app.listen(PORT, () => {
-  console.log(`Server listen at http://localhost/${PORT}`);
+  console.log(`Server listen at http://localhost:${PORT}`);
 });

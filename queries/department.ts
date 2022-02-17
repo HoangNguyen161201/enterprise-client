@@ -23,6 +23,26 @@ export const getDetailDepartment = (
   );
 };
 
+export const getDepartmentByUser = (
+  id: string,
+  accessToken: string,
+  initial: IDetailDepartment
+) => {
+  return useQuery<any, AxiosError>(
+    ['department', id],
+    async () => {
+      return await getData({ url: `/api/departments/user/${id}`, token: accessToken });
+    },
+    {
+      enabled: !!accessToken && !!id,
+      retry: 1,
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+      initialData: initial,
+    }
+  );
+};
+
 export const getAllDepartments = (accessToken: string) => {
   return useQuery<IDepartment, AxiosError>(
     ['departments'],

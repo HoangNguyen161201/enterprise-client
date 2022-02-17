@@ -10,10 +10,10 @@ const departmentModel = require('../models/departmentModel');
 
 const userController = {
   create: catchAsyncError(async (req, res) => {
-    //Get infor user to create
-    const { name, email, password, cf_password, role } = req.body;
+    //Get info user to create
+    const { name, email, password, cf_password, role, avatar } = req.body;
 
-    //Check valid infor sign up
+    //Check valid info sign up
     const errMsg = userValid.validSignUp({
       name,
       email,
@@ -41,6 +41,12 @@ const userController = {
     //Hash Password
     const passwordHash = await bcrypt.hash(password, 12);
 
+    //Avatar
+    const avatarUser = avatar || {
+      public_id: '',
+      url: `https://avatars.dicebear.com/api/avataaars/${name}.svg`,
+    };
+
     //Create and save new user
     const NewUser = new userModel({
       name,
@@ -48,6 +54,7 @@ const userController = {
       role,
       password: passwordHash,
       cf_password,
+      avatar: avatarUser,
     });
 
     await NewUser.save();
@@ -71,6 +78,13 @@ const userController = {
     if (!user)
       return res.status(400).json({
         err: 'The User is does not exist',
+        statusCode: 400,
+      });
+
+    //check root user
+    if (user.root)
+      return res.status(400).json({
+        err: 'Cannot update user',
         statusCode: 400,
       });
 
@@ -102,6 +116,13 @@ const userController = {
     if (!user)
       return res.status(400).json({
         err: 'The User is does not exist',
+        statusCode: 400,
+      });
+
+    //check root user
+    if (user.root)
+      return res.status(400).json({
+        err: 'Cannot update user',
         statusCode: 400,
       });
 
@@ -180,13 +201,25 @@ const userController = {
       msg: 'Get user success',
       staffs,
       QACoordinators,
-      departmentManagers
+      departmentManagers,
     });
   }),
 
   assignDepartment: catchAsyncError(async (req, res) => {
     {
       const { userId, departmentId } = req.body;
+
+      //Check valid data
+      const errMsg = userValid.validAssignOneUser({
+        userId,
+        departmentId,
+      });
+
+      if (errMsg)
+        return res.status(400).json({
+          err: errMsg,
+          statusCode: 400,
+        });
 
       //Check exist user
       const user = await userModel.findById(userId);
@@ -215,6 +248,7 @@ const userController = {
 
       //Check user assigned this department
       const userCheckAssigned = await userModel.findOne({
+        _id: user._id,
         role: user.role,
         department_id: departmentId,
       });
@@ -243,6 +277,18 @@ const userController = {
   manyAssignDepartment: catchAsyncError(async (req, res) => {
     {
       const { users, departmentId } = req.body;
+
+      //Check valid data
+      const errMsg = userValid.validAssignManyUsers({
+        users,
+        departmentId,
+      });
+
+      if (errMsg)
+        return res.status(400).json({
+          err: errMsg,
+          statusCode: 400,
+        });
 
       //Number user assign
       let countUsersAssign = 0;
@@ -289,7 +335,7 @@ const userController = {
 
   removeAssignDepartment: catchAsyncError(async (req, res) => {
     {
-      const { userId } = req.body;
+      const { id: userId } = req.params;
 
       //Check exist user
       const user = await userModel.findById(userId);
@@ -308,6 +354,27 @@ const userController = {
         msg: 'Remove user out of department success.',
       });
     }
+  }),
+
+  removeManyAssignDepartment: catchAsyncError(async (req, res) => {
+    const { users } = req.body;
+
+    //loop remove many user out of department
+    for (let index = 0; index < users.length; index++) {
+      const userId = users[index];
+      // check exist users
+      const user = userModel.findById(userId);
+      if (user) {
+        //Remove user out of department
+        user.department_id = null;
+        await user.save();
+      }
+    }
+
+    return res.status(200).json({
+      statusCode: 200,
+      msg: 'Remove user out of department success.',
+    });
   }),
 };
 module.exports = userController;

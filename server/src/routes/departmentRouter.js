@@ -11,25 +11,26 @@ const authorization = require('../middlewares/authorization');
 
 departmentRouter.post('/', departmentController.create);
 
-departmentRouter.get('/', departmentController.getAll);
-
-departmentRouter.put('/:id', authorization(['admin', 'qa_manager']), departmentController.update);
-
-departmentRouter.delete('/deletemany', departmentController.deleteMany);
-
-departmentRouter.delete(
-  '/:id',
-  authorization(['admin', 'qa_manager']),
-  departmentController.delete
-);
-
-
-departmentRouter.get('/:id', departmentController.getDetail);
+departmentRouter.post('/delete-many', departmentController.deleteMany);
 
 departmentRouter.post(
   '/:id/assign',
   authorization(['admin', 'qa_manager']),
   departmentController.assign
+);
+
+departmentRouter.get('/', departmentController.getAll);
+
+departmentRouter.get('/:id', departmentController.getDetail);
+
+departmentRouter.get('/user/:id', departmentController.getDetailByUser);
+
+departmentRouter.put('/:id', authorization(['admin', 'qa_manager']), departmentController.update);
+
+departmentRouter.delete(
+  '/:id',
+  authorization(['admin', 'qa_manager']),
+  departmentController.delete
 );
 
 module.exports = departmentRouter;

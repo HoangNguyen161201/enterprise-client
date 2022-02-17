@@ -159,7 +159,7 @@ const UpdateDepartmetn: NextPageWithLayout = (props: IUpdateDepartmetnProps) => 
               formSetting={formSetting}
               placeholder="Enter department name"
               type="text"
-              icon={<FileTextOutlined />}
+              icon={<FileTextOutlined style={{color: 'gray'}}/>}
             />
             <TextArea name="description" label="Description" formSetting={formSetting} />
             <div

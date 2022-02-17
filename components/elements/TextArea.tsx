@@ -11,7 +11,7 @@ export const TextArea = ({ formSetting, name, label, require = true }: IInput) =
   } = formSetting;
   return (
     <Space direction="vertical" size={'small'}>
-      <span className="font-2">
+      <span className="font-1">
         {label} {require && <span className="color-red">*</span>}
       </span>
       <Controller

@@ -63,7 +63,7 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
   const handleDlAll = useMutation<any, AxiosError, any>(
     (Ids) => {
       return postData({
-        url: `/api/departments/deletemany`,
+        url: `/api/departments/delete-many`,
         token: dataUser?.accessToken.token,
         body: { departments: Ids },
       });
@@ -276,6 +276,7 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
       >
         <Space direction="vertical" size={20}></Space>
         <Table
+          
           rowSelection={{
             type: 'checkbox',
             getCheckboxProps: (record) => ({
@@ -286,7 +287,7 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
               return setDepartmentsSl(selectedRowKeys);
             },
           }}
-          style={{ overflowX: 'auto' }}
+          style={{ overflowX: 'auto', fontSize: '16px' }}
           dataSource={departments}
           columns={columns}
         />
