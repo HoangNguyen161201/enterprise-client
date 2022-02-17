@@ -86,6 +86,7 @@ export default function DrawerComponent({ onClose, ...props }: IProps) {
   return (
     <>
       <Drawer
+        onClose={onClose}
         {...props}
         bodyStyle={{
           padding: '0px',
@@ -97,6 +98,26 @@ export default function DrawerComponent({ onClose, ...props }: IProps) {
               <a>Home</a>
             </Link>
           </Menu.Item>
+
+          <Menu.Item
+            key="2"
+            icon={<TeamOutlined />}
+            onClick={onClose}
+            style={{
+              display:
+                isShowByRole.staff ||
+                isShowByRole.qa_coordinator ||
+                isShowByRole.department_manager ||
+                isShowByRole.qa_manager
+                  ? 'block'
+                  : 'none',
+            }}
+          >
+            <Link href={'/my-department'}>
+              <a>My Department</a>
+            </Link>
+          </Menu.Item>
+
           <SubMenu
             key="sub1"
             icon={<TeamOutlined />}
