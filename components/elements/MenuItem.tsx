@@ -1,6 +1,6 @@
 import { Menu } from 'antd';
 import Link from 'next/link';
-import * as React from 'react';
+import {useEffect as UseEffect, useState as UseState} from 'react';
 import { getCurrentUser } from '../../queries';
 
 export interface IMenuItemProps {
@@ -13,12 +13,12 @@ export interface IMenuItemProps {
 }
 
 export default function MenuItem({ key, title, href, role, isPublic, ...props }: IMenuItemProps) {
-  const [isShow, setIsShow] = React.useState(false);
+  const [isShow, setIsShow] = UseState(false);
 
   //Get current User
   const { data: dataUser } = getCurrentUser();
 
-  React.useEffect(() => {
+  UseEffect(() => {
     if (dataUser) {
       let valueSetIsShow = false;
 

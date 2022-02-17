@@ -1,23 +1,48 @@
-import { UserAddOutlined, UsergroupAddOutlined, UserSwitchOutlined } from '@ant-design/icons';
-import { Breadcrumb, Button, Card, message, Row, Space } from 'antd';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  ProfileOutlined,
+  QuestionCircleOutlined,
+  SearchOutlined,
+  UserAddOutlined,
+  UsergroupAddOutlined,
+  UserSwitchOutlined,
+} from '@ant-design/icons';
+import { Breadcrumb, Card, Input, message, Popconfirm, Row, Space, Tag , Table, Image} from 'antd';
+import { ColumnsType } from 'antd/lib/table';
 import { AxiosError } from 'axios';
+import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import { useEffect as UseEffect, useState, useState as UseState } from 'react';
+import { useEffect, useEffect as UseEffect, useMemo, useState, useState as UseState } from 'react';
 import { useMutation } from 'react-query';
 import ButtonAssign from '../../../components/elements/ButtonAssign';
 import { ClientLayout } from '../../../components/layouts';
 import {
   IAssignUsers,
-  IDepartmentForm,
+  IDetailDepartment,
+  IUser,
   IUsersNotDepartment,
   NextPageWithLayout,
 } from '../../../models';
-import { getAllDepartments, getCurrentUser, getDetailDepartment, getUsersNotDepartment } from '../../../queries';
-import { postData } from '../../../utils';
+import {
+  getAllDepartments,
+  getCurrentUser,
+  getDetailDepartment,
+  getUsersNotDepartment,
+} from '../../../queries';
+import { column, deleteData, postData } from '../../../utils';
 
-export interface IAssignDepartmentProps {}
+export interface IAssignDepartmentProps {
+  detailDepartment: IDetailDepartment;
+}
 
-const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => {
+const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepartmentProps) => {
+  //Get id from router to get old data
+  const {
+    query: { id },
+    push,
+  } = useRouter();
+
   //State
   const [userNotDepartment, setUserNotDepartment] = UseState<IUsersNotDepartment>({
     staffs: [],
@@ -25,10 +50,32 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
     DepartmentManagers: [],
   });
 
-  //Get id from router to get old data
-  const {
-    query: { id },
-  } = useRouter();
+  const [staffs, setStaffs] = useState<IUser[]>([]);
+
+  // set loading when delete department, delete all departments
+  const [isLoadingDl, setIsLoadingDl] = UseState({
+    key: '',
+    isLoading: false,
+  });
+
+  // delete department
+  const handleDl = useMutation<any, AxiosError, any>(
+    (id: string) => {
+      return deleteData({ url: `/api/departments/${id}`, token: dataUser?.accessToken.token });
+    },
+    {
+      onSuccess: (data) => {
+        message.success(data.msg);
+        setIsLoadingDl({ key: '', isLoading: false });
+        dataDepartmentRefetch();
+      },
+      onError: (error) => {
+        const data = error.response?.data;
+        message.error(data.err);
+        setIsLoadingDl({ key: '', isLoading: false });
+      },
+    }
+  );
 
   //Get access token
   const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
@@ -36,15 +83,15 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
     dataUserRefetch();
   }, []);
 
-   //Queries get data all departments => refetch when have assign users
-   const {refetch: dataAllDepartmentsRefetch} = getAllDepartments(dataUser?.accessToken.token)
+  //Queries get data all departments => refetch when have assign users
+  const { refetch: dataAllDepartmentsRefetch } = getAllDepartments(dataUser?.accessToken.token);
 
   //Get detail data department
   const {
     error: errorDepartment,
     data: dataDepartment,
     refetch: dataDepartmentRefetch,
-  } = getDetailDepartment(id as string, dataUser?.accessToken.token);
+  } = getDetailDepartment(id as string, dataUser?.accessToken.token, detailDepartment);
 
   //Get list users not have department
   const {
@@ -111,6 +158,120 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
     }
   }, [dataUsersnotDPM]);
 
+  // set data source to table
+  useEffect(() => {
+    if (dataDepartment?.department?.staffs) {
+      const getStaffs = dataDepartment.department.staffs.map((staff: IUser) => ({
+        key: staff._id,
+        name_avatar: { name: staff.name, avatar: staff.avatar.url },
+        root: staff.root,
+        role: staff.role,
+        email: staff.email,
+        view: '',
+        remove: '',
+      }));
+      setStaffs(getStaffs);
+    }
+  }, [dataDepartment]);
+
+  const columns = useMemo<ColumnsType<any>>(
+    () => [
+      {
+        ...column({ title: 'name', dataIndex: 'name_avatar', key: 'name_avatar' }),
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+          <Input
+            placeholder="Search"
+            value={selectedKeys[0]}
+            onPressEnter={() => confirm()}
+            onChange={(e) => {
+              return setSelectedKeys(e.target.value ? [e.target.value] : []);
+            }}
+          />
+        ),
+        onFilter: (value, record) => record.name_avatar.name.includes(value),
+        filterIcon: <SearchOutlined />,
+        render: (value)=> (
+          <Space size={20}>
+            <Image width={40} height={40} style={{objectFit: 'cover'}} src={value.avatar}/>
+            <span>{value.name}</span>
+          </Space>
+        )
+      },
+      {
+        ...column({ title: 'root' }),
+        render: (value: boolean) => (
+          <>{value == true ? <Tag color="green">true</Tag> : <Tag color="red">false</Tag>}</>
+        ),
+        filters: [
+          {
+            text: 'Root',
+            value: true,
+          },
+          {
+            text: 'Not Root',
+            value: false,
+          },
+        ],
+        onFilter: (value, record) => {
+          return value == record.root;
+        },
+      },
+      {
+        ...column({ title: 'role' })
+      },
+      {
+        ...column({ title: 'email' })
+      },
+      {
+        ...column({ title: 'view' }),
+        render: (_, record) => (
+          <ProfileOutlined
+            onClick={() => push(`/departments/detail/${record.key}`, undefined, { shallow: true })}
+            style={{ color: '#07456F' }}
+          />
+        ),
+      },
+      {
+        ...column({ title: 'remove' }),
+        render: (_, record) => {
+          if (!record.root)
+            return (
+              <Popconfirm
+                icon={
+                  <QuestionCircleOutlined
+                    style={{
+                      color: '#07456F',
+                    }}
+                  />
+                }
+                title="Are you sure?"
+                okButtonProps={{
+                  onClick: async () => {
+                    await dataUserRefetch();
+                    setIsLoadingDl((state) => ({
+                      ...state,
+                      isLoading: true,
+                    }));
+                    handleDl.mutate(record.key);
+                  },
+                  loading: isLoadingDl.isLoading,
+                }}
+                okText="Yes"
+                cancelText="No"
+              >
+                <DeleteOutlined
+                  onClick={() => setIsLoadingDl({ key: record.key, isLoading: false })}
+                  style={{ color: 'red' }}
+                />
+              </Popconfirm>
+            );
+          return '';
+        },
+      },
+    ],
+    []
+  );
+
   //Mutation assign
   //Mutation Assign one user
   const mutationAssignOneUser = useMutation<any, AxiosError, IAssignUsers>(
@@ -160,7 +321,7 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
         message.success({
           content: data.msg,
         });
-        
+
         //Refetch get data
         dataDepartmentRefetch();
         dataUsersnotDPMRefetch();
@@ -249,6 +410,21 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
               xl={8}
             />
           </Row>
+          <Table
+            rowSelection={{
+              type: 'checkbox',
+              getCheckboxProps: (record) => ({
+                disabled: record.root,
+              }),
+              onChange: (selectedRowKeys) => {
+                if (selectedRowKeys.length == 0) return  (null);
+                return setDepartmentsSl(selectedRowKeys);
+              },
+            }}
+          style={{ overflowX: 'auto' }}
+          dataSource={staffs}
+          columns={columns}
+        />
         </Space>
       </Card>
     </>
@@ -258,3 +434,48 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
 AssignDepartment.getLayout = ClientLayout;
 
 export default AssignDepartment;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  //Check login
+  const res = await fetch(`http://localhost:3000/api/auth/accesstoken`, {
+    method: 'GET',
+    headers: {
+      cookie: context.req.headers.cookie,
+    } as HeadersInit,
+  });
+
+  const data = await res.json();
+
+  //Redirect login page when error
+  if (res.status !== 200) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+  }
+
+  //Check role
+  if (data.user.role !== 'admin') {
+    return {
+      notFound: true,
+    };
+  }
+
+  const detailDepartment: IDetailDepartment = await fetch(
+    `http://localhost:3000/api/departments/${context.query.id}`,
+    {
+      method: 'GET',
+      headers: {
+        cookie: context.req.headers.cookie,
+      } as HeadersInit,
+    }
+  ).then((e) => e.json());
+
+  return {
+    props: {
+      detailDepartment,
+    },
+  };
+};

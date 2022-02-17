@@ -1,20 +1,12 @@
 import { AxiosError } from 'axios';
 import { useQuery } from 'react-query';
-import { IDepartment, IUser, IDetailDepartment } from '../models/apiType';
+import { IDepartment, IDetailDepartment, IResUsersNotDepartments } from '../models/apiType';
 import { getData } from '../utils';
-
-//Interface
-interface IResUsersNotDepartments {
-  staffs?: IUser[];
-  QACoordinators?: IUser[];
-  departmentManagers?: IUser[];
-  [index: string]: any;
-}
 
 export const getDetailDepartment = (
   id: string,
   accessToken: string,
-  initial: IDetailDepartment
+  initial?: IDetailDepartment
 ) => {
   return useQuery<any, AxiosError>(
     ['department', id],

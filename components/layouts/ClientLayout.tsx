@@ -1,11 +1,11 @@
-import { NextLayout } from '../../models/layoutType';
-import { Layout, Menu, Typography, Space, Button } from 'antd';
-const { Footer, Sider, Content } = Layout;
-import Header from '../elements/Header';
-import { useState } from 'react';
 import { MenuOutlined } from '@ant-design/icons';
+import { Layout } from 'antd';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useState } from 'react';
+import { NextLayout } from '../../models/layoutType';
 import Drawer from '../elements/Drawer';
-import Marquee from 'react-fast-marquee'
+import Header from '../elements/Header';
+const { Footer, Sider, Content } = Layout;
 
 export const ClientLayout: NextLayout = ({ children }) => {
   const [visible, setVisible] = useState(false);
@@ -20,10 +20,13 @@ export const ClientLayout: NextLayout = ({ children }) => {
 
   return (
     <>
-      <Layout style={{
-        maxWidth: 1600,
-        marginInline: 'auto'
-      }}>
+      <Layout
+        style={{
+          maxWidth: 1600,
+          marginInline: 'auto',
+        }}
+        className='layout'
+      >
         <Header />
         <Content
           style={{
@@ -31,9 +34,12 @@ export const ClientLayout: NextLayout = ({ children }) => {
             background: 'white',
           }}
         >
-          <MenuOutlined onClick={showDrawer} style={{
-            fontSize: "24px"
-          }}/>
+          <MenuOutlined
+            onClick={showDrawer}
+            style={{
+              fontSize: '24px',
+            }}
+          />
           <div
             style={{
               paddingTop: '20px',

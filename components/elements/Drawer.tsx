@@ -7,7 +7,7 @@ import {
 import { Drawer, Menu } from 'antd';
 import { resolveSrv } from 'dns/promises';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect as UseEffect, useState as UseState } from 'react';
 import { getCurrentUser } from '../../queries';
 
 const { SubMenu } = Menu;
@@ -27,7 +27,7 @@ interface IProps {
 
 export default function DrawerComponent({ onClose, ...props }: IProps) {
   //State Show Menu Item
-  const [isShowByRole, setIsShowByRole] = useState<IsShowMenuItem>({
+  const [isShowByRole, setIsShowByRole] = UseState<IsShowMenuItem>({
     staff: false,
     qa_coordinator: false,
     admin: false,
@@ -39,7 +39,7 @@ export default function DrawerComponent({ onClose, ...props }: IProps) {
   const { data: dataUser } = getCurrentUser();
 
   //Set show menu item by role
-  useEffect(() => {
+  UseEffect(() => {
     if (dataUser && dataUser.user) {
       let valueSetIsShowItem: IsShowMenuItem = isShowByRole;
       console.log(dataUser.user.role);
