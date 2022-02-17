@@ -117,6 +117,7 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
 
   const onSubmit = async ({ name, description }: { name: string; description: string }) => {
     //Refetch again let get accesstoken pass to api
+    //Refetch again let get accesstoken pass to api
     await dataUserRefetch();
   };
 
@@ -137,7 +138,9 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
             <Row>
               <ButtonAssign
                 title="Staff"
-                subTitle="03 People"
+                subTitle={`${
+                  dataDepartment?.department?.staffs ? dataDepartment?.department?.staffs.length : 0
+                } People`}
                 color="#009F9D"
                 Icon={UsergroupAddOutlined}
                 xs={24}
@@ -146,16 +149,16 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
               />
               <ButtonAssign
                 title="QA Coordinator"
-                subTitle="03 People"
+                subTitle={`${dataDepartment?.department?.qa_coordinator ? 1 : 0} People`}
                 color="#07456F"
                 Icon={UserSwitchOutlined}
-                xs={24}
+                xs={24} 
                 lg={12}
                 xl={8}
               />
               <ButtonAssign
                 title="Manager"
-                subTitle="03 People"
+                subTitle={`${dataDepartment?.department?.department_manager ? 1 : 0} People`}
                 color="#0F0A3C"
                 Icon={UserAddOutlined}
                 xs={24}
