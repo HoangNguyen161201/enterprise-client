@@ -16,7 +16,8 @@ import { useMutation } from 'react-query';
 import { ClientLayout } from '../../components/layouts';
 import { NextPageWithLayout } from '../../models/layoutType';
 import { getAllDepartments, getCurrentUser } from '../../queries';
-import { deleteData, postData } from '../../utils';
+import {  deleteData, postData } from '../../utils';
+import { column } from '../../utils/configTB';
 
 export interface IAddDepartmentProps {}
 
@@ -167,6 +168,7 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
       },
     },
     {
+      ...column({title: 'staffs (count)', dataIndex: 'count_users', key: 'count_users '}),
       title: 'staffs (count)',
       dataIndex: 'count_users',
       key: 'count_users',
@@ -175,21 +177,15 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
       },
     },
     {
-      title: 'detail',
-      dataIndex: 'detail',
-      key: 'detail',
+      ...column({title: 'detail'}),
       render: (_,record) => <ProfileOutlined onClick={() => push(`/departments/detail/${record.key}`, undefined, { shallow: true })} style={{ color: '#07456F' }} />,
     },
     {
-      title: 'Assign',
-      dataIndex: 'assign',
-      key: 'assign',
-      render: () => <UsergroupAddOutlined style={{ color: '#07456F' }} />,
+      ...column({title: 'assign'}),
+      render: (_, record) => <UsergroupAddOutlined onClick={() => push(`/departments/assign/${record.key}`, undefined, { shallow: true })} style={{ color: '#07456F' }} />,
     },
     {
-      title: 'Update',
-      dataIndex: 'update',
-      key: 'update',
+      ...column({title: 'update'}),
       render: (value) => (
         <EditOutlined
           onClick={() => push(value, undefined, { shallow: true })}

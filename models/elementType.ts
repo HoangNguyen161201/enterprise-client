@@ -10,17 +10,33 @@ export interface IOptionSelect {
     value: any
 }
 
-export interface IFieldCard {
+export interface ICol {
+  xs?: number
+  sm?: number
+  lg?: number
+  xl?: number
+}
+
+export interface IFieldCard extends ICol {
     label: string
     content: string
     view?: boolean
-    xs?: number
-    xl?: number
+}
+
+export interface IColumn {
+  title: string
+  dataIndex?: string
+  key?: string
 }
   
-
 export interface IUsersNotDepartment {
-  staffs: IOptionSelect[] | undefined;
-  QACoordinators: IOptionSelect[] | undefined;
-  DepartmentManagers: IOptionSelect[] | undefined;
+  staffs: IOptionSelect[] | undefined
+  QACoordinators: IOptionSelect[] | undefined
+  DepartmentManagers: IOptionSelect[] | undefined
+}
+
+export interface IStaff extends ICol{
+  name: string
+  role: string
+  image: string
 }

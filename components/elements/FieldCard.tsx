@@ -3,9 +3,9 @@ import { Col, Space } from 'antd';
 import React from 'react';
 import { IFieldCard } from '../../models';
 
-export default function FieldCard({ label, content, view, xs= 24, xl=12 }: IFieldCard) {
+export default function FieldCard({ label, content, view, xs= 24, xl=12, lg }: IFieldCard) {
   return (
-    <Col xs={xs} xl={xl}>
+    <Col xs={xs} xl={xl} lg={lg}>
       <p style={{ color: 'gray' }}>{label}</p>
       <Space
         style={{
