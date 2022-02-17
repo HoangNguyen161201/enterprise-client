@@ -16,6 +16,8 @@ export interface IDetailDepartmentProps {
 }
 
 const DetailDepartment: NextPageWithLayout = ({ detailMyDepartment }: IDetailDepartmentProps) => {
+    console.log(detailMyDepartment);
+    
   const { query } = useRouter();
 
   //Is show button load more user
@@ -198,15 +200,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   //Check role
-  if (data.user.role === 'admin') {
+  if (data?.user?.role === 'admin') {
     return {
       notFound: true,
     };
   }
 
+  console.log("gsdfgsd", data.user);
+  
+
   //Get department by current user
   const detailMyDepartment: IDetailDepartment = await fetch(
-    `http://localhost:3000/api/departments/user/${data.user._id}`,
+    `http://localhost:3000/api/departments/user/${data?.user?._id}`,
     {
       method: 'GET',
       headers: {
