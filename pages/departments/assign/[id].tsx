@@ -117,6 +117,7 @@ const AssignDepartment: NextPageWithLayout = (props: IAssignDepartmentProps) => 
 
   const onSubmit = async ({ name, description }: { name: string; description: string }) => {
     //Refetch again let get accesstoken pass to api
+    //Refetch again let get accesstoken pass to api
     await dataUserRefetch();
   };
 
