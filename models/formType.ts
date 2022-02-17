@@ -25,3 +25,9 @@ export interface IResetPass {
     password: string
     passwordConfirm: string
 }
+
+export interface IAssignUsers {
+    userId?: string | string[] | undefined,
+    users?: string | string[] | undefined,
+    departmentId: string,
+}
