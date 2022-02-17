@@ -17,6 +17,7 @@ export interface IDetailDepartmentProps {
 
 const DetailDepartment: NextPageWithLayout = ({ detailDepartment }: IDetailDepartmentProps) => {
   const {query} = useRouter()
+  console.log(detailDepartment)
 
   const [isShow, setIsShow] = useState(false);
   //Get id from router to get old data

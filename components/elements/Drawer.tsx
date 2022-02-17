@@ -20,7 +20,12 @@ interface IsShowMenuItem {
   department_manager: boolean;
 }
 
-export default function DrawerComponent(props: any) {
+interface IProps {
+  onClose: () => void;
+  [index: string]: any;
+}
+
+export default function DrawerComponent({ onClose, ...props }: IProps) {
   //State Show Menu Item
   const [isShowByRole, setIsShowByRole] = useState<IsShowMenuItem>({
     staff: false,
@@ -78,9 +83,6 @@ export default function DrawerComponent(props: any) {
     }
   }, [dataUser]);
 
-  const handleClick = (e: any) => {
-    console.log('click ', e);
-  };
   return (
     <>
       <Drawer
@@ -89,8 +91,8 @@ export default function DrawerComponent(props: any) {
           padding: '0px',
         }}
       >
-        <Menu onClick={handleClick} style={{ width: '100%', height: '100%' }} mode="inline">
-          <Menu.Item key="1" icon={<HomeOutlined />}>
+        <Menu style={{ width: '100%', height: '100%' }} mode="inline">
+          <Menu.Item key="1" icon={<HomeOutlined />} onClick={onClose}>
             <Link href={'/'}>
               <a>Home</a>
             </Link>
@@ -103,12 +105,12 @@ export default function DrawerComponent(props: any) {
               display: isShowByRole.admin ? 'block' : 'none',
             }}
           >
-            <Menu.Item key="sub1-1" icon={<FolderViewOutlined />}>
+            <Menu.Item key="sub1-1" icon={<FolderViewOutlined />} onClick={onClose}>
               <Link href={'/departments'}>
                 <a>All Departments</a>
               </Link>
             </Menu.Item>
-            <Menu.Item key="sub1-2" icon={<AppstoreAddOutlined />}>
+            <Menu.Item key="sub1-2" icon={<AppstoreAddOutlined />} onClick={onClose}>
               <Link href={'/departments/add'}>
                 <a>Add Department</a>
               </Link>

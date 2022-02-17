@@ -5,13 +5,17 @@ import { getData } from '../utils';
 
 //Interface
 interface IResUsersNotDepartments {
-  staffs?: IUser[],
-  QACoordinators?: IUser[],
-  departmentManagers?: IUser[],
-  [index: string]: any
+  staffs?: IUser[];
+  QACoordinators?: IUser[];
+  departmentManagers?: IUser[];
+  [index: string]: any;
 }
 
-export const getDetailDepartment = (id: string, accessToken: string, initial: IDetailDepartment) => {
+export const getDetailDepartment = (
+  id: string,
+  accessToken: string,
+  initial: IDetailDepartment
+) => {
   return useQuery<any, AxiosError>(
     ['department', id],
     async () => {
@@ -22,7 +26,7 @@ export const getDetailDepartment = (id: string, accessToken: string, initial: ID
       retry: 1,
       refetchOnWindowFocus: false,
       refetchOnMount: false,
-      initialData: initial
+      initialData: initial,
     }
   );
 };
