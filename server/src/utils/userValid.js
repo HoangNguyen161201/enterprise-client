@@ -91,6 +91,8 @@ function validatePassword(password) {
   return res.test(String(password).toLowerCase());
 }
 
+
+
 module.exports = {
   validSignUp,
   validUpdate,
