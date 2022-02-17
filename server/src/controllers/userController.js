@@ -21,7 +21,6 @@ const userController = {
       password,
       cf_password,
     });
-    console.log({ name, email, password, cf_password, role });
 
     if (errMsg)
       return res.status(400).json({
@@ -210,6 +209,18 @@ const userController = {
     {
       const { userId, departmentId } = req.body;
 
+      //Check valid data
+      const errMsg = userValid.validAssignOneUser({
+        userId,
+        departmentId,
+      });
+
+      if (errMsg)
+        return res.status(400).json({
+          err: errMsg,
+          statusCode: 400,
+        });
+
       //Check exist user
       const user = await userModel.findById(userId);
 
@@ -237,6 +248,7 @@ const userController = {
 
       //Check user assigned this department
       const userCheckAssigned = await userModel.findOne({
+        _id: user._id,
         role: user.role,
         department_id: departmentId,
       });
@@ -265,6 +277,18 @@ const userController = {
   manyAssignDepartment: catchAsyncError(async (req, res) => {
     {
       const { users, departmentId } = req.body;
+
+      //Check valid data
+      const errMsg = userValid.validAssignManyUsers({
+        users,
+        departmentId,
+      });
+
+      if (errMsg)
+        return res.status(400).json({
+          err: errMsg,
+          statusCode: 400,
+        });
 
       //Number user assign
       let countUsersAssign = 0;
@@ -334,7 +358,7 @@ const userController = {
 
   removeManyAssignDepartment: catchAsyncError(async (req, res) => {
     const { users } = req.body;
-    
+
     //loop remove many user out of department
     for (let index = 0; index < users.length; index++) {
       const userId = users[index];

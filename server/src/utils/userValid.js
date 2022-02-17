@@ -78,25 +78,37 @@ function validateEmail(email) {
   return res.test(String(email).toLowerCase());
 }
 
-module.exports = {
-  validSignUp,
-  validUpdate,
-  validFilter,
-};
-
 //Check valid password
 function validatePassword(password) {
-  const res =
-  /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
+  const res = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
   return res.test(String(password).toLowerCase());
 }
 
+<<<<<<< HEAD
 
+=======
+//Check valid assign one user to department
+const validAssignOneUser = ({ userId, departmentId }) => {
+  //Check exist data
+  if (!userId || !departmentId) {
+    return 'Please add all fields.';
+  }
+};
+
+//Check valid assign many users to department
+const validAssignManyUsers = ({ users, departmentId }) => {
+  //Check exist data
+  if (users.length === 0 || !departmentId) {
+    return 'Please add all fields.';
+  }
+};
+>>>>>>> e91496d985e8cc606836013ceb692725431d7aa3
 
 module.exports = {
   validSignUp,
   validUpdate,
   validFilter,
-  validatePassword
+  validatePassword,
+  validAssignOneUser,
+  validAssignManyUsers
 };
-
