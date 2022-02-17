@@ -7,6 +7,7 @@ export interface IPropsFetchData {
 export interface ICommon {
   status: string | number
   msg: string
+  statusCode?: number
 }
 
 export interface ILogout extends ICommon {}
@@ -30,10 +31,25 @@ export interface IDepartment extends ICommon {
 }
 
 export interface IUser {
-  _id: any;
-  name: string,
-  role: string,
-  root: boolean,
-  email: string,
+  _id: any
+  name: string
+  role: string
+  root: boolean
+  email: string
+  avatar: {
+    public_id: string
+    url: string
+  }
   [index: string]: any
+}
+
+export interface IDetailDepartment extends ICommon {
+  department: {
+    _id: string
+    name: string
+    description: string
+    count_users: number
+    staffs: IUser[]
+    [index: string]: any
+  }
 }
