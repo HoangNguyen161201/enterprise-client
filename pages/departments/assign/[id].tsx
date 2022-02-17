@@ -50,6 +50,9 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
     DepartmentManagers: [],
   });
 
+    // departments select
+    const [staffsSl, setStaffsSl] = UseState<any>(null);
+
   const [staffs, setStaffs] = useState<IUser[]>([]);
 
   // set loading when delete department, delete all departments
@@ -363,7 +366,8 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
       </Breadcrumb>
 
       <Card title="Assign Department" style={{ width: '100%', marginTop: '20px' }}>
-        <Space direction="vertical" size={20}>
+        <Space direction="vertical">
+        <h2 className="font-3">Information:</h2>
           <Row>
             <ButtonAssign
               title="Staff"
@@ -410,6 +414,10 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
               xl={8}
             />
           </Row>
+          <Space direction='vertical' style={{
+              margin: '10px 0px 0px',
+            }}>
+          <h2 className="font-3">Staffs:</h2>
           <Table
             rowSelection={{
               type: 'checkbox',
@@ -418,13 +426,14 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
               }),
               onChange: (selectedRowKeys) => {
                 if (selectedRowKeys.length == 0) return  (null);
-                return setDepartmentsSl(selectedRowKeys);
+                return setStaffsSl(selectedRowKeys);
               },
             }}
           style={{ overflowX: 'auto' }}
           dataSource={staffs}
           columns={columns}
         />
+          </Space>
         </Space>
       </Card>
     </>
