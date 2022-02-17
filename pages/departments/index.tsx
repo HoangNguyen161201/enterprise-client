@@ -16,7 +16,8 @@ import { useMutation } from 'react-query';
 import { ClientLayout } from '../../components/layouts';
 import { NextPageWithLayout } from '../../models/layoutType';
 import { getAllDepartments, getCurrentUser } from '../../queries';
-import { column, deleteData, postData } from '../../utils';
+import {  deleteData, postData } from '../../utils';
+import { column } from '../../utils/configTB';
 
 export interface IAddDepartmentProps {}
 
