@@ -42,7 +42,7 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
   const mutationAddCategory = useMutation<any, AxiosError, ICategoryForm>(
     (dataForm) => {
       return postData({
-        url: '/api/category',
+        url: '/api/categories',
         body: dataForm,
         token: dataUser?.accessToken.token,
       });
@@ -65,7 +65,7 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
   const mutationUpdateCategory = useMutation<any, AxiosError, ICategoryForm>(
     ({ id, name, description }) => {
       return putData({
-        url: `/api/category/${id}`,
+        url: `/api/categories/${id}`,
         body: {
           name,
           description,
@@ -91,7 +91,7 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
   const mutationDeleteCategory = useMutation<any, AxiosError, ICategoryForm>(
     ({ id }) => {
       return deleteData({
-        url: `/api/category/${id}`,
+        url: `/api/categories/${id}`,
         token: dataUser?.accessToken.token,
       });
     },
@@ -171,8 +171,8 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
         style={{ width: '100%', marginTop: '20px' }}
       >
         <Row gutter={[30, 30]}>
-          {dataAllCategories?.category &&
-            dataAllCategories?.category.map((category: IDetailCategory, key: number) => (
+          {dataAllCategories?.categories &&
+            dataAllCategories?.categories.map((category: IDetailCategory, key: number) => (
               <Category data={category} deleteCategory={deleteCategory} key={category._id} />
             ))}
         </Row>
@@ -222,7 +222,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   //Get all data categories
-  const allCategories: IallCategories = await fetch(`http://localhost:3000/api/category`, {
+  const allCategories: IallCategories = await fetch(`http://localhost:3000/api/categories`, {
     method: 'GET',
     headers: {
       cookie: context.req.headers.cookie,
