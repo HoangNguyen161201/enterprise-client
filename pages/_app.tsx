@@ -25,13 +25,10 @@ function MyApp({ Component, pageProps, router }: AppPropsWithLayout) {
 
   return (
     <QueryClientProvider client={queryClient}>
+      
       <Layout>
         <GlobalContextProvider>
-          <AnimatePresence exitBeforeEnter>
-            <motion.div animate={{opacity: 1, y: 0, x:0}} key={router.route} initial={{opacity: 0, y: -50}} exit={{opacity: 0, x: 250, transition:{duration: 0.7}}}>
               <Component {...pageProps}/>
-            </motion.div>
-          </AnimatePresence>
         </GlobalContextProvider>
       </Layout>
       <ReactQueryDevtools position="bottom-right" />

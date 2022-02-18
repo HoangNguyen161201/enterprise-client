@@ -1,19 +1,17 @@
-import { FileTextOutlined } from '@ant-design/icons';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { Breadcrumb, Button, Card, message, Space } from 'antd';
+import { DashOutlined, DeleteOutlined, EditOutlined, MoreOutlined } from '@ant-design/icons';
+import { Breadcrumb, Button, Card, Col, Dropdown, Menu, message, Row, Space } from 'antd';
 import { AxiosError } from 'axios';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import * as React from 'react';
-import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
-import { Input, TextArea } from '../../components/elements';
+import Category from '../../components/elements/Category';
 import { ClientLayout } from '../../components/layouts';
-import { IallCategories, ICategoryForm, IDepartmentForm, IDetailDepartment } from '../../models';
+import { IallCategories, ICategoryForm, IDetailCategory } from '../../models';
 import { NextPageWithLayout } from '../../models/layoutType';
 import { getCurrentUser } from '../../queries';
 import { getallCategories } from '../../queries/category';
-import { deleteData, postData, putData, validateAddDepartment } from '../../utils';
+import { deleteData, postData, putData } from '../../utils';
 
 export interface ICategoriesProps {
   allCategories: IallCategories;
@@ -27,7 +25,7 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
   const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
 
   //Get all data categories
-  const { error: errorAllCategories, data: dataAllCategories } = getallCategories(
+  const { error: errorAllCategories, data: dataAllCategories, refetch: rfCategories } = getallCategories(
     dataUser?.accessToken.token,
     allCategories
   );
@@ -103,6 +101,7 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
         message.success({
           content: data.msg,
         });
+        rfCategories()
       },
       onError: (error) => {
         message.error({
@@ -147,40 +146,15 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
   };
 
   //Function handle delete new category
-  const deleteCategory = async () => {
+  const deleteCategory = async (id: string) => {
     //Refetch again let get accesstoken pass to api
     await dataUserRefetch();
 
     //Delete category
     mutationDeleteCategory.mutate({
-      id: '620f4ccfd337af08ff3cbfa6',
+      id,
     });
   };
-
-  //   // setting form
-  //   const formSetting = useForm<{ name: string; description: string }>({
-  //     resolver: yupResolver(validateAddDepartment),
-  //     defaultValues: {
-  //       name: '',
-  //       description: '',
-  //     },
-  //   });
-
-  //   const onSubmit = async ({ name, description }: { name: string; description: string }) => {
-  //     //Refetch again let get accesstoken pass to api
-  //     await dataUserRefetch();
-
-  //     //Post add data department
-  //     mutationAddDepartment.mutate({ name, description });
-  //   };
-
-  //Clear data update
-  //   const onClearData = () => {
-  //     formSetting.reset({
-  //       name: '',
-  //       description: '',
-  //     });
-  //   };
 
   return (
     <>
@@ -195,22 +169,20 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
 
       <Card
         title="All Categories"
-        // extra={
-        //   <a href="#" onClick={onClearData}>
-        //     Clear
-        //   </a>
-        // }
         style={{ width: '100%', marginTop: '20px' }}
       >
+        <Row gutter={[30, 30]}>
+          {dataAllCategories?.category &&
+            dataAllCategories?.category.map((category: IDetailCategory, key: number) => (
+              <Category data={category} deleteCategory={deleteCategory} key={category._id} />
+            ))}
+        </Row>
         <Space direction="vertical" size={20}>
           <Button type="primary" onClick={addCategory}>
             Add new categories
           </Button>
           <Button type="primary" onClick={updateCategory}>
             Update categories
-          </Button>
-          <Button type="primary" onClick={deleteCategory}>
-            Delete categories
           </Button>
         </Space>
       </Card>

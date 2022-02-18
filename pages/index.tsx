@@ -2,7 +2,9 @@ import { ClientLayout } from "../components/layouts";
 import { NextPageWithLayout } from "../models";
 
 const index: NextPageWithLayout = () => {
-    return <div>nguyen quang hoang</div>;
+    return (
+        <div>ffdgfdg</div>
+    )
 };
 
 index.getLayout = ClientLayout;
