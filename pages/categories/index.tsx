@@ -1,19 +1,15 @@
-import { FileTextOutlined } from '@ant-design/icons';
-import { yupResolver } from '@hookform/resolvers/yup';
 import { Breadcrumb, Button, Card, message, Space } from 'antd';
 import { AxiosError } from 'axios';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import * as React from 'react';
-import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
-import { Input, TextArea } from '../../components/elements';
 import { ClientLayout } from '../../components/layouts';
-import { IallCategories, ICategoryForm, IDepartmentForm, IDetailDepartment } from '../../models';
+import { IallCategories, ICategoryForm } from '../../models';
 import { NextPageWithLayout } from '../../models/layoutType';
 import { getCurrentUser } from '../../queries';
 import { getallCategories } from '../../queries/category';
-import { deleteData, postData, putData, validateAddDepartment } from '../../utils';
+import { deleteData, postData, putData } from '../../utils';
 
 export interface ICategoriesProps {
   allCategories: IallCategories;

@@ -64,6 +64,18 @@ export interface IResUsersNotDepartments {
   [index: string]: any;
 }
 
+export interface IAllUsers extends ICommon{
+  users: IUser[];
+  [index: string]: any;
+}
+
+export interface IResUsersRole {
+  msg?: string;
+  users?: any[];
+  statusCode: number;
+  [index: string]: any;
+}
+
 //Interface category
 export interface IDetailCategory extends ICommon {
   _id: string
