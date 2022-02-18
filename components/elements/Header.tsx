@@ -1,5 +1,5 @@
-import { MoreOutlined } from '@ant-design/icons';
-import { Button, message, Layout, Space, Typography, Avatar, Menu, Dropdown } from 'antd';
+import { LogoutOutlined, MoreOutlined, ProfileOutlined } from '@ant-design/icons';
+import { Button, message, Layout, Space, Typography, Avatar, Menu, Dropdown, Divider } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
@@ -43,11 +43,30 @@ export default function HeaderComponent() {
   const menu = (
     <Menu
       style={{
-        padding: '10px 20px',
+        padding: 20,
+        borderRadius: 10,
       }}
     >
-      <Menu.Item key="1">Profile</Menu.Item>
-      <Menu.Item key="2" onClick={onLogout}>
+      <Space
+        size={20}
+        style={{
+          paddingInline: 10,
+        }}
+      >
+        <Avatar
+          size="large"
+          style={{
+            border: '1px solid #009F9D',
+            background: 'white',
+          }}
+          src={dataUser?.user?.avatar?.url}
+        />
+
+        <span>{dataUser?.user?.name}</span>
+      </Space>
+      <Divider />
+      <Menu.Item icon={<ProfileOutlined />} key="1">Profile</Menu.Item>
+      <Menu.Item icon={<LogoutOutlined />} key="2" onClick={onLogout}>
         Logout
       </Menu.Item>
     </Menu>
@@ -77,28 +96,17 @@ export default function HeaderComponent() {
             CMS
           </span>
           {dataUser ? (
-            <Dropdown overlay={menu} placement="bottomRight">
-              <Space>
-                <Space
-                  size={20}
+            <Dropdown overlay={menu} trigger={["click", "hover"]} placement="bottomRight">
+              <Space style={{
+                cursor: "pointer"
+              }}>
+                <Avatar
                   style={{
-                    height: '42px',
-                    paddingLeft: 7,
-                    paddingRight: 10,
-                    borderRadius: '40px',
-                    background: '#009F9D15',
-                    cursor: 'pointer',
+                    border: '1px solid #009F9D',
+                    background: 'white',
                   }}
-                >
-                  <Avatar
-                    style={{
-                      border: '1px solid #009F9D',
-                      background: 'white',
-                    }}
-                    src={dataUser.user?.avatar?.url}
-                  />
-                  <span>{dataUser.user?.name}</span>
-                </Space>
+                  src={dataUser.user?.avatar?.url}
+                />
               </Space>
             </Dropdown>
           ) : (
