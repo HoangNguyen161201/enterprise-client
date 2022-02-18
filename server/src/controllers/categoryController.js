@@ -86,11 +86,11 @@ const categoryController = {
     });
   }),
   getAll: catchAsyncError(async (req, res) => {
-    const category = await categoryModel.find({});
+    const categories = await categoryModel.find({});
     return res.status(200).json({
       statusCode: 200,
       msg: 'Get all topic success',
-      category
+      categories
     });
   }),
   getDetail: catchAsyncError(async (req, res) => {
