@@ -21,6 +21,12 @@ export interface IDepartmentForm {
     description: string
 }
 
+export interface ICategoryForm {
+    id?: string
+    name?: string
+    description?: string
+}
+
 
 export interface ISubmissionForm {
     id?: string
