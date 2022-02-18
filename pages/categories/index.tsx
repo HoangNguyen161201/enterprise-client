@@ -1,22 +1,12 @@
-<<<<<<< HEAD
-import { DashOutlined, DeleteOutlined, EditOutlined, MoreOutlined } from '@ant-design/icons';
-import { Breadcrumb, Button, Card, Col, Dropdown, Menu, message, Row, Space } from 'antd';
-=======
-import { Breadcrumb, Button, Card, message, Space } from 'antd';
->>>>>>> f476d49aafde68c257a6f4a44fbf63e0f963cebd
+import { Breadcrumb, Button, Card, message, Row, Space } from 'antd';
 import { AxiosError } from 'axios';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import * as React from 'react';
 import { useMutation } from 'react-query';
-<<<<<<< HEAD
 import Category from '../../components/elements/Category';
 import { ClientLayout } from '../../components/layouts';
 import { IallCategories, ICategoryForm, IDetailCategory } from '../../models';
-=======
-import { ClientLayout } from '../../components/layouts';
-import { IallCategories, ICategoryForm } from '../../models';
->>>>>>> f476d49aafde68c257a6f4a44fbf63e0f963cebd
 import { NextPageWithLayout } from '../../models/layoutType';
 import { getCurrentUser } from '../../queries';
 import { getallCategories } from '../../queries/category';
