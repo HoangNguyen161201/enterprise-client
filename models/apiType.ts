@@ -78,9 +78,10 @@ export interface IResUsersRole {
 
 //Interface category
 export interface IDetailCategory extends ICommon {
-  _id: string
+  _id?: string
   name: string
   description: string
+  [index: string]: any
 }
 
 export interface IallCategories extends ICommon {

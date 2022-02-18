@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { IInput } from '../../models';
 
-export const Input = ({ type = 'text', formSetting, name, label, placeholder, disable, icon, require = true }: IInput) => {
+export const Input = ({ type = 'text', hidden, formSetting, name, label, placeholder, disable, icon, require = true }: IInput) => {
   const [options, setOptions] = useState([{ value: '@gmail.com' }]);
 
   const handleSearch = (value: string) => {

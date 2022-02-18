@@ -57,4 +57,18 @@ export const validateAddSubmission = yup.object({
     .min(20, 'Submission description should be at least 20 characters'),
 });
 
+//validate form for update or create category
+export const validCategory = yup.object({
+  _id: yup.string(),
+  name: yup
+    .string()
+    .required('Please enter submission name')
+    .min(6, 'Submission name should be at least 6 characters'),
+  description: yup
+    .string()
+    .required('Please enter department description')
+    .min(20, 'Submission description should be at least 20 characters'),
+});
+
+
 

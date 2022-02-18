@@ -1,42 +1,103 @@
-import { Breadcrumb, Button, Card, message, Row, Space } from 'antd';
+import { FileTextOutlined } from '@ant-design/icons';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Breadcrumb, Button, Card, Drawer, message, Row, Space } from 'antd';
 import { AxiosError } from 'axios';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import * as React from 'react';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
+import { Input, TextArea } from '../../components/elements';
 import Category from '../../components/elements/Category';
 import { ClientLayout } from '../../components/layouts';
 import { IallCategories, ICategoryForm, IDetailCategory } from '../../models';
 import { NextPageWithLayout } from '../../models/layoutType';
 import { getCurrentUser } from '../../queries';
 import { getallCategories } from '../../queries/category';
-import { deleteData, postData, putData } from '../../utils';
+import { deleteData, postData, putData, validCategory } from '../../utils';
 
 export interface ICategoriesProps {
   allCategories: IallCategories;
 }
 
 const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => {
-  //Data all categories
-  console.log(allCategories);
+  const [categoryUd, setCategoryUd] = useState<IDetailCategory | null | undefined>(null);
+  const [statusForm, setStatusForm] = useState<'create' | 'update'>('create');
+  const [isOpen, setIsopen] = useState(false);
+
+  // setting form
+  const formSetting = useForm<IDetailCategory>({
+    resolver: yupResolver(validCategory),
+    defaultValues: {
+      _id: '',
+      name: '',
+      description: '',
+    },
+  });
+
+  // submit login
+  const onSubmit = (values: IDetailCategory) => {
+    switch (statusForm) {
+      case 'update':
+        updateCategory({
+          ...values,
+          id: values._id,
+        });
+        break;
+      case 'create':
+        addCategory(values)
+      break;
+    }
+  };
+
+  // open drawer
+  const openDrawer = (data?: IDetailCategory) => {
+    if (data) {
+      setCategoryUd(data);
+      setStatusForm('update');
+    } else {
+      setStatusForm('create');
+    }
+    setIsopen(true);
+  };
 
   //Get access token
   const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
 
   //Get all data categories
-  const { error: errorAllCategories, data: dataAllCategories, refetch: rfCategories } = getallCategories(
-    dataUser?.accessToken.token,
-    allCategories
-  );
+  const {
+    error: errorAllCategories,
+    data: dataAllCategories,
+    refetch: rfCategories,
+  } = getallCategories(dataUser?.accessToken.token, allCategories);
 
   //Check exist and show error
-  React.useEffect(() => {
+  useEffect(() => {
     if (errorAllCategories) {
       message.error({
         content: errorAllCategories.response?.data.err,
       });
     }
   }, [errorAllCategories]);
+
+  //Check exist and show error
+  useEffect(() => {
+    if (statusForm == 'create') {
+      formSetting.reset({
+        name: '',
+        description: '',
+        _id: '',
+      });
+    }
+
+    if (statusForm == 'update') {
+      formSetting.reset({
+        name: categoryUd?.name || '',
+        description: categoryUd?.description || '',
+        _id: categoryUd?._id || '',
+      });
+    }
+  }, [statusForm, categoryUd]);
 
   //  mutation call api to add Category
   const mutationAddCategory = useMutation<any, AxiosError, ICategoryForm>(
@@ -52,11 +113,14 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
         message.success({
           content: data.msg,
         });
+        setIsopen(false);
+        rfCategories();
       },
       onError: (error) => {
         message.error({
           content: error.response?.data.err || 'Create Category false.',
         });
+        setIsopen(false);
       },
     }
   );
@@ -78,11 +142,14 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
         message.success({
           content: data.msg,
         });
+        setIsopen(false);
+        rfCategories();
       },
       onError: (error) => {
         message.error({
           content: error.response?.data.err || 'Update Category false.',
         });
+        setIsopen(false);
       },
     }
   );
@@ -100,7 +167,7 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
         message.success({
           content: data.msg,
         });
-        rfCategories()
+        rfCategories();
       },
       onError: (error) => {
         message.error({
@@ -111,7 +178,7 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
   );
 
   //Check exist and show error
-  React.useEffect(() => {
+  useEffect(() => {
     if (errorGetUser) {
       message.error({
         content: errorGetUser.response?.data.err,
@@ -120,28 +187,21 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
   }, [errorGetUser]);
 
   //Function handle create new category
-  const addCategory = async () => {
+  const addCategory = async (data: IDetailCategory) => {
     //Refetch again let get accesstoken pass to api
     await dataUserRefetch();
 
     //Post data add category
-    mutationAddCategory.mutate({
-      name: 'Nguyen',
-      description: 'Nguyen Quang Huy Nguyen Quang Huy',
-    });
+    mutationAddCategory.mutate(data);
   };
 
   //Function handle update new category
-  const updateCategory = async () => {
+  const updateCategory = async (data: IDetailCategory) => {
     //Refetch again let get accesstoken pass to api
     await dataUserRefetch();
 
     //Put data update category
-    mutationUpdateCategory.mutate({
-      id: '620f4ccfd337af08ff3cbfa6',
-      name: 'Nguyen huy',
-      description: 'Nguyen Quang Huy Nguyen Quang Huy',
-    });
+    mutationUpdateCategory.mutate(data);
   };
 
   //Function handle delete new category
@@ -161,29 +221,79 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
         <title>All Categories Page</title>
       </Head>
 
+      <Drawer
+        title="update category"
+        onClose={() => {
+          setIsopen(false);
+        }}
+        visible={isOpen}
+        closable={true}
+      >
+        <form onSubmit={formSetting.handleSubmit(onSubmit)}>
+          <Space direction="vertical" size={20}>
+            {statusForm == 'update' && (
+              <Input
+                disable={true}
+                name="_id"
+                label="Id"
+                formSetting={formSetting}
+                placeholder="Enter department name"
+                type="text"
+                icon={<FileTextOutlined style={{ marginRight: 5, color: 'gray' }} />}
+              />
+            )}
+            <Input
+              name="name"
+              label="Name"
+              formSetting={formSetting}
+              placeholder="Enter department name"
+              type="text"
+              icon={<FileTextOutlined style={{ marginRight: 5, color: 'gray' }} />}
+            />
+            <TextArea
+              require={false}
+              name="description"
+              label="Description"
+              formSetting={formSetting}
+            />
+            <Button loading={mutationUpdateCategory.isLoading} htmlType="submit" type="primary">
+              Save
+            </Button>
+          </Space>
+        </form>
+      </Drawer>
+
       <Breadcrumb>
         <Breadcrumb.Item>Home</Breadcrumb.Item>
         <Breadcrumb.Item>Categories</Breadcrumb.Item>
       </Breadcrumb>
 
       <Card
+        extra={[
+          <Button
+            type="link"
+            onClick={() => {
+              setStatusForm('create');
+              setIsopen(true);
+            }}
+          >
+            Add new
+          </Button>,
+        ]}
         title="All Categories"
         style={{ width: '100%', marginTop: '20px' }}
       >
         <Row gutter={[30, 30]}>
           {dataAllCategories?.category &&
             dataAllCategories?.category.map((category: IDetailCategory, key: number) => (
-              <Category data={category} deleteCategory={deleteCategory} key={category._id} />
+              <Category
+                data={category}
+                openDrawer={openDrawer}
+                deleteCategory={deleteCategory}
+                key={category._id}
+              />
             ))}
         </Row>
-        <Space direction="vertical" size={20}>
-          <Button type="primary" onClick={addCategory}>
-            Add new categories
-          </Button>
-          <Button type="primary" onClick={updateCategory}>
-            Update categories
-          </Button>
-        </Space>
       </Card>
     </>
   );

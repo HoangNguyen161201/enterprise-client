@@ -4,10 +4,11 @@ import React from 'react';
 import { IDetailCategory } from '../../models';
 
 interface ICategory {
-  data: IDetailCategory;
+  data: IDetailCategory
+  openDrawer: (data: IDetailCategory) => void
   deleteCategory: (id: string)=> void
 }
-export default function Category({ data, deleteCategory }: ICategory) {
+export default function Category({ data, deleteCategory, openDrawer }: ICategory) {
   return (
     <Col xl={8} md={12} xs={24} >
       <Space
@@ -32,7 +33,7 @@ export default function Category({ data, deleteCategory }: ICategory) {
           <Dropdown
             overlay={
               <Menu>
-                <Menu.Item icon={<EditOutlined />}>Update</Menu.Item>
+                <Menu.Item onClick={()=> openDrawer(data)} icon={<EditOutlined />}>Update</Menu.Item>
                 <Menu.Item onClick={()=> deleteCategory(data._id)} icon={<DeleteOutlined style={{ color: 'red' }} />}>Remove</Menu.Item>
               </Menu>
             }
