@@ -122,3 +122,8 @@
     overflow: hidden;
     border-radius: 8px;
 }
+
+.ant-modal-content {
+    border-radius: 5px;
+    overflow: hidden;
+}
