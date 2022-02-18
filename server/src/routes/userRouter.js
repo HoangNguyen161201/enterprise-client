@@ -18,7 +18,9 @@ userRouter.post('/assign-many', userController.manyAssignDepartment);
 
 userRouter.post('/remove-assign-many', userController.removeManyAssignDepartment);
 
-userRouter.put('/:id', authorization(['admin', 'qa_manager']), userController.update);
+userRouter.post('/delete-many', userController.deleteMany);
+
+userRouter.put('/:id', userController.update);
 
 userRouter.delete('/remove-assign/:id', userController.removeAssignDepartment);
 
