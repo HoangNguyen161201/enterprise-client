@@ -84,5 +84,5 @@ export interface IDetailCategory extends ICommon {
 }
 
 export interface IallCategories extends ICommon {
-  category: IDetailCategory[]
+  categories: IDetailCategory[]
 }
