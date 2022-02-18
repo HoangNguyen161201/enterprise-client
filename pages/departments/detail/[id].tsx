@@ -2,6 +2,7 @@
 import { ArrowDownOutlined } from '@ant-design/icons';
 import { Breadcrumb, Button, Card, message, Row, Space } from 'antd';
 import { GetServerSideProps } from 'next';
+import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect as UseEffect, useState } from 'react';
@@ -16,7 +17,7 @@ export interface IDetailDepartmentProps {
 }
 
 const DetailDepartment: NextPageWithLayout = ({ detailDepartment }: IDetailDepartmentProps) => {
-  const {query} = useRouter()
+  const { query } = useRouter();
 
   const [isShow, setIsShow] = useState(false);
   //Get id from router to get old data
@@ -56,6 +57,10 @@ const DetailDepartment: NextPageWithLayout = ({ detailDepartment }: IDetailDepar
 
   return (
     <>
+      <Head>
+        <title>Detail Department Page</title>
+      </Head>
+
       <Breadcrumb>
         <Breadcrumb.Item>Home</Breadcrumb.Item>
         <Breadcrumb.Item>Departments</Breadcrumb.Item>
@@ -163,7 +168,7 @@ const DetailDepartment: NextPageWithLayout = ({ detailDepartment }: IDetailDepar
                 type="default"
                 size="large"
                 style={{ borderRadius: 5 }}
-                onClick={()=> setIsShow(true)}
+                onClick={() => setIsShow(true)}
               >
                 Show more
               </Button>

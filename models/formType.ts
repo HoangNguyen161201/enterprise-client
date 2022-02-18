@@ -21,6 +21,15 @@ export interface IDepartmentForm {
     description: string
 }
 
+
+export interface ISubmissionForm {
+    id?: string
+    name: string
+    description: string,
+    closure_date: string, 
+    final_closure_date: string
+}
+
 export interface IResetPass {
     password: string
     passwordConfirm: string

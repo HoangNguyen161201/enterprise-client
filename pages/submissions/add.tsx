@@ -1,6 +1,6 @@
 import { FileTextOutlined } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Breadcrumb, Button, Card, message, Space } from 'antd';
+import { Breadcrumb, Button, Card, message, Space, DatePicker } from 'antd';
 import { AxiosError } from 'axios';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
@@ -9,22 +9,27 @@ import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
 import { Input, TextArea } from '../../components/elements';
 import { ClientLayout } from '../../components/layouts';
-import { IDepartmentForm } from '../../models';
+import { IDepartmentForm, ISubmissionForm } from '../../models';
 import { NextPageWithLayout } from '../../models/layoutType';
 import { getCurrentUser } from '../../queries';
-import { postData, validateAddDepartment } from '../../utils';
+import { postData, validateAddDepartment, validateAddSubmission } from '../../utils';
 
-export interface IAddDepartmentProps {}
+const { RangePicker } = DatePicker;
 
-const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
+export interface IAddSubmissionProps {}
+
+const AddSubmission: NextPageWithLayout = (props: IAddSubmissionProps) => {
+  //Sate closure_date and final_closure_date
+  const [clousureTime, setClousureTime] = React.useState<string[]>(['', '']);
+
   //Get access token
   const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
 
   //  call api to add deartment
-  const mutationAddDepartment = useMutation<any, AxiosError, IDepartmentForm>(
+  const mutationAddDepartment = useMutation<any, AxiosError, ISubmissionForm>(
     (dataForm) => {
       return postData({
-        url: '/api/departments',
+        url: '/api/submissions',
         body: dataForm,
         token: dataUser?.accessToken.token,
       });
@@ -37,7 +42,7 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
       },
       onError: (error) => {
         message.error({
-          content: error.response?.data.err || 'Create department false.',
+          content: error.response?.data.err || 'Create Submission false.',
         });
       },
     }
@@ -52,9 +57,14 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
     }
   }, [errorGetUser]);
 
+  //Handle change time clousure
+  const onChangeClousureTime = (date: any, dateString: [string, string]) => {
+    setClousureTime(dateString);
+  };
+
   // setting form
   const formSetting = useForm<{ name: string; description: string }>({
-    resolver: yupResolver(validateAddDepartment),
+    resolver: yupResolver(validateAddSubmission),
     defaultValues: {
       name: '',
       description: '',
@@ -62,11 +72,17 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
   });
 
   const onSubmit = async ({ name, description }: { name: string; description: string }) => {
+    //   ame, description, closure_date, final_closure_date
     //Refetch again let get accesstoken pass to api
     await dataUserRefetch();
 
     //Post add data department
-    mutationAddDepartment.mutate({ name, description });
+    mutationAddDepartment.mutate({
+      name,
+      description,
+      closure_date: clousureTime[0],
+      final_closure_date: clousureTime[1],
+    });
   };
 
   //Clear data update
@@ -80,17 +96,16 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
   return (
     <>
       <Head>
-        <title>Add Department Page</title>
+        <title>Add Submission Page</title>
       </Head>
-
       <Breadcrumb>
         <Breadcrumb.Item>Home</Breadcrumb.Item>
-        <Breadcrumb.Item>Departments</Breadcrumb.Item>
-        <Breadcrumb.Item>Add Department</Breadcrumb.Item>
+        <Breadcrumb.Item>Submission</Breadcrumb.Item>
+        <Breadcrumb.Item>Add Submission</Breadcrumb.Item>
       </Breadcrumb>
 
       <Card
-        title="Add Department"
+        title="Add Submission"
         extra={
           <a href="#" onClick={onClearData}>
             Clear
@@ -108,6 +123,14 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
               type="text"
               icon={<FileTextOutlined />}
             />
+
+            <RangePicker
+              placeholder={['Select closure date', 'Select final date']}
+              onChange={onChangeClousureTime}
+              renderExtraFooter={() => 'extra footer'}
+              showTime
+            />
+
             <TextArea name="description" label="Description" formSetting={formSetting} />
             <div
               style={{
@@ -126,9 +149,9 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
   );
 };
 
-export default AddDepartment;
+export default AddSubmission;
 
-AddDepartment.getLayout = ClientLayout;
+AddSubmission.getLayout = ClientLayout;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   //Check login

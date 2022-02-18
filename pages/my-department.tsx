@@ -2,14 +2,15 @@
 import { ArrowDownOutlined } from '@ant-design/icons';
 import { Breadcrumb, Button, Card, message, Row, Space } from 'antd';
 import { GetServerSideProps } from 'next';
+import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect as UseEffect, useState } from 'react';
-import { ClientLayout } from '../components/layouts';
-import { IDetailDepartment, IUser, NextPageWithLayout } from '../models';
-import { getCurrentUser, getDepartmentByUser, getDetailDepartment } from '../queries';
 import FieldCard from '../components/elements/FieldCard';
 import User from '../components/elements/User';
+import { ClientLayout } from '../components/layouts';
+import { IDetailDepartment, IUser, NextPageWithLayout } from '../models';
+import { getCurrentUser, getDepartmentByUser } from '../queries';
 
 export interface IDetailDepartmentProps {
   detailMyDepartment: IDetailDepartment;
@@ -55,6 +56,10 @@ const DetailDepartment: NextPageWithLayout = ({ detailMyDepartment }: IDetailDep
 
   return (
     <>
+      <Head>
+        <title> My Department Page</title>
+      </Head>
+
       <Breadcrumb>
         <Breadcrumb.Item>Home</Breadcrumb.Item>
         <Breadcrumb.Item>My Department</Breadcrumb.Item>

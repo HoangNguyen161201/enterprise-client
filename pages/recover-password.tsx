@@ -53,7 +53,7 @@ export default function recover_password() {
   return (
     <>
       <Head>
-        <title>Recover password</title>
+        <title>Recover Password Page</title>
       </Head>
 
       <Space

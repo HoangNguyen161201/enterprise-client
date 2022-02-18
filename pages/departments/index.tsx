@@ -4,12 +4,13 @@ import {
   ProfileOutlined,
   QuestionCircleOutlined,
   SearchOutlined,
-  UsergroupAddOutlined,
+  UsergroupAddOutlined
 } from '@ant-design/icons';
 import { Breadcrumb, Button, Card, Input, message, Popconfirm, Space, Table, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { AxiosError } from 'axios';
 import { GetServerSideProps } from 'next';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect as UseEffect, useMemo, useState as UseState } from 'react';
 import { useMutation } from 'react-query';
@@ -127,116 +128,123 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
 
   const { push } = useRouter();
 
-  const columns = useMemo<ColumnsType<any>>(()=> [
-    {
-      ...column({ title: 'name' }),
-      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-        <Input
-          placeholder="Search"
-          value={selectedKeys[0]}
-          onPressEnter={() => confirm()}
-          onChange={(e) => {
-            console.log([e.target.value]);
-            return setSelectedKeys(e.target.value ? [e.target.value] : []);
-          }}
-        />
-      ),
-      onFilter: (value, record) => record.name.includes(value),
-      filterIcon: <SearchOutlined />,
-    },
-    {
-      ...column({ title: 'root' }),
-      render: (value: boolean) => (
-        <>{value == true ? <Tag color="green">true</Tag> : <Tag color="red">false</Tag>}</>
-      ),
-      filters: [
-        {
-          text: 'Root',
-          value: true,
-        },
-        {
-          text: 'Not Root',
-          value: false,
-        },
-      ],
-      onFilter: (value, record) => {
-        return value == record.root;
+  const columns = useMemo<ColumnsType<any>>(
+    () => [
+      {
+        ...column({ title: 'name' }),
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+          <Input
+            placeholder="Search"
+            value={selectedKeys[0]}
+            onPressEnter={() => confirm()}
+            onChange={(e) => {
+              console.log([e.target.value]);
+              return setSelectedKeys(e.target.value ? [e.target.value] : []);
+            }}
+          />
+        ),
+        onFilter: (value, record) => record.name.includes(value),
+        filterIcon: <SearchOutlined />,
       },
-    },
-    {
-      ...column({ title: 'staffs (count)', dataIndex: 'count_users', key: 'count_users ' }),
-      sorter: (a, b) => {
-        return a.staff - b.staff;
+      {
+        ...column({ title: 'root' }),
+        render: (value: boolean) => (
+          <>{value == true ? <Tag color="green">true</Tag> : <Tag color="red">false</Tag>}</>
+        ),
+        filters: [
+          {
+            text: 'Root',
+            value: true,
+          },
+          {
+            text: 'Not Root',
+            value: false,
+          },
+        ],
+        onFilter: (value, record) => {
+          return value == record.root;
+        },
       },
-    },
-    {
-      ...column({ title: 'detail' }),
-      render: (_, record) => (
-        <ProfileOutlined
-          onClick={() => push(`/departments/detail/${record.key}`, undefined, { shallow: true })}
-          style={{ color: '#07456F' }}
-        />
-      ),
-    },
-    {
-      ...column({ title: 'assign' }),
-      render: (_, record) => (
-        <UsergroupAddOutlined
-          onClick={() => push(`/departments/assign/${record.key}`, undefined, { shallow: true })}
-          style={{ color: '#07456F' }}
-        />
-      ),
-    },
-    {
-      ...column({ title: 'update' }),
-      render: (_,record) => (
-        <EditOutlined
-          onClick={() => push(`/departments/update/${record.key}`, undefined, { shallow: true })}
-          style={{ color: '#1890ff' }}
-        />
-      ),
-    },
-    {
-      ...column({ title: 'remove' }),
-      render: (_, record) => {
-        if (!record.root)
-          return (
-            <Popconfirm
-              icon={
-                <QuestionCircleOutlined
-                  style={{
-                    color: '#07456F',
-                  }}
+      {
+        ...column({ title: 'staffs (count)', dataIndex: 'count_users', key: 'count_users ' }),
+        sorter: (a, b) => {
+          return a.staff - b.staff;
+        },
+      },
+      {
+        ...column({ title: 'detail' }),
+        render: (_, record) => (
+          <ProfileOutlined
+            onClick={() => push(`/departments/detail/${record.key}`, undefined, { shallow: true })}
+            style={{ color: '#07456F' }}
+          />
+        ),
+      },
+      {
+        ...column({ title: 'assign' }),
+        render: (_, record) => (
+          <UsergroupAddOutlined
+            onClick={() => push(`/departments/assign/${record.key}`, undefined, { shallow: true })}
+            style={{ color: '#07456F' }}
+          />
+        ),
+      },
+      {
+        ...column({ title: 'update' }),
+        render: (_, record) => (
+          <EditOutlined
+            onClick={() => push(`/departments/update/${record.key}`, undefined, { shallow: true })}
+            style={{ color: '#1890ff' }}
+          />
+        ),
+      },
+      {
+        ...column({ title: 'remove' }),
+        render: (_, record) => {
+          if (!record.root)
+            return (
+              <Popconfirm
+                icon={
+                  <QuestionCircleOutlined
+                    style={{
+                      color: '#07456F',
+                    }}
+                  />
+                }
+                title="Are you sure?"
+                okButtonProps={{
+                  onClick: async () => {
+                    await dataUserRefetch();
+                    setIsLoadingDl((state) => ({
+                      ...state,
+                      isLoading: true,
+                    }));
+                    handleDl.mutate(record.key);
+                  },
+                  loading: isLoadingDl.isLoading,
+                }}
+                okText="Yes"
+                cancelText="No"
+              >
+                <DeleteOutlined
+                  onClick={() => setIsLoadingDl({ key: record.key, isLoading: false })}
+                  style={{ color: 'red' }}
                 />
-              }
-              title="Are you sure?"
-              okButtonProps={{
-                onClick: async () => {
-                  await dataUserRefetch();
-                  setIsLoadingDl((state) => ({
-                    ...state,
-                    isLoading: true,
-                  }));
-                  handleDl.mutate(record.key);
-                },
-                loading: isLoadingDl.isLoading,
-              }}
-              okText="Yes"
-              cancelText="No"
-            >
-              <DeleteOutlined
-                onClick={() => setIsLoadingDl({ key: record.key, isLoading: false })}
-                style={{ color: 'red' }}
-              />
-            </Popconfirm>
-          );
-        return '';
+              </Popconfirm>
+            );
+          return '';
+        },
       },
-    },
-  ], [])
+    ],
+    []
+  );
 
   return (
     <>
+      <Head>
+        <title>All Departments Page</title>
+      </Head>
+
       <Breadcrumb>
         <Breadcrumb.Item>Home</Breadcrumb.Item>
         <Breadcrumb.Item>All Departments</Breadcrumb.Item>
@@ -276,7 +284,6 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
       >
         <Space direction="vertical" size={20}></Space>
         <Table
-          
           rowSelection={{
             type: 'checkbox',
             getCheckboxProps: (record) => ({

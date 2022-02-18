@@ -5,24 +5,19 @@ import {
   SearchOutlined,
   UserAddOutlined,
   UsergroupAddOutlined,
-  UserSwitchOutlined,
+  UserSwitchOutlined
 } from '@ant-design/icons';
 import {
-  Breadcrumb,
-  Card,
-  Input,
+  Breadcrumb, Button, Card, Image, Input,
   message,
   Popconfirm,
   Row,
-  Space,
-  Tag,
-  Table,
-  Image,
-  Button,
+  Space, Table, Tag
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { AxiosError } from 'axios';
 import { GetServerSideProps } from 'next';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useEffect as UseEffect, useMemo, useState, useState as UseState } from 'react';
 import { useMutation } from 'react-query';
@@ -33,13 +28,13 @@ import {
   IDetailDepartment,
   IUser,
   IUsersNotDepartment,
-  NextPageWithLayout,
+  NextPageWithLayout
 } from '../../../models';
 import {
   getAllDepartments,
   getCurrentUser,
   getDetailDepartment,
-  getUsersNotDepartment,
+  getUsersNotDepartment
 } from '../../../queries';
 import { column, deleteData, postData } from '../../../utils';
 
@@ -82,7 +77,7 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
   // delete department
   const handleDlAll = useMutation<any, AxiosError, any>(
     (Ids) => {
-      console.log(Ids)
+      console.log(Ids);
       return postData({
         url: `/api/users/remove-assign-many`,
         token: dataUser?.accessToken.token,
@@ -405,6 +400,9 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
 
   return (
     <>
+      <Head>
+        <title>Assign Department Page</title>
+      </Head>
       <Breadcrumb>
         <Breadcrumb.Item>Home</Breadcrumb.Item>
         <Breadcrumb.Item>Departments</Breadcrumb.Item>
@@ -427,7 +425,7 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
             title="Are you sure?"
             okButtonProps={{
               onClick: async () => {
-                console.log(staffsSl)
+                console.log(staffsSl);
                 await dataUserRefetch();
                 setIsLoadingDlAll(true);
                 handleDlAll.mutate(staffsSl);
@@ -509,7 +507,7 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
                 onChange: (selectedRowKeys) => {
                   if (selectedRowKeys.length == 0) return setStaffsSl(null);
                   return setStaffsSl(selectedRowKeys);
-                }
+                },
               }}
               style={{ overflowX: 'auto' }}
               dataSource={staffs}
