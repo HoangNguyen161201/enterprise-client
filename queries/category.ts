@@ -7,7 +7,7 @@ export const getallCategories = (accessToken: string, initial?: IallCategories) 
   return useQuery<any, AxiosError>(
     ['categories'],
     async () => {
-      return await getData({ url: `/api/category`, token: accessToken });
+      return await getData({ url: `/api/categories`, token: accessToken });
     },
     {
       enabled: !!accessToken,
