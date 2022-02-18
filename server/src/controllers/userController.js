@@ -70,7 +70,9 @@ const userController = {
     const { id } = req.params;
 
     //get info update
-    const { name, email, role } = req.body;
+    const { name, email, role, department_id } = req.body;
+
+    console.log('sdf');
 
     //check user exist in system
     const user = await userModel.findById(id);
@@ -98,8 +100,48 @@ const userController = {
         err: errorValid,
       });
 
-    //update data by id
-    await userModel.findByIdAndUpdate(id, { name, email, role });
+    switch (role) {
+      case 'staff':
+        //Check exist department when have department id update
+        if (department_id) {
+          const department = await departmentModel.findById(department_id);
+
+          if (!department)
+            return res.status(400).json({
+              err: 'The Department is does not exist',
+              statusCode: 400,
+            });
+
+          //Update department user count
+          if (user.department_id !== department._id) {
+            department.count_users = --department.count_users;
+            await department.save();
+          }
+
+          //update data by id
+          await userModel.findByIdAndUpdate(id, { name, email, role, department_id });
+        } else {
+          //update data by id
+          await userModel.findByIdAndUpdate(id, { name, email, role });
+        }
+        break;
+
+      default:
+        //Check user assigned department
+        if (user.department_id) {
+          const department = await departmentModel.findById(user.department_id);
+
+          //Update department user count
+          if (department) {
+            department.count_users = --department.count_users;
+            await department.save();
+          }
+        }
+
+        //update data by id Clear department id when role not match with staff
+        await userModel.findByIdAndUpdate(id, { name, email, role, department_id: null });
+        break;
+    }
 
     return res.status(200).json({
       statusCode: 200,
@@ -126,8 +168,52 @@ const userController = {
         statusCode: 400,
       });
 
+    //Check user assigned department
+    if (user.department_id) {
+      const department = await departmentModel.findById(user.department_id);
+
+      //Update department user count
+      if (department) {
+        department.count_users = --department.count_users;
+        await department.save();
+      }
+    }
+
     //delete user by id
     await userModel.findByIdAndDelete(id, req.body);
+
+    return res.status(200).json({
+      statusCode: 200,
+      msg: 'Delete Success',
+    });
+  }),
+
+  deleteMany: catchAsyncError(async (req, res) => {
+    const { users } = req.body;
+
+    for (let index = 0; index < users.length; index++) {
+      const userId = users[index];
+
+      //check user exist in system
+      const user = await userModel.findById(userId);
+
+      
+      if (user && !user.root) {
+        //Check user assigned department
+        if (user.department_id) {
+          const department = await departmentModel.findById(user.department_id);
+
+          //Update department user count
+          if (department) {
+            department.count_users = --department.count_users;
+            await department.save();
+          }
+        }
+
+        //delete user by id
+        await userModel.findByIdAndDelete(userId, req.body);
+      }
+    }
 
     return res.status(200).json({
       statusCode: 200,
