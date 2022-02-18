@@ -77,24 +77,30 @@ export default function HeaderComponent() {
             CMS
           </span>
           {dataUser ? (
-            <Space size={20}>
-              <Avatar
-                style={{
-                  border: '1px solid #009F9D',
-                }}
-                src={dataUser.user?.avatar?.url}
-              />
-              <span>{dataUser.user?.name}</span>
-              <Dropdown overlay={menu} trigger={['click']} placement="bottomRight">
+            <Dropdown overlay={menu} placement="bottomRight">
+              <Space>
                 <Space
+                  size={20}
                   style={{
+                    height: '42px',
+                    paddingLeft: 7,
+                    paddingRight: 10,
+                    borderRadius: '40px',
+                    background: '#009F9D15',
                     cursor: 'pointer',
                   }}
                 >
-                  <MoreOutlined />
+                  <Avatar
+                    style={{
+                      border: '1px solid #009F9D',
+                      background: 'white',
+                    }}
+                    src={dataUser.user?.avatar?.url}
+                  />
+                  <span>{dataUser.user?.name}</span>
                 </Space>
-              </Dropdown>
-            </Space>
+              </Space>
+            </Dropdown>
           ) : (
             <Button
               type="primary"
