@@ -363,7 +363,7 @@ const userController = {
     for (let index = 0; index < users.length; index++) {
       const userId = users[index];
       // check exist users
-      const user = userModel.findById(userId);
+      const user = await userModel.findById(userId);
       if (user) {
         //Remove user out of department
         user.department_id = null;
