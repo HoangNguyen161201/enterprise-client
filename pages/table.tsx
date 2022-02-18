@@ -1,4 +1,3 @@
-import React, { useMemo } from 'react';
 import Table from '../components/elements/Table';
 import { ClientLayout } from '../components/layouts';
 import { NextPageWithLayout } from '../models';

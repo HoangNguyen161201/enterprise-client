@@ -3,6 +3,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Breadcrumb, Button, Card, message, Space } from 'antd';
 import { AxiosError } from 'axios';
 import { GetServerSideProps } from 'next';
+import Head from 'next/head';
 import { useRouter as UseRouter } from 'next/router';
 import { useEffect as UseEffect } from 'react';
 import { useForm as UseForm } from 'react-hook-form';
@@ -126,6 +127,10 @@ const UpdateDepartmetn: NextPageWithLayout = (props: IUpdateDepartmetnProps) => 
 
   return (
     <>
+      <Head>
+        <title>Update Department Page</title>
+      </Head>
+
       <Breadcrumb>
         <Breadcrumb.Item>Home</Breadcrumb.Item>
         <Breadcrumb.Item>Departments</Breadcrumb.Item>
@@ -159,7 +164,7 @@ const UpdateDepartmetn: NextPageWithLayout = (props: IUpdateDepartmetnProps) => 
               formSetting={formSetting}
               placeholder="Enter department name"
               type="text"
-              icon={<FileTextOutlined style={{color: 'gray'}}/>}
+              icon={<FileTextOutlined style={{ color: 'gray' }} />}
             />
             <TextArea name="description" label="Description" formSetting={formSetting} />
             <div
@@ -195,7 +200,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const data = await res.json();
 
   console.log(res, data);
-  
+
   //Redirect login page when error
   if (res.status !== 200) {
     return {
@@ -212,7 +217,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       notFound: true,
     };
   }
-
 
   return {
     props: {},

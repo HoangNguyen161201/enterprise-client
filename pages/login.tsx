@@ -105,8 +105,9 @@ const login: NextPageWithLayout = () => {
   return (
     <>
       <Head>
-        <title> Login </title>
+        <title> Login Page</title>
       </Head>
+
       <Space className="screen-full justify-center" align="center">
         <form
           onSubmit={formSetting.handleSubmit(onSubmit)}

@@ -30,7 +30,7 @@ export default function ResetPass() {
   return (
     <>
       <Head>
-        <title>Reset password</title>
+        <title>Reset Password Page</title>
       </Head>
 
       <Space
