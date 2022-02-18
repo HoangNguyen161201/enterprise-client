@@ -10,8 +10,8 @@ const createUpdateValid = ({ name, description }) => {
   }
 
   if (description.length < 20 || description.length > 255) {
-    //Check length of name department
-    return 'Name department must be at least 20 and than 255 characters.';
+    //Check length of description department
+    return 'Description department must be at least 20 and than 255 characters.';
   }
 };
 
