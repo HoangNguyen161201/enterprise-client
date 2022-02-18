@@ -174,7 +174,7 @@ const login: NextPageWithLayout = () => {
               >
                 Login
               </Button>
-              <Link href={'/recover_password'}>
+              <Link href={'/recover-password'}>
                 <a className="font-1 color-3">Forget password?</a>
               </Link>
             </Space>

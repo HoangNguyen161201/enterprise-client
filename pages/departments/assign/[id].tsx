@@ -1,6 +1,5 @@
 import {
   DeleteOutlined,
-  EditOutlined,
   ProfileOutlined,
   QuestionCircleOutlined,
   SearchOutlined,
@@ -8,7 +7,19 @@ import {
   UsergroupAddOutlined,
   UserSwitchOutlined,
 } from '@ant-design/icons';
-import { Breadcrumb, Card, Input, message, Popconfirm, Row, Space, Tag , Table, Image} from 'antd';
+import {
+  Breadcrumb,
+  Card,
+  Input,
+  message,
+  Popconfirm,
+  Row,
+  Space,
+  Tag,
+  Table,
+  Image,
+  Button,
+} from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { AxiosError } from 'axios';
 import { GetServerSideProps } from 'next';
@@ -50,8 +61,15 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
     DepartmentManagers: [],
   });
 
-    // departments select
-    const [staffsSl, setStaffsSl] = UseState<any>(null);
+  // set isloading delete all
+  const [isLoadingDlAll, setIsLoadingDlAll] = UseState(false);
+
+  // departments select
+  const [staffsSl, setStaffsSl] = UseState<any>(null);
+
+  useEffect(() => {
+    console.log(staffsSl);
+  }, [staffsSl]);
 
   const [staffs, setStaffs] = useState<IUser[]>([]);
 
@@ -62,9 +80,38 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
   });
 
   // delete department
+  const handleDlAll = useMutation<any, AxiosError, any>(
+    (Ids) => {
+      console.log(Ids)
+      return postData({
+        url: `/api/users/remove-assign-many`,
+        token: dataUser?.accessToken.token,
+        body: { users: Ids },
+      });
+    },
+    {
+      onSuccess: (data) => {
+        message.success(data.msg);
+        setIsLoadingDlAll(false);
+        setStaffsSl(null);
+        dataDepartmentRefetch();
+      },
+      onError: (error) => {
+        const data = error.response?.data;
+        message.error(data.err);
+        setIsLoadingDlAll(false);
+        setStaffsSl(null);
+      },
+    }
+  );
+
+  // delete department
   const handleDl = useMutation<any, AxiosError, any>(
     (id: string) => {
-      return deleteData({ url: `/api/departments/${id}`, token: dataUser?.accessToken.token });
+      return deleteData({
+        url: `/api/users/remove-assign/${id}`,
+        token: dataUser?.accessToken.token,
+      });
     },
     {
       onSuccess: (data) => {
@@ -193,12 +240,12 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
         ),
         onFilter: (value, record) => record.name_avatar.name.includes(value),
         filterIcon: <SearchOutlined />,
-        render: (value)=> (
+        render: (value) => (
           <Space size={20}>
-            <Image width={40} height={40} style={{objectFit: 'cover'}} src={value.avatar}/>
+            <Image width={40} height={40} style={{ objectFit: 'cover' }} src={value.avatar} />
             <span>{value.name}</span>
           </Space>
-        )
+        ),
       },
       {
         ...column({ title: 'root' }),
@@ -220,10 +267,10 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
         },
       },
       {
-        ...column({ title: 'role' })
+        ...column({ title: 'role' }),
       },
       {
-        ...column({ title: 'email' })
+        ...column({ title: 'email' }),
       },
       {
         ...column({ title: 'view' }),
@@ -365,9 +412,41 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
         <Breadcrumb.Item>Assign Department</Breadcrumb.Item>
       </Breadcrumb>
 
-      <Card title="Assign Department" style={{ width: '100%', marginTop: '20px' }}>
+      <Card
+        extra={[
+          <Popconfirm
+            key={'delete'}
+            disabled={staffsSl == null}
+            icon={
+              <QuestionCircleOutlined
+                style={{
+                  color: '#07456F',
+                }}
+              />
+            }
+            title="Are you sure?"
+            okButtonProps={{
+              onClick: async () => {
+                console.log(staffsSl)
+                await dataUserRefetch();
+                setIsLoadingDlAll(true);
+                handleDlAll.mutate(staffsSl);
+              },
+              loading: isLoadingDlAll,
+            }}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button disabled={staffsSl == null} type="link">
+              Remove all
+            </Button>
+          </Popconfirm>,
+        ]}
+        title="Assign Department"
+        style={{ width: '100%', marginTop: '20px' }}
+      >
         <Space direction="vertical">
-        <h2 className="font-3">Information:</h2>
+          <h2 className="font-3">Information:</h2>
           <Row>
             <ButtonAssign
               title="Staff"
@@ -414,25 +493,28 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
               xl={8}
             />
           </Row>
-          <Space direction='vertical' style={{
+          <Space
+            direction="vertical"
+            style={{
               margin: '10px 0px 0px',
-            }}>
-          <h2 className="font-3">Staffs:</h2>
-          <Table
-            rowSelection={{
-              type: 'checkbox',
-              getCheckboxProps: (record) => ({
-                disabled: record.root,
-              }),
-              onChange: (selectedRowKeys) => {
-                if (selectedRowKeys.length == 0) return  (null);
-                return setStaffsSl(selectedRowKeys);
-              },
             }}
-          style={{ overflowX: 'auto' }}
-          dataSource={staffs}
-          columns={columns}
-        />
+          >
+            <h2 className="font-3">Staffs:</h2>
+            <Table
+              rowSelection={{
+                type: 'checkbox',
+                getCheckboxProps: (record) => ({
+                  disabled: record.root,
+                }),
+                onChange: (selectedRowKeys) => {
+                  if (selectedRowKeys.length == 0) return setStaffsSl(null);
+                  return setStaffsSl(selectedRowKeys);
+                }
+              }}
+              style={{ overflowX: 'auto' }}
+              dataSource={staffs}
+              columns={columns}
+            />
           </Space>
         </Space>
       </Card>
