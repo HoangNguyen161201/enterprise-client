@@ -358,7 +358,6 @@ const userController = {
 
   removeManyAssignDepartment: catchAsyncError(async (req, res) => {
     const { users } = req.body;
-
     //loop remove many user out of department
     for (let index = 0; index < users.length; index++) {
       const userId = users[index];
