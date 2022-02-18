@@ -56,6 +56,8 @@ const submissionController = {
         statusCode: 400,
       });
     }
+    
+    //Check valid
     const submissionErr = submissionValid.submissionUpdate({
       name,
       description,
@@ -67,6 +69,8 @@ const submissionController = {
         statusCode: 400,
         err: submissionErr,
       });
+
+    //Update and response
     await submissionModel.findByIdAndUpdate(id, {
       name,
       description,

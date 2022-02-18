@@ -35,6 +35,7 @@ const categoryController = {
       statusCode: 200,
     });
   }),
+
   update: catchAsyncError(async (req, res) => {
     //get id from query
     const { id } = req.params;
@@ -67,6 +68,7 @@ const categoryController = {
       msg: 'Update Success',
     });
   }),
+
   delete: catchAsyncError(async (req, res) => {
     const { id } = req.params;
 
@@ -85,14 +87,16 @@ const categoryController = {
       msg: 'Delete Success',
     });
   }),
+
   getAll: catchAsyncError(async (req, res) => {
     const categories = await categoryModel.find({});
     return res.status(200).json({
       statusCode: 200,
       msg: 'Get all topic success',
-      categories
+      categories,
     });
   }),
+  
   getDetail: catchAsyncError(async (req, res) => {
     const { id } = req.params;
     const category = await categoryModel.findById(id);
