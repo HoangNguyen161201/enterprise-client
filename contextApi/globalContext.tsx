@@ -1,6 +1,7 @@
 import { createContext, useEffect } from 'react';
 import { getCurrentUser } from '../queries';
 import { useRouter } from 'next/router';
+import { AnimatePresence, motion } from 'framer-motion';
 
 //Types
 interface IGlobalConttextProps {
@@ -14,7 +15,7 @@ const GlobalContext = createContext({});
 function GlobalContextProvider({ children }: IGlobalConttextProps) {
   const { refetch } = getCurrentUser();
   const value = {};
-  const { push } = useRouter();
+  const { push, route } = useRouter();
   useEffect(() => {
     const firstLogin = localStorage.getItem('first-login');
     if (firstLogin === 'true') {
@@ -22,7 +23,20 @@ function GlobalContextProvider({ children }: IGlobalConttextProps) {
     }
   }, []);
 
-  return <GlobalContext.Provider value={value}>{children}</GlobalContext.Provider>;
+  return (
+    <GlobalContext.Provider value={value}>
+      <AnimatePresence exitBeforeEnter>
+        <motion.div
+          animate={{ opacity: 1, y: 0, x: 0 }}
+          key={route}
+          initial={{ opacity: 0, y: -50 }}
+          exit={{ opacity: 0, x: 250, transition: { duration: 0.7 } }}
+        >
+          {children}
+        </motion.div>
+      </AnimatePresence>
+    </GlobalContext.Provider>
+  );
 }
 
 export { GlobalContext, GlobalContextProvider };

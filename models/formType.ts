@@ -36,6 +36,14 @@ export interface ISubmissionForm {
     final_closure_date: string
 }
 
+export interface IUserForm {
+    id: string
+    name: string
+    email: string
+    role: string
+    department_id: string
+}
+
 export interface IResetPass {
     password: string
     passwordConfirm: string
