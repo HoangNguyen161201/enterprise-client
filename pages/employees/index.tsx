@@ -222,9 +222,9 @@ const Employees: NextPageWithLayout = ({ allUsers }: IEmployeesProps) => {
         dataIndex: 'name_avatar',
         key: 'name_avatar',
       }),
-      render: (value) => (
+      render: (value, record) => (
         <Space size={20}>
-          <Image width={40} height={40} style={{ objectFit: 'cover' }} src={value.avatar} />
+          <Image width={40} alt={record.key} height={40} style={{ objectFit: 'cover' }} src={value.avatar} />
           <span>{value.name}</span>
         </Space>
       ),

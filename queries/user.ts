@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios';
 import { useQuery } from 'react-query';
-import { IallCategories, IAllUsers, IResUsersRole, IUser } from '../models';
+import { IAllUsers, IResUsersRole, IUser } from '../models';
 import { getData } from '../utils';
 
 
