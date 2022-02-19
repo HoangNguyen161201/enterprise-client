@@ -136,7 +136,7 @@ const Employees: NextPageWithLayout = ({ allUsers }: IEmployeesProps) => {
       return postData({
         url: `/api/users/delete-many`,
         body: {
-          users
+          users,
         },
         token: dataUser?.accessToken.token,
       });
@@ -147,6 +147,7 @@ const Employees: NextPageWithLayout = ({ allUsers }: IEmployeesProps) => {
           content: data.msg,
         });
         dataAllUsersRefetch();
+        setUsersSl(null);
       },
       onError: (error) => {
         message.error({
