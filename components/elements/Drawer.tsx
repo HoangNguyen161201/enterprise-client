@@ -3,6 +3,7 @@ import {
   FolderViewOutlined,
   HomeOutlined,
   TeamOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
 import { Drawer, Menu } from 'antd';
 import { resolveSrv } from 'dns/promises';
@@ -134,6 +135,26 @@ export default function DrawerComponent({ onClose, ...props }: IProps) {
             <Menu.Item key="sub1-2" icon={<AppstoreAddOutlined />} onClick={onClose}>
               <Link href={'/departments/add'}>
                 <a>Add Department</a>
+              </Link>
+            </Menu.Item>
+          </SubMenu>
+
+          <SubMenu
+            key="sub2"
+            icon={<UserOutlined />}
+            title="Employees"
+            style={{
+              display: isShowByRole.admin ? 'block' : 'none',
+            }}
+          >
+            <Menu.Item key="sub2-1" icon={<FolderViewOutlined />} onClick={onClose}>
+              <Link href={'/employees'}>
+                <a>All Employees</a>
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="sub2-2" icon={<AppstoreAddOutlined />} onClick={onClose}>
+              <Link href={'/employees/add'}>
+                <a>Add Employees</a>
               </Link>
             </Menu.Item>
           </SubMenu>

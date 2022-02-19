@@ -10,13 +10,13 @@ import FieldCard from '../../../components/elements/FieldCard';
 import User from '../../../components/elements/User';
 import { ClientLayout } from '../../../components/layouts';
 import { IDetailDepartment, IUser, NextPageWithLayout } from '../../../models';
-import { getCurrentUser, getDetailDepartment } from '../../../queries';
+import { getCurrentUser, getDetailDepartment, getDetailUser } from '../../../queries';
 
 export interface IDetailDepartmentProps {
-  detailDepartment: IDetailDepartment;
+  detailUser: IUser;
 }
 
-const DetailDepartment: NextPageWithLayout = ({ detailDepartment }: IDetailDepartmentProps) => {
+const DetailEmployee: NextPageWithLayout = ({ detailUser }: IDetailDepartmentProps) => {
   const { query } = useRouter();
 
   const [isShow, setIsShow] = useState(false);
@@ -31,11 +31,11 @@ const DetailDepartment: NextPageWithLayout = ({ detailDepartment }: IDetailDepar
     dataUserRefetch();
   }, []);
 
-  //Get detail data department
-  const { error: errorDepartment, data: dataDepartment } = getDetailDepartment(
+  //Get detail data user
+  const { error: errorUser, data: dataDepartment } = getDetailUser(
     id as string,
     dataUser?.accessToken.token,
-    detailDepartment
+    detailUser
   );
 
   //Check exist and show error
@@ -48,27 +48,27 @@ const DetailDepartment: NextPageWithLayout = ({ detailDepartment }: IDetailDepar
   }, [errorGetUser]);
 
   UseEffect(() => {
-    if (errorDepartment) {
+    if (errorUser) {
       message.error({
-        content: errorDepartment.response?.data.err,
+        content: errorUser.response?.data.err,
       });
     }
-  }, [errorDepartment]);
+  }, [errorUser]);
 
   return (
     <>
       <Head>
-        <title>Detail Department Page</title>
+        <title>Detail User Page</title>
       </Head>
 
       <Breadcrumb>
         <Breadcrumb.Item>Home</Breadcrumb.Item>
-        <Breadcrumb.Item>Departments</Breadcrumb.Item>
-        <Breadcrumb.Item>All Departments</Breadcrumb.Item>
-        <Breadcrumb.Item>View Detail Department</Breadcrumb.Item>
+        <Breadcrumb.Item>Employees</Breadcrumb.Item>
+        <Breadcrumb.Item>All Employees</Breadcrumb.Item>
+        <Breadcrumb.Item>View Detail Employee</Breadcrumb.Item>
       </Breadcrumb>
 
-      <Card title="View Detail Department" style={{ width: '100%', marginTop: '20px' }}>
+      <Card title="View Detail Employee" style={{ width: '100%', marginTop: '20px' }}>
         <h2 className="font-3">Information:</h2>
         <Row gutter={[30, 20]}>
           <FieldCard
@@ -182,9 +182,9 @@ const DetailDepartment: NextPageWithLayout = ({ detailDepartment }: IDetailDepar
   );
 };
 
-DetailDepartment.getLayout = ClientLayout;
+DetailEmployee.getLayout = ClientLayout;
 
-export default DetailDepartment;
+export default DetailEmployee;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   //Check login
@@ -209,24 +209,23 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   //Check role
   if (data.user.role !== 'admin') {
+    console.log('asdfasdfas');
+
     return {
       notFound: true,
     };
   }
 
-  const detailDepartment: IDetailDepartment = await fetch(
-    `http://localhost:3000/api/departments/${context.query.id}`,
-    {
-      method: 'GET',
-      headers: {
-        cookie: context.req.headers.cookie,
-      } as HeadersInit,
-    }
-  ).then((e) => e.json());
+  const detailUser: IUser = await fetch(`http://localhost:3000/api/users/${context.query.id}`, {
+    method: 'GET',
+    headers: {
+      cookie: context.req.headers.cookie,
+    } as HeadersInit,
+  }).then((e) => e.json());
 
   return {
     props: {
-      detailDepartment,
+      detailUser,
     },
   };
 };

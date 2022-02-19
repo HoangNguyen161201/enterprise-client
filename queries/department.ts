@@ -15,7 +15,7 @@ export const getDetailDepartment = (
       return await getData({ url: `/api/departments/${id}`, token: accessToken });
     },
     {
-      enabled: !!accessToken,
+      enabled: !!accessToken && !!id,
       retry: 1,
       refetchOnWindowFocus: false,
       refetchOnMount: false,

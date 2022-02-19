@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios';
 import { useQuery } from 'react-query';
-import { IallCategories, IAllUsers, IResUsersRole } from '../models';
+import { IallCategories, IAllUsers, IResUsersRole, IUser } from '../models';
 import { getData } from '../utils';
 
 
@@ -34,6 +34,26 @@ export const getallUsers = (accessToken: string, initial?: IAllUsers) => {
     },
     {
       enabled: !!accessToken,
+      retry: 1,
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+      initialData: initial,
+    }
+  );
+};
+
+export const getDetailUser = (
+  id: string,
+  accessToken: string,
+  initial?: IUser
+) => {
+  return useQuery<any, AxiosError>(
+    ['user', id],
+    async () => {
+      return await getData({ url: `/api/users/${id}`, token: accessToken });
+    },
+    {
+      enabled: !!accessToken && !!id,
       retry: 1,
       refetchOnWindowFocus: false,
       refetchOnMount: false,

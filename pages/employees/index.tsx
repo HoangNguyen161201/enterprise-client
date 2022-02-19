@@ -213,7 +213,8 @@ const Employees: NextPageWithLayout = ({ allUsers }: IEmployeesProps) => {
         title: 'Id',
         dataIndex: 'employee_id',
         key: 'employee_id',
-      })
+      }),
+      render: (value) => <>{`epl-${value}`}</>,
     },
     {
       ...column({
