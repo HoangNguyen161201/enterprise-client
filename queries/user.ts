@@ -27,7 +27,7 @@ export const getUsersRoleDepartment = (
 };
 
 export const getallUsers = (accessToken: string, initial?: IAllUsers) => {
-  return useQuery<any, AxiosError>(
+  return useQuery<IAllUsers, AxiosError>(
     ['users'],
     async () => {
       return await getData({ url: `/api/users`, token: accessToken });
