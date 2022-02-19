@@ -5,14 +5,20 @@ import {
   SearchOutlined,
   UserAddOutlined,
   UsergroupAddOutlined,
-  UserSwitchOutlined
+  UserSwitchOutlined,
 } from '@ant-design/icons';
 import {
-  Breadcrumb, Button, Card, Image, Input,
+  Breadcrumb,
+  Button,
+  Card,
+  Image,
+  Input,
   message,
   Popconfirm,
   Row,
-  Space, Table, Tag
+  Space,
+  Table,
+  Tag,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { AxiosError } from 'axios';
@@ -28,13 +34,13 @@ import {
   IDetailDepartment,
   IUser,
   IUsersNotDepartment,
-  NextPageWithLayout
+  NextPageWithLayout,
 } from '../../../models';
 import {
   getAllDepartments,
   getCurrentUser,
   getDetailDepartment,
-  getUsersNotDepartment
+  getUsersNotDepartment,
 } from '../../../queries';
 import { column, deleteData, postData } from '../../../utils';
 
@@ -208,6 +214,7 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
     if (dataDepartment?.department?.staffs) {
       const getStaffs = dataDepartment.department.staffs.map((staff: IUser) => ({
         key: staff._id,
+        employee_id: staff.employee_id,
         name_avatar: { name: staff.name, avatar: staff.avatar.url },
         root: staff.root,
         role: staff.role,
@@ -221,6 +228,10 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
 
   const columns = useMemo<ColumnsType<any>>(
     () => [
+      {
+        ...column({ title: 'Id', dataIndex: 'employee_id', key: 'employee_id' }),
+        render: (value) => <>{`epl-${value}`}</>,
+      },
       {
         ...column({ title: 'name', dataIndex: 'name_avatar', key: 'name_avatar' }),
         filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
