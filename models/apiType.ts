@@ -46,6 +46,7 @@ export interface IDetailDepartment extends ICommon {
 //Iterface user
 export interface IUser {
   _id: any
+  employee_id: number
   name: string
   role: string
   root: boolean

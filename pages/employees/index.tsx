@@ -60,6 +60,7 @@ const Employees: NextPageWithLayout = ({ allUsers }: IEmployeesProps) => {
       newDataSourceUsers = dataAllUsers.users.map((user) => {
         return {
           key: user._id,
+          employee_id: user.employee_id,
           name_avatar: { name: user.name, avatar: user.avatar.url },
           root: user.root,
           role: user.role,
@@ -207,6 +208,13 @@ const Employees: NextPageWithLayout = ({ allUsers }: IEmployeesProps) => {
 
   //Seting column table users
   const columns: ColumnsType<any> = [
+    {
+      ...column({
+        title: 'Id',
+        dataIndex: 'employee_id',
+        key: 'employee_id',
+      })
+    },
     {
       ...column({
         title: 'Name',
@@ -393,7 +401,7 @@ const Employees: NextPageWithLayout = ({ allUsers }: IEmployeesProps) => {
             okButtonProps={{
               onClick: async () => {
                 await dataUserRefetch();
-                mutationDeleteManyUser.mutate({users: usersSl as string[]});
+                mutationDeleteManyUser.mutate({ users: usersSl as string[] });
               },
               loading: mutationDeleteManyUser.isLoading,
             }}
