@@ -18,8 +18,8 @@ export const validateResetPass = yup.object({
     .string()
     .required('Please Enter your password')
     .matches(
-      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
-      'Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character'
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$/,
+      'Must Contain 6 Characters, One Uppercase, One Lowercase, One Number and one special case Character'
     ),
   passwordConfirm: yup
     .string()
@@ -70,5 +70,24 @@ export const validCategory = yup.object({
     .min(20, 'Submission description should be at least 20 characters'),
 });
 
-
-
+//User valid
+export const validateAddUser = yup.object({
+  name: yup
+    .string()
+    .required('Please enter user employee')
+    .min(6, 'Employee names should be at least 3 characters'),
+  email: yup.string().required('Please enter email employee'),
+  password: yup
+    .string()
+    .required('Please Enter password')
+    .matches(
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$/,
+      'Must Contain 6 Characters, One Uppercase, One Lowercase, One Number and one special case Character'
+    ),
+  cf_password: yup
+    .string()
+    .label('Password Confirm')
+    .required()
+    .oneOf([yup.ref('password')], 'Passwords does not match'),
+  role: yup.string().required('Please select role'),
+});
