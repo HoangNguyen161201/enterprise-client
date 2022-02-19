@@ -57,48 +57,43 @@ const userController = {
           err: 'Department dose not exist!',
         });
 
-      switch (user.role) {
-        case 'staff':
-          //Create and save new user
-          const NewUser = new userModel({
-            name,
-            email,
-            role,
-            password: passwordHash,
-            cf_password,
-            avatar: avatarUser,
-            department_id,
+      //if user role not match staff
+      if (role !== staff) {
+        //check  role assigned
+        const userAssigned = await userModel.find({
+          role,
+          department_id,
+        });
+        if (userAssigned) {
+          return res.status(400).json({
+            statusCode: 400,
+            err: `${role} of department ${department.name} already exist!`,
           });
-          await NewUser.save();
-          break;
-
-        //if user role not match staff
-        default:
-          //check user role assigned
-          const userAssigned = await userModel.find({
-            role,
-            department_id,
-          });
-          if (userAssigned) {
-            return res.status(400).json({
-              statusCode: 400,
-              err: `${role} of department ${department.name} already exist!`,
-            });
-          }
-
-          //Create and save new user
-          const NewUser = new userModel({
-            name,
-            email,
-            role,
-            password: passwordHash,
-            cf_password,
-            avatar: avatarUser,
-            department_id,
-          });
-          await NewUser.save();
-          break;
+        }
       }
+
+      //Create and save new user
+      const NewUser = new userModel({
+        name,
+        email,
+        role,
+        password: passwordHash,
+        cf_password,
+        avatar: avatarUser,
+        department_id,
+      });
+      await NewUser.save();
+    } else {
+      //Create and save new user without department_id
+      const NewUser = new userModel({
+        name,
+        email,
+        role,
+        password: passwordHash,
+        cf_password,
+        avatar: avatarUser,
+      });
+      await NewUser.save();
     }
 
     return res.status(200).json({
