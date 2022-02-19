@@ -37,11 +37,13 @@ export interface ISubmissionForm {
 }
 
 export interface IUserForm {
-    id: string
+    id?: string
     name: string
     email: string
     role: string
-    department_id: string
+    department_id?: string
+    password?: string
+    cf_password?: string
 }
 
 export interface IResetPass {

@@ -34,6 +34,9 @@ export const Select = ({ formSetting, name, label, placeholder, require = true, 
               placeholder={placeholder || ''}
             >
               {
+                !require && <Option key="null" value="">---</Option>
+              }
+              {
                 data && data.map((option: IOptionSelect, key: number)=> <Option key={key} value={option.value}>{option.label}</Option>)
               }
             </AntSelect>
