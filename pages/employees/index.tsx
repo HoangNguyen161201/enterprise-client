@@ -351,7 +351,7 @@ const Employees: NextPageWithLayout = ({ allUsers }: IEmployeesProps) => {
             }
             arrow
             trigger={['click', 'hover']}
-            placement="topRight"
+            placement="bottomRight"
           >
             <Space
               style={{

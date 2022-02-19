@@ -21,7 +21,7 @@ export interface IAccessToken extends ICommon {
 }
 
 // Interface department
-export interface IDepartment extends ICommon {
+export interface IDepartments extends ICommon {
   departments: Array<{
     _id: string
     name: string

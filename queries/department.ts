@@ -1,6 +1,7 @@
 import { AxiosError } from 'axios';
 import { useQuery } from 'react-query';
-import { IDepartment, IDetailDepartment, IResUsersNotDepartments } from '../models/apiType';
+import { StringSchema } from 'yup';
+import { IDepartments, IDetailDepartment, IResUsersNotDepartments } from '../models/apiType';
 import { getData } from '../utils';
 
 export const getDetailDepartment = (
@@ -43,8 +44,8 @@ export const getDepartmentByUser = (
   );
 };
 
-export const getAllDepartments = (accessToken: string) => {
-  return useQuery<IDepartment, AxiosError>(
+export const getAllDepartments = (accessToken: string, initial?: IDepartments) => {
+  return useQuery<IDepartments, AxiosError>(
     ['departments'],
     async () => {
       return await getData({ url: `/api/departments`, token: accessToken });
@@ -54,6 +55,7 @@ export const getAllDepartments = (accessToken: string) => {
       retry: 1,
       refetchOnWindowFocus: false,
       refetchOnMount: false,
+      initialData: initial
     }
   );
 };
