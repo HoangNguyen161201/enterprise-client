@@ -39,6 +39,9 @@ const AddEmployee: NextPageWithLayout = ({ allDepartments }: IAddEmployeeProps) 
     allDepartments
   );
 
+  //Get all data user
+  const { refetch: dataAllUsersRefetch } = getallUsers(dataUser?.accessToken.token);
+
   //Set data select departmen
   React.useEffect(() => {
     if (dataAllDepartments && dataAllDepartments.departments) {
@@ -86,6 +89,7 @@ const AddEmployee: NextPageWithLayout = ({ allDepartments }: IAddEmployeeProps) 
         message.success({
           content: data.msg,
         });
+        dataAllUsersRefetch();
       },
       onError: (error) => {
         message.error({

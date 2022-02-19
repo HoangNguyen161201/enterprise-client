@@ -3,7 +3,7 @@ import { Button, Col, Image, Space } from 'antd';
 import { IStaff } from '../../models';
 import { motion } from 'framer-motion';
 
-export default function User({ image, name, role, xs, sm, lg, xl }: IStaff) {
+export default function User({ image, name, role, employee_id, xs, sm, lg, xl }: IStaff) {
   return (
     <Col xs={xs} sm={sm} lg={lg} xl={xl}>
       <motion.div
@@ -38,6 +38,7 @@ export default function User({ image, name, role, xs, sm, lg, xl }: IStaff) {
         />
         <Space direction="vertical" size={0} style={{ marginTop: 10 }}>
           <h2 className="font-2">{name}</h2>
+          <p>{`epl-${employee_id}`}</p>
           <Space
             style={{
               display: 'flex',
