@@ -28,7 +28,7 @@ import { ClientLayout } from '../../components/layouts';
 import { IAllUsers, IUser, IUserForm } from '../../models';
 import { NextPageWithLayout } from '../../models/layoutType';
 import { getallUsers, getCurrentUser } from '../../queries';
-import { column, deleteData, putData } from '../../utils';
+import { column, deleteData, postData, putData } from '../../utils';
 
 export interface IEmployeesProps {
   allUsers: IAllUsers;
@@ -39,6 +39,7 @@ const Employees: NextPageWithLayout = ({ allUsers }: IEmployeesProps) => {
   const [dataSourceUsers, setDataSourceUsers] = React.useState<Partial<IUser>[]>([]);
 
   //Data user select
+  const [usersSl, setUsersSl] = React.useState<null | string[]>(null);
 
   //Get access token
   const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
@@ -67,7 +68,7 @@ const Employees: NextPageWithLayout = ({ allUsers }: IEmployeesProps) => {
     }
     setDataSourceUsers(newDataSourceUsers);
   }, [dataAllUsers]);
-  console.log('fdg', dataSourceUsers);
+  console.log(usersSl);
 
   //Check exist and show error
   React.useEffect(() => {
@@ -106,7 +107,7 @@ const Employees: NextPageWithLayout = ({ allUsers }: IEmployeesProps) => {
     }
   );
 
-  //  mutation call api to delete Users
+  //  mutation call api to delete User
   const mutationDeleteUser = useMutation<any, AxiosError, Partial<IUserForm>>(
     ({ id }) => {
       return deleteData({
@@ -124,6 +125,32 @@ const Employees: NextPageWithLayout = ({ allUsers }: IEmployeesProps) => {
       onError: (error) => {
         message.error({
           content: error.response?.data.err || 'Delete User false.',
+        });
+      },
+    }
+  );
+
+  //  mutation call api to delete many Users
+  const mutationDeleteManyUser = useMutation<any, AxiosError, { users: string[] }>(
+    ({ users }) => {
+      return postData({
+        url: `/api/users/delete-many`,
+        body: {
+          users
+        },
+        token: dataUser?.accessToken.token,
+      });
+    },
+    {
+      onSuccess: (data) => {
+        message.success({
+          content: data.msg,
+        });
+        dataAllUsersRefetch();
+      },
+      onError: (error) => {
+        message.error({
+          content: error.response?.data.err || 'Delete Users false.',
         });
       },
     }
@@ -153,7 +180,7 @@ const Employees: NextPageWithLayout = ({ allUsers }: IEmployeesProps) => {
     });
   };
 
-  //Function handle delete users
+  //Function handle delete user
   const deleteUser = async (id: string) => {
     //Refetch again let get accesstoken pass to api
     await dataUserRefetch();
@@ -161,6 +188,17 @@ const Employees: NextPageWithLayout = ({ allUsers }: IEmployeesProps) => {
     //Delete user
     mutationDeleteUser.mutate({
       id,
+    });
+  };
+
+  //Function handle delete many users
+  const deleteManyUser = async (users: string[]) => {
+    //Refetch again let get accesstoken pass to api
+    await dataUserRefetch();
+
+    //Delete users
+    mutationDeleteManyUser.mutate({
+      users,
     });
   };
 
@@ -334,7 +372,20 @@ const Employees: NextPageWithLayout = ({ allUsers }: IEmployeesProps) => {
         <Breadcrumb.Item>All Employees</Breadcrumb.Item>
       </Breadcrumb>
 
-      <Card title="All Employees" style={{ width: '100%', marginTop: '20px' }}>
+      <Card
+        extra={
+          <a
+            onClick={() => deleteManyUser(usersSl as string[])}
+            style={{
+              display: usersSl ? 'block' : 'none',
+            }}
+          >
+            Remove All
+          </a>
+        }
+        title="All Employees"
+        style={{ width: '100%', marginTop: '20px' }}
+      >
         <Space direction="vertical" size={20}>
           <Table
             rowSelection={{
@@ -343,7 +394,11 @@ const Employees: NextPageWithLayout = ({ allUsers }: IEmployeesProps) => {
                 disabled: record.root,
               }),
               onChange: (selectedRowKeys) => {
-                console.log(selectedRowKeys);
+                if (selectedRowKeys.length !== 0) {
+                  setUsersSl(selectedRowKeys as string[]);
+                } else {
+                  setUsersSl(null);
+                }
               },
             }}
             style={{ overflowX: 'auto', fontSize: '16px' }}
