@@ -310,6 +310,7 @@ const Employees: NextPageWithLayout = ({ allUsers }: IEmployeesProps) => {
             overlay={
               <Menu>
                 <Menu.Item
+                  disabled={record.root}
                   icon={
                     <UploadOutlined
                       style={{
@@ -321,6 +322,7 @@ const Employees: NextPageWithLayout = ({ allUsers }: IEmployeesProps) => {
                   Update
                 </Menu.Item>
                 <Menu.Item
+                  disabled={record.root}
                   onClick={() => deleteUser(record.key)}
                   icon={
                     <DeleteOutlined
