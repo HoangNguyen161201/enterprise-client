@@ -2,8 +2,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Breadcrumb, Button, Card, Col, Drawer, Image, message, Row, Space } from 'antd';
 import axios, { AxiosError } from 'axios';
 import Head from 'next/head';
-import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useEffect as UseEffect, useState as UseState } from 'react';
+import { useForm as UseForm } from 'react-hook-form';
 import { DateInput, Input, TextArea } from '../../components/elements';
 import Skeletons from '../../components/elements/Skeletons';
 import { ClientLayout } from '../../components/layouts';
@@ -11,18 +11,18 @@ import { ICommon, ISumission, NextPageWithLayout } from '../../models';
 import { postData, validateSubmission } from '../../utils';
 import moment from 'moment';
 import { EditOutlined } from '@ant-design/icons';
-import { useMutation } from 'react-query';
+import { useMutation as UseMutation } from 'react-query';
 import { getCurrentUser } from '../../queries';
 
 const index: NextPageWithLayout = () => {
-  const [isOpen, setIsopen] = useState(false);
-  const [isOpenSlImg, setIsOpenSlImg] = useState(false);
-  const [imgs, setImgs] = useState<string[] | null>(null);
-  const [imgSubmission, setImgSubmission] = useState(
+  const [isOpen, setIsopen] = UseState(false);
+  const [isOpenSlImg, setIsOpenSlImg] = UseState(false);
+  const [imgs, setImgs] = UseState<string[] | null>(null);
+  const [imgSubmission, setImgSubmission] = UseState(
     'https://res.cloudinary.com/hoang161201/image/upload/v1645274633/Group_92_grzovc.svg'
   );
 
-  useEffect(() => {
+  UseEffect(() => {
     if (!imgs && isOpenSlImg) {
       axios.get('/api/image/submissions').then((result) => {
         setImgs(result.data.imgs);
@@ -31,7 +31,7 @@ const index: NextPageWithLayout = () => {
   }, [isOpenSlImg]);
 
   // setting form
-  const formSetting = useForm<ISumission>({
+  const formSetting = UseForm<ISumission>({
     resolver: yupResolver(validateSubmission),
     defaultValues: {
       name: '',
@@ -42,39 +42,43 @@ const index: NextPageWithLayout = () => {
   });
 
   const onSubmit = (value: ISumission) => {
-    addSubmission.mutate(value)
+    addSubmission.mutate(value);
   };
 
   //Get access token
   const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
-  useEffect(() => {
+  UseEffect(() => {
     dataUserRefetch();
   }, []);
 
-  const addSubmission = useMutation<any, AxiosError, ISumission>((value) => {
-    return postData({
-      url: '/api/submissions',
-      body: value,
-      token: dataUser?.accessToken.token,
-    });
-  }, {
-      onSuccess: (data: ICommon)=> {
-        message.success(data.msg)
-        setIsopen(false)
+  const addSubmission = UseMutation<any, AxiosError, ISumission>(
+    (value) => {
+      return postData({
+        url: '/api/submissions',
+        body: value,
+        token: dataUser?.accessToken.token,
+      });
+    },
+    {
+      onSuccess: (data: ICommon) => {
+        message.success(data.msg);
+        setIsopen(false);
         formSetting.reset({
-            name: '',
-            description: '',
-            closure_date: moment(),
-            final_closure_date: moment(),
-        })
-        setImgSubmission('https://res.cloudinary.com/hoang161201/image/upload/v1645274633/Group_92_grzovc.svg')
+          name: '',
+          description: '',
+          closure_date: moment(),
+          final_closure_date: moment(),
+        });
+        setImgSubmission(
+          'https://res.cloudinary.com/hoang161201/image/upload/v1645274633/Group_92_grzovc.svg'
+        );
       },
-      onError: (result)=> {
-        message.error(result.response?.data.err)
-        setIsopen(false)
+      onError: (result) => {
+        message.error(result.response?.data.err);
+        setIsopen(false);
+      },
     }
-  });
-
+  );
 
   return (
     <>
@@ -104,6 +108,7 @@ const index: NextPageWithLayout = () => {
         >
           <Space size={20} direction="vertical">
             <Image
+              alt={'img_submission'}
               onClick={() => setIsOpenSlImg(true)}
               preview={false}
               src={imgSubmission}
@@ -137,9 +142,10 @@ const index: NextPageWithLayout = () => {
 
         <Drawer title="Images" closable onClose={() => setIsOpenSlImg(false)} visible={isOpenSlImg}>
           <Space direction="vertical">
-            {imgs ? 
+            {imgs ? (
               imgs.map((item, key) => (
                 <Image
+                  alt={`img_${key}`}
                   style={{
                     cursor: 'pointer',
                   }}
@@ -153,7 +159,7 @@ const index: NextPageWithLayout = () => {
                   key={key}
                 />
               ))
-            : (
+            ) : (
               <Skeletons />
             )}
           </Space>
@@ -162,6 +168,7 @@ const index: NextPageWithLayout = () => {
           <Col xl={8}>
             <Space direction="vertical" size={15}>
               <Image
+                alt="submission_df"
                 style={{
                   background: 'white',
                 }}

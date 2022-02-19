@@ -36,7 +36,7 @@ export interface IUsersNotDepartment {
 }
 
 export interface IStaff extends ICol{
-  employee_id: number
+  employee_id?: number
   name: string
   role: string
   image: string

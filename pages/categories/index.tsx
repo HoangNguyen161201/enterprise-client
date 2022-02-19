@@ -99,7 +99,7 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
         _id: categoryUd?._id || '',
       });
     }
-  }, [statusForm, categoryUd]);
+  }, [statusForm, categoryUd, formSetting]);
 
   //  mutation call api to add Category
   const mutationAddCategory = useMutation<any, AxiosError, ICategoryForm>(
@@ -242,7 +242,7 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
 
       <Card
         extra={[
-          <Button
+          <Button key={'Add_ct'}
             type="link"
             onClick={() => {
               setStatusForm('create');

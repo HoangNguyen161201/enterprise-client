@@ -24,8 +24,8 @@ import { ColumnsType } from 'antd/lib/table';
 import { AxiosError } from 'axios';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
-import { useEffect, useEffect as UseEffect, useMemo, useState, useState as UseState } from 'react';
+import { useRouter as UseRouter } from 'next/router';
+import { useEffect as UseEffect, useMemo as UseMemo, useState as UseState } from 'react';
 import { useMutation } from 'react-query';
 import ButtonAssign from '../../../components/elements/ButtonAssign';
 import { ClientLayout } from '../../../components/layouts';
@@ -53,7 +53,7 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
   const {
     query: { id },
     push,
-  } = useRouter();
+  } = UseRouter();
 
   //State
   const [userNotDepartment, setUserNotDepartment] = UseState<IUsersNotDepartment>({
@@ -68,11 +68,11 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
   // departments select
   const [staffsSl, setStaffsSl] = UseState<any>(null);
 
-  useEffect(() => {
+  UseEffect(() => {
     console.log(staffsSl);
   }, [staffsSl]);
 
-  const [staffs, setStaffs] = useState<IUser[]>([]);
+  const [staffs, setStaffs] = UseState<IUser[]>([]);
 
   // set loading when delete department, delete all departments
   const [isLoadingDl, setIsLoadingDl] = UseState({
@@ -210,7 +210,7 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
   }, [dataUsersnotDPM]);
 
   // set data source to table
-  useEffect(() => {
+  UseEffect(() => {
     if (dataDepartment?.department?.staffs) {
       const getStaffs = dataDepartment.department.staffs.map((staff: IUser) => ({
         key: staff._id,
@@ -226,7 +226,7 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
     }
   }, [dataDepartment]);
 
-  const columns = useMemo<ColumnsType<any>>(
+  const columns = UseMemo<ColumnsType<any>>(
     () => [
       {
         ...column({ title: 'Id', dataIndex: 'employee_id', key: 'employee_id' }),
@@ -248,7 +248,7 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
         filterIcon: <SearchOutlined />,
         render: (value) => (
           <Space size={20}>
-            <Image width={40} height={40} style={{ objectFit: 'cover' }} src={value.avatar} />
+            <Image alt='Avatar' width={40} height={40} style={{ objectFit: 'cover' }} src={value.avatar} />
             <span>{value.name}</span>
           </Space>
         ),

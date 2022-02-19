@@ -12,7 +12,7 @@ import { AxiosError } from 'axios';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useEffect as UseEffect, useMemo, useState as UseState } from 'react';
+import { useEffect as UseEffect, useMemo as UseMemo, useState as UseState } from 'react';
 import { useMutation } from 'react-query';
 import { ClientLayout } from '../../components/layouts';
 import { NextPageWithLayout } from '../../models/layoutType';
@@ -128,7 +128,7 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
 
   const { push } = useRouter();
 
-  const columns = useMemo<ColumnsType<any>>(
+  const columns = UseMemo<ColumnsType<any>>(
     () => [
       {
         ...column({ title: 'name' }),

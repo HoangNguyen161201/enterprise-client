@@ -9,10 +9,10 @@ import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
 import { Input, TextArea } from '../../components/elements';
 import { ClientLayout } from '../../components/layouts';
-import { IDepartmentForm, ISubmissionForm } from '../../models';
+import { ISubmissionForm } from '../../models';
 import { NextPageWithLayout } from '../../models/layoutType';
 import { getCurrentUser } from '../../queries';
-import { postData, validateAddDepartment, validateAddSubmission } from '../../utils';
+import { postData, validateSubmission } from '../../utils';
 
 const { RangePicker } = DatePicker;
 
@@ -64,7 +64,7 @@ const AddSubmission: NextPageWithLayout = (props: IAddSubmissionProps) => {
 
   // setting form
   const formSetting = useForm<{ name: string; description: string }>({
-    resolver: yupResolver(validateAddSubmission),
+    resolver: yupResolver(validateSubmission),
     defaultValues: {
       name: '',
       description: '',
