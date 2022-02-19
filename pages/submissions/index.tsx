@@ -1,10 +1,81 @@
-import { Breadcrumb, Card, Col, Drawer, Image, Row, Skeleton, Space } from 'antd';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Breadcrumb, Button, Card, Col, Drawer, Image, message, Row, Space } from 'antd';
+import axios, { AxiosError } from 'axios';
 import Head from 'next/head';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { DateInput, Input, TextArea } from '../../components/elements';
+import Skeletons from '../../components/elements/Skeletons';
 import { ClientLayout } from '../../components/layouts';
-import { NextPageWithLayout } from '../../models';
+import { ICommon, ISumission, NextPageWithLayout } from '../../models';
+import { postData, validateSubmission } from '../../utils';
+import moment from 'moment';
+import { EditOutlined } from '@ant-design/icons';
+import { useMutation } from 'react-query';
+import { getCurrentUser } from '../../queries';
 
-const index: NextPageWithLayout = ()=> {
+const index: NextPageWithLayout = () => {
+  const [isOpen, setIsopen] = useState(false);
+  const [isOpenSlImg, setIsOpenSlImg] = useState(false);
+  const [imgs, setImgs] = useState<string[] | null>(null);
+  const [imgSubmission, setImgSubmission] = useState(
+    'https://res.cloudinary.com/hoang161201/image/upload/v1645274633/Group_92_grzovc.svg'
+  );
+
+  useEffect(() => {
+    if (!imgs && isOpenSlImg) {
+      axios.get('/api/image/submissions').then((result) => {
+        setImgs(result.data.imgs);
+      });
+    }
+  }, [isOpenSlImg]);
+
+  // setting form
+  const formSetting = useForm<ISumission>({
+    resolver: yupResolver(validateSubmission),
+    defaultValues: {
+      name: '',
+      description: '',
+      closure_date: moment(),
+      final_closure_date: moment(),
+    },
+  });
+
+  const onSubmit = (value: ISumission) => {
+    addSubmission.mutate(value)
+  };
+
+  //Get access token
+  const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
+  useEffect(() => {
+    dataUserRefetch();
+  }, []);
+
+  const addSubmission = useMutation<any, AxiosError, ISumission>((value) => {
+    return postData({
+      url: '/api/submissions',
+      body: value,
+      token: dataUser?.accessToken.token,
+    });
+  }, {
+      onSuccess: (data: ICommon)=> {
+        message.success(data.msg)
+        setIsopen(false)
+        formSetting.reset({
+            name: '',
+            description: '',
+            closure_date: moment(),
+            final_closure_date: moment(),
+        })
+        setImgSubmission('https://res.cloudinary.com/hoang161201/image/upload/v1645274633/Group_92_grzovc.svg')
+      },
+      onError: (result)=> {
+        message.error(result.response?.data.err)
+        setIsopen(false)
+    }
+  });
+
+
   return (
     <>
       <Head>
@@ -18,70 +89,76 @@ const index: NextPageWithLayout = ()=> {
 
       <Card
         title="Add Submission"
-        extra={<a href="#">Clear</a>}
+        extra={[
+          <Button key={'add_sumission'} onClick={() => setIsopen(true)} type="link">
+            Add new
+          </Button>,
+        ]}
         style={{ width: '100%', marginTop: '20px', backgroundColor: 'transparent' }}
-
       >
-        <Drawer>
+        <Drawer
+          title="Add new Submission"
+          closable
+          onClose={() => setIsopen(false)}
+          visible={isOpen}
+        >
+          <Space size={20} direction="vertical">
+            <Image
+              onClick={() => setIsOpenSlImg(true)}
+              preview={false}
+              src={imgSubmission}
+              style={{
+                cursor: 'pointer',
+              }}
+            />
+            <form onSubmit={formSetting.handleSubmit(onSubmit)}>
+              <Space direction="vertical" size={20}>
+                <Input
+                  icon={<EditOutlined style={{ marginRight: 10, color: 'gray' }} />}
+                  label="Name"
+                  name="name"
+                  formSetting={formSetting}
+                  placeholder="Enter submission name"
+                />
+                <DateInput label="Closure date" name="closure_date" formSetting={formSetting} />
+                <DateInput
+                  label="Final closure date"
+                  name="final_closure_date"
+                  formSetting={formSetting}
+                />
+                <TextArea label="Description" name="description" formSetting={formSetting} />
+                <Button disabled={addSubmission.isLoading} htmlType="submit" type="primary">
+                  Save
+                </Button>
+              </Space>
+            </form>
+          </Space>
+        </Drawer>
+
+        <Drawer title="Images" closable onClose={() => setIsOpenSlImg(false)} visible={isOpenSlImg}>
           <Space direction="vertical">
-            <Skeleton.Button
-              style={{
-                height: 235,
-              }}
-              active={true}
-              size={'large'}
-              shape={'square'}
-              block={true}
-            />
-            <Skeleton.Button
-              style={{
-                height: 235,
-              }}
-              active={true}
-              size={'large'}
-              shape={'square'}
-              block={true}
-            />
-            <Skeleton.Button
-              style={{
-                height: 235,
-              }}
-              active={true}
-              size={'large'}
-              shape={'square'}
-              block={true}
-            />
-            <Skeleton.Button
-              style={{
-                height: 235,
-              }}
-              active={true}
-              size={'large'}
-              shape={'square'}
-              block={true}
-            />
-            <Skeleton.Button
-              style={{
-                height: 235,
-              }}
-              active={true}
-              size={'large'}
-              shape={'square'}
-              block={true}
-            />
-            <Skeleton.Button
-              style={{
-                height: 235,
-              }}
-              active={true}
-              size={'large'}
-              shape={'square'}
-              block={true}
-            />
+            {imgs ? 
+              imgs.map((item, key) => (
+                <Image
+                  style={{
+                    cursor: 'pointer',
+                  }}
+                  preview={false}
+                  onClick={() => {
+                    setImgSubmission(item);
+                    setIsOpenSlImg(false);
+                  }}
+                  loading="lazy"
+                  src={item}
+                  key={key}
+                />
+              ))
+            : (
+              <Skeletons />
+            )}
           </Space>
         </Drawer>
         <Row gutter={[30, 30]}>
- 
           <Col xl={8}>
             <Space direction="vertical" size={15}>
               <Image
@@ -111,8 +188,8 @@ const index: NextPageWithLayout = ()=> {
       </Card>
     </>
   );
-}
+};
 
-index.getLayout = ClientLayout
+index.getLayout = ClientLayout;
 
-export default index
+export default index;

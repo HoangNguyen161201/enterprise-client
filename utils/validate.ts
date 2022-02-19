@@ -45,17 +45,6 @@ export const validateAssignDepartment = yup.object({
   qa_coordinator: yup.string().required('Please select qa coordinator'),
 });
 
-//Submission Valid
-export const validateAddSubmission = yup.object({
-  name: yup
-    .string()
-    .required('Please enter submission name')
-    .min(6, 'Submission name should be at least 6 characters'),
-  description: yup
-    .string()
-    .required('Please enter department description')
-    .min(20, 'Submission description should be at least 20 characters'),
-});
 
 //validate form for update or create category
 export const validCategory = yup.object({
@@ -90,4 +79,20 @@ export const validateAddUser = yup.object({
     .required()
     .oneOf([yup.ref('password')], 'Passwords does not match'),
   role: yup.string().required('Please select role'),
+});
+
+
+//validate form submission
+export const validateSubmission = yup.object({
+  _id: yup.string(),
+  name: yup
+    .string()
+    .required('Please enter submission name')
+    .min(6, 'Submission name should be at least 6 characters'),
+  description: yup
+    .string()
+    .required('Please enter department description')
+    .min(20, 'Submission description should be at least 20 characters'),
+  closure_date: yup.date().required('khong duoc de trong'),
+  final_closure_date:  yup.date().required('khong duoc de trong'),
 });
