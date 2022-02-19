@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
 import { Input, TextArea } from '../../components/elements';
 import Category from '../../components/elements/Category';
+import DrawerCt from '../../components/elements/DrawerCt';
 import { ClientLayout } from '../../components/layouts';
 import { IallCategories, ICategoryForm, IDetailCategory } from '../../models';
 import { NextPageWithLayout } from '../../models/layoutType';
@@ -45,8 +46,8 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
         });
         break;
       case 'create':
-        addCategory(values)
-      break;
+        addCategory(values);
+        break;
     }
   };
 
@@ -221,47 +222,17 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
         <title>All Categories Page</title>
       </Head>
 
-      <Drawer
-        title="update category"
-        onClose={() => {
-          setIsopen(false);
-        }}
-        visible={isOpen}
-        closable={true}
-      >
-        <form onSubmit={formSetting.handleSubmit(onSubmit)}>
-          <Space direction="vertical" size={20}>
-            {statusForm == 'update' && (
-              <Input
-                disable={true}
-                name="_id"
-                label="Id"
-                formSetting={formSetting}
-                placeholder="Enter department name"
-                type="text"
-                icon={<FileTextOutlined style={{ marginRight: 5, color: 'gray' }} />}
-              />
-            )}
-            <Input
-              name="name"
-              label="Name"
-              formSetting={formSetting}
-              placeholder="Enter department name"
-              type="text"
-              icon={<FileTextOutlined style={{ marginRight: 5, color: 'gray' }} />}
-            />
-            <TextArea
-              require={false}
-              name="description"
-              label="Description"
-              formSetting={formSetting}
-            />
-            <Button loading={mutationUpdateCategory.isLoading} htmlType="submit" type="primary">
-              Save
-            </Button>
-          </Space>
-        </form>
-      </Drawer>
+      <DrawerCt
+        title={statusForm == 'create' ? 'Add new category' : 'Update category'}
+        isLoading={
+          statusForm == 'create' ? mutationAddCategory.isLoading : mutationUpdateCategory.isLoading
+        }
+        onSubmit={onSubmit}
+        statusForm={statusForm}
+        isOpen={isOpen}
+        formSetting={formSetting}
+        setIsopen={(isOpen: boolean) => setIsopen(isOpen)}
+      />
 
       <Breadcrumb>
         <Breadcrumb.Item>Home</Breadcrumb.Item>
