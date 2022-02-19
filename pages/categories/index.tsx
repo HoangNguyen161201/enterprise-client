@@ -22,6 +22,7 @@ export interface ICategoriesProps {
 }
 
 const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => {
+  console.log(allCategories)
   const [categoryUd, setCategoryUd] = useState<IDetailCategory | null | undefined>(null);
   const [statusForm, setStatusForm] = useState<'create' | 'update'>('create');
   const [isOpen, setIsopen] = useState(false);
@@ -255,8 +256,8 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
         style={{ width: '100%', marginTop: '20px' }}
       >
         <Row gutter={[30, 30]}>
-          {dataAllCategories?.category &&
-            dataAllCategories?.category.map((category: IDetailCategory, key: number) => (
+          {dataAllCategories?.categories &&
+            dataAllCategories?.categories.map((category: IDetailCategory, key: number) => (
               <Category
                 data={category}
                 openDrawer={openDrawer}
