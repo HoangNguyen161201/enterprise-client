@@ -83,6 +83,11 @@ const userController = {
         department_id,
       });
       await NewUser.save();
+
+      //update count user department
+      department.count_users = ++department.count_users;
+      await department.save();
+
     } else {
       //Create and save new user without department_id
       const NewUser = new userModel({
