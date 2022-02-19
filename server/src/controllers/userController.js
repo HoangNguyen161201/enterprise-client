@@ -58,9 +58,9 @@ const userController = {
         });
 
       //if user role not match staff
-      if (role !== staff) {
+      if (role !== 'staff') {
         //check  role assigned
-        const userAssigned = await userModel.find({
+        const userAssigned = await userModel.findOne({
           role,
           department_id,
         });
@@ -87,7 +87,6 @@ const userController = {
       //update count user department
       department.count_users = ++department.count_users;
       await department.save();
-
     } else {
       //Create and save new user without department_id
       const NewUser = new userModel({
