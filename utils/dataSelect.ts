@@ -4,7 +4,7 @@ import { IOptionSelect } from '../models';
 export const roleSelect: IOptionSelect[] = [
   {
     label: 'Department Manager',
-    value: 'department manager',
+    value: 'department_manager',
   },
   {
     label: 'QA Coordinator',
