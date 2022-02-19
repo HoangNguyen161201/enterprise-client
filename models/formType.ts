@@ -52,7 +52,14 @@ export interface IResetPass {
 }
 
 export interface IAssignUsers {
-    userId?: string | string[] | undefined,
-    users?: string | string[] | undefined,
-    departmentId: string,
+    userId?: string | string[] | undefined
+    users?: string | string[] | undefined
+    departmentId: string
+}
+
+export interface ISumission {
+    name: string
+    description: string
+    closure_date: any
+   final_closure_date: any
 }
