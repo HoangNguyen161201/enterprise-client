@@ -14,6 +14,7 @@
     "axios": "^0.25.0",
     "bcrypt": "^5.0.1",
     "bcryptjs": "^2.4.3",
+    "cloudinary": "^1.28.1",
     "cookies": "^0.8.0",
     "framer-motion": "^6.2.6",
     "http-proxy": "^1.18.1",
