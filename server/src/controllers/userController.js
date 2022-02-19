@@ -10,6 +10,7 @@ const departmentModel = require('../models/departmentModel');
 
 const userController = {
   create: catchAsyncError(async (req, res) => {
+    const count = await userModel.count();
     //Get info user to create
     const { name, email, password, cf_password, role, avatar, department_id } = req.body;
 
@@ -112,8 +113,6 @@ const userController = {
 
     //get info update
     const { name, email, role, department_id } = req.body;
-
-    console.log('sdf');
 
     //check user exist in system
     const user = await userModel.findById(id);
@@ -297,7 +296,7 @@ const userController = {
         statusCode: 400,
       });
 
-    const users = await userModel.find({ role });
+    const users = await userModel.find({ role }).select('-password');
 
     return res.status(200).json({
       statusCode: 200,
@@ -310,17 +309,17 @@ const userController = {
     const staffs = await userModel.find({
       role: 'staff',
       department_id: undefined,
-    });
+    }).select('-password');
 
     const QACoordinators = await userModel.find({
       role: 'qa_coordinator',
       department_id: undefined,
-    });
+    }).select('-password');
 
     const departmentManagers = await userModel.find({
       role: 'department_manager',
       department_id: undefined,
-    });
+    }).select('-password');
 
     return res.status(200).json({
       statusCode: 200,
