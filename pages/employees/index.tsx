@@ -2,6 +2,7 @@ import {
   DeleteOutlined,
   EyeOutlined,
   MoreOutlined,
+  QuestionCircleOutlined,
   SearchOutlined,
   UploadOutlined,
 } from '@ant-design/icons';
@@ -17,6 +18,7 @@ import {
   Menu,
   Dropdown,
   Input,
+  Popconfirm,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { AxiosError } from 'axios';
@@ -376,16 +378,33 @@ const Employees: NextPageWithLayout = ({ allUsers }: IEmployeesProps) => {
       </Breadcrumb>
 
       <Card
-        extra={
-          <a
-            onClick={() => deleteManyUser(usersSl as string[])}
-            style={{
-              display: usersSl ? 'block' : 'none',
+        extra={[
+          <Popconfirm
+            key={'delete'}
+            disabled={usersSl == null}
+            icon={
+              <QuestionCircleOutlined
+                style={{
+                  color: '#07456F',
+                }}
+              />
+            }
+            title="Are you sure?"
+            okButtonProps={{
+              onClick: async () => {
+                await dataUserRefetch();
+                mutationDeleteManyUser.mutate({users: usersSl as string[]});
+              },
+              loading: mutationDeleteManyUser.isLoading,
             }}
+            okText="Yes"
+            cancelText="No"
           >
-            Remove All
-          </a>
-        }
+            <Button disabled={usersSl == null} type="link">
+              Remove All
+            </Button>
+          </Popconfirm>,
+        ]}
         title="All Employees"
         style={{ width: '100%', marginTop: '20px' }}
       >
