@@ -11,7 +11,7 @@ const departmentModel = require('../models/departmentModel');
 const userController = {
   create: catchAsyncError(async (req, res) => {
     //Get info user to create
-    const { name, email, password, cf_password, role, avatar } = req.body;
+    const { name, email, password, cf_password, role, avatar, department_id } = req.body;
 
     //Check valid info sign up
     const errMsg = userValid.validSignUp({
@@ -47,17 +47,59 @@ const userController = {
       url: `https://avatars.dicebear.com/api/avataaars/${name}.svg`,
     };
 
-    //Create and save new user
-    const NewUser = new userModel({
-      name,
-      email,
-      role,
-      password: passwordHash,
-      cf_password,
-      avatar: avatarUser,
-    });
+    //Check exist department id
+    if (department_id) {
+      //check exist department
+      const department = await departmentModel.findById(department_id);
+      if (!department)
+        return res.status(400).json({
+          statusCode: 400,
+          err: 'Department dose not exist!',
+        });
 
-    await NewUser.save();
+      switch (user.role) {
+        case 'staff':
+          //Create and save new user
+          const NewUser = new userModel({
+            name,
+            email,
+            role,
+            password: passwordHash,
+            cf_password,
+            avatar: avatarUser,
+            department_id,
+          });
+          await NewUser.save();
+          break;
+
+        //if user role not match staff
+        default:
+          //check user role assigned
+          const userAssigned = await userModel.find({
+            role,
+            department_id,
+          });
+          if (userAssigned) {
+            return res.status(400).json({
+              statusCode: 400,
+              err: `${role} of department ${department.name} already exist!`,
+            });
+          }
+
+          //Create and save new user
+          const NewUser = new userModel({
+            name,
+            email,
+            role,
+            password: passwordHash,
+            cf_password,
+            avatar: avatarUser,
+            department_id,
+          });
+          await NewUser.save();
+          break;
+      }
+    }
 
     return res.status(200).json({
       msg: 'Create User Success!',
@@ -197,7 +239,6 @@ const userController = {
       //check user exist in system
       const user = await userModel.findById(userId);
 
-      
       if (user && !user.root) {
         //Check user assigned department
         if (user.department_id) {
