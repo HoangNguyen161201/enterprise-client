@@ -13,7 +13,7 @@ const pageIndex = require('../utils/PageIndex');
 const submissionController = {
   create: catchAsyncError(async (req, res) => {
     //get info submission to create
-    const { name, description, closure_date, final_closure_date } = req.body;
+    const { name, description, closure_date, final_closure_date, background } = req.body;
 
     //check valid info input
     const errMsg = submissionValid.submissionFillIn({
@@ -35,6 +35,7 @@ const submissionController = {
       description,
       closure_date,
       final_closure_date,
+      background
     });
     await NewSubmission.save();
 
@@ -48,7 +49,7 @@ const submissionController = {
     //get id from query
     const { id } = req.params;
     //get info update
-    const { name, description, closure_date, final_closure_date } = req.body;
+    const { name, description, closure_date, final_closure_date, background } = req.body;
 
     //check topic exist in system
     const submission = await submissionModel.findById(id);
@@ -79,6 +80,7 @@ const submissionController = {
       description,
       closure_date,
       final_closure_date,
+      background
     });
 
     return res.status(200).json({

@@ -5,7 +5,7 @@ const submissionSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
   },
 
   description: {
@@ -21,6 +21,11 @@ const submissionSchema = new mongoose.Schema({
   final_closure_date: {
     type: Date,
     required: true,
+  },
+
+  background: {
+    type: String,
+    default: 'https://res.cloudinary.com/hoang161201/image/upload/v1645274633/Group_92_grzovc.svg',
   },
 });
 

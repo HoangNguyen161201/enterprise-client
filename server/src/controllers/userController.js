@@ -10,8 +10,9 @@ const departmentModel = require('../models/departmentModel');
 
 const userController = {
   create: catchAsyncError(async (req, res) => {
+    const count = await userModel.count();
     //Get info user to create
-    const { name, email, password, cf_password, role, avatar } = req.body;
+    const { name, email, password, cf_password, role, avatar, department_id } = req.body;
 
     //Check valid info sign up
     const errMsg = userValid.validSignUp({
@@ -47,17 +48,58 @@ const userController = {
       url: `https://avatars.dicebear.com/api/avataaars/${name}.svg`,
     };
 
-    //Create and save new user
-    const NewUser = new userModel({
-      name,
-      email,
-      role,
-      password: passwordHash,
-      cf_password,
-      avatar: avatarUser,
-    });
+    //Check exist department id
+    if (department_id) {
+      //check exist department
+      const department = await departmentModel.findById(department_id);
+      if (!department)
+        return res.status(400).json({
+          statusCode: 400,
+          err: 'Department dose not exist!',
+        });
 
-    await NewUser.save();
+      //if user role not match staff
+      if (role !== 'staff') {
+        //check  role assigned
+        const userAssigned = await userModel.findOne({
+          role,
+          department_id,
+        });
+        if (userAssigned) {
+          return res.status(400).json({
+            statusCode: 400,
+            err: `${role} of department ${department.name} already exist!`,
+          });
+        }
+      }
+
+      //Create and save new user
+      const NewUser = new userModel({
+        name,
+        email,
+        role,
+        password: passwordHash,
+        cf_password,
+        avatar: avatarUser,
+        department_id,
+      });
+      await NewUser.save();
+
+      //update count user department
+      department.count_users = ++department.count_users;
+      await department.save();
+    } else {
+      //Create and save new user without department_id
+      const NewUser = new userModel({
+        name,
+        email,
+        role,
+        password: passwordHash,
+        cf_password,
+        avatar: avatarUser,
+      });
+      await NewUser.save();
+    }
 
     return res.status(200).json({
       msg: 'Create User Success!',
@@ -71,8 +113,6 @@ const userController = {
 
     //get info update
     const { name, email, role, department_id } = req.body;
-
-    console.log('sdf');
 
     //check user exist in system
     const user = await userModel.findById(id);
@@ -197,7 +237,6 @@ const userController = {
       //check user exist in system
       const user = await userModel.findById(userId);
 
-      
       if (user && !user.root) {
         //Check user assigned department
         if (user.department_id) {
@@ -257,7 +296,7 @@ const userController = {
         statusCode: 400,
       });
 
-    const users = await userModel.find({ role });
+    const users = await userModel.find({ role }).select('-password');
 
     return res.status(200).json({
       statusCode: 200,
@@ -270,17 +309,17 @@ const userController = {
     const staffs = await userModel.find({
       role: 'staff',
       department_id: undefined,
-    });
+    }).select('-password');
 
     const QACoordinators = await userModel.find({
       role: 'qa_coordinator',
       department_id: undefined,
-    });
+    }).select('-password');
 
     const departmentManagers = await userModel.find({
       role: 'department_manager',
       department_id: undefined,
-    });
+    }).select('-password');
 
     return res.status(200).json({
       statusCode: 200,

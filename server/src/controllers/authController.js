@@ -105,6 +105,7 @@ const authController = {
       accessToken: access_token,
       user: {
         _id: user._id,
+        employee_id: user.employee_id,
         name: user.name,
         email: user.email,
         role: user.role,
