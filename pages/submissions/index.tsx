@@ -50,6 +50,12 @@ const index: NextPageWithLayout = () => {
 
   //Get access token
   const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
+<<<<<<< HEAD
+=======
+
+  // get all submissions
+
+>>>>>>> back-end
   UseEffect(() => {
     dataUserRefetch();
   }, []);
