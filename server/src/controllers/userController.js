@@ -152,9 +152,17 @@ const userController = {
               statusCode: 400,
             });
 
-          //Update department user count
-          if (user.department_id !== department._id) {
-            department.count_users = --department.count_users;
+          //Check exist old department
+          if (user.department_id && user.department_id !== department._id) {
+            //Update old department user count
+            const old_department = await departmentModel.findById(user.department_id);
+            if (old_department) {
+              departmentModel.count_users = --departmentModel.count_users;
+              await departmentModel.save();
+            }
+            
+            //Update new department user count
+            department.count_users = ++department.count_users;
             await department.save();
           }
 
@@ -306,20 +314,26 @@ const userController = {
   }),
 
   getNotDepartment: catchAsyncError(async (req, res) => {
-    const staffs = await userModel.find({
-      role: 'staff',
-      department_id: undefined,
-    }).select('-password');
+    const staffs = await userModel
+      .find({
+        role: 'staff',
+        department_id: undefined,
+      })
+      .select('-password');
 
-    const QACoordinators = await userModel.find({
-      role: 'qa_coordinator',
-      department_id: undefined,
-    }).select('-password');
+    const QACoordinators = await userModel
+      .find({
+        role: 'qa_coordinator',
+        department_id: undefined,
+      })
+      .select('-password');
 
-    const departmentManagers = await userModel.find({
-      role: 'department_manager',
-      department_id: undefined,
-    }).select('-password');
+    const departmentManagers = await userModel
+      .find({
+        role: 'department_manager',
+        department_id: undefined,
+      })
+      .select('-password');
 
     return res.status(200).json({
       statusCode: 200,
