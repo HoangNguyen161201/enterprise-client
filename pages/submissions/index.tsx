@@ -1,27 +1,47 @@
+import { EditOutlined } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Breadcrumb, Button, Card, Col, Drawer, Image, message, Row, Space } from 'antd';
+import {
+  Breadcrumb,
+  Button,
+  Card,
+  Col,
+  Drawer,
+  Image,
+  message,
+  Pagination,
+  Row,
+  Space,
+} from 'antd';
 import axios, { AxiosError } from 'axios';
+import moment from 'moment';
+import { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import { useEffect as UseEffect, useState as UseState } from 'react';
+import { useEffect, useEffect as UseEffect, useState as UseState } from 'react';
 import { useForm as UseForm } from 'react-hook-form';
+import { useMutation as UseMutation } from 'react-query';
 import { DateInput, Input, TextArea } from '../../components/elements';
 import Skeletons from '../../components/elements/Skeletons';
 import { ClientLayout } from '../../components/layouts';
-import { ICommon, ISumission, NextPageWithLayout } from '../../models';
+import { ICommon, ISubmission, ISubmissions, ISumission, NextPageWithLayout } from '../../models';
+import { getallSubmissions, getCurrentUser } from '../../queries';
 import { postData, validateSubmission } from '../../utils';
-import moment from 'moment';
-import { EditOutlined } from '@ant-design/icons';
-import { useMutation as UseMutation } from 'react-query';
-import { getCurrentUser } from '../../queries';
 
-const index: NextPageWithLayout = () => {
+interface submisionPage {
+  result: ISubmissions;
+}
+const index: NextPageWithLayout = ({ result }: submisionPage) => {
   const [isOpen, setIsopen] = UseState(false);
   const [isOpenSlImg, setIsOpenSlImg] = UseState(false);
   const [imgs, setImgs] = UseState<string[] | null>(null);
+  const [page, setPage] = UseState<number>(1);
   const [imgSubmission, setImgSubmission] = UseState(
     'https://res.cloudinary.com/hoang161201/image/upload/v1645274633/Group_92_grzovc.svg'
   );
 
+  useEffect(()=> {
+    console.log(page)
+    RefetchSubmisssion()
+  }, [page])
   UseEffect(() => {
     if (!imgs && isOpenSlImg) {
       axios.get('/api/image/submissions').then((result) => {
@@ -29,6 +49,8 @@ const index: NextPageWithLayout = () => {
       });
     }
   }, [isOpenSlImg]);
+
+  
 
   // setting form
   const formSetting = UseForm<ISumission>({
@@ -44,21 +66,23 @@ const index: NextPageWithLayout = () => {
   const onSubmit = (value: ISumission) => {
     addSubmission.mutate({
       ...value,
-      background: imgSubmission
+      background: imgSubmission,
     });
   };
 
   //Get access token
   const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
-<<<<<<< HEAD
-=======
 
-  // get all submissions
+  // get all submission
+  const {
+    error: errorSubmission,
+    data: dataSubmissions,
+    refetch: RefetchSubmisssion,
+  } = getallSubmissions(dataUser?.accessToken.token, result, {
+    _page: page,
+  });
 
->>>>>>> back-end
-  UseEffect(() => {
-    dataUserRefetch();
-  }, []);
+  console.log(dataSubmissions)
 
   const addSubmission = UseMutation<any, AxiosError, ISumission>(
     (value) => {
@@ -107,7 +131,7 @@ const index: NextPageWithLayout = () => {
             Add new
           </Button>,
         ]}
-        style={{ width: '100%', marginTop: '20px', backgroundColor: 'transparent' }}
+        style={{ width: '100%', marginTop: '20px' }}
       >
         <Drawer
           title="Add new Submission"
@@ -173,34 +197,45 @@ const index: NextPageWithLayout = () => {
             )}
           </Space>
         </Drawer>
-        <Row gutter={[30, 30]}>
-          <Col xl={8}>
-            <Space direction="vertical" size={15}>
-              <Image
-                alt="submission_df"
-                style={{
-                  background: 'white',
-                }}
-                preview={false}
-                src="https://res.cloudinary.com/hoang161201/image/upload/v1645254094/image/shopping-2194208-0_kenboc.svg"
-              />
-              <div>
-                <span
-                  className="font-3"
-                  style={{
-                    fontWeight: 'bold',
-                    display: 'block',
-                  }}
-                >
-                  Title 1
-                </span>
-                <span style={{ color: 'gray' }}>
-                  nguywn q efw wes sdfsd sd sdf sdfsd f sdf sdf fdgdf g fdgd dfgdf sdf s sd sdf
-                </span>
-              </div>
-            </Space>
-          </Col>
-        </Row>
+        <Space direction="vertical" size={'large'}>
+          <Row gutter={[30, 30]}>
+            {dataSubmissions?.submissions &&
+              dataSubmissions?.submissions.map((item: ISubmission, key: number) => (
+                <Col xl={8} lg={12} md={24} key={key}>
+                  <Space direction="vertical" size={15}>
+                    <Image
+                      alt={`submission_${item._id}`}
+                      width={'100%'}
+                      style={{
+                        background: 'white',
+                        objectFit: 'cover',
+                        objectPosition: 'center',
+                      }}
+                      preview={false}
+                      src={item.background}
+                    />
+                    <div>
+                      <span
+                        className="font-3"
+                        style={{
+                          fontWeight: 'bold',
+                          display: 'block',
+                        }}
+                      >
+                        {item.name}
+                      </span>
+                      <span style={{ color: 'gray' }}>{item.description}</span>
+                    </div>
+                  </Space>
+                </Col>
+              ))}
+          </Row>
+          {
+            dataSubmissions?.page_Index && <Pagination onChange={ (pageSl)=> {
+              setPage(pageSl)
+            }} defaultCurrent={1} pageSize={1} total={dataSubmissions.page_Index} />
+          }
+        </Space>
       </Card>
     </>
   );
@@ -209,3 +244,46 @@ const index: NextPageWithLayout = () => {
 index.getLayout = ClientLayout;
 
 export default index;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  //Check login
+  const res = await fetch('http://localhost:3000/api/auth/accesstoken', {
+    method: 'GET',
+    headers: {
+      cookie: context.req.headers.cookie,
+    } as HeadersInit,
+  });
+
+  const data = await res.json();
+
+  //Redirect login page when error
+  if (res.status !== 200) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+  }
+
+  //Check role
+  if (data.user.role !== 'admin') {
+    return {
+      notFound: true,
+    };
+  }
+
+  //Get all data users
+  const result: ISubmissions = await fetch(`http://localhost:3000/api/submissions?_page=1`, {
+    method: 'GET',
+    headers: {
+      cookie: context.req.headers.cookie,
+    } as HeadersInit,
+  }).then((e) => e.json());
+
+  return {
+    props: {
+      result,
+    },
+  };
+};

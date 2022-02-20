@@ -2,6 +2,7 @@ export interface IPropsFetchData {
   url: string
   body?: any
   token?: string
+  params?: any
 }
 
 export interface ICommon {
@@ -45,6 +46,7 @@ export interface IDetailDepartment extends ICommon {
 
 //Iterface user
 export interface IUser {
+  id: any
   _id: any
   employee_id: number
   name: string
@@ -55,19 +57,35 @@ export interface IUser {
     public_id: string
     url: string
   }
+  department_id: string
   [index: string]: any
 }
 
 export interface IResUsersNotDepartments {
-  staffs?: IUser[];
-  QACoordinators?: IUser[];
-  departmentManagers?: IUser[];
-  [index: string]: any;
+  staffs?: IUser[]
+  QACoordinators?: IUser[]
+  departmentManagers?: IUser[]
+  [index: string]: any
 }
 
 export interface IAllUsers extends ICommon{
-  users: IUser[];
-  [index: string]: any;
+  users: IUser[]
+  [index: string]: any
+}
+
+export interface ISubmission {
+  _id: string
+  name: string
+  description: string
+  closure_date: string
+  final_closure_date: string
+  background: string
+}
+
+export interface ISubmissions extends ICommon{
+  submissions: Array<ISubmission>
+  page_Index: number
+  [index: string]: any
 }
 
 export interface IResUsersRole {
