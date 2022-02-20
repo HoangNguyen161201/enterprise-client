@@ -62,4 +62,5 @@ export interface ISumission {
     description: string
     closure_date: any
    final_closure_date: any
+   [index: string]: any
 }
