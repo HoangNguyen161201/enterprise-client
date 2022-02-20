@@ -166,7 +166,7 @@ const userController = {
             //Update new department user count
             department.count_users = ++department.count_users;
             await department.save();
-          }
+          }``
 
           //update data by id
           await userModel.findByIdAndUpdate(id, { name, email, role, department_id });
