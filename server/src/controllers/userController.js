@@ -156,8 +156,8 @@ const userController = {
             //Update old department user count
             const old_department = await departmentModel.findById(user.department_id);
             if (old_department) {
-              departmentModel.count_users = --departmentModel.count_users;
-              await departmentModel.save();
+              old_department.count_users = --old_department.count_users;
+              await old_department.save();
             }
           }
 
