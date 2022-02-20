@@ -33,13 +33,14 @@ export const putData = async ({ url, body, token = '' }: IPropsFetchData) => {
 };
 
 //Get api
-export const getData = async ({ url, token = '' }: IPropsFetchData) => {
+export const getData = async ({ url, token = '', params }: IPropsFetchData) => {
   return await axios
     .get(url, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: token,
       },
+      params
     })
     .then((result) => {
       return result.data;
