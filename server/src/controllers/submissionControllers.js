@@ -109,6 +109,7 @@ const submissionController = {
   }),
 
   getAll: catchAsyncError(async (req, res) => {
+    // get all submission by field 
     const {_page, _search, _time,} = req.query
     let filter = new Filter(submissionModel).getAll()
     if(_search) {
