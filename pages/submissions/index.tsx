@@ -42,7 +42,10 @@ const index: NextPageWithLayout = () => {
   });
 
   const onSubmit = (value: ISumission) => {
-    addSubmission.mutate(value);
+    addSubmission.mutate({
+      ...value,
+      background: imgSubmission
+    });
   };
 
   //Get access token
@@ -132,7 +135,7 @@ const index: NextPageWithLayout = () => {
                   formSetting={formSetting}
                 />
                 <TextArea label="Description" name="description" formSetting={formSetting} />
-                <Button disabled={addSubmission.isLoading} htmlType="submit" type="primary">
+                <Button loading={addSubmission.isLoading} htmlType="submit" type="primary">
                   Save
                 </Button>
               </Space>
