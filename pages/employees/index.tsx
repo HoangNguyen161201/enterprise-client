@@ -1,11 +1,14 @@
 import {
   DeleteOutlined,
   EyeOutlined,
+  FileTextOutlined,
+  MailOutlined,
   MoreOutlined,
   QuestionCircleOutlined,
   SearchOutlined,
   UploadOutlined,
 } from '@ant-design/icons';
+import { yupResolver } from '@hookform/resolvers/yup';
 import {
   Breadcrumb,
   Table,
@@ -17,26 +20,68 @@ import {
   Image,
   Menu,
   Dropdown,
-  Input,
   Popconfirm,
+  Drawer,
+  Avatar,
+  Row,
+  Col,
+  Input,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { AxiosError } from 'axios';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import * as React from 'react';
+import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
+import { Input as InputForm, Select } from '../../components/elements';
+import DrawerUpdateUser from '../../components/elements/DrawerEpl';
 import { ClientLayout } from '../../components/layouts';
-import { IAllUsers, IUser, IUserForm } from '../../models';
+import { IAllUsers, IDepartments, IOptionSelect, IUser, IUserForm } from '../../models';
 import { NextPageWithLayout } from '../../models/layoutType';
-import { getallUsers, getCurrentUser } from '../../queries';
-import { column, deleteData, postData, putData } from '../../utils';
+import { getAllDepartments, getallUsers, getCurrentUser } from '../../queries';
+import {
+  column,
+  deleteData,
+  postData,
+  putData,
+  validateAddUser,
+  validateUpdateUser,
+} from '../../utils';
 
 export interface IEmployeesProps {
   allUsers: IAllUsers;
+  allDepartments: IDepartments;
 }
 
-const Employees: NextPageWithLayout = ({ allUsers }: IEmployeesProps) => {
+const Employees: NextPageWithLayout = ({ allUsers, allDepartments }: IEmployeesProps) => {
+  //Visibble drawer udpate employee
+  const [visible, setVisible] = React.useState(false);
+
+  //Old data of employee update
+  const [oldUpdateUser, setoldUpdateUser] = React.useState<Partial<IUser>>({
+    _id: '',
+    employee_id: undefined,
+    name: '',
+    role: '',
+    email: '',
+    avatar: {
+      public_id: '',
+      url: '',
+    },
+  });
+
+  //Show and close drawer
+  const showDrawer = () => {
+    setVisible(true);
+  };
+  const onClose = () => {
+    setVisible(false);
+  };
+
+  //Data select department
+  const [departmentSl, setDepartmentSL] = React.useState<IOptionSelect[]>([]);
+
   //Data source table users
   const [dataSourceUsers, setDataSourceUsers] = React.useState<Partial<IUser>[]>([]);
 
@@ -52,6 +97,28 @@ const Employees: NextPageWithLayout = ({ allUsers }: IEmployeesProps) => {
     data: dataAllUsers,
     refetch: dataAllUsersRefetch,
   } = getallUsers(dataUser?.accessToken.token, allUsers);
+
+  //Get all data departments
+  const { error: errorAllDepartments, data: dataAllDepartments } = getAllDepartments(
+    dataUser?.accessToken.token,
+    allDepartments
+  );
+
+  //Set data select departmen
+  React.useEffect(() => {
+    if (dataAllDepartments && dataAllDepartments.departments) {
+      const valueSetDepartmentSl: IOptionSelect[] = dataAllDepartments.departments.map(
+        (department) => {
+          return {
+            value: department._id,
+            label: department.name,
+          };
+        }
+      );
+
+      setDepartmentSL(valueSetDepartmentSl);
+    }
+  }, [dataAllDepartments]);
 
   //Set data source for table users
   React.useEffect(() => {
@@ -81,34 +148,6 @@ const Employees: NextPageWithLayout = ({ allUsers }: IEmployeesProps) => {
       });
     }
   }, [errorAllUsers]);
-
-  //    mutation call api to update User
-  const mutationUpdateUser = useMutation<any, AxiosError, Partial<IUserForm>>(
-    ({ id, name, email, role, department_id }) => {
-      return putData({
-        url: `/api/users/${id}`,
-        body: {
-          name,
-          role,
-          email,
-          department_id,
-        },
-        token: dataUser?.accessToken.token,
-      });
-    },
-    {
-      onSuccess: (data) => {
-        message.success({
-          content: data.msg,
-        });
-      },
-      onError: (error) => {
-        message.error({
-          content: error.response?.data.err || 'Update User false.',
-        });
-      },
-    }
-  );
 
   //  mutation call api to delete User
   const mutationDeleteUser = useMutation<any, AxiosError, Partial<IUserForm>>(
@@ -160,6 +199,33 @@ const Employees: NextPageWithLayout = ({ allUsers }: IEmployeesProps) => {
     }
   );
 
+  //  mutation call api to update User
+  const mutationUpdateUser = useMutation<any, AxiosError, { user: IUser }>(
+    ({ user }) => {
+      return putData({
+        url: `/api/users/${user.id}`,
+        body: {
+          ...user,
+        },
+        token: dataUser?.accessToken.token,
+      });
+    },
+    {
+      onSuccess: (data) => {
+        message.success({
+          content: data.msg,
+        });
+        dataAllUsersRefetch();
+        setUsersSl(null);
+      },
+      onError: (error) => {
+        message.error({
+          content: error.response?.data.err || 'Update User false.',
+        });
+      },
+    }
+  );
+
   //Check exist and show error
   React.useEffect(() => {
     if (errorGetUser) {
@@ -170,18 +236,12 @@ const Employees: NextPageWithLayout = ({ allUsers }: IEmployeesProps) => {
   }, [errorGetUser]);
 
   //Function handle update user
-  const updateUser = async () => {
+  const updateUser = async (user: IUser) => {
     //Refetch again let get accesstoken pass to api
     await dataUserRefetch();
 
     //Put data update user
-    mutationUpdateUser.mutate({
-      id: '620dfa643ed7da2a45b46ed9',
-      name: 'Nguyen huy',
-      email: 'huy1212@gmail.com',
-      role: 'admin',
-      department_id: '6208aab5491e8da35ed5d5f1',
-    });
+    mutationUpdateUser.mutate({ user });
   };
 
   //Function handle delete user
@@ -224,7 +284,13 @@ const Employees: NextPageWithLayout = ({ allUsers }: IEmployeesProps) => {
       }),
       render: (value, record) => (
         <Space size={20}>
-          <Image width={40} alt={record.key} height={40} style={{ objectFit: 'cover' }} src={value.avatar} />
+          <Image
+            width={40}
+            alt={record.key}
+            height={40}
+            style={{ objectFit: 'cover' }}
+            src={value.avatar}
+          />
           <span>{value.name}</span>
         </Space>
       ),
@@ -315,13 +381,27 @@ const Employees: NextPageWithLayout = ({ allUsers }: IEmployeesProps) => {
       ...column({
         title: 'active',
       }),
-      render: (value: boolean, record) => (
+      render: (value: boolean, record: Partial<IUser>) => (
         <>
           <Dropdown
             overlay={
               <Menu>
                 <Menu.Item
                   disabled={record.root}
+                  onClick={() => {
+                    //Reset data form update user
+                    formSetting.reset({
+                      id: record.key,
+                      name: record.name_avatar?.name,
+                      email: record.email,
+                      role: record.role,
+                      department_id: record.department_id,
+                    });
+
+                    //Set state and show drawer
+                    setoldUpdateUser(record);
+                    showDrawer();
+                  }}
                   icon={
                     <UploadOutlined
                       style={{
@@ -375,6 +455,27 @@ const Employees: NextPageWithLayout = ({ allUsers }: IEmployeesProps) => {
     },
   ];
 
+  // setting form update user
+  const formSetting = useForm<IUserForm>({
+    resolver: yupResolver(validateUpdateUser),
+    defaultValues: {
+      id: '',
+      name: '',
+      email: '',
+      role: '',
+      department_id: '',
+    },
+  });
+
+  const onSubmit = async (dataForm: IUser) => {
+    //Refetch again let get accesstoken pass to api
+    await dataUserRefetch();
+
+    //Post add data user
+    mutationUpdateUser.mutate({ user: dataForm });
+    console.log(dataForm);
+  };
+
   return (
     <>
       <Head>
@@ -400,10 +501,7 @@ const Employees: NextPageWithLayout = ({ allUsers }: IEmployeesProps) => {
             }
             title="Are you sure?"
             okButtonProps={{
-              onClick: async () => {
-                await dataUserRefetch();
-                mutationDeleteManyUser.mutate({ users: usersSl as string[] });
-              },
+              onClick: async () => deleteManyUser(usersSl as string[]),
               loading: mutationDeleteManyUser.isLoading,
             }}
             okText="Yes"
@@ -438,6 +536,15 @@ const Employees: NextPageWithLayout = ({ allUsers }: IEmployeesProps) => {
           />
         </Space>
       </Card>
+
+      <DrawerUpdateUser
+        onClose={onClose}
+        visible={visible}
+        oldUpdateUser={oldUpdateUser}
+        formSetting={formSetting}
+        departmentSl={departmentSl}
+        onSubmit={onSubmit}
+      />
     </>
   );
 };
@@ -482,9 +589,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     } as HeadersInit,
   }).then((e) => e.json());
 
+  //Get all department
+  const allDepartments: IDepartments = await fetch(`http://localhost:3000/api/departments`, {
+    method: 'GET',
+    headers: {
+      cookie: context.req.headers.cookie,
+    } as HeadersInit,
+  }).then((e) => e.json());
+
   return {
     props: {
       allUsers,
+      allDepartments,
     },
   };
 };
