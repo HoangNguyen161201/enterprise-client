@@ -16,7 +16,8 @@ const departmentSchema = new mongoose.Schema({
   },
   count_users: {
     type: Number,
-    default: 0
+    default: 0,
+    min: 0
   }
 });
 

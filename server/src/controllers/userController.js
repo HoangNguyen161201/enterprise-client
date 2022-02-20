@@ -152,15 +152,17 @@ const userController = {
               statusCode: 400,
             });
 
-          //Check exist old department
-          if (user.department_id && user.department_id !== department._id) {
+          if (user.department_id) {
             //Update old department user count
             const old_department = await departmentModel.findById(user.department_id);
             if (old_department) {
               departmentModel.count_users = --departmentModel.count_users;
               await departmentModel.save();
             }
-            
+          }
+
+          //Check exist old department
+          if (user.department_id !== department._id) {
             //Update new department user count
             department.count_users = ++department.count_users;
             await department.save();
