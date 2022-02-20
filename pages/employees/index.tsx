@@ -133,6 +133,7 @@ const Employees: NextPageWithLayout = ({ allUsers, allDepartments }: IEmployeesP
           role: user.role,
           email: user.email,
           active: '',
+          department_id: user.department_id
         };
       });
     }
@@ -234,15 +235,6 @@ const Employees: NextPageWithLayout = ({ allUsers, allDepartments }: IEmployeesP
       });
     }
   }, [errorGetUser]);
-
-  //Function handle update user
-  const updateUser = async (user: IUser) => {
-    //Refetch again let get accesstoken pass to api
-    await dataUserRefetch();
-
-    //Put data update user
-    mutationUpdateUser.mutate({ user });
-  };
 
   //Function handle delete user
   const deleteUser = async (id: string) => {
