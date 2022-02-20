@@ -23,7 +23,7 @@ const submissionSchema = new mongoose.Schema({
     required: true,
   },
 
-  back_ground: {
+  background: {
     type: String,
     default: 'https://res.cloudinary.com/hoang161201/image/upload/v1645274633/Group_92_grzovc.svg',
   },
