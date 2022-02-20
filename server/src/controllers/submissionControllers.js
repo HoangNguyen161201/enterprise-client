@@ -1,4 +1,5 @@
 const submissionValid = require('../utils/submissionValid');
+const moment = require('moment')
 
 //Import middleware
 const catchAsyncError = require('../helpers/catchAsyncError');
@@ -6,6 +7,8 @@ const catchAsyncError = require('../helpers/catchAsyncError');
 //Import model
 const submissionModel = require('../models/submissionModel');
 const { update } = require('./userController');
+const Filter = require('../utils/filter');
+const pageIndex = require('../utils/PageIndex');
 
 const submissionController = {
   create: catchAsyncError(async (req, res) => {
@@ -104,10 +107,27 @@ const submissionController = {
   }),
 
   getAll: catchAsyncError(async (req, res) => {
-    const submissions = await submissionModel.find({});
+    const {_page, _search, _time,} = req.query
+    let filter = new Filter(submissionModel).getAll()
+    if(_search) {
+      filter = filter.search({name: 'name', query: _search})
+    }
+    if(_time) {
+      filter = filter.searchGte({name: 'name', query: _search})
+    }
+    if(_page) {
+      filter = filter.pagination({limit: 6, page: (Number(_page) - 1)})
+    }
+
+    const page_Index = await pageIndex({query: submissionModel, limit: 6})
+    const submissions = await filter.query
+    
+    
+
     return res.status(200).json({
       statusCode: 200,
       submissions,
+      page_Index,
       msg: 'Get all topic success',
     });
   }),
