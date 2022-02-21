@@ -1,4 +1,4 @@
-import { FileTextOutlined, IdcardOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
+import { FileTextOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Breadcrumb, Button, Card, Col, message, Row, Space } from 'antd';
 import { AxiosError } from 'axios';
@@ -7,20 +7,16 @@ import Head from 'next/head';
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
-import { Input, Select, TextArea } from '../../components/elements';
-import { ClientLayout } from '../../components/layouts';
-import {
-  IAllUsers,
-  IDepartmentForm,
-  IDepartments,
-  IDetailDepartment,
-  IOptionSelect,
-  IUserForm,
-} from '../../models';
-import { NextPageWithLayout } from '../../models/layoutType';
-import { getAllDepartments, getallUsers, getCurrentUser } from '../../queries';
-import { postData, validateAddDepartment, validateAddUser } from '../../utils';
-import { roleSelect } from '../../utils/dataSelect';
+import { Input, Select } from 'components/elements/form';
+import { ClientLayout } from 'components/layouts';
+import { IDepartments } from 'models/apiType';
+import { IOptionSelect } from 'models/elementType';
+import { IUserForm } from 'models/formType';
+import { NextPageWithLayout } from 'models/layoutType';
+import { getAllDepartments, getallUsers, getCurrentUser } from 'queries';
+import { postData } from 'utils/fetchData';
+import { validateAddUser } from 'utils/validate';
+import { roleSelect } from 'utils/dataSelect';
 
 export interface IAddEmployeeProps {
   allDepartments: IDepartments;

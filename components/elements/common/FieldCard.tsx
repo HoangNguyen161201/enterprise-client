@@ -1,9 +1,9 @@
 import { EyeOutlined } from '@ant-design/icons';
 import { Col, Space } from 'antd';
 import React from 'react';
-import { IFieldCard } from '../../models';
+import { IFieldCard } from '../../../models';
 
-export default function FieldCard({ label, content, view, xs= 24, xl=12, lg }: IFieldCard) {
+export const FieldCard = ({ label, content, view, xs= 24, xl=12, lg }: IFieldCard)=> {
   return (
     <Col xs={xs} xl={xl} lg={lg}>
       <p style={{ color: 'gray' }}>{label}</p>

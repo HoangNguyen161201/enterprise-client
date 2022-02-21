@@ -1,12 +1,11 @@
 import { ConfigProvider } from 'antd';
 import 'antd/dist/antd.variable.min.css';
-import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import { EmptyLayout } from '../components/layouts';
-import { GlobalContextProvider } from '../contextApi/globalContext';
-import { AppPropsWithLayout } from '../models/layoutType';
+import { EmptyLayout } from 'components/layouts';
+import { GlobalContextProvider } from 'contextApi/globalContext';
+import { AppPropsWithLayout } from 'models/layoutType';
 import '../styles/globals.css';
 
 function MyApp({ Component, pageProps, router }: AppPropsWithLayout) {

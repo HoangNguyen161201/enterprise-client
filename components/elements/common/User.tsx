@@ -1,9 +1,9 @@
 import { EyeOutlined } from '@ant-design/icons';
 import { Button, Col, Image, Space } from 'antd';
-import { IStaff } from '../../models';
+import { IStaff } from '../../../models';
 import { motion } from 'framer-motion';
 
-export default function User({ image, name, role, employee_id, xs, sm, lg, xl }: IStaff) {
+export const User = ({ image, name, role, employee_id, xs, sm, lg, xl }: IStaff) => {
   return (
     <Col xs={xs} sm={sm} lg={lg} xl={xl}>
       <motion.div
@@ -53,4 +53,4 @@ export default function User({ image, name, role, employee_id, xs, sm, lg, xl }:
       </motion.div>
     </Col>
   );
-}
+};

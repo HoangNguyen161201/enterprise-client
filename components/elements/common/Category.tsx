@@ -1,14 +1,14 @@
 import { DeleteOutlined, EditOutlined, MoreOutlined } from '@ant-design/icons';
 import { Col, Dropdown, Menu, Space } from 'antd';
 import React from 'react';
-import { IDetailCategory } from '../../models';
+import { IDetailCategory } from '../../../models';
 
 interface ICategory {
   data: IDetailCategory
   openDrawer: (data: IDetailCategory) => void
   deleteCategory: (id: string)=> void
 }
-export default function Category({ data, deleteCategory, openDrawer }: ICategory) {
+export const Category = ({ data, deleteCategory, openDrawer }: ICategory)=> {
   return (
     <Col xl={8} md={12} xs={24} >
       <Space

@@ -2,7 +2,7 @@ import { FileTextOutlined } from '@ant-design/icons';
 import { Button, Drawer, Space } from 'antd';
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { Input, TextArea } from '.';
+import { Input, TextArea } from '../form';
 
 interface IDrawerCt {
   setIsopen: (isOpen: boolean) => void;
@@ -14,7 +14,7 @@ interface IDrawerCt {
   title: string;
 }
 
-export default function DrawerCt({
+export const DrawerCt = ({
   setIsopen,
   title,
   isOpen,
@@ -22,7 +22,7 @@ export default function DrawerCt({
   formSetting,
   isLoading,
   onSubmit,
-}: IDrawerCt) {
+}: IDrawerCt) => {
   return (
     <Drawer
       title={title}

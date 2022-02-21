@@ -6,14 +6,18 @@ import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
-import Category from '../../components/elements/Category';
-import DrawerCt from '../../components/elements/DrawerCt';
-import { ClientLayout } from '../../components/layouts';
-import { IallCategories, ICategoryForm, IDetailCategory } from '../../models';
-import { NextPageWithLayout } from '../../models/layoutType';
-import { getCurrentUser } from '../../queries';
-import { getallCategories } from '../../queries/category';
-import { deleteData, postData, putData, validCategory } from '../../utils';
+import { Category } from 'components/elements/common';
+import { DrawerCt } from 'components/elements/drawer';
+import { ClientLayout } from 'components/layouts';
+import { IallCategories } from 'models/apiType';
+import { ICategoryForm } from 'models/formType'; 
+import { IDetailCategory } from 'models/apiType';
+
+import { NextPageWithLayout } from 'models/layoutType';
+import { getCurrentUser } from 'queries/auth';
+import { getallCategories } from 'queries/category';
+import { deleteData, postData, putData} from 'utils/fetchData';
+import { validCategory } from 'utils/validate';
 
 export interface ICategoriesProps {
   allCategories: IallCategories;

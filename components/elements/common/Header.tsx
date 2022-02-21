@@ -4,13 +4,13 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { useMutation } from 'react-query';
-import { ILogout } from '../../models';
-import { getCurrentUser } from '../../queries';
-import { postData } from '../../utils/fetchData';
+import { ILogout } from '../../../models';
+import { getCurrentUser } from '../../../queries';
+import { postData } from '../../../utils/fetchData';
 
 const { Header } = Layout;
 
-export default function HeaderComponent() {
+export const HeaderComponent = ()=> {
   //Get data current user
   const { data: dataUser } = getCurrentUser();
 

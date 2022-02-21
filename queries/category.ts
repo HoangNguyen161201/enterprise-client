@@ -1,7 +1,7 @@
 import { AxiosError } from 'axios';
 import { useQuery } from 'react-query';
 import { IallCategories } from '../models/apiType';
-import { getData } from '../utils';
+import { getData } from '../utils/fetchData';
 
 export const getallCategories = (accessToken: string, initial?: IallCategories) => {
   return useQuery<any, AxiosError>(

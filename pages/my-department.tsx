@@ -6,11 +6,12 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect as UseEffect, useState } from 'react';
-import FieldCard from '../components/elements/FieldCard';
-import User from '../components/elements/User';
-import { ClientLayout } from '../components/layouts';
-import { IDetailDepartment, IUser, NextPageWithLayout } from '../models';
-import { getCurrentUser, getDepartmentByUser } from '../queries';
+import {FieldCard, User} from 'components/elements/common';
+import { ClientLayout } from 'components/layouts';
+import { NextPageWithLayout } from 'models/layoutType';
+import { IDetailDepartment } from 'models/apiType';
+import { IUser } from 'models/apiType';
+import { getCurrentUser, getDepartmentByUser } from 'queries';
 
 export interface IDetailDepartmentProps {
   detailMyDepartment: IDetailDepartment;

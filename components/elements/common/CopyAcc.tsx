@@ -1,8 +1,8 @@
 import { CopyOutlined } from '@ant-design/icons';
 import React from 'react';
-import { ICopyAcc } from '../../models';
+import { ICopyAcc } from '../../../models';
 
-export default function CopyAcc({ acc, handleSetAcc }: ICopyAcc) {
+export const CopyAcc = ({ acc, handleSetAcc }: ICopyAcc)=> {
   return (
     <div
       style={{

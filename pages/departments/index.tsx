@@ -14,11 +14,11 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect as UseEffect, useMemo as UseMemo, useState as UseState } from 'react';
 import { useMutation } from 'react-query';
-import { ClientLayout } from '../../components/layouts';
-import { NextPageWithLayout } from '../../models/layoutType';
-import { getAllDepartments, getCurrentUser } from '../../queries';
-import { deleteData, postData } from '../../utils';
-import { column } from '../../utils/configTB';
+import { ClientLayout } from 'components/layouts';
+import { NextPageWithLayout } from 'models/layoutType';
+import { getAllDepartments, getCurrentUser } from 'queries';
+import { deleteData, postData } from 'utils/fetchData';
+import  column from 'utils/configTB';
 
 export interface IAddDepartmentProps {}
 

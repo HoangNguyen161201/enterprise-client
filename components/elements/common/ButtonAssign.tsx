@@ -1,7 +1,8 @@
-import { PlusOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Col, Modal, Select, Space } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import { Col, Modal, Select, Space } from 'antd';
 import * as React from 'react';
-import { IAssignUsers, IOptionSelect } from '../../models';
+import { IAssignUsers } from 'models/formType';
+import { IOptionSelect } from 'models/elementType';
 
 export interface IButtonAssignProps {
   color: string;
@@ -18,7 +19,7 @@ export interface IButtonAssignProps {
 
 const { Option } = Select;
 
-export default function ButtonAssign({
+export const ButtonAssign = ({
   color,
   Icon,
   title,
@@ -29,7 +30,7 @@ export default function ButtonAssign({
   handleOk,
   departmentId,
   ...props
-}: IButtonAssignProps) {
+}: IButtonAssignProps) => {
   const [isModalVisible, setIsModalVisible] = React.useState(false);
   const [dataSelect, setDataSelect] = React.useState<string | string[]>(
     assignType === 'one' ? '' : []

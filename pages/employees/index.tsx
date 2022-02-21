@@ -1,31 +1,14 @@
 import {
   DeleteOutlined,
-  EyeOutlined,
-  FileTextOutlined,
-  MailOutlined,
-  MoreOutlined,
+  EyeOutlined, MoreOutlined,
   QuestionCircleOutlined,
   SearchOutlined,
-  UploadOutlined,
+  UploadOutlined
 } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
-  Breadcrumb,
-  Table,
-  Button,
-  Card,
-  message,
-  Space,
-  Tag,
-  Image,
-  Menu,
-  Dropdown,
-  Popconfirm,
-  Drawer,
-  Avatar,
-  Row,
-  Col,
-  Input,
+  Breadcrumb, Button,
+  Card, Dropdown, Image, Input, Menu, message, Popconfirm, Space, Table, Tag
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { AxiosError } from 'axios';
@@ -35,20 +18,20 @@ import Link from 'next/link';
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
-import { Input as InputForm, Select } from '../../components/elements';
-import DrawerUpdateUser from '../../components/elements/DrawerEpl';
-import { ClientLayout } from '../../components/layouts';
-import { IAllUsers, IDepartments, IOptionSelect, IUser, IUserForm } from '../../models';
-import { NextPageWithLayout } from '../../models/layoutType';
-import { getAllDepartments, getallUsers, getCurrentUser } from '../../queries';
+import { DrawerUpdateUser } from 'components/elements/drawer';
+import { ClientLayout } from 'components/layouts';
+import { IAllUsers, IUser , IDepartments} from 'models/apiType';
+import { IUserForm } from 'models/formType';
+import { IOptionSelect } from 'models/elementType';
+import { NextPageWithLayout } from 'models/layoutType';
+import { getAllDepartments, getallUsers, getCurrentUser } from 'queries';
 import {
-  column,
   deleteData,
   postData,
-  putData,
-  validateAddUser,
-  validateUpdateUser,
-} from '../../utils';
+  putData
+} from '../../utils/fetchData';
+import { validateUpdateUser } from '../../utils/validate';
+import column from '../../utils/configTB'
 
 export interface IEmployeesProps {
   allUsers: IAllUsers;
@@ -125,7 +108,7 @@ const Employees: NextPageWithLayout = ({ allUsers, allDepartments }: IEmployeesP
   React.useEffect(() => {
     let newDataSourceUsers: Partial<IUser>[] = [];
     if (dataAllUsers) {
-      newDataSourceUsers = dataAllUsers.users.map((user) => {
+      newDataSourceUsers = dataAllUsers.users.map((user: IUser) => {
         return {
           key: user._id,
           employee_id: user.employee_id,

@@ -7,12 +7,13 @@ import Head from 'next/head';
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
-import { Input, TextArea } from '../../components/elements';
-import { ClientLayout } from '../../components/layouts';
-import { IDepartmentForm } from '../../models';
-import { NextPageWithLayout } from '../../models/layoutType';
-import { getCurrentUser } from '../../queries';
-import { postData, validateAddDepartment } from '../../utils';
+import { Input,  TextArea  } from 'components/elements/form';
+import { ClientLayout } from 'components/layouts';
+import { IDepartmentForm } from 'models/formType';
+import { NextPageWithLayout } from 'models/layoutType';
+import { getCurrentUser } from 'queries/auth';
+import { postData } from 'utils/fetchData';
+import { validateAddDepartment } from 'utils/validate';
 
 export interface IAddDepartmentProps {}
 

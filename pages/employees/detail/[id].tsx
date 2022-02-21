@@ -1,14 +1,15 @@
 //Import
-import { IdcardOutlined, MailOutlined, SearchOutlined, TeamOutlined } from '@ant-design/icons';
+import { IdcardOutlined, MailOutlined, TeamOutlined } from '@ant-design/icons';
 import { Avatar, Breadcrumb, Card, Col, Grid, message, Row, Space } from 'antd';
+import { ClientLayout } from 'components/layouts';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useEffect as UseEffect, useState } from 'react';
-import { ClientLayout } from '../../../components/layouts';
-import { IUser, NextPageWithLayout } from '../../../models';
-import { getCurrentUser, getDetailUser } from '../../../queries';
-import Infor from '../../../components/elements/Infor';
+import { useEffect as UseEffect } from 'react';
+import { Infor } from 'components/elements/common';
+import { IUser } from 'models/apiType';
+import { NextPageWithLayout } from 'models/layoutType';
+import { getCurrentUser, getDetailUser } from 'queries';
 
 export interface IDetailDepartmentProps {
   detailUser: { user: IUser; [index: string]: any };

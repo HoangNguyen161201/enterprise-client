@@ -3,6 +3,10 @@
     letter-spacing: 1px;
 }
 
+body {
+    overflow-x: hidden;
+}
+
 /* container */
 .screen-full {
     width: 100%;

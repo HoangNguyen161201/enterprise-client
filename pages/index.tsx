@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import { ClientLayout } from '../components/layouts';
-import { NextPageWithLayout } from '../models';
+import { NextPageWithLayout } from 'models/layoutType';
 
 const index: NextPageWithLayout = () => {
 

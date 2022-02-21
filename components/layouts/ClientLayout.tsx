@@ -1,10 +1,9 @@
 import { MenuOutlined } from '@ant-design/icons';
 import { Layout } from 'antd';
-import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import { NextLayout } from '../../models/layoutType';
-import Drawer from '../elements/Drawer';
-import Header from '../elements/Header';
+import {HeaderComponent} from '../elements/common';
+import {Drawer} from '../elements/drawer';
 const { Footer, Sider, Content } = Layout;
 
 export const ClientLayout: NextLayout = ({ children }) => {
@@ -27,7 +26,7 @@ export const ClientLayout: NextLayout = ({ children }) => {
         }}
         className='layout'
       >
-        <Header />
+        <HeaderComponent />
         <Content
           style={{
             padding: '20px 40px',

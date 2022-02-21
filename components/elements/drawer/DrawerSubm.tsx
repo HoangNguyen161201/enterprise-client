@@ -2,7 +2,7 @@ import { EditOutlined } from '@ant-design/icons';
 import { Button, Drawer, Image, Space } from 'antd';
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { DateInput, Input, TextArea } from '.';
+import { DateInput, Input, TextArea } from '../form';
 
 interface IDrawerSubm {
   close: () => void;
@@ -17,7 +17,7 @@ interface IDrawerSubm {
   openDrawerImg: () => void;
 }
 
-export default function DrawerSubm({
+export const DrawerSubm = ({
   formSetting,
   statusForm,
   openDrawerImg,
@@ -28,7 +28,7 @@ export default function DrawerSubm({
   isOpen,
   deleteSubm,
   close,
-}: IDrawerSubm) {
+}: IDrawerSubm) => {
   return (
     <Drawer
       title={statusForm == 'create' ? 'Add new Submission' : 'Update submission'}
@@ -89,4 +89,4 @@ export default function DrawerSubm({
       </Space>
     </Drawer>
   );
-}
+};

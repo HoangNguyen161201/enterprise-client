@@ -1,31 +1,27 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Breadcrumb, Button, Card as AntCard, message, Pagination, Row, Space } from 'antd';
 import axios, { AxiosError } from 'axios';
+import { Card } from 'components/elements/common';
+import { DrawerImg, DrawerSubm } from 'components/elements/drawer';
+import { ClientLayout } from 'components/layouts';
+import { ICommon, ISubmission, ISubmissions } from 'models/apiType';
+import { ISubmissionForm } from 'models/formType';
+import { NextPageWithLayout } from 'models/layoutType';
 import moment from 'moment';
+import { submMutation } from 'mutations/submission';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
+import { getallSubmissions, getCurrentUser } from 'queries';
 import { useEffect as UseEffect, useState, useState as UseState } from 'react';
 import { useForm as UseForm } from 'react-hook-form';
-import Card from '../../components/elements/Card';
-import DrawerImg from '../../components/elements/DrawerImg';
-import DrawerSubm from '../../components/elements/DrawerSubm';
-import { ClientLayout } from '../../components/layouts';
-import {
-  ICommon,
-  ISubmission,
-  ISubmissionForm,
-  ISubmissions,
-  NextPageWithLayout
-} from '../../models';
-import { submMutation } from '../../mutations';
-import { getallSubmissions, getCurrentUser } from '../../queries';
-import { validateSubmission } from '../../utils';
+import { validateSubmission } from 'utils/validate';
+
 
 interface submisionPage {
   result: ISubmissions;
 }
 const index: NextPageWithLayout = ({ result }: submisionPage) => {
-  
+
   const [isOpen, setIsopen] = UseState(false);
   const [isOpenSlImg, setIsOpenSlImg] = UseState(false);
   const [imgs, setImgs] = UseState<string[] | null>(null);

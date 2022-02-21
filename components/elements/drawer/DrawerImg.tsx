@@ -1,6 +1,6 @@
 import { Drawer, Image, Space } from 'antd';
 import React from 'react';
-import Skeletons from './Skeletons';
+import {Skeletons} from '../common';
 
 interface IDawerImg {
   imgs: Array<string> | null;
@@ -8,7 +8,7 @@ interface IDawerImg {
   close: () => void;
   setImg: (img: string) => void;
 }
-export default function DrawerImg({ imgs, isOpen, close, setImg }: IDawerImg) {
+export const DrawerImg = ({ imgs, isOpen, close, setImg }: IDawerImg) => {
   return (
     <Drawer title="Images" closable onClose={() => close()} visible={isOpen}>
       <Space direction="vertical">

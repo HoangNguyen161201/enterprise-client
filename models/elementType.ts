@@ -1,4 +1,4 @@
-import { ILogin } from '.';
+import { ILogin } from "./formType";
 
 export interface ICopyAcc {
   acc: ILogin;

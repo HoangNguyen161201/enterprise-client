@@ -1,14 +1,14 @@
 import { MoreOutlined } from '@ant-design/icons';
 import { Button, Col, Image, Space } from 'antd';
 import React from 'react';
-import { ISubmissionForm } from '../../models';
+import {ISubmissionForm } from 'models/formType'
 
 interface ICard {
     item: ISubmissionForm
     more: (item: ISubmissionForm)=> void
     [index: string]: any
 }
-export default function Card({item, more}: ICard) {
+export const Card = ({item, more}: ICard)=> {
   return (
     <Col xl={8} lg={12} md={24}>
       <Space direction="vertical" size={15}>
