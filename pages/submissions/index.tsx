@@ -26,7 +26,7 @@ const index: NextPageWithLayout = ({ result }: submisionPage) => {
   const [page, setPage] = UseState<number>(1);
   const [search, setSearch] = useState('');
   const [searchFirst, setSearchFirst] = useState('')
-  const [date1, setDate] = useState(null);
+  const [date, setDate] = useState('');
   const [searchDate, setSearchDate] = useState<any>(null)
   const [submissionUd, setSubmissionUd] = useState<ISubmissionForm | null | undefined>(null);
   const [statusForm, setStatusForm] = useState<'create' | 'update'>('create');
@@ -45,8 +45,8 @@ const index: NextPageWithLayout = ({ result }: submisionPage) => {
   }, [searchFirst])
 
   useEffect(()=> {
-    console.log(searchDate)
     timeOutSearchTime = setTimeout(()=> {
+      console.log(searchDate)
       setDate(searchDate)
       setPage(1)
     }, 1000)
@@ -129,7 +129,7 @@ const index: NextPageWithLayout = ({ result }: submisionPage) => {
   } = getallSubmissions(dataUser?.accessToken.token, result, {
     _page: page,
     _search: search,
-    _time: date1
+    _time: date
 
   });
 
