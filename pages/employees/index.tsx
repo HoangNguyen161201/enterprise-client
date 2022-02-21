@@ -31,6 +31,7 @@ import { ColumnsType } from 'antd/lib/table';
 import { AxiosError } from 'axios';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
+import Link from 'next/link';
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
@@ -133,7 +134,7 @@ const Employees: NextPageWithLayout = ({ allUsers, allDepartments }: IEmployeesP
           role: user.role,
           email: user.email,
           active: '',
-          department_id: user.department_id
+          department_id: user.department_id,
         };
       });
     }
@@ -426,7 +427,9 @@ const Employees: NextPageWithLayout = ({ allUsers, allDepartments }: IEmployeesP
                     />
                   }
                 >
-                  Detail
+                  <Link href={`http://localhost:3000/employees/detail/${record.key}`}>
+                    <a>Detail</a>
+                  </Link>
                 </Menu.Item>
               </Menu>
             }

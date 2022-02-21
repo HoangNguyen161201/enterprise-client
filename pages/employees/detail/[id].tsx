@@ -81,7 +81,7 @@ const DetailEmployee: NextPageWithLayout = ({ detailUser }: IDetailDepartmentPro
                       border: '2px solid #009F9D',
                       borderRadius: 4,
                     }}
-                    src="https://joeschmoe.io/api/v1/random"
+                    src={dataDetailUser?.user?.avatar?.url}
                   />
                   <div
                     style={{
@@ -102,7 +102,7 @@ const DetailEmployee: NextPageWithLayout = ({ detailUser }: IDetailDepartmentPro
                         color: 'gray',
                       }}
                     >
-                      Staff
+                      {dataDetailUser?.user?.role}
                     </span>
                   </div>
                 </Space>
