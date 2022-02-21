@@ -1,5 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Breadcrumb, Button, Card as AntCard, Input, message, Pagination, Row, Space } from 'antd';
+import { Breadcrumb, Button, Card as AntCard, DatePicker, Input, message, Pagination, Row, Space } from 'antd';
 import axios, { AxiosError } from 'axios';
 import { Card } from 'components/elements/common';
 import { DrawerImg, DrawerSubm } from 'components/elements/drawer';
@@ -12,7 +12,7 @@ import { submMutation } from 'mutations/submission';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { getallSubmissions, getCurrentUser } from 'queries';
-import { useEffect as UseEffect, useState, useState as UseState } from 'react';
+import { useEffect, useEffect as UseEffect, useState, useState as UseState } from 'react';
 import { useForm as UseForm } from 'react-hook-form';
 import { validateSubmission } from 'utils/validate';
 
@@ -25,12 +25,33 @@ const index: NextPageWithLayout = ({ result }: submisionPage) => {
   const [imgs, setImgs] = UseState<string[] | null>(null);
   const [page, setPage] = UseState<number>(1);
   const [search, setSearch] = useState('');
+  const [searchFirst, setSearchFirst] = useState('')
+  const [date1, setDate] = useState(null);
+  const [searchDate, setSearchDate] = useState<any>(null)
   const [submissionUd, setSubmissionUd] = useState<ISubmissionForm | null | undefined>(null);
   const [statusForm, setStatusForm] = useState<'create' | 'update'>('create');
   const [imgSubmission, setImgSubmission] = UseState(
     'https://res.cloudinary.com/hoang161201/image/upload/v1645274633/Group_92_grzovc.svg'
   );
+  let timeOutSearch: NodeJS.Timeout, timeOutSearchTime: NodeJS.Timeout
+  
   const [idDelete, setIdDelete] = useState('');
+  useEffect(()=> {
+    timeOutSearch = setTimeout(()=> {
+      setSearch(searchFirst)
+      setPage(1)
+    }, 1000)
+    return ()=> clearTimeout(timeOutSearch)
+  }, [searchFirst])
+
+  useEffect(()=> {
+    console.log(searchDate)
+    timeOutSearchTime = setTimeout(()=> {
+      setDate(searchDate)
+      setPage(1)
+    }, 1000)
+    return ()=> clearTimeout(timeOutSearchTime)
+  }, [searchDate])
 
   // setting form
   const formSetting = UseForm<ISubmissionForm>({
@@ -108,6 +129,8 @@ const index: NextPageWithLayout = ({ result }: submisionPage) => {
   } = getallSubmissions(dataUser?.accessToken.token, result, {
     _page: page,
     _search: search,
+    _time: date1
+
   });
 
   const addSubmission = submMutation.add({
@@ -191,8 +214,11 @@ const index: NextPageWithLayout = ({ result }: submisionPage) => {
             <Button key={'add_sumission'} onClick={() => setIsopen(true)} type="link">
               Add new
             </Button>
-            <Input value={search} onChange={(event)=> {
-              console.log(event)
+            <Input value={searchFirst} onChange={(event)=> {
+              setSearchFirst(event.target.value)
+            }}/>
+            <DatePicker onChange={(value)=> {
+              setSearchDate(value)
             }}/>
           </Space>
         }
