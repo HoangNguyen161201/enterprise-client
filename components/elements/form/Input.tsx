@@ -1,10 +1,19 @@
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import { AutoComplete, Input as AntInput, Space } from 'antd';
+import { IInput } from 'models/formType';
 import React, { useState } from 'react';
 import { Controller } from 'react-hook-form';
-import { IInput } from '../../models';
 
-export const Input = ({ type = 'text', hidden, formSetting, name, label, placeholder, disable, icon, require = true }: IInput) => {
+export const Input = ({
+  type = 'text',
+  formSetting,
+  name,
+  label,
+  placeholder,
+  disable,
+  icon,
+  require = true,
+}: IInput) => {
   const [options, setOptions] = useState([{ value: '@gmail.com' }]);
 
   const handleSearch = (value: string) => {
@@ -16,10 +25,7 @@ export const Input = ({ type = 'text', hidden, formSetting, name, label, placeho
     control,
   } = formSetting;
   return (
-    <Space
-      direction="vertical"
-      size={'small'}
-    >
+    <Space direction="vertical" size={'small'}>
       <span className="font-1">
         {label} {require && <span className="color-red">*</span>}
       </span>
@@ -27,33 +33,53 @@ export const Input = ({ type = 'text', hidden, formSetting, name, label, placeho
         name={name}
         control={control}
         render={({ field }) => {
-          if (type == 'password') {
-            return (
-              <AntInput.Password
-                style={{
-                  width: "100%"
-                }}
-                {...field}
-                disabled = {disable}
-                prefix={icon}
-                size='large'
-                placeholder={placeholder || ''}
-                iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
-              />
-            );
+          switch (type) {
+            case 'password':
+              return (
+                <AntInput.Password
+                  style={{
+                    width: '100%',
+                  }}
+                  {...field}
+                  disabled={disable}
+                  prefix={icon}
+                  size="large"
+                  placeholder={placeholder || ''}
+                  iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+                />
+              );
+            case 'email':
+              return (
+                <AutoComplete
+                  {...field}
+                  style={{ width: '100%' }}
+                  onSearch={handleSearch}
+                  options={options}
+                  disabled={disable}
+                >
+                  <AntInput
+                    size="large"
+                    prefix={icon}
+                    type={type}
+                    placeholder={placeholder || ''}
+                  />
+                </AutoComplete>
+              );
+
+            default:
+              return (
+                <AntInput
+                  {...field}
+                  style={{ width: '100%' }}
+                  size="large"
+                  prefix={icon}
+                  type={type}
+                  placeholder={placeholder || ''}
+                />
+              );
           }
 
-          return (
-            <AutoComplete
-              {...field}
-              style={{ width: '100%' }}
-              onSearch={handleSearch}
-              options={options}
-              disabled = {disable}
-            >
-              <AntInput size='large' prefix={icon} type={type} placeholder={placeholder || ''} />
-            </AutoComplete>
-          );
+          
         }}
       />
       {errors[name] && <span className="color-red">{errors[name].message}</span>}
