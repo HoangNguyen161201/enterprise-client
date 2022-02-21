@@ -12,26 +12,26 @@ import {
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { AxiosError } from 'axios';
+import { DrawerUpdateUser } from 'components/elements/drawer';
+import { ClientLayout } from 'components/layouts';
+import { IAllUsers, IDepartments, IUser } from 'models/apiType';
+import { IOptionSelect } from 'models/elementType';
+import { IUserForm } from 'models/formType';
+import { NextPageWithLayout } from 'models/layoutType';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
+import { getAllDepartments, getallUsers, getCurrentUser } from 'queries';
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
-import { DrawerUpdateUser } from 'components/elements/drawer';
-import { ClientLayout } from 'components/layouts';
-import { IAllUsers, IUser , IDepartments} from 'models/apiType';
-import { IUserForm } from 'models/formType';
-import { IOptionSelect } from 'models/elementType';
-import { NextPageWithLayout } from 'models/layoutType';
-import { getAllDepartments, getallUsers, getCurrentUser } from 'queries';
+import column from '../../utils/configTB';
 import {
   deleteData,
   postData,
   putData
 } from '../../utils/fetchData';
 import { validateUpdateUser } from '../../utils/validate';
-import column from '../../utils/configTB'
 
 export interface IEmployeesProps {
   allUsers: IAllUsers;

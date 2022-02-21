@@ -1,18 +1,18 @@
 import { AxiosError } from 'axios';
 import { useMutation } from 'react-query';
-import { ISubmissionForm } from 'models/formType';
+import { ICategoryForm } from 'models/formType';
 import { deleteData, postData, putData } from '../utils/fetchData';
 import { IMutation } from 'models/apiType';
 
 
-export const submMutation = {
+export const CtMutation = {
   add: ({ options, dataUserRefetch, token }: IMutation) => {
-    return useMutation<any, AxiosError, ISubmissionForm>(
-      (data) => {
+    return useMutation<any, AxiosError, ICategoryForm>(
+      (dataForm) => {
         dataUserRefetch && dataUserRefetch();
         return postData({
-          url: '/api/submissions',
-          body: data,
+          url: '/api/categories',
+          body: dataForm,
           token,
         });
       },
@@ -21,13 +21,17 @@ export const submMutation = {
       }
     );
   },
+
   update: ({ options, dataUserRefetch, token }: IMutation) => {
-    return useMutation<any, AxiosError, ISubmissionForm>(
-      (data) => {
+    return useMutation<any, AxiosError, ICategoryForm>(
+      ({ id, name, description }) => {
         dataUserRefetch && dataUserRefetch();
         return putData({
-          url: `/api/submissions/${data._id}`,
-          body: data,
+          url: `/api/categories/${id}`,
+          body: {
+            name,
+            description,
+          },
           token,
         });
       },
@@ -36,13 +40,14 @@ export const submMutation = {
       }
     );
   },
+
   delete: ({ options, dataUserRefetch, token }: IMutation) => {
-    return useMutation<any, AxiosError, string>(
-      (id) => {
+    return useMutation<any, AxiosError, ICategoryForm>(
+      ({ id }) => {
         dataUserRefetch && dataUserRefetch();
         return deleteData({
-          url: `/api/submissions/${id}`,
-          token
+          url: `/api/categories/${id}`,
+          token,
         });
       },
       {

@@ -14,6 +14,8 @@ import { NextPageWithLayout } from 'models/layoutType';
 import { getCurrentUser } from 'queries/auth';
 import { postData } from 'utils/fetchData';
 import { validateAddDepartment } from 'utils/validate';
+import { departmentMutation } from 'mutations/department';
+import { ICommon } from 'models/apiType';
 
 export interface IAddDepartmentProps {}
 
@@ -22,27 +24,22 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
   const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
 
   //  call api to add deartment
-  const mutationAddDepartment = useMutation<any, AxiosError, IDepartmentForm>(
-    (dataForm) => {
-      return postData({
-        url: '/api/departments',
-        body: dataForm,
-        token: dataUser?.accessToken.token,
-      });
-    },
-    {
-      onSuccess: (data) => {
+  const mutationAddDepartment = departmentMutation.add({
+    dataUserRefetch: dataUserRefetch,
+    options: {
+      onSuccess: (data: ICommon) => {
         message.success({
           content: data.msg,
         });
       },
-      onError: (error) => {
+      onError: (error: AxiosError) => {
         message.error({
           content: error.response?.data.err || 'Create department false.',
         });
-      },
-    }
-  );
+      }
+    },
+    token: dataUser?.accessToken.token
+  })
 
   //Check exist and show error
   React.useEffect(() => {
