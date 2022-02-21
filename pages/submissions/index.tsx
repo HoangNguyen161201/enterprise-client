@@ -1,47 +1,72 @@
-import { EditOutlined } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
-import {
-  Breadcrumb,
-  Button,
-  Card,
-  Col,
-  Drawer,
-  Image,
-  message,
-  Pagination,
-  Row,
-  Space,
-} from 'antd';
+import { Breadcrumb, Button, Card as AntCard, message, Pagination, Row, Space } from 'antd';
 import axios, { AxiosError } from 'axios';
 import moment from 'moment';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import { useEffect, useEffect as UseEffect, useState as UseState } from 'react';
+import { useEffect as UseEffect, useState, useState as UseState } from 'react';
 import { useForm as UseForm } from 'react-hook-form';
-import { useMutation as UseMutation } from 'react-query';
-import { DateInput, Input, TextArea } from '../../components/elements';
-import Skeletons from '../../components/elements/Skeletons';
+import Card from '../../components/elements/Card';
+import DrawerImg from '../../components/elements/DrawerImg';
+import DrawerSubm from '../../components/elements/DrawerSubm';
 import { ClientLayout } from '../../components/layouts';
-import { ICommon, ISubmission, ISubmissions, ISumission, NextPageWithLayout } from '../../models';
+import {
+  ICommon,
+  ISubmission,
+  ISubmissionForm,
+  ISubmissions,
+  NextPageWithLayout
+} from '../../models';
+import { submMutation } from '../../mutations';
 import { getallSubmissions, getCurrentUser } from '../../queries';
-import { postData, validateSubmission } from '../../utils';
+import { validateSubmission } from '../../utils';
 
 interface submisionPage {
   result: ISubmissions;
 }
 const index: NextPageWithLayout = ({ result }: submisionPage) => {
+  
   const [isOpen, setIsopen] = UseState(false);
   const [isOpenSlImg, setIsOpenSlImg] = UseState(false);
   const [imgs, setImgs] = UseState<string[] | null>(null);
   const [page, setPage] = UseState<number>(1);
+  const [search, setSearch] = useState('');
+  const [submissionUd, setSubmissionUd] = useState<ISubmissionForm | null | undefined>(null);
+  const [statusForm, setStatusForm] = useState<'create' | 'update'>('create');
   const [imgSubmission, setImgSubmission] = UseState(
     'https://res.cloudinary.com/hoang161201/image/upload/v1645274633/Group_92_grzovc.svg'
   );
+  const [idDelete, setIdDelete] = useState('');
 
-  useEffect(()=> {
-    console.log(page)
-    RefetchSubmisssion()
-  }, [page])
+  // setting form
+  const formSetting = UseForm<ISubmissionForm>({
+    resolver: yupResolver(validateSubmission),
+    defaultValues: {
+      _id: '',
+      name: '',
+      description: '',
+      closure_date: moment(),
+      final_closure_date: moment(),
+    },
+  });
+
+  const onSubmit = (value: ISubmissionForm) => {
+    switch (statusForm) {
+      case 'create':
+        addSubmission.mutate({
+          ...value,
+          background: imgSubmission,
+        });
+        break;
+      case 'update':
+        updateSubmission.mutate({
+          ...value,
+          background: imgSubmission,
+        });
+        break;
+    }
+  };
+
   UseEffect(() => {
     if (!imgs && isOpenSlImg) {
       axios.get('/api/image/submissions').then((result) => {
@@ -50,25 +75,33 @@ const index: NextPageWithLayout = ({ result }: submisionPage) => {
     }
   }, [isOpenSlImg]);
 
-  
+  UseEffect(() => {
+    if (!isOpen) {
+      setImgSubmission(
+        'https://res.cloudinary.com/hoang161201/image/upload/v1645274633/Group_92_grzovc.svg'
+      );
+      setStatusForm('create');
+      formSetting.reset({
+        _id: '',
+        name: '',
+        description: '',
+        closure_date: moment(),
+        final_closure_date: moment(),
+      });
+    }
+  }, [isOpen, formSetting]);
 
-  // setting form
-  const formSetting = UseForm<ISumission>({
-    resolver: yupResolver(validateSubmission),
-    defaultValues: {
-      name: '',
-      description: '',
-      closure_date: moment(),
-      final_closure_date: moment(),
-    },
-  });
-
-  const onSubmit = (value: ISumission) => {
-    addSubmission.mutate({
-      ...value,
-      background: imgSubmission,
-    });
-  };
+  UseEffect(() => {
+    if (statusForm == 'update') {
+      formSetting.reset({
+        _id: submissionUd?._id,
+        name: submissionUd?.name,
+        description: submissionUd?.description,
+        closure_date: submissionUd?.closure_date,
+        final_closure_date: submissionUd?.final_closure_date,
+      });
+    }
+  }, [statusForm]);
 
   //Get access token
   const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
@@ -80,43 +113,76 @@ const index: NextPageWithLayout = ({ result }: submisionPage) => {
     refetch: RefetchSubmisssion,
   } = getallSubmissions(dataUser?.accessToken.token, result, {
     _page: page,
+    _search: search,
   });
 
-  console.log(dataSubmissions)
-
-  const addSubmission = UseMutation<any, AxiosError, ISumission>(
-    (value) => {
-      return postData({
-        url: '/api/submissions',
-        body: value,
-        token: dataUser?.accessToken.token,
-      });
-    },
-    {
+  const addSubmission = submMutation.add({
+    dataUserRefetch: dataUserRefetch,
+    options: {
       onSuccess: (data: ICommon) => {
         message.success(data.msg);
         setIsopen(false);
-        formSetting.reset({
-          name: '',
-          description: '',
-          closure_date: moment(),
-          final_closure_date: moment(),
-        });
-        setImgSubmission(
-          'https://res.cloudinary.com/hoang161201/image/upload/v1645274633/Group_92_grzovc.svg'
-        );
+        RefetchSubmisssion();
       },
-      onError: (result) => {
+      onError: (result: AxiosError) => {
         message.error(result.response?.data.err);
         setIsopen(false);
       },
-    }
-  );
+    },
+    token: dataUser?.accessToken.token,
+  });
+
+  const updateSubmission = submMutation.update({
+    dataUserRefetch: dataUserRefetch,
+    options: {
+      onSuccess: (data: ICommon) => {
+        message.success(data.msg);
+        setIsopen(false);
+        RefetchSubmisssion();
+      },
+      onError: (result: AxiosError) => {
+        message.error(result.response?.data.err);
+        setIsopen(false);
+      },
+    },
+    token: dataUser?.accessToken.token,
+  });
+
+  const deleteSubmission = submMutation.delete({
+    dataUserRefetch: dataUserRefetch,
+    options: {
+      onSuccess: (data: ICommon) => {
+        message.success(data.msg);
+        setIsopen(false);
+        RefetchSubmisssion();
+      },
+      onError: (result: AxiosError) => {
+        message.error(result.response?.data.err);
+        setIsopen(false);
+      },
+    },
+    token: dataUser?.accessToken.token,
+  })
+
+  // more to show drawer to update anh delete
+  const more = (item: ISubmissionForm) => {
+    setStatusForm('update');
+    setIsopen(true);
+    setSubmissionUd({
+      _id: item._id,
+      name: item.name,
+      closure_date: moment(item.closure_date),
+      final_closure_date: moment(item.final_closure_date),
+      description: item.description,
+    });
+    setImgSubmission(item.background);
+    setIdDelete(item._id as string);
+  };
 
   return (
     <>
       <Head>
-        <title>Add Submission Page</title>
+        <title>Submission</title>
       </Head>
       <Breadcrumb>
         <Breadcrumb.Item>Home</Breadcrumb.Item>
@@ -124,8 +190,8 @@ const index: NextPageWithLayout = ({ result }: submisionPage) => {
         <Breadcrumb.Item>Add Submission</Breadcrumb.Item>
       </Breadcrumb>
 
-      <Card
-        title="Add Submission"
+      <AntCard
+        title="Submissions"
         extra={[
           <Button key={'add_sumission'} onClick={() => setIsopen(true)} type="link">
             Add new
@@ -133,110 +199,51 @@ const index: NextPageWithLayout = ({ result }: submisionPage) => {
         ]}
         style={{ width: '100%', marginTop: '20px' }}
       >
-        <Drawer
-          title="Add new Submission"
-          closable
-          onClose={() => setIsopen(false)}
-          visible={isOpen}
-        >
-          <Space size={20} direction="vertical">
-            <Image
-              alt={'img_submission'}
-              onClick={() => setIsOpenSlImg(true)}
-              preview={false}
-              src={imgSubmission}
-              style={{
-                cursor: 'pointer',
-              }}
-            />
-            <form onSubmit={formSetting.handleSubmit(onSubmit)}>
-              <Space direction="vertical" size={20}>
-                <Input
-                  icon={<EditOutlined style={{ marginRight: 10, color: 'gray' }} />}
-                  label="Name"
-                  name="name"
-                  formSetting={formSetting}
-                  placeholder="Enter submission name"
-                />
-                <DateInput label="Closure date" name="closure_date" formSetting={formSetting} />
-                <DateInput
-                  label="Final closure date"
-                  name="final_closure_date"
-                  formSetting={formSetting}
-                />
-                <TextArea label="Description" name="description" formSetting={formSetting} />
-                <Button loading={addSubmission.isLoading} htmlType="submit" type="primary">
-                  Save
-                </Button>
-              </Space>
-            </form>
-          </Space>
-        </Drawer>
+        <DrawerSubm
+          imgSubmission={imgSubmission}
+          isDelete={deleteSubmission.isLoading}
+          onSubmit={onSubmit}
+          deleteSubm={() => deleteSubmission.mutate(idDelete)}
+          openDrawerImg={() => setIsOpenSlImg(true)}
+          isLoading={statusForm == 'create' ? addSubmission.isLoading : updateSubmission.isLoading}
+          formSetting={formSetting}
+          isOpen={isOpen}
+          statusForm={statusForm}
+          close={() => setIsopen(false)}
+        />
 
-        <Drawer title="Images" closable onClose={() => setIsOpenSlImg(false)} visible={isOpenSlImg}>
-          <Space direction="vertical">
-            {imgs ? (
-              imgs.map((item, key) => (
-                <Image
-                  alt={`img_${key}`}
-                  style={{
-                    cursor: 'pointer',
-                  }}
-                  preview={false}
-                  onClick={() => {
-                    setImgSubmission(item);
-                    setIsOpenSlImg(false);
-                  }}
-                  loading="lazy"
-                  src={item}
-                  key={key}
-                />
-              ))
-            ) : (
-              <Skeletons />
-            )}
-          </Space>
-        </Drawer>
+        <DrawerImg
+          imgs={imgs}
+          isOpen={isOpenSlImg}
+          close={() => setIsOpenSlImg(false)}
+          setImg={(item) => {
+            setImgSubmission(item);
+            setIsOpenSlImg(false);
+          }}
+        />
+
         <Space direction="vertical" size={'large'}>
           <Row gutter={[30, 30]}>
             {dataSubmissions?.submissions &&
-              dataSubmissions?.submissions.map((item: ISubmission, key: number) => (
-                <Col xl={8} lg={12} md={24} key={key}>
-                  <Space direction="vertical" size={15}>
-                    <Image
-                      alt={`submission_${item._id}`}
-                      width={'100%'}
-                      style={{
-                        background: 'white',
-                        objectFit: 'cover',
-                        objectPosition: 'center',
-                      }}
-                      preview={false}
-                      src={item.background}
-                    />
-                    <div>
-                      <span
-                        className="font-3"
-                        style={{
-                          fontWeight: 'bold',
-                          display: 'block',
-                        }}
-                      >
-                        {item.name}
-                      </span>
-                      <span style={{ color: 'gray' }}>{item.description}</span>
-                    </div>
-                  </Space>
-                </Col>
+              dataSubmissions?.submissions.map((item: ISubmission) => (
+                <Card item={item} more={more} key={item._id} />
               ))}
           </Row>
-          {
-            dataSubmissions?.page_Index && <Pagination onChange={ (pageSl)=> {
-              setPage(pageSl)
-            }} defaultCurrent={1} pageSize={1} total={dataSubmissions.page_Index} />
-          }
+          <Space direction="vertical" align="end">
+            {dataSubmissions?.page_Index && (
+              <Pagination
+                onChange={(pageSl) => {
+                  setPage(pageSl);
+                }}
+                current={page}
+                responsive
+                pageSize={1}
+                total={dataSubmissions.page_Index}
+              />
+            )}
+          </Space>
         </Space>
-      </Card>
+      </AntCard>
     </>
   );
 };

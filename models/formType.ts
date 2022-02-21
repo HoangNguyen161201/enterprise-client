@@ -29,11 +29,12 @@ export interface ICategoryForm {
 
 
 export interface ISubmissionForm {
-    id?: string
+    _id?: string
     name: string
     description: string,
-    closure_date: string, 
-    final_closure_date: string
+    closure_date: any, 
+    final_closure_date: any,
+    [index: string]: any
 }
 
 export interface IUserForm {
@@ -57,10 +58,3 @@ export interface IAssignUsers {
     departmentId: string
 }
 
-export interface ISumission {
-    name: string
-    description: string
-    closure_date: any
-   final_closure_date: any
-   [index: string]: any
-}
