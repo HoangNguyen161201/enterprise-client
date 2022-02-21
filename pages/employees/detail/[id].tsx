@@ -122,18 +122,18 @@ const DetailEmployee: NextPageWithLayout = ({ detailUser }: IDetailDepartmentPro
                 <Infor
                   color="#009F9D"
                   Icon={IdcardOutlined}
-                  title={`epl-${dataDetailUser?.user.employee_id}`}
+                  title={`epl-${dataDetailUser?.user?.employee_id}`}
                 />
                 <Infor
-                  color="#009F9D"
+                  color="#07456F"
                   Icon={MailOutlined}
-                  title={`${dataDetailUser?.user.email}`}
+                  title={`${dataDetailUser?.user?.email}`}
                 />
                 <Infor
-                  color="#009F9D"
+                  color="#0F0A3C"
                   Icon={TeamOutlined}
-                  title={`${dataDetailUser?.user.department_id}`}
-                  url="http://localhost:3000/employees/detail/1"
+                  title={`${dataDetailUser?.user?.department_id?.name}`}
+                  url={`/departments/detail/${dataDetailUser?.user?.department_id?._id}`}
                 />
               </Space>
             </Col>
