@@ -57,7 +57,13 @@ export interface IUser {
     public_id: string
     url: string
   }
-  department_id: any
+  department_id?: string | {
+    _id: string
+    name: string
+    description: string
+    count_users: number
+    [index: string]: any
+  }
   [index: string]: any
 }
 
