@@ -19,8 +19,6 @@ const DetailEmployee: NextPageWithLayout = ({ detailUser }: IDetailDepartmentPro
   const { useBreakpoint } = Grid;
   const { lg } = useBreakpoint();
 
-  console.log(detailUser);
-
   //Get id from router to get old data
   const {
     query: { id },
@@ -38,8 +36,6 @@ const DetailEmployee: NextPageWithLayout = ({ detailUser }: IDetailDepartmentPro
     dataUser?.accessToken.token,
     detailUser
   );
-
-  console.log(dataDetailUser);
 
   //Check exist and show error
   UseEffect(() => {
@@ -132,8 +128,8 @@ const DetailEmployee: NextPageWithLayout = ({ detailUser }: IDetailDepartmentPro
                 <Infor
                   color="#0F0A3C"
                   Icon={TeamOutlined}
-                  title={`${dataDetailUser?.user?.department_id?.name}`}
-                  url={`/departments/detail/${dataDetailUser?.user?.department_id?._id}`}
+                  title={dataDetailUser?.user?.department_id?.name ? `${dataDetailUser.user.department_id.name}` : "none"}
+                  url={dataDetailUser?.user?.department_id?._id && `/departments/detail/${dataDetailUser?.user?.department_id?._id}`}
                 />
               </Space>
             </Col>
@@ -198,8 +194,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   //Check role
   if (data.user.role !== 'admin') {
-    console.log('asdfasdfas');
-
     return {
       notFound: true,
     };
