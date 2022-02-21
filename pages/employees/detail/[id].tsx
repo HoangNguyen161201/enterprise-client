@@ -1,25 +1,26 @@
 //Import
-import { ArrowDownOutlined } from '@ant-design/icons';
-import { Breadcrumb, Button, Card, message, Row, Space } from 'antd';
+import { IdcardOutlined, MailOutlined, SearchOutlined, TeamOutlined } from '@ant-design/icons';
+import { Avatar, Breadcrumb, Card, Col, Grid, message, Row, Space } from 'antd';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect as UseEffect, useState } from 'react';
-import FieldCard from '../../../components/elements/FieldCard';
-import User from '../../../components/elements/User';
 import { ClientLayout } from '../../../components/layouts';
-import { IDetailDepartment, IUser, NextPageWithLayout } from '../../../models';
-import { getCurrentUser, getDetailDepartment, getDetailUser } from '../../../queries';
+import { IUser, NextPageWithLayout } from '../../../models';
+import { getCurrentUser, getDetailUser } from '../../../queries';
+import Infor from '../../../components/elements/Infor';
 
 export interface IDetailDepartmentProps {
-  detailUser: IUser;
+  detailUser: { user: IUser; [index: string]: any };
 }
 
 const DetailEmployee: NextPageWithLayout = ({ detailUser }: IDetailDepartmentProps) => {
   const { query } = useRouter();
+  const { useBreakpoint } = Grid;
+  const { lg } = useBreakpoint();
 
-  const [isShow, setIsShow] = useState(false);
+  console.log(detailUser);
+
   //Get id from router to get old data
   const {
     query: { id },
@@ -32,11 +33,13 @@ const DetailEmployee: NextPageWithLayout = ({ detailUser }: IDetailDepartmentPro
   }, []);
 
   //Get detail data user
-  const { error: errorUser, data: dataDepartment } = getDetailUser(
+  const { error: errorDetailUser, data: dataDetailUser } = getDetailUser(
     id as string,
     dataUser?.accessToken.token,
     detailUser
   );
+
+  console.log(dataDetailUser);
 
   //Check exist and show error
   UseEffect(() => {
@@ -48,12 +51,12 @@ const DetailEmployee: NextPageWithLayout = ({ detailUser }: IDetailDepartmentPro
   }, [errorGetUser]);
 
   UseEffect(() => {
-    if (errorUser) {
+    if (errorDetailUser) {
       message.error({
-        content: errorUser.response?.data.err,
+        content: errorDetailUser.response?.data.err,
       });
     }
-  }, [errorUser]);
+  }, [errorDetailUser]);
 
   return (
     <>
@@ -69,113 +72,99 @@ const DetailEmployee: NextPageWithLayout = ({ detailUser }: IDetailDepartmentPro
       </Breadcrumb>
 
       <Card title="View Detail Employee" style={{ width: '100%', marginTop: '20px' }}>
-        <h2 className="font-3">Information:</h2>
-        <Row gutter={[30, 20]}>
-          <FieldCard
-            lg={12}
-            label="ID Department"
-            content={dataDepartment ? dataDepartment.department._id : ''}
-          />
-          <FieldCard
-            lg={12}
-            view={dataDepartment?.department_manager ? true : false}
-            label="Department Manager"
-            content={
-              dataDepartment?.department_manager?.email
-                ? dataDepartment.department_manager.email
-                : ''
-            }
-          />
-          <FieldCard
-            lg={12}
-            view={dataDepartment?.qa_coordinator ? true : false}
-            label="QA Coordinator"
-            content={
-              dataDepartment?.qa_coordinator?.email ? dataDepartment?.qa_coordinator?.email : ''
-            }
-          />
-          <FieldCard
-            lg={12}
-            view={dataDepartment?.qa_manager ? true : false}
-            label="QA Manager"
-            content={dataDepartment?.qa_manager?.email ? dataDepartment?.qa_manager?.email : ''}
-          />
+        <Space direction="vertical" size={20}>
+          <Row gutter={[20, 20]}>
+            <Col flex={lg ? '400px' : undefined} span={lg ? undefined : 24}>
+              <Space size={20} direction="vertical">
+                <Space size={20}>
+                  <Avatar
+                    shape="square"
+                    style={{
+                      width: 100,
+                      height: 100,
+                      border: '2px solid #009F9D',
+                      borderRadius: 4,
+                    }}
+                    src="https://joeschmoe.io/api/v1/random"
+                  />
+                  <div
+                    style={{
+                      height: '100%',
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: 20,
+                        fontWeight: 'bold',
+                        display: 'block',
+                      }}
+                    >
+                      Nguyen Quang Hoang
+                    </span>
+                    <span
+                      style={{
+                        color: 'gray',
+                      }}
+                    >
+                      Staff
+                    </span>
+                  </div>
+                </Space>
 
-          <FieldCard
-            xs={24}
-            xl={24}
-            view={dataDepartment?.qa_coordinator ? true : false}
-            label="Description"
-            content={dataDepartment ? dataDepartment.department.description : ''}
-          />
-        </Row>
-        <Space
-          align="center"
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <h2
-            className="font-3"
-            style={{
-              margin: '30px 0px 20px',
-            }}
-          >
-            Staffs
-          </h2>
-          <Link href={`/departments/assign/${query.id}`}>
-            <a>Manager</a>
-          </Link>
-        </Space>
-        <Space direction="vertical" size={30}>
-          <Row gutter={[30, 30]}>
-            {dataDepartment?.department?.staffs &&
-              dataDepartment?.department?.staffs.map((item: IUser, key: number) => {
-                if (!isShow && key <= 7)
-                  return (
-                    <User
-                      key={key}
-                      xs={24}
-                      sm={12}
-                      lg={8}
-                      xl={6}
-                      image={item.avatar.url}
-                      name={item.name}
-                      role={item.role}
-                      employee_id={item.employee_id}
-                    />
-                  );
-                if (isShow)
-                  return (
-                    <User
-                      key={key}
-                      xs={24}
-                      sm={12}
-                      lg={8}
-                      xl={6}
-                      image={item.avatar.url}
-                      name={item.name}
-                      role={item.role}
-                      employee_id={item.employee_id}
-                    />
-                  );
-              })}
+                <span
+                  style={{
+                    color: 'gray',
+                    fontSize: 14,
+                  }}
+                >
+                  Employee infor
+                </span>
+                <Infor
+                  color="#009F9D"
+                  Icon={IdcardOutlined}
+                  title={`epl-${dataDetailUser?.user.employee_id}`}
+                />
+                <Infor
+                  color="#009F9D"
+                  Icon={MailOutlined}
+                  title={`${dataDetailUser?.user.email}`}
+                />
+                <Infor
+                  color="#009F9D"
+                  Icon={TeamOutlined}
+                  title={`${dataDetailUser?.user.department_id}`}
+                  url="http://localhost:3000/employees/detail/1"
+                />
+              </Space>
+            </Col>
+            <Col
+              flex="auto"
+              style={{
+                border: '1px solid red',
+              }}
+            >
+              <Row gutter={[20, 20]}>
+                <Col
+                  xs={24}
+                  xl={12}
+                  style={{
+                    border: '1px solid red',
+                  }}
+                >
+                  Ideal 1
+                </Col>
+                <Col
+                  xs={24}
+                  xl={12}
+                  style={{
+                    border: '1px solid red',
+                  }}
+                >
+                  Ideal 2
+                </Col>
+              </Row>
+            </Col>
           </Row>
-          {dataDepartment?.department?.staffs?.length > 8 && !isShow && (
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <Button
-                icon={<ArrowDownOutlined />}
-                type="default"
-                size="large"
-                style={{ borderRadius: 5 }}
-                onClick={() => setIsShow(true)}
-              >
-                Show more
-              </Button>
-            </div>
-          )}
         </Space>
       </Card>
     </>
@@ -216,12 +205,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
-  const detailUser: IUser = await fetch(`http://localhost:3000/api/users/${context.query.id}`, {
-    method: 'GET',
-    headers: {
-      cookie: context.req.headers.cookie,
-    } as HeadersInit,
-  }).then((e) => e.json());
+  const detailUser: { user: IUser; [index: string]: any } = await fetch(
+    `http://localhost:3000/api/users/${context.query.id}`,
+    {
+      method: 'GET',
+      headers: {
+        cookie: context.req.headers.cookie,
+        authorization: data.accessToken.token,
+      } as HeadersInit,
+    }
+  ).then((e) => e.json());
 
   return {
     props: {
