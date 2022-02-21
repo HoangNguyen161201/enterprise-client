@@ -281,7 +281,7 @@ const userController = {
 
   getDetail: catchAsyncError(async (req, res) => {
     const { id } = req.params;
-    const user = await userModel.findById(id).select('-password');
+    const user = await userModel.findById(id).select('-password').populate('departments');
     if (!user)
       return res.status(400).json({
         err: 'The User is does not exist',
