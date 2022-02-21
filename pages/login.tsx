@@ -131,7 +131,7 @@ const login: NextPageWithLayout = () => {
                 placeholder="Enter your email"
                 formSetting={formSetting}
                 name={'email'}
-                type="text"
+                type="email"
                 icon={<UserOutlined style={{ color: 'gray' }} />}
               />
               <Input

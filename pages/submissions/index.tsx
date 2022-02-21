@@ -1,5 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Breadcrumb, Button, Card as AntCard, message, Pagination, Row, Space } from 'antd';
+import { Breadcrumb, Button, Card as AntCard, Input, message, Pagination, Row, Space } from 'antd';
 import axios, { AxiosError } from 'axios';
 import { Card } from 'components/elements/common';
 import { DrawerImg, DrawerSubm } from 'components/elements/drawer';
@@ -16,12 +16,10 @@ import { useEffect as UseEffect, useState, useState as UseState } from 'react';
 import { useForm as UseForm } from 'react-hook-form';
 import { validateSubmission } from 'utils/validate';
 
-
 interface submisionPage {
   result: ISubmissions;
 }
 const index: NextPageWithLayout = ({ result }: submisionPage) => {
-
   const [isOpen, setIsopen] = UseState(false);
   const [isOpenSlImg, setIsOpenSlImg] = UseState(false);
   const [imgs, setImgs] = UseState<string[] | null>(null);
@@ -158,7 +156,7 @@ const index: NextPageWithLayout = ({ result }: submisionPage) => {
       },
     },
     token: dataUser?.accessToken.token,
-  })
+  });
 
   // more to show drawer to update anh delete
   const more = (item: ISubmissionForm) => {
@@ -188,11 +186,16 @@ const index: NextPageWithLayout = ({ result }: submisionPage) => {
 
       <AntCard
         title="Submissions"
-        extra={[
-          <Button key={'add_sumission'} onClick={() => setIsopen(true)} type="link">
-            Add new
-          </Button>,
-        ]}
+        extra={
+          <Space>
+            <Button key={'add_sumission'} onClick={() => setIsopen(true)} type="link">
+              Add new
+            </Button>
+            <Input value={search} onChange={(event)=> {
+              console.log(event)
+            }}/>
+          </Space>
+        }
         style={{ width: '100%', marginTop: '20px' }}
       >
         <DrawerSubm
