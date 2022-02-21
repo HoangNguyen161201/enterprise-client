@@ -82,6 +82,12 @@ export interface ISubmission {
   background: string
 }
 
+export interface IMutation {
+  options: any;
+  dataUserRefetch?: any;
+  token?: string;
+}
+
 export interface ISubmissions extends ICommon{
   submissions: Array<ISubmission>
   page_Index: number

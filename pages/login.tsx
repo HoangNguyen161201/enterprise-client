@@ -2,21 +2,20 @@ import { UnlockOutlined, UserOutlined } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button, Divider, message, Space } from 'antd';
 import { AxiosError } from 'axios';
+import { CopyAcc } from 'components/elements/common';
+import { Input, Select } from 'components/elements/form';
+import Accounts from 'DataAccount.json';
+import { IAccessToken } from 'models/apiType';
+import { IOptionSelect } from 'models/elementType';
+import { ILogin } from 'models/formType';
+import { NextPageWithLayout } from 'models/layoutType';
+import { authMutation } from 'mutations/auth';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter as UseRouter } from 'next/router';
+import { getCurrentUser } from 'queries';
 import { useMemo as UseMemo } from 'react';
 import { useForm as UseForm } from 'react-hook-form';
-import { useMutation as UseMutation } from 'react-query';
-import { Input, Select } from 'components/elements/form';
-import {CopyAcc} from 'components/elements/common';
-import Accounts from 'DataAccount.json';
-import { IAccessToken } from 'models/apiType';
-import { ILogin } from 'models/formType';
-import { IOptionSelect } from 'models/elementType';
-import { NextPageWithLayout } from 'models/layoutType';
-import { getCurrentUser } from 'queries';
-import { postData } from 'utils/fetchData';
 import { validateLogin } from 'utils/validate';
 
 const login: NextPageWithLayout = () => {
@@ -51,15 +50,9 @@ const login: NextPageWithLayout = () => {
   );
 
   //  call api to get accessToken
-  const mutationLogin = UseMutation<IAccessToken, AxiosError, ILogin>(
-    (dataForm) => {
-      return postData({
-        url: '/api/auth/login',
-        body: dataForm,
-      });
-    },
-    {
-      onSuccess: (data) => {
+  const mutationLogin = authMutation.login({
+    options: {
+      onSuccess: (data: IAccessToken) => {
         if (data.status == 'success') {
           message.success({
             content: data.msg,
@@ -71,13 +64,13 @@ const login: NextPageWithLayout = () => {
           push('/', undefined, { shallow: true });
         }
       },
-      onError: (error) => {
+      onError: (error: AxiosError) => {
         message.error({
           content: error.response?.data.err || 'Login false',
         });
       },
     }
-  );
+  })
 
   // setting form
   const formSetting = UseForm<ILogin>({

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { IPropsFetchData } from '../models';
+import { IPropsFetchData } from 'models/apiType';
 
 //Config default axios
 axios.defaults.withCredentials = true;

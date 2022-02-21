@@ -2,42 +2,34 @@ import { ArrowLeftOutlined, KeyOutlined, UserOutlined } from '@ant-design/icons'
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button, message, Result, Space } from 'antd';
 import { AxiosError } from 'axios';
+import { Input } from 'components/elements/form';
+import { ICommon } from 'models/apiType';
+import { authMutation } from 'mutations/auth';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useState as UseState } from 'react';
 import { useForm as UseForm } from 'react-hook-form';
-import { useMutation as UseMutation } from 'react-query';
-import { Input } from 'components/elements/form';
 import { validateRecoverPass } from 'utils/validate';
-import { postData } from 'utils/fetchData';
 
 export default function recover_password() {
   const [isSMTP, setIsSMTP] = UseState(false);
   // call api to reset password by email
-  const recoverPass = UseMutation<any, AxiosError, string>(
-    (email) => {
-      return postData({
-        url: 'api/auth/smtpResetPass',
-        body: {
-          email,
-        },
-      });
-    },
-    {
-      onSuccess: (data) => {
+  const recoverPass = authMutation.recoverPass({
+    options: {
+      onSuccess: (data: ICommon) => {
         console.log(data);
         message.success({
           content: 'send mail success',
         });
         setIsSMTP(true);
       },
-      onError: (error) => {
+      onError: (error: AxiosError) => {
         message.error({
           content: error.response?.data.err,
         });
       },
-    }
-  );
+    },
+  });
 
   // setting form
   const formSetting = UseForm<{ email: string }>({

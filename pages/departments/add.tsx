@@ -2,17 +2,16 @@ import { FileTextOutlined } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Breadcrumb, Button, Card, message, Space } from 'antd';
 import { AxiosError } from 'axios';
+import { Input, TextArea } from 'components/elements/form';
+import { ClientLayout } from 'components/layouts';
+import { ICommon } from 'models/apiType';
+import { NextPageWithLayout } from 'models/layoutType';
+import { departmentMutation } from 'mutations/department';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
+import { getCurrentUser } from 'queries/auth';
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
-import { useMutation } from 'react-query';
-import { Input,  TextArea  } from 'components/elements/form';
-import { ClientLayout } from 'components/layouts';
-import { IDepartmentForm } from 'models/formType';
-import { NextPageWithLayout } from 'models/layoutType';
-import { getCurrentUser } from 'queries/auth';
-import { postData } from 'utils/fetchData';
 import { validateAddDepartment } from 'utils/validate';
 
 export interface IAddDepartmentProps {}
@@ -22,27 +21,22 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
   const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
 
   //  call api to add deartment
-  const mutationAddDepartment = useMutation<any, AxiosError, IDepartmentForm>(
-    (dataForm) => {
-      return postData({
-        url: '/api/departments',
-        body: dataForm,
-        token: dataUser?.accessToken.token,
-      });
-    },
-    {
-      onSuccess: (data) => {
+  const mutationAddDepartment = departmentMutation.add({
+    dataUserRefetch: dataUserRefetch,
+    options: {
+      onSuccess: (data: ICommon) => {
         message.success({
           content: data.msg,
         });
       },
-      onError: (error) => {
+      onError: (error: AxiosError) => {
         message.error({
           content: error.response?.data.err || 'Create department false.',
         });
-      },
-    }
-  );
+      }
+    },
+    token: dataUser?.accessToken.token
+  })
 
   //Check exist and show error
   React.useEffect(() => {

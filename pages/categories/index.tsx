@@ -1,30 +1,26 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Breadcrumb, Button, Card, message, Row } from 'antd';
 import { AxiosError } from 'axios';
-import { GetServerSideProps } from 'next';
-import Head from 'next/head';
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useMutation } from 'react-query';
 import { Category } from 'components/elements/common';
 import { DrawerCt } from 'components/elements/drawer';
 import { ClientLayout } from 'components/layouts';
-import { IallCategories } from 'models/apiType';
-import { ICategoryForm } from 'models/formType'; 
-import { IDetailCategory } from 'models/apiType';
-
+import { IallCategories, ICommon, IDetailCategory } from 'models/apiType';
 import { NextPageWithLayout } from 'models/layoutType';
+import { CtMutation } from 'mutations/category';
+import { GetServerSideProps } from 'next';
+import Head from 'next/head';
 import { getCurrentUser } from 'queries/auth';
 import { getallCategories } from 'queries/category';
-import { deleteData, postData, putData} from 'utils/fetchData';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { validCategory } from 'utils/validate';
+
 
 export interface ICategoriesProps {
   allCategories: IallCategories;
 }
 
 const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => {
-
   const [categoryUd, setCategoryUd] = useState<IDetailCategory | null | undefined>(null);
   const [statusForm, setStatusForm] = useState<'create' | 'update'>('create');
   const [isOpen, setIsopen] = useState(false);
@@ -104,82 +100,62 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
   }, [statusForm, categoryUd, formSetting]);
 
   //  mutation call api to add Category
-  const mutationAddCategory = useMutation<any, AxiosError, ICategoryForm>(
-    (dataForm) => {
-      return postData({
-        url: '/api/categories',
-        body: dataForm,
-        token: dataUser?.accessToken.token,
-      });
-    },
-    {
-      onSuccess: (data) => {
+  const mutationAddCategory = CtMutation.add({
+    dataUserRefetch: dataUserRefetch,
+    options: {
+      onSuccess: (data: ICommon) => {
         message.success({
           content: data.msg,
         });
         setIsopen(false);
         rfCategories();
       },
-      onError: (error) => {
+      onError: (error: AxiosError) => {
         message.error({
           content: error.response?.data.err || 'Create Category false.',
         });
         setIsopen(false);
       },
-    }
-  );
+    },
+  });
 
   //  mutation call api to update Category
-  const mutationUpdateCategory = useMutation<any, AxiosError, ICategoryForm>(
-    ({ id, name, description }) => {
-      return putData({
-        url: `/api/categories/${id}`,
-        body: {
-          name,
-          description,
-        },
-        token: dataUser?.accessToken.token,
-      });
-    },
-    {
-      onSuccess: (data) => {
+  const mutationUpdateCategory = CtMutation.update({
+    dataUserRefetch: dataUserRefetch,
+    options: {
+      onSuccess: (data: ICommon) => {
         message.success({
           content: data.msg,
         });
         setIsopen(false);
         rfCategories();
       },
-      onError: (error) => {
+      onError: (error: AxiosError) => {
         message.error({
           content: error.response?.data.err || 'Update Category false.',
         });
         setIsopen(false);
       },
-    }
-  );
+    },
+  });
 
   //  mutation call api to delete Category
-  const mutationDeleteCategory = useMutation<any, AxiosError, ICategoryForm>(
-    ({ id }) => {
-      return deleteData({
-        url: `/api/categories/${id}`,
-        token: dataUser?.accessToken.token,
-      });
-    },
-    {
-      onSuccess: (data) => {
+  const mutationDeleteCategory = CtMutation.delete({
+    dataUserRefetch: dataUserRefetch,
+    options: {
+      onSuccess: (data: ICommon) => {
         message.success({
           content: data.msg,
         });
         rfCategories();
       },
-      onError: (error) => {
+      onError: (error: AxiosError) => {
         message.error({
           content: error.response?.data.err || 'Delete Category false.',
         });
       },
-    }
-  );
+    },
+  });
 
   //Check exist and show error
   useEffect(() => {
@@ -192,28 +168,17 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
 
   //Function handle create new category
   const addCategory = async (data: IDetailCategory) => {
-    //Refetch again let get accesstoken pass to api
-    await dataUserRefetch();
-
     //Post data add category
     mutationAddCategory.mutate(data);
   };
 
-  //Function handle update new category
+  //Function handle update category
   const updateCategory = async (data: IDetailCategory) => {
-    //Refetch again let get accesstoken pass to api
-    await dataUserRefetch();
-
-    //Put data update category
     mutationUpdateCategory.mutate(data);
   };
 
   //Function handle delete new category
   const deleteCategory = async (id: string) => {
-    //Refetch again let get accesstoken pass to api
-    await dataUserRefetch();
-
-    //Delete category
     mutationDeleteCategory.mutate({
       id,
     });
@@ -244,7 +209,8 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
 
       <Card
         extra={[
-          <Button key={'Add_ct'}
+          <Button
+            key={'Add_ct'}
             type="link"
             onClick={() => {
               setStatusForm('create');

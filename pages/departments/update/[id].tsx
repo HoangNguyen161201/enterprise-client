@@ -8,13 +8,16 @@ import { useRouter as UseRouter } from 'next/router';
 import { useEffect as UseEffect } from 'react';
 import { useForm as UseForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
-import { Input, TextArea } from '../../../components/elements/form';
-import { ClientLayout } from '../../../components/layouts';
-import { IDepartmentForm, NextPageWithLayout } from '../../../models';
-import { getCurrentUser } from '../../../queries';
-import { getDetailDepartment } from '../../../queries/department';
-import { putData } from '../../../utils/fetchData';
-import { validateAddDepartment } from '../../../utils/validate';
+import { Input, TextArea } from 'components/elements/form';
+import { ClientLayout } from 'components/layouts';
+import { NextPageWithLayout } from 'models/layoutType';
+import { IDepartmentForm } from 'models/formType';
+import { getCurrentUser } from 'queries';
+import { getDetailDepartment } from 'queries/department';
+import { putData } from 'utils/fetchData';
+import { validateAddDepartment } from 'utils/validate';
+import { departmentMutation } from 'mutations/department';
+import { ICommon } from 'models/apiType';
 
 export interface IUpdateDepartmetnProps {}
 
@@ -78,28 +81,23 @@ const UpdateDepartmetn: NextPageWithLayout = (props: IUpdateDepartmetnProps) => 
     }
   }, [dataDepartment]);
 
-  //  call api to add deartment
-  const mutationUpdateDepartment = useMutation<any, AxiosError, IDepartmentForm>(
-    (dataForm) => {
-      return putData({
-        url: `/api/departments/${dataForm.id}`,
-        body: dataForm,
-        token: dataUser?.accessToken.token,
-      });
-    },
-    {
-      onSuccess: (data) => {
+  //  call api to update deartment
+  const mutationUpdateDepartment = departmentMutation.update({
+    dataUserRefetch: dataUserRefetch,
+    options: {
+      onSuccess: (data: ICommon) => {
         message.success({
           content: data.msg,
         });
       },
-      onError: (error) => {
+      onError: (error: AxiosError) => {
         message.error({
           content: error.response?.data.err || 'Create department false.',
         });
       },
-    }
-  );
+    },
+    token: dataUser?.accessToken.token
+  })
 
   const onSubmit = async ({
     id,

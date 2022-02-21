@@ -5,7 +5,7 @@ import {
   SearchOutlined,
   UserAddOutlined,
   UsergroupAddOutlined,
-  UserSwitchOutlined,
+  UserSwitchOutlined
 } from '@ant-design/icons';
 import {
   Breadcrumb,
@@ -18,27 +18,26 @@ import {
   Row,
   Space,
   Table,
-  Tag,
+  Tag
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { AxiosError } from 'axios';
+import { ButtonAssign } from 'components/elements/common';
+import { ClientLayout } from 'components/layouts';
+import { ICommon, IDetailDepartment, IUser } from 'models/apiType';
+import { IUsersNotDepartment } from 'models/elementType';
+import { IAssignUsers } from 'models/formType';
+import { NextPageWithLayout } from 'models/layoutType';
+import { departmentMutation } from 'mutations/department';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter as UseRouter } from 'next/router';
-import { useEffect as UseEffect, useMemo as UseMemo, useState as UseState } from 'react';
-import { useMutation } from 'react-query';
-import { ButtonAssign } from 'components/elements/common';
-import { ClientLayout } from 'components/layouts';
-import {IAssignUsers} from 'models/formType';
-import { IDetailDepartment, IUser} from 'models/apiType';
-import { IUsersNotDepartment } from 'models/elementType';
-import { NextPageWithLayout } from 'models/layoutType';
-import { getAllDepartments, getDetailDepartment, getUsersNotDepartment,} from 'queries/department';
 import { getCurrentUser } from 'queries/auth';
-
-
-import { deleteData, postData } from 'utils/fetchData';
+import { getAllDepartments, getDetailDepartment, getUsersNotDepartment } from 'queries/department';
+import { useEffect as UseEffect, useMemo as UseMemo, useState as UseState } from 'react';
 import column from 'utils/configTB';
+
+
 
 export interface IAssignDepartmentProps {
   detailDepartment: IDetailDepartment;
@@ -76,54 +75,7 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
     isLoading: false,
   });
 
-  // delete department
-  const handleDlAll = useMutation<any, AxiosError, any>(
-    (Ids) => {
-      console.log(Ids);
-      return postData({
-        url: `/api/users/remove-assign-many`,
-        token: dataUser?.accessToken.token,
-        body: { users: Ids },
-      });
-    },
-    {
-      onSuccess: (data) => {
-        message.success(data.msg);
-        setIsLoadingDlAll(false);
-        setStaffsSl(null);
-        dataDepartmentRefetch();
-      },
-      onError: (error) => {
-        const data = error.response?.data;
-        message.error(data.err);
-        setIsLoadingDlAll(false);
-        setStaffsSl(null);
-      },
-    }
-  );
-
-  // delete department
-  const handleDl = useMutation<any, AxiosError, any>(
-    (id: string) => {
-      return deleteData({
-        url: `/api/users/remove-assign/${id}`,
-        token: dataUser?.accessToken.token,
-      });
-    },
-    {
-      onSuccess: (data) => {
-        message.success(data.msg);
-        setIsLoadingDl({ key: '', isLoading: false });
-        dataDepartmentRefetch();
-      },
-      onError: (error) => {
-        const data = error.response?.data;
-        message.error(data.err);
-        setIsLoadingDl({ key: '', isLoading: false });
-      },
-    }
-  );
-
+  
   //Get access token
   const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
   UseEffect(() => {
@@ -146,6 +98,45 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
     data: dataUsersnotDPM,
     refetch: dataUsersnotDPMRefetch,
   } = getUsersNotDepartment(dataUser?.accessToken.token);
+
+  // remove all staff in department
+  const handleDlAll = departmentMutation.removeAllStaffs({
+    dataUserRefetch: dataUserRefetch,
+    options: {
+      onSuccess: (data: ICommon) => {
+        message.success(data.msg);
+        setIsLoadingDlAll(false);
+        setStaffsSl(null);
+        dataDepartmentRefetch();
+      },
+      onError: (error: AxiosError) => {
+        const data = error.response?.data;
+        message.error(data.err);
+        setIsLoadingDlAll(false);
+        setStaffsSl(null);
+      },
+    },
+    token: dataUser?.accessToken.token
+
+  })
+
+  // remove staff in department
+  const handleDl = departmentMutation.removeStaff({
+    dataUserRefetch: dataUserRefetch, 
+    options: {
+      onSuccess: (data: ICommon) => {
+        message.success(data.msg);
+        setIsLoadingDl({ key: '', isLoading: false });
+        dataDepartmentRefetch();
+      },
+      onError: (error: AxiosError) => {
+        const data = error.response?.data;
+        message.error(data.err);
+        setIsLoadingDl({ key: '', isLoading: false });
+      }
+    },
+    token: dataUser?.accessToken.token
+  })
 
   //Check exist and show error
   UseEffect(() => {
@@ -332,19 +323,10 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
 
   //Mutation assign
   //Mutation Assign one user
-  const mutationAssignOneUser = useMutation<any, AxiosError, IAssignUsers>(
-    ({ userId, departmentId }) => {
-      return postData({
-        url: `/api/users/assign`,
-        body: {
-          userId,
-          departmentId,
-        },
-        token: dataUser?.accessToken.token,
-      });
-    },
-    {
-      onSuccess: (data) => {
+  const mutationAssignOneUser = departmentMutation.AssignOneUser({
+    dataUserRefetch: dataUserRefetch(),
+    options: {
+      onSuccess: (data: ICommon) => {
         message.success({
           content: data.msg,
         });
@@ -354,28 +336,21 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
         dataUsersnotDPMRefetch();
         dataAllDepartmentsRefetch();
       },
-      onError: (error) => {
+      onError: (error: AxiosError) => {
         message.error({
           content: error.response?.data.err || 'Assign user false.',
         });
-      },
-    }
-  );
+      }
+    },
+    token: dataUser?.accessToken.token 
+  })
+  
 
   //Mutation Assign one user
-  const mutationAssignManyUsers = useMutation<any, AxiosError, IAssignUsers>(
-    ({ users, departmentId }) => {
-      return postData({
-        url: `/api/users/assign-many`,
-        body: {
-          users,
-          departmentId,
-        },
-        token: dataUser?.accessToken.token,
-      });
-    },
-    {
-      onSuccess: (data) => {
+  const mutationAssignManyUsers = departmentMutation.AssignManyUser({
+    dataUserRefetch: dataUserRefetch(),
+    options: {
+      onSuccess: (data: ICommon) => {
         message.success({
           content: data.msg,
         });
@@ -385,13 +360,14 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
         dataUsersnotDPMRefetch();
         dataAllDepartmentsRefetch();
       },
-      onError: (error) => {
+      onError: (error: AxiosError) => {
         message.error({
           content: error.response?.data.err || 'Assign users false.',
         });
       },
-    }
-  );
+    },
+    token: dataUser?.accessToken.token 
+  })
 
   //Function on assign one user
   const onAssignOneUser = ({ userId, departmentId }: IAssignUsers) => {

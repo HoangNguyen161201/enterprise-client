@@ -12,26 +12,21 @@ import {
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { AxiosError } from 'axios';
+import { DrawerUpdateUser } from 'components/elements/drawer';
+import { ClientLayout } from 'components/layouts';
+import { IAllUsers, ICommon, IDepartments, IUser } from 'models/apiType';
+import { IOptionSelect } from 'models/elementType';
+import { IUserForm } from 'models/formType';
+import { NextPageWithLayout } from 'models/layoutType';
+import { EmplMutation } from 'mutations/employee';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
+import { getAllDepartments, getallUsers, getCurrentUser } from 'queries';
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
-import { useMutation } from 'react-query';
-import { DrawerUpdateUser } from 'components/elements/drawer';
-import { ClientLayout } from 'components/layouts';
-import { IAllUsers, IUser , IDepartments} from 'models/apiType';
-import { IUserForm } from 'models/formType';
-import { IOptionSelect } from 'models/elementType';
-import { NextPageWithLayout } from 'models/layoutType';
-import { getAllDepartments, getallUsers, getCurrentUser } from 'queries';
-import {
-  deleteData,
-  postData,
-  putData
-} from '../../utils/fetchData';
+import column from '../../utils/configTB';
 import { validateUpdateUser } from '../../utils/validate';
-import column from '../../utils/configTB'
 
 export interface IEmployeesProps {
   allUsers: IAllUsers;
@@ -135,81 +130,63 @@ const Employees: NextPageWithLayout = ({ allUsers, allDepartments }: IEmployeesP
   }, [errorAllUsers]);
 
   //  mutation call api to delete User
-  const mutationDeleteUser = useMutation<any, AxiosError, Partial<IUserForm>>(
-    ({ id }) => {
-      return deleteData({
-        url: `/api/users/${id}`,
-        token: dataUser?.accessToken.token,
-      });
-    },
-    {
-      onSuccess: (data) => {
+  const mutationDeleteUser = EmplMutation.delete({
+    dataUserRefetch: dataUserRefetch,
+    options: {
+      onSuccess: (data: ICommon) => {
         message.success({
           content: data.msg,
         });
         dataAllUsersRefetch();
       },
-      onError: (error) => {
+      onError: (error: AxiosError) => {
         message.error({
           content: error.response?.data.err || 'Delete User false.',
         });
       },
-    }
-  );
+    },
+    token: dataUser?.accessToken.token
+  })
 
   //  mutation call api to delete many Users
-  const mutationDeleteManyUser = useMutation<any, AxiosError, { users: string[] }>(
-    ({ users }) => {
-      return postData({
-        url: `/api/users/delete-many`,
-        body: {
-          users,
-        },
-        token: dataUser?.accessToken.token,
-      });
-    },
-    {
-      onSuccess: (data) => {
+  const mutationDeleteManyUser = EmplMutation.deleteMany({
+    dataUserRefetch: dataUserRefetch,
+    options: {
+      onSuccess: (data: ICommon) => {
         message.success({
           content: data.msg,
         });
         dataAllUsersRefetch();
         setUsersSl(null);
       },
-      onError: (error) => {
+      onError: (error: AxiosError) => {
         message.error({
           content: error.response?.data.err || 'Delete Users false.',
         });
       },
-    }
-  );
+    },
+    token: dataUser?.accessToken.token
+  })
 
   //  mutation call api to update User
-  const mutationUpdateUser = useMutation<any, AxiosError, { user: IUser }>(
-    ({ user }) => {
-      return putData({
-        url: `/api/users/${user.id}`,
-        body: {
-          ...user,
-        },
-        token: dataUser?.accessToken.token,
-      });
-    },
-    {
-      onSuccess: (data) => {
+  const mutationUpdateUser = EmplMutation.update({
+    options: {
+      onSuccess: (data: ICommon) => {
         message.success({
           content: data.msg,
         });
         dataAllUsersRefetch();
         setUsersSl(null);
       },
-      onError: (error) => {
+      onError: (error: AxiosError) => {
         message.error({
           content: error.response?.data.err || 'Update User false.',
         });
       },
-    }
-  );
+    },
+    dataUserRefetch: dataUserRefetch,
+    token: dataUser?.accessToken.token
+  })
 
   //Check exist and show error
   React.useEffect(() => {
