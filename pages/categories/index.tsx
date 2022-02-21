@@ -1,13 +1,11 @@
-import { FileTextOutlined } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Breadcrumb, Button, Card, Drawer, message, Row, Space } from 'antd';
+import { Breadcrumb, Button, Card, message, Row } from 'antd';
 import { AxiosError } from 'axios';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
-import { Input, TextArea } from '../../components/elements';
 import Category from '../../components/elements/Category';
 import DrawerCt from '../../components/elements/DrawerCt';
 import { ClientLayout } from '../../components/layouts';
@@ -22,7 +20,7 @@ export interface ICategoriesProps {
 }
 
 const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => {
-  console.log(allCategories)
+
   const [categoryUd, setCategoryUd] = useState<IDetailCategory | null | undefined>(null);
   const [statusForm, setStatusForm] = useState<'create' | 'update'>('create');
   const [isOpen, setIsopen] = useState(false);
