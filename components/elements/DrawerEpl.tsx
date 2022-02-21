@@ -1,5 +1,5 @@
 import { FileTextOutlined } from '@ant-design/icons';
-import { Avatar, Button, Col, Drawer, Row, Space } from 'antd';
+import { Avatar, Button, Col, Drawer, Row, Space, Alert } from 'antd';
 import { UseFormReturn } from 'react-hook-form';
 import { IOptionSelect, IUser } from '../../models';
 import { roleSelect } from '../../utils/dataSelect';
@@ -36,6 +36,11 @@ export default function DrawerUpdateUser({
             justifyContent: 'center',
           }}
         >
+          <Alert
+            showIcon
+            message="If you choose the QA Manager or QA Coordinator role, it will be removed from the department and need to be assigned at the department assign page."
+            type="warning"
+          />
           <Space
             align="center"
             direction="vertical"

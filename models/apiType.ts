@@ -57,7 +57,7 @@ export interface IUser {
     public_id: string
     url: string
   }
-  department_id: string
+  department_id: any
   [index: string]: any
 }
 
