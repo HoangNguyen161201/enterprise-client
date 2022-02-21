@@ -1,9 +1,11 @@
 import {
   AppstoreAddOutlined,
+  AppstoreOutlined,
   FolderViewOutlined,
   HomeOutlined,
   TeamOutlined,
-  UserOutlined
+  UploadOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
 import { Drawer as AntDrawer, Menu } from 'antd';
 import Link from 'next/link';
@@ -25,7 +27,7 @@ interface IProps {
   [index: string]: any;
 }
 
-export const Drawer = ({ onClose, ...props }: IProps)=> {
+export const Drawer = ({ onClose, ...props }: IProps) => {
   //State Show Menu Item
   const [isShowByRole, setIsShowByRole] = UseState<IsShowMenuItem>({
     staff: false,
@@ -42,36 +44,50 @@ export const Drawer = ({ onClose, ...props }: IProps)=> {
   UseEffect(() => {
     if (dataUser && dataUser.user) {
       let valueSetIsShowItem: IsShowMenuItem = isShowByRole;
-      console.log(dataUser.user.role);
 
       switch (dataUser.user.role) {
         case 'staff':
           valueSetIsShowItem = {
-            ...valueSetIsShowItem,
             staff: true,
+            qa_coordinator: false,
+            admin: false,
+            qa_manager: false,
+            department_manager: false,
           };
           break;
         case 'admin':
           valueSetIsShowItem = {
-            ...valueSetIsShowItem,
+            staff: false,
+            qa_coordinator: false,
             admin: true,
+            qa_manager: false,
+            department_manager: false,
           };
           break;
         case 'qa_manager':
           valueSetIsShowItem = {
-            ...valueSetIsShowItem,
+            staff: false,
+            qa_coordinator: false,
+            admin: false,
             qa_manager: true,
+            department_manager: false,
           };
           break;
         case 'qa_coordinator':
           valueSetIsShowItem = {
-            ...valueSetIsShowItem,
+            staff: false,
             qa_coordinator: true,
+            admin: false,
+            qa_manager: false,
+            department_manager: false,
           };
           break;
         case 'department_manager':
           valueSetIsShowItem = {
-            ...valueSetIsShowItem,
+            staff: false,
+            qa_coordinator: false,
+            admin: false,
+            qa_manager: false,
             department_manager: true,
           };
           break;
@@ -123,7 +139,7 @@ export const Drawer = ({ onClose, ...props }: IProps)=> {
             icon={<TeamOutlined />}
             title="Departments"
             style={{
-              display: isShowByRole.admin ? 'block' : 'none',
+              display: isShowByRole.admin || isShowByRole.qa_manager ? 'block' : 'none',
             }}
           >
             <Menu.Item key="sub1-1" icon={<FolderViewOutlined />} onClick={onClose}>
@@ -143,7 +159,7 @@ export const Drawer = ({ onClose, ...props }: IProps)=> {
             icon={<UserOutlined />}
             title="Employees"
             style={{
-              display: isShowByRole.admin ? 'block' : 'none',
+              display: isShowByRole.admin || isShowByRole.qa_manager ? 'block' : 'none',
             }}
           >
             <Menu.Item key="sub2-1" icon={<FolderViewOutlined />} onClick={onClose}>
@@ -157,8 +173,33 @@ export const Drawer = ({ onClose, ...props }: IProps)=> {
               </Link>
             </Menu.Item>
           </SubMenu>
+
+          <Menu.Item
+            key="3"
+            icon={<UploadOutlined />}
+            onClick={onClose}
+            style={{
+              display: isShowByRole.admin || isShowByRole.qa_manager ? 'block' : 'none',
+            }}
+          >
+            <Link href={'/submissions'}>
+              <a>Submissions</a>
+            </Link>
+          </Menu.Item>
+          <Menu.Item
+            key="4"
+            icon={<AppstoreOutlined />}
+            onClick={onClose}
+            style={{
+              display: isShowByRole.admin || isShowByRole.qa_manager ? 'block' : 'none',
+            }}
+          >
+            <Link href={'/categories'}>
+              <a>Categories</a>
+            </Link>
+          </Menu.Item>
         </Menu>
       </AntDrawer>
     </>
   );
-}
+};
