@@ -3,13 +3,12 @@ import {
   FolderViewOutlined,
   HomeOutlined,
   TeamOutlined,
-  UserOutlined,
+  UserOutlined
 } from '@ant-design/icons';
-import { Drawer, Menu } from 'antd';
-import { resolveSrv } from 'dns/promises';
+import { Drawer as AntDrawer, Menu } from 'antd';
 import Link from 'next/link';
 import { useEffect as UseEffect, useState as UseState } from 'react';
-import { getCurrentUser } from '../../queries';
+import { getCurrentUser } from '../../../queries';
 
 const { SubMenu } = Menu;
 
@@ -26,7 +25,7 @@ interface IProps {
   [index: string]: any;
 }
 
-export default function DrawerComponent({ onClose, ...props }: IProps) {
+export const Drawer = ({ onClose, ...props }: IProps)=> {
   //State Show Menu Item
   const [isShowByRole, setIsShowByRole] = UseState<IsShowMenuItem>({
     staff: false,
@@ -86,7 +85,7 @@ export default function DrawerComponent({ onClose, ...props }: IProps) {
 
   return (
     <>
-      <Drawer
+      <AntDrawer
         onClose={onClose}
         {...props}
         bodyStyle={{
@@ -159,7 +158,7 @@ export default function DrawerComponent({ onClose, ...props }: IProps) {
             </Menu.Item>
           </SubMenu>
         </Menu>
-      </Drawer>
+      </AntDrawer>
     </>
   );
 }

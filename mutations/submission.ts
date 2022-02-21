@@ -1,7 +1,7 @@
 import { AxiosError } from 'axios';
 import { useMutation } from 'react-query';
-import { ICommon, ISubmissionForm } from '../models';
-import { deleteData, postData, putData } from '../utils';
+import { ISubmissionForm } from 'models/formType';
+import { deleteData, postData, putData } from '../utils/fetchData';
 
 interface SubmMutation {
   options: any;

@@ -1,7 +1,7 @@
 import { Skeleton, Space } from 'antd';
 import React from 'react';
 
-export default function Skeletons() {
+export const Skeletons = ()=> {
   return (
     <Space direction='vertical'>
       <Skeleton.Button

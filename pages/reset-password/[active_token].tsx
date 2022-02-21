@@ -1,16 +1,15 @@
 import { UnlockOutlined } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button, Space } from 'antd';
+import { Input } from 'components/elements/form';
+import { IResetPass } from 'models/formType';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Input } from '../../components/elements';
-import { IResetPass } from '../../models';
-import { validateResetPass } from '../../utils';
+import { validateResetPass } from 'utils/validate';
 
 export default function ResetPass() {
-  const [isResetPass, setIsResetPass] = useState(false);
 
   // setting form
   const formSetting = useForm<IResetPass>({

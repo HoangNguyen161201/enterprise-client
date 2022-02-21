@@ -1,10 +1,9 @@
 import { FileTextOutlined } from '@ant-design/icons';
 import { Avatar, Button, Col, Drawer, Row, Space, Alert } from 'antd';
 import { UseFormReturn } from 'react-hook-form';
-import { IOptionSelect, IUser } from '../../models';
-import { roleSelect } from '../../utils/dataSelect';
-import { Input } from './Input';
-import { Select } from './Select';
+import { IOptionSelect, IUser } from '../../../models';
+import { roleSelect } from '../../../utils/dataSelect';
+import { Select, Input } from '../form';
 
 export interface IDrawerUpdateUserProps {
   onClose: () => void;
@@ -15,14 +14,14 @@ export interface IDrawerUpdateUserProps {
   onSubmit: (dataForm: IUser) => void;
 }
 
-export default function DrawerUpdateUser({
+export const DrawerUpdateUser = ({
   onClose,
   visible,
   oldUpdateUser,
   formSetting,
   departmentSl,
   onSubmit,
-}: IDrawerUpdateUserProps) {
+}: IDrawerUpdateUserProps)=> {
   // setting form
 
   return (

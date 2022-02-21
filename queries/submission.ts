@@ -1,7 +1,7 @@
 import { AxiosError } from 'axios';
 import { useQuery } from 'react-query';
 import { ISubmissions } from '../models/apiType';
-import { getData } from '../utils';
+import { getData } from '../utils/fetchData';
 
 export const getallSubmissions = (accessToken: string, initial?: ISubmissions, params?: any) => {
     return useQuery<any, AxiosError>(

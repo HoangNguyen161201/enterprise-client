@@ -27,22 +27,18 @@ import Head from 'next/head';
 import { useRouter as UseRouter } from 'next/router';
 import { useEffect as UseEffect, useMemo as UseMemo, useState as UseState } from 'react';
 import { useMutation } from 'react-query';
-import ButtonAssign from '../../../components/elements/ButtonAssign';
-import { ClientLayout } from '../../../components/layouts';
-import {
-  IAssignUsers,
-  IDetailDepartment,
-  IUser,
-  IUsersNotDepartment,
-  NextPageWithLayout,
-} from '../../../models';
-import {
-  getAllDepartments,
-  getCurrentUser,
-  getDetailDepartment,
-  getUsersNotDepartment,
-} from '../../../queries';
-import { column, deleteData, postData } from '../../../utils';
+import { ButtonAssign } from 'components/elements/common';
+import { ClientLayout } from 'components/layouts';
+import {IAssignUsers} from 'models/formType';
+import { IDetailDepartment, IUser} from 'models/apiType';
+import { IUsersNotDepartment } from 'models/elementType';
+import { NextPageWithLayout } from 'models/layoutType';
+import { getAllDepartments, getDetailDepartment, getUsersNotDepartment,} from 'queries/department';
+import { getCurrentUser } from 'queries/auth';
+
+
+import { deleteData, postData } from 'utils/fetchData';
+import column from 'utils/configTB';
 
 export interface IAssignDepartmentProps {
   detailDepartment: IDetailDepartment;
@@ -248,7 +244,13 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
         filterIcon: <SearchOutlined />,
         render: (value) => (
           <Space size={20}>
-            <Image alt='Avatar' width={40} height={40} style={{ objectFit: 'cover' }} src={value.avatar} />
+            <Image
+              alt="Avatar"
+              width={40}
+              height={40}
+              style={{ objectFit: 'cover' }}
+              src={value.avatar}
+            />
             <span>{value.name}</span>
           </Space>
         ),

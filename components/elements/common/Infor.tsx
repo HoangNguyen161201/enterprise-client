@@ -10,7 +10,7 @@ export interface IAppProps {
   url?: string;
 }
 
-export default function App({ color, Icon, title, url }: IAppProps) {
+export const Infor = ({ color, Icon, title, url }: IAppProps)=> {
   return (
     <>
       <Space size={20}>

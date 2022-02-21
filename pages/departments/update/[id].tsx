@@ -8,12 +8,13 @@ import { useRouter as UseRouter } from 'next/router';
 import { useEffect as UseEffect } from 'react';
 import { useForm as UseForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
-import { Input, TextArea } from '../../../components/elements';
+import { Input, TextArea } from '../../../components/elements/form';
 import { ClientLayout } from '../../../components/layouts';
 import { IDepartmentForm, NextPageWithLayout } from '../../../models';
 import { getCurrentUser } from '../../../queries';
 import { getDetailDepartment } from '../../../queries/department';
-import { putData, validateAddDepartment } from '../../../utils';
+import { putData } from '../../../utils/fetchData';
+import { validateAddDepartment } from '../../../utils/validate';
 
 export interface IUpdateDepartmetnProps {}
 

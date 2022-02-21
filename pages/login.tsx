@@ -8,13 +8,16 @@ import { useRouter as UseRouter } from 'next/router';
 import { useMemo as UseMemo } from 'react';
 import { useForm as UseForm } from 'react-hook-form';
 import { useMutation as UseMutation } from 'react-query';
-import { Input, Select } from '../components/elements';
-import CopyAcc from '../components/elements/CopyAcc';
-import Accounts from '../DataAccount.json';
-import { IAccessToken, ILogin, IOptionSelect, NextPageWithLayout } from '../models';
-import { getCurrentUser } from '../queries';
-import { postData } from '../utils/fetchData';
-import { validateLogin } from '../utils/validate';
+import { Input, Select } from 'components/elements/form';
+import {CopyAcc} from 'components/elements/common';
+import Accounts from 'DataAccount.json';
+import { IAccessToken } from 'models/apiType';
+import { ILogin } from 'models/formType';
+import { IOptionSelect } from 'models/elementType';
+import { NextPageWithLayout } from 'models/layoutType';
+import { getCurrentUser } from 'queries';
+import { postData } from 'utils/fetchData';
+import { validateLogin } from 'utils/validate';
 
 const login: NextPageWithLayout = () => {
   const { refetch } = getCurrentUser();

@@ -7,8 +7,9 @@ import Link from 'next/link';
 import { useState as UseState } from 'react';
 import { useForm as UseForm } from 'react-hook-form';
 import { useMutation as UseMutation } from 'react-query';
-import { Input } from '../components/elements';
-import { postData, validateRecoverPass } from '../utils';
+import { Input } from 'components/elements/form';
+import { validateRecoverPass } from 'utils/validate';
+import { postData } from 'utils/fetchData';
 
 export default function recover_password() {
   const [isSMTP, setIsSMTP] = UseState(false);

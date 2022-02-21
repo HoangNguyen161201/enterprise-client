@@ -1,7 +1,7 @@
 import { AxiosError } from 'axios';
 import { useQuery } from 'react-query';
 import { IAllUsers, IResUsersRole, IUser } from '../models';
-import { getData } from '../utils';
+import { getData } from '../utils/fetchData';
 
 export const getUsersRoleDepartment = (
   role: string,
