@@ -9,16 +9,16 @@ import {
 import { Breadcrumb, Button, Card, Input, message, Popconfirm, Space, Table, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { AxiosError } from 'axios';
+import { ClientLayout } from 'components/layouts';
+import { ICommon } from 'models/apiType';
+import { NextPageWithLayout } from 'models/layoutType';
+import { departmentMutation } from 'mutations/department';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useEffect as UseEffect, useMemo as UseMemo, useState as UseState } from 'react';
-import { useMutation } from 'react-query';
-import { ClientLayout } from 'components/layouts';
-import { NextPageWithLayout } from 'models/layoutType';
 import { getAllDepartments, getCurrentUser } from 'queries';
-import { deleteData, postData } from 'utils/fetchData';
-import  column from 'utils/configTB';
+import { useEffect as UseEffect, useMemo as UseMemo, useState as UseState } from 'react';
+import column from 'utils/configTB';
 
 export interface IAddDepartmentProps {}
 
@@ -42,48 +42,42 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
   const { error: errorDepartments, data, refetch } = getAllDepartments(dataUser?.accessToken.token);
 
   // delete department
-  const handleDl = useMutation<any, AxiosError, any>(
-    (id: string) => {
-      return deleteData({ url: `/api/departments/${id}`, token: dataUser?.accessToken.token });
-    },
-    {
-      onSuccess: (data) => {
+  const handleDl = departmentMutation.delete({
+    dataUserRefetch: dataUserRefetch,
+    options: {
+      onSuccess: (data: ICommon) => {
         message.success(data.msg);
         setIsLoadingDl({ key: '', isLoading: false });
         refetch();
       },
-      onError: (error) => {
+      onError: (error: AxiosError) => {
         const data = error.response?.data;
         message.error(data.err);
         setIsLoadingDl({ key: '', isLoading: false });
       },
-    }
-  );
+    },
+    token: dataUser?.accessToken.token,
+  });
 
   // delete department
-  const handleDlAll = useMutation<any, AxiosError, any>(
-    (Ids) => {
-      return postData({
-        url: `/api/departments/delete-many`,
-        token: dataUser?.accessToken.token,
-        body: { departments: Ids },
-      });
-    },
-    {
-      onSuccess: (data) => {
+  const handleDlAll = departmentMutation.deleteAll({
+    dataUserRefetch: dataUserRefetch,
+    token: dataUser?.accessToken.token,
+    options: {
+      onSuccess: (data: ICommon) => {
         message.success(data.msg);
         setIsLoadingDlAll(false);
         setDepartmentsSl(null);
         refetch();
       },
-      onError: (error) => {
+      onError: (error: AxiosError) => {
         const data = error.response?.data;
         message.error(data.err);
         setIsLoadingDlAll(false);
         setDepartmentsSl(null);
       },
-    }
-  );
+    },
+  });
 
   UseEffect(() => {
     dataUserRefetch();

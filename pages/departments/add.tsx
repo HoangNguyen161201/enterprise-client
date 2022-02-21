@@ -2,20 +2,17 @@ import { FileTextOutlined } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Breadcrumb, Button, Card, message, Space } from 'antd';
 import { AxiosError } from 'axios';
+import { Input, TextArea } from 'components/elements/form';
+import { ClientLayout } from 'components/layouts';
+import { ICommon } from 'models/apiType';
+import { NextPageWithLayout } from 'models/layoutType';
+import { departmentMutation } from 'mutations/department';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
+import { getCurrentUser } from 'queries/auth';
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
-import { useMutation } from 'react-query';
-import { Input,  TextArea  } from 'components/elements/form';
-import { ClientLayout } from 'components/layouts';
-import { IDepartmentForm } from 'models/formType';
-import { NextPageWithLayout } from 'models/layoutType';
-import { getCurrentUser } from 'queries/auth';
-import { postData } from 'utils/fetchData';
 import { validateAddDepartment } from 'utils/validate';
-import { departmentMutation } from 'mutations/department';
-import { ICommon } from 'models/apiType';
 
 export interface IAddDepartmentProps {}
 

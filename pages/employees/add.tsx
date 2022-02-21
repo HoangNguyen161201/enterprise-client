@@ -2,21 +2,20 @@ import { FileTextOutlined, LockOutlined, MailOutlined } from '@ant-design/icons'
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Breadcrumb, Button, Card, Col, message, Row, Space } from 'antd';
 import { AxiosError } from 'axios';
-import { GetServerSideProps } from 'next';
-import Head from 'next/head';
-import * as React from 'react';
-import { useForm } from 'react-hook-form';
-import { useMutation } from 'react-query';
 import { Input, Select } from 'components/elements/form';
 import { ClientLayout } from 'components/layouts';
-import { IDepartments } from 'models/apiType';
+import { ICommon, IDepartments } from 'models/apiType';
 import { IOptionSelect } from 'models/elementType';
 import { IUserForm } from 'models/formType';
 import { NextPageWithLayout } from 'models/layoutType';
+import { EmplMutation } from 'mutations/employee';
+import { GetServerSideProps } from 'next';
+import Head from 'next/head';
 import { getAllDepartments, getallUsers, getCurrentUser } from 'queries';
-import { postData } from 'utils/fetchData';
-import { validateAddUser } from 'utils/validate';
+import * as React from 'react';
+import { useForm } from 'react-hook-form';
 import { roleSelect } from 'utils/dataSelect';
+import { validateAddUser } from 'utils/validate';
 
 export interface IAddEmployeeProps {
   allDepartments: IDepartments;
@@ -72,28 +71,24 @@ const AddEmployee: NextPageWithLayout = ({ allDepartments }: IAddEmployeeProps) 
   }, [errorAllDepartments]);
 
   //  call api to add user
-  const mutationAddUser = useMutation<any, AxiosError, IUserForm>(
-    (dataForm) => {
-      return postData({
-        url: '/api/users',
-        body: dataForm,
-        token: dataUser?.accessToken.token,
-      });
-    },
-    {
-      onSuccess: (data) => {
+  const mutationAddUser = EmplMutation.add({
+    token: dataUser?.accessToken.token,
+    options: {
+      onSuccess: (data: ICommon) => {
         message.success({
           content: data.msg,
         });
         dataAllUsersRefetch();
       },
-      onError: (error) => {
+      onError: (error: AxiosError) => {
         message.error({
           content: error.response?.data.err || 'Create user false.',
         });
       },
-    }
-  );
+    },
+    dataUserRefetch: dataUserRefetch 
+  })
+  
 
   // setting form
   const formSetting = useForm<IUserForm>({

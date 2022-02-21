@@ -16,6 +16,8 @@ import { getCurrentUser } from 'queries';
 import { getDetailDepartment } from 'queries/department';
 import { putData } from 'utils/fetchData';
 import { validateAddDepartment } from 'utils/validate';
+import { departmentMutation } from 'mutations/department';
+import { ICommon } from 'models/apiType';
 
 export interface IUpdateDepartmetnProps {}
 
@@ -79,28 +81,23 @@ const UpdateDepartmetn: NextPageWithLayout = (props: IUpdateDepartmetnProps) => 
     }
   }, [dataDepartment]);
 
-  //  call api to add deartment
-  const mutationUpdateDepartment = useMutation<any, AxiosError, IDepartmentForm>(
-    (dataForm) => {
-      return putData({
-        url: `/api/departments/${dataForm.id}`,
-        body: dataForm,
-        token: dataUser?.accessToken.token,
-      });
-    },
-    {
-      onSuccess: (data) => {
+  //  call api to update deartment
+  const mutationUpdateDepartment = departmentMutation.update({
+    dataUserRefetch: dataUserRefetch,
+    options: {
+      onSuccess: (data: ICommon) => {
         message.success({
           content: data.msg,
         });
       },
-      onError: (error) => {
+      onError: (error: AxiosError) => {
         message.error({
           content: error.response?.data.err || 'Create department false.',
         });
       },
-    }
-  );
+    },
+    token: dataUser?.accessToken.token
+  })
 
   const onSubmit = async ({
     id,
