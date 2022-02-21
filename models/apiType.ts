@@ -46,6 +46,7 @@ export interface IDetailDepartment extends ICommon {
 
 //Iterface user
 export interface IUser {
+  id: any
   _id: any
   employee_id: number
   name: string
@@ -55,6 +56,13 @@ export interface IUser {
   avatar: {
     public_id: string
     url: string
+  }
+  department_id?: string | {
+    _id: string
+    name: string
+    description: string
+    count_users: number
+    [index: string]: any
   }
   [index: string]: any
 }

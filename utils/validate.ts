@@ -81,6 +81,15 @@ export const validateAddUser = yup.object({
   role: yup.string().required('Please select role'),
 });
 
+export const validateUpdateUser = yup.object({
+  name: yup
+    .string()
+    .required('Please enter user employee')
+    .min(6, 'Employee names should be at least 3 characters'),
+  email: yup.string().required('Please enter email employee'),
+  role: yup.string().required('Please select role'),
+});
+
 
 //validate form submission
 export const validateSubmission = yup.object({

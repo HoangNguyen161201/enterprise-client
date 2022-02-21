@@ -3,7 +3,6 @@ import { useQuery } from 'react-query';
 import { IAllUsers, IResUsersRole, IUser } from '../models';
 import { getData } from '../utils';
 
-
 export const getUsersRoleDepartment = (
   role: string,
   hasDepartment: string,
@@ -45,9 +44,9 @@ export const getallUsers = (accessToken: string, initial?: IAllUsers) => {
 export const getDetailUser = (
   id: string,
   accessToken: string,
-  initial?: IUser
+  initial?: { user: IUser; [index: string]: any }
 ) => {
-  return useQuery<any, AxiosError>(
+  return useQuery<{ user: IUser; [index: string]: any }, AxiosError>(
     ['user', id],
     async () => {
       return await getData({ url: `/api/users/${id}`, token: accessToken });
