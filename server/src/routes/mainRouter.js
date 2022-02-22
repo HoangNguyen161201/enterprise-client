@@ -7,6 +7,7 @@ const categoryRouter = require('./categoryRouter');
 const viewRouter = require('./viewRouter');
 const reactionRouter = require('./reactionRouter');
 const reactionTypeRouter = require('./reactionTypeRouter');
+const commentRouter = require('./commentRouter');
 
 //Config main router
 mainRouter = (app) => {
@@ -25,6 +26,8 @@ mainRouter = (app) => {
   app.use('/api/reactions', reactionRouter);
 
   app.use('/api/reactiontypes', reactionTypeRouter); 
+
+  app.use('/api/comments', commentRouter); 
 };
 
 module.exports = mainRouter;
