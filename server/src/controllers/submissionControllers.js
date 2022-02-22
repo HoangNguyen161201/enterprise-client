@@ -56,7 +56,7 @@ const submissionController = {
 
     if (!submission) {
       return res.status(400).json({
-        err: ' The Topic is does not exist',
+        err: ' The Topic does not exist',
         statusCode: 400,
       });
     }
@@ -125,8 +125,6 @@ const submissionController = {
     const page_Index = await pageIndex({query: submissionModel, limit: 6})
     const submissions = await filter.query
     
-    
-
     return res.status(200).json({
       statusCode: 200,
       submissions,
