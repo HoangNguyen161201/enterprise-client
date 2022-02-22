@@ -5,6 +5,7 @@ const catchAsyncError = require('../helpers/catchAsyncError');
 const reactionModel = require('../models/reactionModel');
 const reactionTypeModel = require('../models/reactionTypeModel');
 const userModel = require('../models/userModel');
+const ideaModel = require('../models/ideaModel');
 
 //Import valid
 const reactionValid = require('../utils/reactionValid');
@@ -43,6 +44,13 @@ const reactionController = {
         err: 'Reaction type does not exist in system.',
       });
 
+    //Check exist idea
+    const idea = await ideaModel.findById(idea_id);
+    if (!idea)
+      return res.status(400).json({
+        statusCode: 400,
+        err: 'Idea does not exist in system.',
+      });
 
     //Check exist reaction, if exist will delete
     const reactTion = await reactionModel.findOne({
@@ -68,9 +76,9 @@ const reactionController = {
     });
 
     return res.status(200).json({
-        statusCode: 200,
-        msg: `${reactionType.name} success.`,
-      });
+      statusCode: 200,
+      msg: `${reactionType.name} success.`,
+    });
   }),
 };
 
