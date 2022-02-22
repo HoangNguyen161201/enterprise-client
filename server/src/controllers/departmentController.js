@@ -85,6 +85,17 @@ const departmentController = {
         statusCode: 400,
       });
 
+    //Check if department has user assigned
+    const users = await userModel.find({
+      department_id: department._id,
+    });
+
+    if (!users || users.length !== 0)
+      return res.status(400).json({
+        msg: 'Please remove all assigned users from this department.',
+        statusCode: 400,
+      });
+
     //Check exist department and update
     await departmentModel.findByIdAndDelete(id);
 
