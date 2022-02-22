@@ -4,6 +4,7 @@ const catchAsyncError = require('../helpers/catchAsyncError');
 //Import model
 const viewModel = require('../models/viewModel');
 const userModel = require('../models/userModel');
+const ideaModel = require('../models/ideaModel');
 
 const viewController = {
   create: catchAsyncError(async (req, res) => {
@@ -17,6 +18,14 @@ const viewController = {
         return res.status(400).json({
           statusCode: 400,
           err: 'User does not exist in system.',
+        });
+
+      //Check exist idea
+      const idea = await ideaModel.findById(idea_id);
+      if (!idea)
+        return res.status(400).json({
+          statusCode: 400,
+          err: 'Idea does not exist in system.',
         });
 
       //Check exist user view

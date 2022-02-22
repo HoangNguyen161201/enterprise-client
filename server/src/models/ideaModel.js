@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 //define schema model
-const submissionSchema = new mongoose.Schema({
+const ideaSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
