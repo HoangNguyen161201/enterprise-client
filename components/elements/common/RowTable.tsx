@@ -1,39 +1,68 @@
-import { Col, Row } from 'antd';
+import { KeyOutlined } from '@ant-design/icons';
+import { Col, Row, Space, Grid } from 'antd';
 import * as React from 'react';
 
 export interface IRowTableProps {
-    title: string,
-    value: any,
-    color?: string
+  title: string;
+  value: any;
+  isValid?: boolean;
 }
 
-export default function RowTable({title, value, color}: IRowTableProps) {
+export default function RowTable({ title, value, isValid = true }: IRowTableProps) {
+  const { useBreakpoint } = Grid;
+  const { md } = useBreakpoint();
+
   return (
     <Row>
-      <Col xs={24} md={6}>
-        <div
-          style={{
-            background: '#009F9D50',
-            padding: 10,
-            border: '1px solid white',
-            fontSize: 16,
-            fontWeight: 'bold',
-          }}
-        >
-          {title}
-        </div>
+      <Col
+        xs={24}
+        md={8}
+        style={{
+          borderRight: md ? '1px solid gray' : undefined,
+          borderBottom: md ? undefined : '1px solid gray',
+          paddingBottom: md ? undefined : 20
+        }}
+      >
+        <Space size={20}>
+          <Space
+            align="center"
+            style={{
+              width: 50,
+              height: 50,
+              background: isValid ? '#009F9D' : '#FF7070',
+              borderRadius: 10,
+              justifyContent: 'center',
+            }}
+          >
+            <KeyOutlined
+              style={{
+                fontSize: 20,
+                color: 'white',
+              }}
+            />
+          </Space>
+          <span
+            style={{
+              fontSize: 16,
+              color: isValid ? '#009F9D' : '#FF7070',
+            }}
+          >
+            {title}
+          </span>
+        </Space>
       </Col>
-      <Col xs={24} md={18}>
-        <div
+      <Col xs={24} md={16}>
+        <Space
           style={{
             padding: 10,
-            border: '1px solid white',
             fontSize: 16,
-            background: color ? color : '#CDFFEB',
+            background: isValid ? 'white' : '#FF000012',
+            width: '100%',
+            minHeight: "100%"
           }}
         >
           {value}
-        </div>
+        </Space>
       </Col>
     </Row>
   );
