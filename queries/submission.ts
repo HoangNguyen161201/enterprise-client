@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios';
 import { useQuery } from 'react-query';
-import { ISubmissions } from '../models/apiType';
+import { IDetailSubmission, ISubmissions } from '../models/apiType';
 import { getData } from '../utils/fetchData';
 
 export const getallSubmissions = (accessToken: string, initial?: ISubmissions, params?: any) => {
@@ -18,4 +18,24 @@ export const getallSubmissions = (accessToken: string, initial?: ISubmissions, p
         keepPreviousData: true
       }
     );
+};
+
+export const getDetailSubmission = (
+  id: string,
+  accessToken: string,
+  initial?: IDetailSubmission
+) => {
+  return useQuery<IDetailSubmission, AxiosError>(
+    ['submission', id],
+    async () => {
+      return await getData({ url: `/api/submissions/${id}`, token: accessToken });
+    },
+    {
+      enabled: !!accessToken && !!id,
+      retry: 1,
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+      initialData: initial,
+    }
+  );
 };

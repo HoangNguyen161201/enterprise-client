@@ -80,6 +80,11 @@ export interface ISubmission {
   closure_date: string
   final_closure_date: string
   background: string
+  [index: string]: any
+}
+
+export interface IDetailSubmission extends ICommon {
+  submission: ISubmission
 }
 
 export interface IMutation {
