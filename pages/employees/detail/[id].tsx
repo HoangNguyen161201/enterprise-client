@@ -11,11 +11,11 @@ import { IUser } from 'models/apiType';
 import { NextPageWithLayout } from 'models/layoutType';
 import { getCurrentUser, getDetailUser } from 'queries';
 
-export interface IDetailDepartmentProps {
+export interface IDetailEmployeeProps {
   detailUser: { user: IUser; [index: string]: any };
 }
 
-const DetailEmployee: NextPageWithLayout = ({ detailUser }: IDetailDepartmentProps) => {
+const DetailEmployee: NextPageWithLayout = ({ detailUser }: IDetailEmployeeProps) => {
   const { query } = useRouter();
   const { useBreakpoint } = Grid;
   const { lg } = useBreakpoint();
