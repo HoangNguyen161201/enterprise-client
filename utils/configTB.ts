@@ -1,4 +1,5 @@
-import { IColumn } from "../models";
+import { IColumn } from "models/elementType"
+
 
 export default function column ({title, dataIndex, key}:IColumn) {
     if(!dataIndex && !key) return {

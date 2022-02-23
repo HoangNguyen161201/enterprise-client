@@ -1,11 +1,11 @@
 //Import
 import { IdcardOutlined, MailOutlined, TeamOutlined } from '@ant-design/icons';
-import { Avatar, Breadcrumb, Card, Col, Grid, message, Row, Space, Table } from 'antd';
+import { Avatar, Breadcrumb, Button, Card, Col, Grid, message, Row, Space, Table } from 'antd';
 import { ClientLayout } from 'components/layouts';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Infor } from 'components/elements/common';
 import { IUser, IDetailSubmission, ISubmission } from 'models/apiType';
 import { NextPageWithLayout } from 'models/layoutType';
@@ -13,6 +13,10 @@ import { getCurrentUser, getDetailSubmission, getDetailUser } from 'queries';
 import { ColumnsType } from 'antd/lib/table';
 import column from 'utils/configTB';
 import RowTable from 'components/elements/common/RowTable';
+import { useDropzone } from 'react-dropzone';
+import { uploadFile } from 'utils/uploadFile';
+import { v4 as uuidv4 } from 'uuid';
+import { dataTypeFile } from 'utils/dataTypeFile';
 
 export interface IDetailSubmissionProps {
   detailSubmission: IDetailSubmission;
@@ -22,6 +26,9 @@ const DetailSubmission: NextPageWithLayout = ({ detailSubmission }: IDetailSubmi
   const { query } = useRouter();
   const { useBreakpoint } = Grid;
   const { lg } = useBreakpoint();
+
+  //State file
+  const [filesUpload, setFilesUpload] = useState<File[]>([]);
 
   //State date
   const [timeClosure, setTimeClosure] = useState({
@@ -49,7 +56,7 @@ const DetailSubmission: NextPageWithLayout = ({ detailSubmission }: IDetailSubmi
   //Get detail data submission
   const { error: errorSubmission, data: dataDetailSubmission } = getDetailSubmission(
     id as string,
-    dataUser?.accessToken.token,
+    dataUser?.accessToken.token as string,
     detailSubmission
   );
 
@@ -86,6 +93,46 @@ const DetailSubmission: NextPageWithLayout = ({ detailSubmission }: IDetailSubmi
     }
   }, [errorSubmission]);
 
+  //Setting data file submit
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    setFilesUpload(acceptedFiles);
+  }, []);
+
+  //Setting files uploads
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+
+  //Remove file upload
+  const onRemoveFile = (index: number) => {
+    console.log(index);
+
+    const newFilesUpload = filesUpload.filter((file, indexFile) => {
+      if (indexFile !== index) {
+        return file;
+      }
+    });
+    setFilesUpload(newFilesUpload);
+  };
+
+  //Handle submit file
+  const onSubmit = async () => {
+    const result = await uploadFile(filesUpload, [
+      detailSubmission.submission._id,
+      dataUser?.user._id,
+      uuidv4(),
+    ]);
+    console.log(result);
+  };
+
+  //Generate img type file
+  const generateImgFile = (nameFile: string) => {
+    let typeFile = nameFile.split('.')[1];
+    if (!dataTypeFile.includes(typeFile)) {
+      typeFile = 'other';
+    }
+
+    return `/assets/files/${typeFile}.svg`;
+  };
+
   return (
     <>
       <Head>
@@ -114,6 +161,26 @@ const DetailSubmission: NextPageWithLayout = ({ detailSubmission }: IDetailSubmi
             color={timeClosure.final_closure_date.isMatchDate ? 'tomato' : undefined}
           />
         </Space>
+
+        <div {...getRootProps()}>
+          <input {...getInputProps()} />
+          {isDragActive ? (
+            <p>Drop the files here ...</p>
+          ) : (
+            <p>Drag 'n' drop some files here, or click to select files</p>
+          )}
+        </div>
+        {filesUpload.map((file, index) => (
+          <div key={index}>
+            <img src={generateImgFile(file.name)} /> 
+            <div>
+              {file.name} <span onClick={() => onRemoveFile(index)}>Delete</span>
+            </div>
+          </div>
+        ))}
+        <Button onClick={onSubmit} type="primary">
+          Submit
+        </Button>
       </Card>
     </>
   );
