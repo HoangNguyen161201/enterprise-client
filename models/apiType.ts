@@ -61,6 +61,15 @@ export interface IUser {
   [index: string]: any
 }
 
+export interface IDetailUser extends ICommon {
+  user: IUser,
+  accessToken: {
+    token: string,
+    exp: number
+  },
+  [index: string]: any
+}
+
 export interface IResUsersNotDepartments {
   staffs?: IUser[]
   QACoordinators?: IUser[]

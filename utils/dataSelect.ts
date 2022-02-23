@@ -1,4 +1,5 @@
-import { IOptionSelect } from '../models';
+import { IOptionSelect } from "models/elementType";
+
 
 //Data Select role
 export const roleSelect: IOptionSelect[] = [

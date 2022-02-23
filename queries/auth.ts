@@ -1,9 +1,10 @@
 import { AxiosError } from 'axios';
+import { IDetailUser, IUser } from 'models/apiType';
 import { useQuery } from 'react-query';
 import { getData } from '../utils/fetchData';
 
 export const getCurrentUser = () => {
-  return useQuery <any, AxiosError>(
+  return useQuery <IDetailUser, AxiosError>(
     'accessToken',
     async () => {
       return await getData({ url: '/api/auth/accesstoken' });
