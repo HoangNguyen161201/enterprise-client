@@ -1,6 +1,24 @@
 //Import
-import { IdcardOutlined, MailOutlined, TeamOutlined } from '@ant-design/icons';
-import { Avatar, Breadcrumb, Button, Card, Col, Grid, message, Row, Space, Table } from 'antd';
+import {
+  CloseOutlined,
+  CloudUploadOutlined,
+  IdcardOutlined,
+  MailOutlined,
+  TeamOutlined,
+} from '@ant-design/icons';
+import {
+  Avatar,
+  Breadcrumb,
+  Button,
+  Card,
+  Col,
+  Grid,
+  message,
+  Row,
+  Space,
+  Spin,
+  Table,
+} from 'antd';
 import { ClientLayout } from 'components/layouts';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
@@ -17,6 +35,7 @@ import { useDropzone } from 'react-dropzone';
 import { uploadFile } from 'utils/uploadFile';
 import { v4 as uuidv4 } from 'uuid';
 import { dataTypeFile } from 'utils/dataTypeFile';
+import ItemFileUpload from 'components/elements/common/ItemFileUpload';
 
 export interface IDetailSubmissionProps {
   detailSubmission: IDetailSubmission;
@@ -29,6 +48,9 @@ const DetailSubmission: NextPageWithLayout = ({ detailSubmission }: IDetailSubmi
 
   //State file
   const [filesUpload, setFilesUpload] = useState<File[]>([]);
+
+  //State loading submit files
+  const [isLoadUpFile, setIsLoadUpFile] = useState<boolean>(false);
 
   //State date
   const [timeClosure, setTimeClosure] = useState({
@@ -66,11 +88,11 @@ const DetailSubmission: NextPageWithLayout = ({ detailSubmission }: IDetailSubmi
       setTimeClosure({
         closure_date: {
           value: new Date(dataDetailSubmission.submission.closure_date).toString(),
-          isMatchDate: new Date(dataDetailSubmission.submission.closure_date) < new Date(),
+          isMatchDate: new Date(dataDetailSubmission.submission.closure_date) > new Date(),
         },
         final_closure_date: {
           value: new Date(dataDetailSubmission.submission.final_closure_date).toString(),
-          isMatchDate: new Date(dataDetailSubmission.submission.final_closure_date) < new Date(),
+          isMatchDate: new Date(dataDetailSubmission.submission.final_closure_date) > new Date(),
         },
       });
     }
@@ -115,12 +137,21 @@ const DetailSubmission: NextPageWithLayout = ({ detailSubmission }: IDetailSubmi
 
   //Handle submit file
   const onSubmit = async () => {
+    setIsLoadUpFile(true);
+
+    //Up files
     const result = await uploadFile(filesUpload, [
       detailSubmission.submission._id,
       dataUser?.user._id,
       uuidv4(),
     ]);
-    console.log(result);
+
+    //set state files upload
+    setFilesUpload([]);
+    setIsLoadUpFile(false);
+    message.success({
+      content: 'Upload files success.',
+    });
   };
 
   //Generate img type file
@@ -147,40 +178,110 @@ const DetailSubmission: NextPageWithLayout = ({ detailSubmission }: IDetailSubmi
       </Breadcrumb>
 
       <Card title="View Detail Employee" style={{ width: '100%', marginTop: '20px' }}>
-        <Space direction="vertical" size={0}>
+        <Space direction="vertical" size={20}>
+          <span
+            style={{
+              fontSize: 14,
+              color: 'gray',
+            }}
+          >
+            Information
+          </span>
           <RowTable title="Name" value={dataDetailSubmission?.submission.name} />
           <RowTable title="Description" value={dataDetailSubmission?.submission.description} />
           <RowTable
             title="Closure Date"
             value={timeClosure.closure_date.value}
-            color={timeClosure.closure_date.isMatchDate ? 'tomato' : undefined}
+            isValid={timeClosure.closure_date.isMatchDate}
           />
           <RowTable
             title="Closure Date"
             value={timeClosure.final_closure_date.value}
-            color={timeClosure.final_closure_date.isMatchDate ? 'tomato' : undefined}
+            isValid={timeClosure.final_closure_date.isMatchDate}
           />
-        </Space>
 
-        <div {...getRootProps()}>
-          <input {...getInputProps()} />
-          {isDragActive ? (
-            <p>Drop the files here ...</p>
-          ) : (
-            <p>Drag 'n' drop some files here, or click to select files</p>
+          <span
+            style={{
+              fontSize: 14,
+              color: 'gray',
+            }}
+          >
+            Upload file
+          </span>
+          <Spin spinning={isLoadUpFile}>
+            <Space
+              style={{
+                width: '100%',
+                border: '5px dotted #009F9D30',
+                padding: '40px 40px',
+                borderRadius: '20px',
+                justifyContent: 'center',
+              }}
+              direction="vertical"
+              align="center"
+              size={20}
+              {...getRootProps()}
+            >
+              <img src="/assets/uploadFiles.svg" />
+              <input {...getInputProps()} />
+              {isDragActive ? (
+                <p
+                  style={{
+                    fontSize: 16,
+                    fontWeight: 'bold',
+                    color: 'gray',
+                  }}
+                >
+                  Drop the files here ...
+                </p>
+              ) : (
+                <p
+                  style={{
+                    fontSize: 16,
+                    fontWeight: 'bold',
+                    color: 'gray',
+                  }}
+                >
+                  Drag your documents, photos, or videos here to start uploading
+                </p>
+              )}
+              <Button
+                type="primary"
+                size="large"
+                style={{
+                  borderRadius: 4,
+                }}
+              >
+                Choose Files
+              </Button>
+            </Space>
+          </Spin>
+
+          {filesUpload.map((file, index) => (
+            <Spin spinning={isLoadUpFile}>
+              <ItemFileUpload
+                src={generateImgFile(file.name)}
+                fileName={file.name}
+                index={index}
+                onRemoveFile={onRemoveFile}
+              />
+            </Spin>
+          ))}
+
+          {filesUpload.length !== 0 && (
+            <Button
+              loading={isLoadUpFile}
+              style={{
+                borderRadius: 5,
+              }}
+              onClick={onSubmit}
+              type="primary"
+              icon={<CloudUploadOutlined />}
+            >
+              Submit
+            </Button>
           )}
-        </div>
-        {filesUpload.map((file, index) => (
-          <div key={index}>
-            <img src={generateImgFile(file.name)} /> 
-            <div>
-              {file.name} <span onClick={() => onRemoveFile(index)}>Delete</span>
-            </div>
-          </div>
-        ))}
-        <Button onClick={onSubmit} type="primary">
-          Submit
-        </Button>
+        </Space>
       </Card>
     </>
   );

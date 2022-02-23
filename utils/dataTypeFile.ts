@@ -10,6 +10,8 @@ export const dataTypeFile: string[] = [
   'iso',
   'javascript',
   'jpg',
+  'png',
+  'jpeg',
   'js',
   'mail',
   'mp3',
