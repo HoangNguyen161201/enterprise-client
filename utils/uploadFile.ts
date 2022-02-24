@@ -2,6 +2,7 @@ export const uploadFile = async (files: File[], tags: String[])=> {
     const data: any = []
     await Promise.all(
         files.map(async (file) => {
+            console.log(file)
             return new Promise(async (resolve) => {
                 const formData = new FormData()
                 formData.append('file', file)
