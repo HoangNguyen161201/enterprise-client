@@ -25,7 +25,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
 import { Infor } from 'components/elements/common';
-import { IUser, IDetailSubmission, ISubmission } from 'models/apiType';
+import { IUser, IDetailSubmission, ISubmission, ICommon } from 'models/apiType';
 import { NextPageWithLayout } from 'models/layoutType';
 import { getCurrentUser, getDetailSubmission, getDetailUser } from 'queries';
 import { ColumnsType } from 'antd/lib/table';
@@ -36,6 +36,9 @@ import { uploadFile } from 'utils/uploadFile';
 import { v4 as uuidv4 } from 'uuid';
 import { dataTypeFile } from 'utils/dataTypeFile';
 import ItemFileUpload from 'components/elements/common/ItemFileUpload';
+import { departmentMutation } from 'mutations/department';
+import { fileMutation } from 'mutations/file';
+import { AxiosError } from 'axios';
 
 export interface IDetailSubmissionProps {
   detailSubmission: IDetailSubmission;
@@ -45,6 +48,22 @@ const DetailSubmission: NextPageWithLayout = ({ detailSubmission }: IDetailSubmi
   const { query } = useRouter();
   const { useBreakpoint } = Grid;
   const { lg } = useBreakpoint();
+
+    //  Mutation call api to add file
+    const mutationDeleteFiles = fileMutation.delete({
+      options: {
+        onSuccess: (data: ICommon) => {
+          message.success({
+            content: data.msg,
+          });
+        },
+        onError: (error: AxiosError) => {
+          message.error({
+            content: error.response?.data.err || 'Delete files false.',
+          });
+        }
+      },
+    })
 
   //State file
   const [filesUpload, setFilesUpload] = useState<File[]>([]);
@@ -117,7 +136,21 @@ const DetailSubmission: NextPageWithLayout = ({ detailSubmission }: IDetailSubmi
 
   //Setting data file submit
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    setFilesUpload(acceptedFiles);
+    //Check size
+    let isValidSize = true;
+    acceptedFiles.forEach((file) => {
+      if (file.size >= 10485760) {
+        isValidSize = false;
+      }
+    });
+
+    if (isValidSize) {
+      setFilesUpload(acceptedFiles);
+    } else {
+      message.error({
+        content: 'Each file should be less than 10MB in size.',
+      });
+    }
   }, []);
 
   //Setting files uploads
@@ -145,6 +178,8 @@ const DetailSubmission: NextPageWithLayout = ({ detailSubmission }: IDetailSubmi
       dataUser?.user._id,
       uuidv4(),
     ]);
+
+    console.log(result);
 
     //set state files upload
     setFilesUpload([]);
@@ -282,6 +317,11 @@ const DetailSubmission: NextPageWithLayout = ({ detailSubmission }: IDetailSubmi
             </Button>
           )}
         </Space>
+        <Button type="primary" onClick={() => {
+          mutationDeleteFiles.mutate({tag: "8397f58a-b662-4c07-b806-cd0771b597ec"})
+        }}>
+          Delete file
+        </Button>
       </Card>
     </>
   );
