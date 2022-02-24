@@ -6,9 +6,9 @@ export const uploadFile = async (files: File[], tags: String[])=> {
             return new Promise(async (resolve) => {
                 const formData = new FormData()
                 formData.append('file', file)
-                formData.append('upload_preset', 'ideaSubmission')
-                formData.append('api_key', '127883878126518')
-                formData.append('cloud_name', 'hoang161201')
+                formData.append('upload_preset', `${process.env.UPLOAD_PRESET}`)
+                formData.append('api_key',  `${process.env.API_KEY}`)
+                formData.append('cloud_name', `${process.env.CLOUD_NAME}`)
                 tags.map((tag: any )=> {
                     formData.append('tags[]', tag)
                 })

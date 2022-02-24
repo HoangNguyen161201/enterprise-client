@@ -39,31 +39,42 @@ import ItemFileUpload from 'components/elements/common/ItemFileUpload';
 import { departmentMutation } from 'mutations/department';
 import { fileMutation } from 'mutations/file';
 import { AxiosError } from 'axios';
+import dynamic from 'next/dynamic';
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+
+//CSS
+import 'react-quill/dist/quill.snow.css';
+import 'react-quill/dist/quill.bubble.css';
 
 export interface IDetailSubmissionProps {
   detailSubmission: IDetailSubmission;
 }
 
 const DetailSubmission: NextPageWithLayout = ({ detailSubmission }: IDetailSubmissionProps) => {
-  const { query } = useRouter();
-  const { useBreakpoint } = Grid;
-  const { lg } = useBreakpoint();
-
-    //  Mutation call api to add file
-    const mutationDeleteFiles = fileMutation.delete({
-      options: {
-        onSuccess: (data: ICommon) => {
-          message.success({
-            content: data.msg,
-          });
-        },
-        onError: (error: AxiosError) => {
-          message.error({
-            content: error.response?.data.err || 'Delete files false.',
-          });
-        }
+  //  Mutation call api to add file
+  const mutationDeleteFiles = fileMutation.delete({
+    options: {
+      onSuccess: (data: ICommon) => {
+        message.success({
+          content: data.msg,
+        });
       },
-    })
+      onError: (error: AxiosError) => {
+        message.error({
+          content: error.response?.data.err || 'Delete files false.',
+        });
+      },
+    },
+  });
+
+  ///Setting editor
+  const [editorVl, setEditorVl] = useState('');
+  const handleChange = (value: any) => {
+    setEditorVl(value);
+  };
+
+  //State show form submit idea
+  const [isShowFormIdea, setIsShowFormIdea] = useState<boolean>(false);
 
   //State file
   const [filesUpload, setFilesUpload] = useState<File[]>([]);
@@ -156,6 +167,11 @@ const DetailSubmission: NextPageWithLayout = ({ detailSubmission }: IDetailSubmi
   //Setting files uploads
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
+  //handle change show form upload file
+  const onChangeShowForm = () => {
+    setIsShowFormIdea(!isShowFormIdea);
+  };
+
   //Remove file upload
   const onRemoveFile = (index: number) => {
     console.log(index);
@@ -235,93 +251,147 @@ const DetailSubmission: NextPageWithLayout = ({ detailSubmission }: IDetailSubmi
             isValid={timeClosure.final_closure_date.isMatchDate}
           />
 
-          <span
+          <Button
+            icon={<CloudUploadOutlined />}
+            type="primary"
+            danger={isShowFormIdea}
+            size="large"
             style={{
-              fontSize: 14,
-              color: 'gray',
+              borderRadius: 5,
+              margin: '20px 0px',
+            }}
+            onClick={onChangeShowForm}
+          >
+            {isShowFormIdea ? 'Cancel up idea' : 'Add your idea'}
+          </Button>
+
+          {/* Form upload file */}
+          <Space
+            direction="vertical"
+            size={20}
+            style={{
+              width: '100%',
+              display: isShowFormIdea ? undefined : 'none',
             }}
           >
-            Upload file
-          </span>
-          <Spin spinning={isLoadUpFile}>
-            <Space
+            <span
               style={{
-                width: '100%',
-                border: '5px dotted #009F9D30',
-                padding: '40px 40px',
-                borderRadius: '20px',
-                justifyContent: 'center',
+                fontSize: 14,
+                color: 'gray',
               }}
-              direction="vertical"
-              align="center"
-              size={20}
-              {...getRootProps()}
             >
-              <img src="/assets/uploadFiles.svg" />
-              <input {...getInputProps()} />
-              {isDragActive ? (
-                <p
-                  style={{
-                    fontSize: 16,
-                    fontWeight: 'bold',
-                    color: 'gray',
-                  }}
-                >
-                  Drop the files here ...
-                </p>
-              ) : (
-                <p
-                  style={{
-                    fontSize: 16,
-                    fontWeight: 'bold',
-                    color: 'gray',
-                  }}
-                >
-                  Drag your documents, photos, or videos here to start uploading
-                </p>
-              )}
-              <Button
-                type="primary"
-                size="large"
-                style={{
-                  borderRadius: 4,
-                }}
-              >
-                Choose Files
-              </Button>
-            </Space>
-          </Spin>
+              Detail your idea
+            </span>
+            <ReactQuill
+              placeholder="Enter you text"
+              modules={{
+                toolbar: [
+                  ['bold', 'italic', 'underline', 'strike'], // toggled buttons
+                  ['blockquote', 'code-block'],
 
-          {filesUpload.map((file, index) => (
+                  [{ header: 1 }, { header: 2 }], // custom button values
+                  [{ list: 'ordered' }, { list: 'bullet' }],
+                  [{ script: 'sub' }, { script: 'super' }], // superscript/subscript
+                  [{ indent: '-1' }, { indent: '+1' }], // outdent/indent
+                  [{ direction: 'rtl' }], // text direction
+
+                  [{ size: ['small', false, 'large', 'huge'] }], // custom dropdown
+                  [{ header: [1, 2, 3, 4, 5, 6, false] }],
+
+                  [{ color: [] }, { background: [] }], // dropdown with defaults from theme
+                  [{ font: [] }],
+                  [{ align: [] }],
+
+                  ['clean'], // remove formatting button
+                ],
+              }}
+              value={editorVl}
+              onChange={handleChange}
+            />
+
+            <span
+              style={{
+                fontSize: 14,
+                color: 'gray',
+              }}
+            >
+              Upload file
+            </span>
             <Spin spinning={isLoadUpFile}>
-              <ItemFileUpload
-                src={generateImgFile(file.name)}
-                fileName={file.name}
-                index={index}
-                onRemoveFile={onRemoveFile}
-              />
+              <Space
+                style={{
+                  width: '100%',
+                  border: '5px dotted #009F9D30',
+                  padding: '40px 40px',
+                  borderRadius: '20px',
+                  justifyContent: 'center',
+                }}
+                direction="vertical"
+                align="center"
+                size={20}
+                {...getRootProps()}
+              >
+                <img src="/assets/uploadFiles.svg" />
+                <input {...getInputProps()} />
+                {isDragActive ? (
+                  <p
+                    style={{
+                      fontSize: 16,
+                      fontWeight: 'bold',
+                      color: 'gray',
+                    }}
+                  >
+                    Drop the files here ...
+                  </p>
+                ) : (
+                  <p
+                    style={{
+                      fontSize: 16,
+                      fontWeight: 'bold',
+                      color: 'gray',
+                    }}
+                  >
+                    Drag your documents, photos, or videos here to start uploading
+                  </p>
+                )}
+                <Button
+                  type="primary"
+                  size="large"
+                  style={{
+                    borderRadius: 4,
+                  }}
+                >
+                  Choose Files
+                </Button>
+              </Space>
             </Spin>
-          ))}
 
-          {filesUpload.length !== 0 && (
-            <Button
-              loading={isLoadUpFile}
-              style={{
-                borderRadius: 5,
-              }}
-              onClick={onSubmit}
-              type="primary"
-              icon={<CloudUploadOutlined />}
-            >
-              Submit
-            </Button>
-          )}
+            {filesUpload.map((file, index) => (
+              <Spin spinning={isLoadUpFile}>
+                <ItemFileUpload
+                  src={generateImgFile(file.name)}
+                  fileName={file.name}
+                  index={index}
+                  onRemoveFile={onRemoveFile}
+                />
+              </Spin>
+            ))}
+
+            {filesUpload.length !== 0 && (
+              <Button
+                loading={isLoadUpFile}
+                style={{
+                  borderRadius: 5,
+                }}
+                onClick={onSubmit}
+                type="primary"
+                icon={<CloudUploadOutlined />}
+              >
+                Submit
+              </Button>
+            )}
+          </Space>
         </Space>
-        <Button type="primary" onClick={() => {
-          mutationDeleteFiles.mutate({tag: "8397f58a-b662-4c07-b806-cd0771b597ec"})
-        }}>
-          Delete file
-        </Button>
       </Card>
     </>
   );

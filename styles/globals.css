@@ -7,6 +7,25 @@ body {
     overflow-x: hidden;
 }
 
+/* quill */
+.quill .ql-toolbar.ql-snow {
+    border-radius: 10px;
+    border: 2px solid #07456f6e;
+}
+
+.quill .ql-container.ql-snow{
+    margin-top: 20px;
+    border-radius: 10px;
+    border: none;
+}
+
+.quill .ql-editor{
+    min-height: 200px;
+    border: 2px solid #07456f6e;
+    border-radius: 10px;
+
+}
+
 /* container */
 .screen-full {
     width: 100%;
