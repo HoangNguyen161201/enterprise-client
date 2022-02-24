@@ -7,7 +7,7 @@ const deleteFile = async (req: NextApiRequest, res: NextApiResponse) => {
       err: 'ban khong co quyen',
     });
   const { public_id, tag } = req.body;
-  console.log(public_id);
+
   if (tag) await cloudinary.api.delete_resources_by_tag(tag, {
     resource_type: 'raw'
   });
