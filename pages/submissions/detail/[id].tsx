@@ -1,13 +1,33 @@
 //Import
-import { CloudUploadOutlined, FileTextOutlined } from '@ant-design/icons';
+import {
+  CloudUploadOutlined,
+  DeleteOutlined,
+  FieldTimeOutlined,
+  FileAddOutlined,
+  FileSearchOutlined,
+  FileTextOutlined,
+  FolderViewOutlined,
+} from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Breadcrumb, Button, Card, Col, message, Row, Space, Spin, Switch } from 'antd';
+import {
+  Badge,
+  Breadcrumb,
+  Button,
+  Card,
+  Col,
+  List,
+  message,
+  Row,
+  Space,
+  Spin,
+  Switch,
+} from 'antd';
 import { AxiosError } from 'axios';
 import ItemFileUpload from 'components/elements/common/ItemFileUpload';
 import RowTable from 'components/elements/common/RowTable';
 import { Input, Select, TextArea } from 'components/elements/form';
 import { ClientLayout } from 'components/layouts';
-import { IallCategories, ICommon, IDetailSubmission } from 'models/apiType';
+import { IallCategories, IAllIdeas, ICommon, IDetailSubmission } from 'models/apiType';
 import { IOptionSelect } from 'models/elementType';
 import { ICategoryForm, IIdeaForm, IUserForm } from 'models/formType';
 import { NextPageWithLayout } from 'models/layoutType';
@@ -17,12 +37,13 @@ import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { getCurrentUser, getDetailSubmission } from 'queries';
+import { getCurrentUser, getDetailSubmission, getIdeasCurrentUser } from 'queries';
 import { getallCategories } from 'queries/category';
 import { useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useForm } from 'react-hook-form';
 import 'react-quill/dist/quill.bubble.css';
+import {ItemIdea} from 'components/elements/common'
 //CSS
 import 'react-quill/dist/quill.snow.css';
 import { dataTypeFile } from 'utils/dataTypeFile';
@@ -34,17 +55,40 @@ const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 export interface IDetailSubmissionProps {
   detailSubmission: IDetailSubmission;
   allCategories: IallCategories;
+  allIdeaCurrentUser: IAllIdeas;
 }
 
 const DetailSubmission: NextPageWithLayout = ({
   detailSubmission,
   allCategories,
+  allIdeaCurrentUser,
 }: IDetailSubmissionProps) => {
+  console.log(allIdeaCurrentUser);
+
   //Get access token
   const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
   useEffect(() => {
     dataUserRefetch();
   }, []);
+
+  //Mutation call api detele
+  const mutationDeleteIdea = IdeaMutaion.delete({
+    options: {
+      onSuccess: (data: ICommon) => {
+        message.success({
+          content: data.msg,
+        });
+        refetchIdeasCurrentUser();
+      },
+      onError: (error: AxiosError) => {
+        message.error({
+          content: error.response?.data.err || 'Delete idea false.',
+        });
+      },
+    },
+    dataUserRefetch: dataUserRefetch,
+    token: dataUser?.accessToken.token,
+  });
 
   //  Mutation call api to add file
   const mutationDeleteFiles = fileMutation.delete({
@@ -69,6 +113,9 @@ const DetailSubmission: NextPageWithLayout = ({
         message.success({
           content: data.msg,
         });
+
+        //refetch data all idea current user and submission
+        refetchIdeasCurrentUser();
       },
       onError: (error: AxiosError) => {
         message.error({
@@ -141,6 +188,32 @@ const DetailSubmission: NextPageWithLayout = ({
     }
   }, [dataAllCategories]);
 
+  //Get ideas by current users and submission
+  const {
+    error: errorIdeasCurrentUser,
+    data: dataIdeasCurrentUser,
+    refetch: refetchIdeasCurrentUser,
+  } = getIdeasCurrentUser({
+    accessToken: dataUser?.accessToken.token,
+    user_id: dataUser?.user._id,
+    submission_id: id as string,
+    initial: allIdeaCurrentUser,
+  });
+
+  //Set data select departmen
+  useEffect(() => {
+    if (dataAllCategories && dataAllCategories.categories) {
+      const valueSetCategorySl: IOptionSelect[] = dataAllCategories.categories.map((category) => {
+        return {
+          value: category._id,
+          label: category.name,
+        };
+      });
+
+      setCategoriesSelect(valueSetCategorySl);
+    }
+  }, [dataAllCategories]);
+
   //Set closure date when have data detail submission
   useEffect(() => {
     if (dataDetailSubmission) {
@@ -164,23 +237,25 @@ const DetailSubmission: NextPageWithLayout = ({
         content: errorGetUser.response?.data.err,
       });
     }
-  }, [errorGetUser]);
 
-  useEffect(() => {
     if (errorSubmission) {
       message.error({
         content: errorSubmission.response?.data.err,
       });
     }
-  }, [errorSubmission]);
 
-  useEffect(() => {
     if (errorAllCategories) {
       message.error({
         content: errorAllCategories.response?.data.err,
       });
     }
-  }, [errorAllCategories]);
+
+    if (errorIdeasCurrentUser) {
+      message.error({
+        content: errorIdeasCurrentUser.response?.data.err,
+      });
+    }
+  }, [errorGetUser, errorSubmission, errorAllCategories, errorIdeasCurrentUser]);
 
   //Setting data file submit
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -296,6 +371,19 @@ const DetailSubmission: NextPageWithLayout = ({
     setAnonymously(false);
   };
 
+  //Clear data when user cancel up idea
+  useEffect(() => {
+    if (!isShowFormIdea) {
+      onClearData();
+    }
+  }, [isShowFormIdea]);
+
+  //Handle delete idea
+  const onDeleteIdea = (idea_id: string, cloudinary_id: string) => {
+    mutationDeleteFiles.mutate({ tag: cloudinary_id });
+    mutationDeleteIdea.mutate({ idea_id });
+  };
+
   return (
     <>
       <Head>
@@ -319,15 +407,25 @@ const DetailSubmission: NextPageWithLayout = ({
           >
             Information
           </span>
-          <RowTable title="Name" value={dataDetailSubmission?.submission.name} />
-          <RowTable title="Description" value={dataDetailSubmission?.submission.description} />
           <RowTable
+            Icon={FileSearchOutlined}
+            title="Name"
+            value={dataDetailSubmission?.submission.name}
+          />
+          <RowTable
+            Icon={FileTextOutlined}
+            title="Description"
+            value={dataDetailSubmission?.submission.description}
+          />
+          <RowTable
+            Icon={FieldTimeOutlined}
             title="Closure Date"
             value={timeClosure.closure_date.value}
             isValid={timeClosure.closure_date.isMatchDate}
           />
           <RowTable
-            title="Closure Date"
+            Icon={FieldTimeOutlined}
+            title="Final Closure Date"
             value={timeClosure.final_closure_date.value}
             isValid={timeClosure.final_closure_date.isMatchDate}
           />
@@ -515,6 +613,22 @@ const DetailSubmission: NextPageWithLayout = ({
               Submit
             </Button>
           </Space>
+
+          <span
+            style={{
+              fontSize: 14,
+              color: 'gray',
+            }}
+          >
+            Your idea
+          </span>
+          <List
+            itemLayout="horizontal"
+            dataSource={dataIdeasCurrentUser?.ideas}
+            renderItem={(item) => (
+              <ItemIdea item={item} onDeleteIdea={onDeleteIdea}/>
+            )}
+          />
         </Space>
       </Card>
     </>
@@ -578,10 +692,22 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     } as HeadersInit,
   }).then((e) => e.json());
 
+  // Get all detail by user and submission
+  const allIdeaCurrentUser: IAllIdeas = await fetch(
+    `http://localhost:3000/api/ideas/user/${dataAccess.user._id}/?submission_id=${context.query.id}`,
+    {
+      method: 'GET',
+      headers: {
+        cookie: context.req.headers.cookie,
+      } as HeadersInit,
+    }
+  ).then((e) => e.json());
+
   return {
     props: {
       detailSubmission,
       allCategories,
+      allIdeaCurrentUser,
     },
   };
 };

@@ -6,9 +6,10 @@ export interface IRowTableProps {
   title: string;
   value: any;
   isValid?: boolean;
+  Icon: React.ForwardRefExoticComponent<any>;
 }
 
-export default function RowTable({ title, value, isValid = true }: IRowTableProps) {
+export default function RowTable({ title, value, isValid = true, Icon }: IRowTableProps) {
   const { useBreakpoint } = Grid;
   const { md } = useBreakpoint();
 
@@ -20,7 +21,7 @@ export default function RowTable({ title, value, isValid = true }: IRowTableProp
         style={{
           borderRight: md ? '1px solid gray' : undefined,
           borderBottom: md ? undefined : '1px solid gray',
-          paddingBottom: md ? undefined : 20
+          paddingBottom: md ? undefined : 20,
         }}
       >
         <Space size={20}>
@@ -34,7 +35,7 @@ export default function RowTable({ title, value, isValid = true }: IRowTableProp
               justifyContent: 'center',
             }}
           >
-            <KeyOutlined
+            <Icon
               style={{
                 fontSize: 20,
                 color: 'white',
@@ -58,7 +59,7 @@ export default function RowTable({ title, value, isValid = true }: IRowTableProp
             fontSize: 16,
             background: isValid ? 'white' : '#FF000012',
             width: '100%',
-            minHeight: "100%"
+            minHeight: '100%',
           }}
         >
           {value}

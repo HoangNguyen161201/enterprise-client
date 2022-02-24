@@ -1,101 +1,100 @@
 export interface IPropsFetchData {
-  url: string
-  body?: any
-  token?: string
-  params?: any
+  url: string;
+  body?: any;
+  token?: string;
+  params?: any;
 }
 
 export interface ICommon {
-  status?: string | number
-  msg?: string
-  statusCode?: number
+  status?: string | number;
+  msg?: string;
+  statusCode?: number;
 }
 
-//Interface auth 
+//Interface auth
 export interface ILogout extends ICommon {}
 
 export interface IAccessToken extends ICommon {
   accessToken: {
-    token: string
-  }
-  [index: string]: any
+    token: string;
+  };
+  [index: string]: any;
 }
 
 // Interface department
 export interface IDepartments extends ICommon {
   departments: Array<{
-    _id: string
-    name: string
-    description: string
-    root: boolean
-    count_users: number
-  }>
-  [index: string]: any
+    _id: string;
+    name: string;
+    description: string;
+    root: boolean;
+    count_users: number;
+  }>;
+  [index: string]: any;
 }
 
 export interface IDetailDepartment extends ICommon {
   department: {
-    _id: string
-    name: string
-    description: string
-    count_users: number
-    staffs: Array<IUser>
-    [index: string]: any
-  }
+    _id: string;
+    name: string;
+    description: string;
+    count_users: number;
+    staffs: Array<IUser>;
+    [index: string]: any;
+  };
 }
 
 //Iterface user
 export interface IUser {
-  id: any
-  _id: any
-  employee_id: number
-  name: string
-  role: string
-  root: boolean
-  email: string
+  id: any;
+  _id: any;
+  employee_id: number;
+  name: string;
+  role: string;
+  root: boolean;
+  email: string;
   avatar: {
-    public_id: string
-    url: string
-  }
-  department_id?: any
-  [index: string]: any
+    public_id: string;
+    url: string;
+  };
+  department_id?: any;
+  [index: string]: any;
 }
 
 export interface IDetailUser extends ICommon {
-  user: IUser,
+  user: IUser;
   accessToken: {
-    token: string,
-    exp: number
-  },
-  [index: string]: any
+    token: string;
+    exp: number;
+  };
+  [index: string]: any;
 }
 
 export interface IResUsersNotDepartments {
-  staffs?: IUser[]
-  QACoordinators?: IUser[]
-  departmentManagers?: IUser[]
-  [index: string]: any
+  staffs?: IUser[];
+  QACoordinators?: IUser[];
+  departmentManagers?: IUser[];
+  [index: string]: any;
 }
 
-export interface IAllUsers extends ICommon{
-  users: IUser[]
-  [index: string]: any
+export interface IAllUsers extends ICommon {
+  users: IUser[];
+  [index: string]: any;
 }
-
 
 //Interface submission
 export interface ISubmission {
-  _id: string
-  name: string
-  description: string
-  closure_date: string
-  final_closure_date: string
-  background: string
-  [index: string]: any
+  _id: string;
+  name: string;
+  description: string;
+  closure_date: string;
+  final_closure_date: string;
+  background: string;
+  [index: string]: any;
 }
 
 export interface IDetailSubmission extends ICommon {
-  submission: ISubmission
+  submission: ISubmission;
 }
 
 export interface IMutation {
@@ -104,10 +103,10 @@ export interface IMutation {
   token?: string;
 }
 
-export interface ISubmissions extends ICommon{
-  submissions: Array<ISubmission>
-  page_Index: number
-  [index: string]: any
+export interface ISubmissions extends ICommon {
+  submissions: Array<ISubmission>;
+  page_Index: number;
+  [index: string]: any;
 }
 
 export interface IResUsersRole {
@@ -119,12 +118,34 @@ export interface IResUsersRole {
 
 //Interface category
 export interface IDetailCategory extends ICommon {
-  _id: string
-  name: string
-  description: string
-  [index: string]: any
+  _id: string;
+  name: string;
+  description: string;
+  [index: string]: any;
 }
 
 export interface IallCategories extends ICommon {
-  categories: IDetailCategory[]
+  categories: IDetailCategory[];
+}
+
+//Interface idea
+export interface IIdea {
+  _id?: string;
+  user_id: string;
+  category_id: string;
+  submission_id: string;
+  cloudinary_id: string;
+  title: string;
+  content: string;
+  description: string;
+  files: any[];
+  anonymously: boolean;
+}
+
+export interface IDetailIdea extends ICommon {
+  idea: IIdea
+}
+
+export interface IAllIdeas extends ICommon {
+  ideas: IIdea[]
 }
