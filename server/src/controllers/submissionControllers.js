@@ -1,11 +1,12 @@
 const submissionValid = require('../utils/submissionValid');
-const moment = require('moment')
+const moment = require('moment');
 
 //Import middleware
 const catchAsyncError = require('../helpers/catchAsyncError');
 
 //Import model
 const submissionModel = require('../models/submissionModel');
+const ideaModel = require('../models/ideaModel');
 const { update } = require('./userController');
 const Filter = require('../utils/filter');
 const pageIndex = require('../utils/PageIndex');
@@ -35,7 +36,7 @@ const submissionController = {
       description,
       closure_date,
       final_closure_date,
-      background
+      background,
     });
     await NewSubmission.save();
 
@@ -60,7 +61,7 @@ const submissionController = {
         statusCode: 400,
       });
     }
-    
+
     //Check valid
     const submissionErr = submissionValid.submissionUpdate({
       name,
@@ -80,7 +81,7 @@ const submissionController = {
       description,
       closure_date,
       final_closure_date,
-      background
+      background,
     });
 
     return res.status(200).json({
@@ -102,6 +103,16 @@ const submissionController = {
       });
     await submissionModel.findByIdAndDelete(id, req.body);
 
+    const ideas = await ideaModel.find({
+      submission_id: id,
+    });
+    //check submission have any idea
+    if (ideas && ideas.length !== 0)
+      return res.status(400).json({
+        err: 'Please delete all idea of this submission',
+        statusCode: 400,
+      });
+
     return res.status(200).json({
       statusCode: 200,
       msg: 'Delete Success',
@@ -109,22 +120,22 @@ const submissionController = {
   }),
 
   getAll: catchAsyncError(async (req, res) => {
-    // get all submission by field 
-    const {_page, _search, _time,} = req.query
-    let filter = new Filter(submissionModel).getAll()
-    if(_search) {
-      filter = filter.search({name: 'name', query: _search})
+    // get all submission by field
+    const { _page, _search, _time } = req.query;
+    let filter = new Filter(submissionModel).getAll();
+    if (_search) {
+      filter = filter.search({ name: 'name', query: _search });
     }
-    if(_time) {
-      filter = filter.searchGte({name: 'closure_date', query: _time})
+    if (_time) {
+      filter = filter.searchGte({ name: 'closure_date', query: _time });
     }
-    if(_page) {
-      filter = filter.pagination({limit: 6, page: (Number(_page) - 1)})
+    if (_page) {
+      filter = filter.pagination({ limit: 6, page: Number(_page) - 1 });
     }
 
-    const page_Index = await pageIndex({query: submissionModel, limit: 6})
-    const submissions = await filter.query
-    
+    const page_Index = await pageIndex({ query: submissionModel, limit: 6 });
+    const submissions = await filter.query;
+
     return res.status(200).json({
       statusCode: 200,
       submissions,
@@ -139,7 +150,7 @@ const submissionController = {
 
     if (!submission)
       return res.status(400).json({
-        err: 'The topic is does not exist',
+        err: 'The topic does not exist',
         statusCode: 400,
       });
     return res.status(200).json({

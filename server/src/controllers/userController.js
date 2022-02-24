@@ -228,9 +228,16 @@ const userController = {
         await department.save();
       }
     }
-
+    console.log(id);
     //delete user by id
-    await userModel.findByIdAndDelete(id, req.body);
+    userModel.deleteById(id, function(err){
+      if(err)
+      return res.status(400).json({
+        err: 'Something wrent wrong',
+        statusCode: 400,
+      })      
+      
+    })
 
     return res.status(200).json({
       statusCode: 200,
