@@ -5,6 +5,10 @@ const catchAsyncError = require('../helpers/catchAsyncError');
 
 //Import Model
 const ideaModel = require('../models/ideaModel');
+const Filter = require('../utils/filter');
+const userModel = require('../models/userModel');
+const { rmSync } = require('fs');
+const submissionModel = require('../models/submissionModel');
 
 const ideaController = {
   create: catchAsyncError(async (req, res) => {
@@ -13,11 +17,12 @@ const ideaController = {
       title,
       description,
       content,
-      created_date,
-      last_modified_date,
       user_id,
       category_id,
       submission_id,
+      anoymous,
+      files,
+      id_Cloudinary,
     } = req.body;
 
     //check valid info input
@@ -25,8 +30,6 @@ const ideaController = {
       title,
       description,
       content,
-      created_date,
-      last_modified_date,
       user_id,
       category_id,
       submission_id,
@@ -42,11 +45,12 @@ const ideaController = {
       title,
       description,
       content,
-      created_date,
-      last_modified_date,
       user_id,
-      category_id,
+      category_id: category_id ? category_id : null,
       submission_id,
+      anoymous,
+      files,
+      id_Cloudinary,
     });
     await NewIdea.save();
 
@@ -94,6 +98,7 @@ const ideaController = {
       content,
       last_modified_date,
       category_id,
+      anoymous,
     });
 
     return res.status(200).json({
@@ -122,8 +127,73 @@ const ideaController = {
   }),
 
   getAll: catchAsyncError(async (req, res) => {
-      
-    //get all submission by field
-    
-  })
+    const { _sort } = req.query;
+    console.log(_sort);
+    let filter = new Filter(ideaModel);
+    filter = filter.getAll();
+    if (_sort) {
+      filter = filter.sort(_sort);
+    }
+    const data = await filter.query;
+    return res.status(200).json({
+      statusCode: 200,
+      msg: 'Get All Success',
+      data,
+    });
+  }),
+
+  getDetail: catchAsyncError(async (req, res) => {
+    const { id } = req.params;
+
+    const idea = await ideaModel.findById(id);
+
+    if (!idea)
+      return res.status(400).json({
+        err: 'The Idea does not exist',
+        statusCode: 400,
+      });
+    return res.status(200).json({
+      statusCode: '200',
+      msg: ' Get topic success',
+      idea,
+    });
+  }),
+
+  deleteFile: catchAsyncError(async (req, res) => {
+    const { public_id, id } = req.body;
+    await ideaModel.findByIdAndUpdate(id, { $pull: { files: { public_id } } });
+    return res.status(200).json({
+      statusCode: 200,
+      msg: 'Delete file success',
+    });
+  }),
+  getIdeaOfUser: catchAsyncError(async (req, res) => {
+    const { user_id } = req.params;
+    const { submission_id } = req.query;
+
+    const user = await userModel.findById(user_id);
+    console.log(user);
+
+    if (!user)
+      return res.status(400).json({
+        err: 'The user id dose not exist',
+        statusCode: 400,
+      });
+
+    const submission = await submissionModel.findById(submission_id);
+    if (!submission)
+      return res.status(400).json({
+        err: 'The submission id dose not exist',
+        statusCode: 400,
+      });
+
+    const ideas = await ideaModel.find({ submission_id, user_id });
+    return res.status(200).json({
+      msg: 'Get ideas by user success',
+      statusCode: 200,
+      ideas,
+    });
+  }),
 };
+
+module.exports = ideaController;
