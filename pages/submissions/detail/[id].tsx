@@ -293,6 +293,7 @@ const DetailSubmission: NextPageWithLayout = ({
     });
     setEditorVl('');
     setFilesUpload([]);
+    setAnonymously(false);
   };
 
   return (
@@ -341,6 +342,7 @@ const DetailSubmission: NextPageWithLayout = ({
               margin: '20px 0px',
             }}
             onClick={onChangeShowForm}
+            disabled={!timeClosure.closure_date.isMatchDate}
           >
             {isShowFormIdea ? 'Cancel up idea' : 'Add your idea'}
           </Button>
@@ -504,6 +506,7 @@ const DetailSubmission: NextPageWithLayout = ({
               style={{
                 borderRadius: 5,
               }}
+              disabled={!timeClosure.closure_date.isMatchDate}
               htmlType="submit"
               form={'submitIdea'}
               type="primary"
@@ -560,11 +563,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
   ).then((e) => e.json());
 
-  console.log(detailSubmission);
-  
-
   //Redirect 404 page when not have submission
-  if (detailSubmission.statusCode === 200) {
+  if (detailSubmission.statusCode !== 200) {
     return {
       notFound: true,
     };
