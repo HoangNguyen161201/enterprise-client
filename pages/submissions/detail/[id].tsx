@@ -610,7 +610,7 @@ const DetailSubmission: NextPageWithLayout = ({
               type="primary"
               icon={<CloudUploadOutlined />}
             >
-              Submit
+              Submit 
             </Button>
           </Space>
 
