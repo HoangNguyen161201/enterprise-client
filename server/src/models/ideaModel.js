@@ -47,6 +47,10 @@ const ideaSchema = new mongoose.Schema(
     id_Cloudinary: {
       type: String,
     },
+    anonymously: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   { timestamps: true }
