@@ -154,7 +154,7 @@ const submissionController = {
         statusCode: 400,
       });
     return res.status(200).json({
-      statusCode: '200',
+      statusCode: 200,
       msg: 'Get topic success',
       submission,
     });

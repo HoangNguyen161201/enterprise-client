@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const fileSchema = new mongoose.Schema({
   public_id: String,
   url: String,
+  name: String
 });
 //define schema model
 const ideaSchema = new mongoose.Schema(
@@ -44,12 +45,16 @@ const ideaSchema = new mongoose.Schema(
       type: [fileSchema],
       default: [],
     },
-    id_Cloudinary: {
+    cloudinary_id: {
       type: String,
     },
     anonymously: {
       type: Boolean,
       default: false,
+    },
+    view: {
+      type: Number,
+      default: 0,
     },
   },
 
