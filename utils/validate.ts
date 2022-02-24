@@ -105,3 +105,16 @@ export const validateSubmission = yup.object({
   closure_date: yup.date().required('khong duoc de trong'),
   final_closure_date:  yup.date().required('khong duoc de trong'),
 });
+
+//Idea valid
+export const validateCategory = yup.object({
+  _id: yup.string(),
+  description: yup
+    .string()
+    .required('Please enter idea description')
+    .min(20, 'Idea description should be at least 20 characters'),
+  title: yup
+    .string()
+    .required('Please enter idea description')
+    .min(20, 'Idea description should be at least 20 characters')
+});

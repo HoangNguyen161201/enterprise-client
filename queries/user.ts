@@ -1,12 +1,12 @@
 import { AxiosError } from 'axios';
+import { IAllUsers, IResUsersRole, IUser } from 'models/apiType';
 import { useQuery } from 'react-query';
-import { IAllUsers, IResUsersRole, IUser } from '../models';
 import { getData } from '../utils/fetchData';
 
 export const getUsersRoleDepartment = (
   role: string,
   hasDepartment: string,
-  accessToken: string
+  accessToken?: string
 ) => {
   return useQuery<IResUsersRole, AxiosError>(
     ['users', role, `department-${hasDepartment}`],
@@ -25,7 +25,7 @@ export const getUsersRoleDepartment = (
   );
 };
 
-export const getallUsers = (accessToken: string, initial?: IAllUsers) => {
+export const getallUsers = (accessToken?: string, initial?: IAllUsers) => {
   return useQuery<IAllUsers, AxiosError>(
     ['users'],
     async () => {
@@ -43,7 +43,7 @@ export const getallUsers = (accessToken: string, initial?: IAllUsers) => {
 
 export const getDetailUser = (
   id: string,
-  accessToken: string,
+  accessToken?: string,
   initial?: { user: IUser; [index: string]: any }
 ) => {
   return useQuery<{ user: IUser; [index: string]: any }, AxiosError>(

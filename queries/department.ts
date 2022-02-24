@@ -6,7 +6,7 @@ import { getData } from '../utils/fetchData';
 
 export const getDetailDepartment = (
   id: string,
-  accessToken: string,
+  accessToken?: string,
   initial?: IDetailDepartment
 ) => {
   return useQuery<any, AxiosError>(
@@ -26,8 +26,8 @@ export const getDetailDepartment = (
 
 export const getDepartmentByUser = (
   id: string,
-  accessToken: string,
-  initial: IDetailDepartment
+  accessToken?: string,
+  initial?: IDetailDepartment
 ) => {
   return useQuery<any, AxiosError>(
     ['department', id],
@@ -44,7 +44,7 @@ export const getDepartmentByUser = (
   );
 };
 
-export const getAllDepartments = (accessToken: string, initial?: IDepartments) => {
+export const getAllDepartments = (accessToken: string | undefined, initial?: IDepartments) => {
   return useQuery<IDepartments, AxiosError>(
     ['departments'],
     async () => {
@@ -60,7 +60,7 @@ export const getAllDepartments = (accessToken: string, initial?: IDepartments) =
   );
 };
 
-export const getUsersNotDepartment = (accessToken: string) => {
+export const getUsersNotDepartment = (accessToken?: string) => {
   return useQuery<IResUsersNotDepartments, AxiosError>(
     ['users', 'not-department'],
     async () => {

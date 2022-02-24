@@ -17,7 +17,11 @@ export const uploadFile = async (files: File[], tags: String[])=> {
                   method: 'POST',
                   body: formData,
                 }).then(e=> e.json())
-                data.push(result)
+                data.push({
+                    public_id: result.public_id,
+                    url: result.secure_url,
+                    name: file.name
+                })
                 resolve(result)
             })
         })

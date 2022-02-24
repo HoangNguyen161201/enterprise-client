@@ -296,7 +296,7 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
                 title="Are you sure?"
                 okButtonProps={{
                   onClick: async () => {
-                    await dataUserRefetch();
+                    await dataUserRefetch;
                     setIsLoadingDl((state) => ({
                       ...state,
                       isLoading: true,
@@ -324,7 +324,7 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
   //Mutation assign
   //Mutation Assign one user
   const mutationAssignOneUser = departmentMutation.AssignOneUser({
-    dataUserRefetch: dataUserRefetch(),
+    dataUserRefetch: dataUserRefetch,
     options: {
       onSuccess: (data: ICommon) => {
         message.success({
@@ -348,7 +348,7 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
 
   //Mutation Assign one user
   const mutationAssignManyUsers = departmentMutation.AssignManyUser({
-    dataUserRefetch: dataUserRefetch(),
+    dataUserRefetch: dataUserRefetch,
     options: {
       onSuccess: (data: ICommon) => {
         message.success({
@@ -371,18 +371,12 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
 
   //Function on assign one user
   const onAssignOneUser = ({ userId, departmentId }: IAssignUsers) => {
-    //Get data user again to get access token
-    dataUserRefetch();
-
     //Call mutation active with api to assign one user
     mutationAssignOneUser.mutate({ userId, departmentId });
   };
 
   //Function on assign many users
   const onAssignManyUsers = ({ users, departmentId }: IAssignUsers) => {
-    //Get data user again to get access token
-    dataUserRefetch();
-
     //Call mutation active with api to assign many users
     mutationAssignManyUsers.mutate({ users, departmentId });
   };

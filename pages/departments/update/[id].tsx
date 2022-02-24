@@ -17,11 +17,13 @@ import { getDetailDepartment } from 'queries/department';
 import { putData } from 'utils/fetchData';
 import { validateAddDepartment } from 'utils/validate';
 import { departmentMutation } from 'mutations/department';
-import { ICommon } from 'models/apiType';
+import { ICommon, IDetailDepartment } from 'models/apiType';
 
-export interface IUpdateDepartmetnProps {}
+export interface IUpdateDepartmetnProps {
+  detailDepartment: IDetailDepartment;
+}
 
-const UpdateDepartmetn: NextPageWithLayout = (props: IUpdateDepartmetnProps) => {
+const UpdateDepartmetn: NextPageWithLayout = ({ detailDepartment }: IUpdateDepartmetnProps) => {
   //Get id from router to get old data
   const {
     query: { id },
@@ -33,7 +35,8 @@ const UpdateDepartmetn: NextPageWithLayout = (props: IUpdateDepartmetnProps) => 
   //Get old data department
   const { error: errorDepartment, data: dataDepartment } = getDetailDepartment(
     id as string,
-    dataUser?.accessToken.token
+    dataUser?.accessToken.token,
+    detailDepartment
   );
 
   //Check exist and show error get data department
@@ -96,8 +99,8 @@ const UpdateDepartmetn: NextPageWithLayout = (props: IUpdateDepartmetnProps) => 
         });
       },
     },
-    token: dataUser?.accessToken.token
-  })
+    token: dataUser?.accessToken.token,
+  });
 
   const onSubmit = async ({
     id,
@@ -189,19 +192,16 @@ export default UpdateDepartmetn;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   //Check login
-  const res = await fetch('http://localhost:3000/api/auth/accesstoken', {
+  const res: any = await fetch(`http://localhost:3000/api/auth/accesstoken`, {
     method: 'GET',
     headers: {
       cookie: context.req.headers.cookie,
     } as HeadersInit,
   });
-
-  const data = await res.json();
-
-  console.log(res, data);
+  const dataAccess = await res.json();
 
   //Redirect login page when error
-  if (res.status !== 200) {
+  if (dataAccess.statusCode !== 200) {
     return {
       redirect: {
         destination: '/login',
@@ -211,13 +211,34 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   //Check role
-  if (data.user.role !== 'admin') {
+  if (dataAccess.user.role !== 'admin' && dataAccess.user.role !== 'qa_manager') {
+    return {
+      notFound: true,
+    };
+  }
+
+  //Get detail department
+  const detailDepartment: IDetailDepartment = await fetch(
+    `http://localhost:3000/api/departments/${context.query.id}`,
+    {
+      method: 'GET',
+      headers: {
+        cookie: context.req.headers.cookie,
+        authorization: dataAccess.accessToken.token
+      } as HeadersInit,
+    }
+  ).then((e) => e.json());
+
+  //Redirect 404 page when not have department
+  if (detailDepartment.statusCode !== 200) {
     return {
       notFound: true,
     };
   }
 
   return {
-    props: {},
+    props: {
+      detailDepartment,
+    },
   };
 };

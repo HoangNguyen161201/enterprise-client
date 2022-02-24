@@ -82,6 +82,8 @@ export interface IAllUsers extends ICommon{
   [index: string]: any
 }
 
+
+//Interface submission
 export interface ISubmission {
   _id: string
   name: string
