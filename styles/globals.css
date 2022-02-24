@@ -67,6 +67,11 @@ body {
 
 /* font */
 
+.quill {
+    border: 2px solid #07456fb4;
+    border-radius: 10px;
+}
+
 .font-1 {
     font-size: 14px;
 }
