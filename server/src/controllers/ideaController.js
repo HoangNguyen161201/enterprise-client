@@ -9,6 +9,7 @@ const Filter = require('../utils/filter');
 const userModel = require('../models/userModel');
 const { rmSync } = require('fs');
 const submissionModel = require('../models/submissionModel');
+const reactionModel = require('../models/reactionModel');
 
 const ideaController = {
   create: catchAsyncError(async (req, res) => {
@@ -22,7 +23,7 @@ const ideaController = {
       submission_id,
       anoymous,
       files,
-      id_Cloudinary,
+      cloudinary_id,
     } = req.body;
 
     //check valid info input
@@ -50,7 +51,7 @@ const ideaController = {
       submission_id,
       anoymous,
       files,
-      id_Cloudinary,
+      cloudinary_id,
     });
     await NewIdea.save();
 
@@ -126,13 +127,14 @@ const ideaController = {
     });
   }),
 
+  getByReaction: catchAsyncError(async (req, res) => {}),
+
   getAll: catchAsyncError(async (req, res) => {
-    const { _sort } = req.query;
-    console.log(_sort);
+    const { _sort, _sortBy } = req.query;
     let filter = new Filter(ideaModel);
     filter = filter.getAll();
     if (_sort) {
-      filter = filter.sort(_sort);
+      filter = filter.sort({ name: _sortBy, NorO: _sort });
     }
     const data = await filter.query;
     return res.status(200).json({

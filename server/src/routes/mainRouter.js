@@ -25,7 +25,7 @@ mainRouter = (app) => {
 
   app.use('/api/views', viewRouter);
 
-  app.use('/api/idea', ideaRouter);
+  app.use('/api/ideas', ideaRouter);
   
   app.use('/api/reactions', reactionRouter);
 

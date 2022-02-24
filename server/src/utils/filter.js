@@ -20,8 +20,9 @@ class Filter {
     this.query = this.query.skip(page * limit).limit(limit);
     return this;
   }
-  sort(NorO){
-      this.query = this.query.sort({updatedAt:NorO});
+  sort({name, NorO}){
+    console.log(name, NorO);
+      this.query = this.query.sort({[name]:NorO});
       return this;
   }
 }

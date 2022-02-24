@@ -42,6 +42,9 @@ const viewController = {
           user_id,
           idea_id,
         });
+        await ideaModel.findByIdAndUpdate(idea_id, {
+          view : idea.view +1
+        })
       }
     }
 
