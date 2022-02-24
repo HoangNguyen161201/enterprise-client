@@ -1,56 +1,51 @@
 //Import
-import {
-  CloseOutlined,
-  CloudUploadOutlined,
-  IdcardOutlined,
-  MailOutlined,
-  TeamOutlined,
-} from '@ant-design/icons';
-import {
-  Avatar,
-  Breadcrumb,
-  Button,
-  Card,
-  Col,
-  Grid,
-  message,
-  Row,
-  Space,
-  Spin,
-  Table,
-} from 'antd';
+import { CloudUploadOutlined, FileTextOutlined } from '@ant-design/icons';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Breadcrumb, Button, Card, Col, message, Row, Space, Spin, Switch } from 'antd';
+import { AxiosError } from 'axios';
+import ItemFileUpload from 'components/elements/common/ItemFileUpload';
+import RowTable from 'components/elements/common/RowTable';
+import { Input, Select, TextArea } from 'components/elements/form';
 import { ClientLayout } from 'components/layouts';
+import { IallCategories, ICommon, IDetailSubmission } from 'models/apiType';
+import { IOptionSelect } from 'models/elementType';
+import { ICategoryForm, IIdeaForm, IUserForm } from 'models/formType';
+import { NextPageWithLayout } from 'models/layoutType';
+import { fileMutation } from 'mutations/file';
+import { IdeaMutaion } from 'mutations/idea';
 import { GetServerSideProps } from 'next';
+import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import { getCurrentUser, getDetailSubmission } from 'queries';
+import { getallCategories } from 'queries/category';
 import { useCallback, useEffect, useState } from 'react';
-import { Infor } from 'components/elements/common';
-import { IUser, IDetailSubmission, ISubmission, ICommon } from 'models/apiType';
-import { NextPageWithLayout } from 'models/layoutType';
-import { getCurrentUser, getDetailSubmission, getDetailUser } from 'queries';
-import { ColumnsType } from 'antd/lib/table';
-import column from 'utils/configTB';
-import RowTable from 'components/elements/common/RowTable';
 import { useDropzone } from 'react-dropzone';
-import { uploadFile } from 'utils/uploadFile';
-import { v4 as uuidv4 } from 'uuid';
-import { dataTypeFile } from 'utils/dataTypeFile';
-import ItemFileUpload from 'components/elements/common/ItemFileUpload';
-import { departmentMutation } from 'mutations/department';
-import { fileMutation } from 'mutations/file';
-import { AxiosError } from 'axios';
-import dynamic from 'next/dynamic';
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
-
+import { useForm } from 'react-hook-form';
+import 'react-quill/dist/quill.bubble.css';
 //CSS
 import 'react-quill/dist/quill.snow.css';
-import 'react-quill/dist/quill.bubble.css';
+import { dataTypeFile } from 'utils/dataTypeFile';
+import { uploadFile } from 'utils/uploadFile';
+import { validateAddUser, validateCategory } from 'utils/validate';
+import { v4 as uuidv4 } from 'uuid';
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 export interface IDetailSubmissionProps {
   detailSubmission: IDetailSubmission;
+  allCategories: IallCategories;
 }
 
-const DetailSubmission: NextPageWithLayout = ({ detailSubmission }: IDetailSubmissionProps) => {
+const DetailSubmission: NextPageWithLayout = ({
+  detailSubmission,
+  allCategories,
+}: IDetailSubmissionProps) => {
+  //Get access token
+  const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
+  useEffect(() => {
+    dataUserRefetch();
+  }, []);
+
   //  Mutation call api to add file
   const mutationDeleteFiles = fileMutation.delete({
     options: {
@@ -67,17 +62,37 @@ const DetailSubmission: NextPageWithLayout = ({ detailSubmission }: IDetailSubmi
     },
   });
 
-  ///Setting editor
+  //  Mutation call api to add idea
+  const mutationAddIdea = IdeaMutaion.add({
+    options: {
+      onSuccess: (data: ICommon) => {
+        message.success({
+          content: data.msg,
+        });
+      },
+      onError: (error: AxiosError) => {
+        message.error({
+          content: error.response?.data.err || 'Add Idea false.',
+        });
+      },
+    },
+    dataUserRefetch: dataUserRefetch,
+    token: dataUser?.accessToken.token,
+  });
+
+  ///Initial data upload ideal
   const [editorVl, setEditorVl] = useState('');
+  const [categoriesSelect, setCategoriesSelect] = useState<IOptionSelect[]>([]);
+  const [filesUpload, setFilesUpload] = useState<File[]>([]);
+  const [anonymously, setAnonymously] = useState<boolean>(false);
+
+  //Handle change content editor
   const handleChange = (value: any) => {
     setEditorVl(value);
   };
 
   //State show form submit idea
   const [isShowFormIdea, setIsShowFormIdea] = useState<boolean>(false);
-
-  //State file
-  const [filesUpload, setFilesUpload] = useState<File[]>([]);
 
   //State loading submit files
   const [isLoadUpFile, setIsLoadUpFile] = useState<boolean>(false);
@@ -99,18 +114,32 @@ const DetailSubmission: NextPageWithLayout = ({ detailSubmission }: IDetailSubmi
     query: { id },
   } = useRouter();
 
-  //Get access token
-  const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
-  useEffect(() => {
-    dataUserRefetch();
-  }, []);
-
   //Get detail data submission
   const { error: errorSubmission, data: dataDetailSubmission } = getDetailSubmission(
     id as string,
     dataUser?.accessToken.token as string,
     detailSubmission
   );
+
+  //Get all data categories
+  const {
+    error: errorAllCategories,
+    data: dataAllCategories,
+    refetch: rfCategories,
+  } = getallCategories(dataUser?.accessToken.token, allCategories);
+  //Set data select departmen
+  useEffect(() => {
+    if (dataAllCategories && dataAllCategories.categories) {
+      const valueSetCategorySl: IOptionSelect[] = dataAllCategories.categories.map((category) => {
+        return {
+          value: category._id,
+          label: category.name,
+        };
+      });
+
+      setCategoriesSelect(valueSetCategorySl);
+    }
+  }, [dataAllCategories]);
 
   //Set closure date when have data detail submission
   useEffect(() => {
@@ -144,6 +173,14 @@ const DetailSubmission: NextPageWithLayout = ({ detailSubmission }: IDetailSubmi
       });
     }
   }, [errorSubmission]);
+
+  useEffect(() => {
+    if (errorAllCategories) {
+      message.error({
+        content: errorAllCategories.response?.data.err,
+      });
+    }
+  }, [errorAllCategories]);
 
   //Setting data file submit
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -184,27 +221,6 @@ const DetailSubmission: NextPageWithLayout = ({ detailSubmission }: IDetailSubmi
     setFilesUpload(newFilesUpload);
   };
 
-  //Handle submit file
-  const onSubmit = async () => {
-    setIsLoadUpFile(true);
-
-    //Up files
-    const result = await uploadFile(filesUpload, [
-      detailSubmission.submission._id,
-      dataUser?.user._id,
-      uuidv4(),
-    ]);
-
-    console.log(result);
-
-    //set state files upload
-    setFilesUpload([]);
-    setIsLoadUpFile(false);
-    message.success({
-      content: 'Upload files success.',
-    });
-  };
-
   //Generate img type file
   const generateImgFile = (nameFile: string) => {
     let typeFile = nameFile.split('.')[1];
@@ -213,6 +229,70 @@ const DetailSubmission: NextPageWithLayout = ({ detailSubmission }: IDetailSubmi
     }
 
     return `/assets/files/${typeFile}.svg`;
+  };
+
+  // setting form
+  const formSetting = useForm<IIdeaForm>({
+    resolver: yupResolver(validateCategory),
+    defaultValues: {
+      title: '',
+      category_id: '',
+      description: '',
+    },
+  });
+
+  const onSubmitFormAddIdea = async (dataForm: ICategoryForm) => {
+    if (!editorVl) {
+      message.error({
+        content: 'Please enter field content idea.',
+      });
+    } else {
+      //Handle submit file
+      let files = [];
+
+      //Set cloud dinary id files
+      const cloudinary_id = uuidv4();
+
+      if (filesUpload && filesUpload.length !== 0) {
+        setIsLoadUpFile(true);
+
+        //Up files
+        files = await uploadFile(filesUpload, [
+          detailSubmission.submission._id,
+          dataUser?.user._id,
+          cloudinary_id,
+        ]);
+
+        setIsLoadUpFile(false);
+      }
+
+      //Set again data form
+      const newDataForm = {
+        user_id: dataUser?.user._id,
+        submission_id: dataDetailSubmission?.submission._id,
+        anonymously,
+        files,
+        content: editorVl,
+        cloudinary_id,
+        ...dataForm,
+      };
+
+      mutationAddIdea.mutate(newDataForm);
+
+      //Clear Idea
+      onClearData();
+    }
+  };
+
+  //Clear data update
+  const onClearData = () => {
+    formSetting.reset({
+      title: '',
+      description: '',
+      category_id: '',
+    });
+    setEditorVl('');
+    setFilesUpload([]);
   };
 
   return (
@@ -282,6 +362,48 @@ const DetailSubmission: NextPageWithLayout = ({ detailSubmission }: IDetailSubmi
             >
               Detail your idea
             </span>
+
+            <form id="submitIdea" onSubmit={formSetting.handleSubmit(onSubmitFormAddIdea)}>
+              <Space direction="vertical" size={20}>
+                <Row gutter={[20, 20]}>
+                  <Col xs={24} sm={24} md={12}>
+                    <Input
+                      name="title"
+                      label="Title"
+                      formSetting={formSetting}
+                      placeholder="Enter name"
+                      type="text"
+                      icon={<FileTextOutlined />}
+                    />
+                  </Col>
+                  <Col xs={24} md={12}>
+                    <Select
+                      formSetting={formSetting}
+                      name="category_id"
+                      label="Category"
+                      placeholder="Please select category"
+                      data={categoriesSelect}
+                      require={false}
+                    />
+                  </Col>
+                  <Col xs={24}>
+                    <TextArea
+                      name="description"
+                      label="Description"
+                      formSetting={formSetting}
+                      placeholder="Enter description"
+                      type="email"
+                      icon={<FileTextOutlined />}
+                    />
+                  </Col>
+                </Row>
+                <Space direction="vertical">
+                  <span>Anonymously author information</span>
+                  <Switch checked={anonymously} onChange={(e) => setAnonymously(e)} />
+                </Space>
+              </Space>
+            </form>
+
             <ReactQuill
               placeholder="Enter you text"
               modules={{
@@ -367,7 +489,7 @@ const DetailSubmission: NextPageWithLayout = ({ detailSubmission }: IDetailSubmi
             </Spin>
 
             {filesUpload.map((file, index) => (
-              <Spin spinning={isLoadUpFile}>
+              <Spin spinning={isLoadUpFile} key={index}>
                 <ItemFileUpload
                   src={generateImgFile(file.name)}
                   fileName={file.name}
@@ -377,19 +499,18 @@ const DetailSubmission: NextPageWithLayout = ({ detailSubmission }: IDetailSubmi
               </Spin>
             ))}
 
-            {filesUpload.length !== 0 && (
-              <Button
-                loading={isLoadUpFile}
-                style={{
-                  borderRadius: 5,
-                }}
-                onClick={onSubmit}
-                type="primary"
-                icon={<CloudUploadOutlined />}
-              >
-                Submit
-              </Button>
-            )}
+            <Button
+              loading={isLoadUpFile || mutationAddIdea.isLoading}
+              style={{
+                borderRadius: 5,
+              }}
+              htmlType="submit"
+              form={'submitIdea'}
+              type="primary"
+              icon={<CloudUploadOutlined />}
+            >
+              Submit
+            </Button>
           </Space>
         </Space>
       </Card>
@@ -403,17 +524,16 @@ export default DetailSubmission;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   //Check login
-  const res = await fetch(`http://localhost:3000/api/auth/accesstoken`, {
+  const res: any = await fetch(`http://localhost:3000/api/auth/accesstoken`, {
     method: 'GET',
     headers: {
       cookie: context.req.headers.cookie,
     } as HeadersInit,
   });
-
-  const data = await res.json();
+  const dataAccess = await res.json();
 
   //Redirect login page when error
-  if (res.status !== 200) {
+  if (dataAccess.statusCode !== 200) {
     return {
       redirect: {
         destination: '/login',
@@ -423,7 +543,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   //Check role
-  if (data.user.role !== 'admin') {
+  if (dataAccess.user.role !== 'admin') {
     return {
       notFound: true,
     };
@@ -435,14 +555,33 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       method: 'GET',
       headers: {
         cookie: context.req.headers.cookie,
-        authorization: data.accessToken.token,
+        authorization: dataAccess.accessToken.token,
       } as HeadersInit,
     }
   ).then((e) => e.json());
 
+  console.log(detailSubmission);
+  
+
+  //Redirect 404 page when not have submission
+  if (detailSubmission.statusCode === 200) {
+    return {
+      notFound: true,
+    };
+  }
+
+  //Get all data categories
+  const allCategories: IallCategories = await fetch(`http://localhost:3000/api/categories`, {
+    method: 'GET',
+    headers: {
+      cookie: context.req.headers.cookie,
+    } as HeadersInit,
+  }).then((e) => e.json());
+
   return {
     props: {
       detailSubmission,
+      allCategories,
     },
   };
 };

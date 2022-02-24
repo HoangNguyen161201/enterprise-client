@@ -3,8 +3,8 @@ import { useQuery } from 'react-query';
 import { IallCategories } from '../models/apiType';
 import { getData } from '../utils/fetchData';
 
-export const getallCategories = (accessToken: string, initial?: IallCategories) => {
-  return useQuery<any, AxiosError>(
+export const getallCategories = (accessToken?: string, initial?: IallCategories) => {
+  return useQuery<IallCategories, AxiosError>(
     ['categories'],
     async () => {
       return await getData({ url: `/api/categories`, token: accessToken });
