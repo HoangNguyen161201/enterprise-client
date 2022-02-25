@@ -7,9 +7,9 @@ const catchAsyncError = require('../helpers/catchAsyncError');
 const ideaModel = require('../models/ideaModel');
 const Filter = require('../utils/filter');
 const userModel = require('../models/userModel');
-const { rmSync } = require('fs');
 const submissionModel = require('../models/submissionModel');
 const reactionModel = require('../models/reactionModel');
+const categoryModel = require('../models/categoryModel');
 
 const ideaController = {
   create: catchAsyncError(async (req, res) => {
@@ -41,6 +41,39 @@ const ideaController = {
         err: errMsg,
         statusCode: 400,
       });
+
+    //Check exist user
+    const user = await userModel.findById(user_id);
+    if (!user)
+      return res.status(400).json({
+        err: 'User does not exist in system.',
+        statusCode: 400,
+      });
+
+    //Check exist category
+    if (category_id) {
+      const category = await categoryModel.findById(category_id);
+      if (!category)
+        return res.status(400).json({
+          err: 'Category does not exist in system.',
+          statusCode: 400,
+        });
+    }
+
+    //Check exist submission
+    const submission = await submissionModel.findById(submission_id);
+    if (!submission)
+      return res.status(400).json({
+        err: 'Submission does not exist in system.',
+        statusCode: 400,
+      });
+
+    //Check time closure date
+    const checkTimeClosure = new Date(submission.closure_date) > new Date()
+    if(!checkTimeClosure) return res.status(400).json({
+      err: 'The closure timeout date has expired.',
+      statusCode: 400,
+    });
 
     const NewIdea = new ideaModel({
       title,
