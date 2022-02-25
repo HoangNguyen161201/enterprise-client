@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const fileSchema = new mongoose.Schema({
   public_id: String,
   url: String,
-  name: String
+  name: String,
 });
 //define schema model
 const ideaSchema = new mongoose.Schema(
@@ -49,6 +49,10 @@ const ideaSchema = new mongoose.Schema(
       type: String,
     },
     anonymously: {
+      type: Boolean,
+      default: false,
+    },
+    accept: {
       type: Boolean,
       default: false,
     },

@@ -21,7 +21,7 @@ const ideaController = {
       user_id,
       category_id,
       submission_id,
-      anoymous,
+      anonymously,
       files,
       cloudinary_id,
     } = req.body;
@@ -49,7 +49,7 @@ const ideaController = {
       user_id,
       category_id: category_id ? category_id : null,
       submission_id,
-      anoymous,
+      anonymously,
       files,
       cloudinary_id,
     });
