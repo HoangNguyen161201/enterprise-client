@@ -140,12 +140,14 @@ export interface IIdea {
   description: string;
   files: any[];
   anonymously: boolean;
+  accept: boolean;
+  view: number;
 }
 
 export interface IDetailIdea extends ICommon {
-  idea: IIdea
+  idea: IIdea;
 }
 
 export interface IAllIdeas extends ICommon {
-  ideas: IIdea[]
+  ideas: IIdea[];
 }

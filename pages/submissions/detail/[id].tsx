@@ -54,9 +54,10 @@ const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 export interface IDetailSubmissionProps {
   detailSubmission: IDetailSubmission;
-  allCategories: IallCategories;
+  allCategories: IallCategories; 
   allIdeaCurrentUser: IAllIdeas;
 }
+
 
 const DetailSubmission: NextPageWithLayout = ({
   detailSubmission,
@@ -660,7 +661,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   //Check role
-  if (dataAccess.user.role !== 'admin') {
+  if (dataAccess.user.role === 'admin') {
     return {
       notFound: true,
     };

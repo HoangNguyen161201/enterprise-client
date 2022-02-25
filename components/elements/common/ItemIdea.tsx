@@ -1,14 +1,14 @@
-import { DeleteOutlined, FileAddOutlined, FolderViewOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EyeInvisibleOutlined, EyeOutlined, FileAddOutlined, FolderViewOutlined } from '@ant-design/icons';
 import { List, Space } from 'antd';
 import { IIdea } from 'models/apiType';
 import * as React from 'react';
 
 export interface IItemIdeaProps {
-    item: IIdea;
-    onDeleteIdea: (idea_id: string, cloudinary_id: string) => void
+  item: IIdea;
+  onDeleteIdea: (idea_id: string, cloudinary_id: string) => void;
 }
 
-export const ItemIdea = ({item, onDeleteIdea}: IItemIdeaProps) => {
+export const ItemIdea = ({ item, onDeleteIdea }: IItemIdeaProps) => {
   return (
     <List.Item>
       <Space
@@ -30,15 +30,27 @@ export const ItemIdea = ({item, onDeleteIdea}: IItemIdeaProps) => {
             >
               {item.title}
             </span>
-            <Space
-              style={{
-                borderRadius: 10,
-                padding: 4,
-                fontSize: 12,
-                background: '#CDFFEB',
-              }}
-            >
-              {item.category_id ? item.category_id : 'Not have category'}
+            <Space size={20}>
+              <Space
+                style={{
+                  borderRadius: 10,
+                  padding: 4,
+                  fontSize: 12,
+                  background: item.accept ? '#CDFFEB' : '#FF000020',
+                }}
+              >
+                {item.accept ? 'Accepted' : 'Not accepted yet'}
+              </Space>
+              <Space
+                style={{
+                  borderRadius: 10,
+                  padding: 4,
+                  fontSize: 12,
+                  background: '#CDFFEB',
+                }}
+              >
+                {item.category_id ? item.category_id : 'Not have category'}
+              </Space>
             </Space>
 
             <Space size={20}>
@@ -49,7 +61,16 @@ export const ItemIdea = ({item, onDeleteIdea}: IItemIdeaProps) => {
 
               <Space>
                 <FolderViewOutlined />
-                <span>10 view</span>
+                <span>{item.view} view</span>
+              </Space>
+
+              <Space>
+                {
+                  item.anonymously 
+                  ? (<EyeInvisibleOutlined />)
+                  : (<EyeOutlined />)
+                }
+                <span>{item.anonymously ? 'Anonymous information' : 'Public information'}</span>
               </Space>
             </Space>
           </Space>
@@ -67,4 +88,4 @@ export const ItemIdea = ({item, onDeleteIdea}: IItemIdeaProps) => {
       </Space>
     </List.Item>
   );
-}
+};
