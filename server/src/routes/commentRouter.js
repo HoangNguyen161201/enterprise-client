@@ -15,4 +15,6 @@ commentRouter.put('/:comment_id', commentController.update);
 
 commentRouter.delete('/:comment_id', commentController.delete);
 
+commentRouter.get('/idea/:idea_id', commentController.getCommentsByDetail);
+
 module.exports = commentRouter;
