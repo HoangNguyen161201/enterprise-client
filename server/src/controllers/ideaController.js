@@ -69,11 +69,12 @@ const ideaController = {
       });
 
     //Check time closure date
-    const checkTimeClosure = new Date(submission.closure_date) > new Date()
-    if(!checkTimeClosure) return res.status(400).json({
-      err: 'The closure timeout date has expired.',
-      statusCode: 400,
-    });
+    const checkTimeClosure = new Date(submission.closure_date) > new Date();
+    if (!checkTimeClosure)
+      return res.status(400).json({
+        err: 'The closure timeout date has expired.',
+        statusCode: 400,
+      });
 
     const NewIdea = new ideaModel({
       title,
@@ -180,7 +181,11 @@ const ideaController = {
   getDetail: catchAsyncError(async (req, res) => {
     const { id } = req.params;
 
-    const idea = await ideaModel.findById(id);
+    const idea = await ideaModel
+      .findById(id)
+      .populate('user_id')
+      .populate('category_id')
+      .populate('submission_id');
 
     if (!idea)
       return res.status(400).json({
@@ -188,7 +193,7 @@ const ideaController = {
         statusCode: 400,
       });
     return res.status(200).json({
-      statusCode: '200',
+      statusCode: 200,
       msg: ' Get topic success',
       idea,
     });
