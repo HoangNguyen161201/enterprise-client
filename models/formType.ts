@@ -77,3 +77,10 @@ export interface IIdeaForm {
   files: any[];
   anonymously: boolean;
 }
+
+export interface ICommentForm {
+  content: string;
+  user_id: string;
+  idea_id: string;
+  comment_id?: string;
+}

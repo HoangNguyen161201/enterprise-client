@@ -150,3 +150,8 @@ body {
     border-radius: 5px;
     overflow: hidden;
 }
+
+.reaction {
+    font-size: 24px;
+    cursor: pointer;
+}

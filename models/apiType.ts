@@ -129,19 +129,28 @@ export interface IallCategories extends ICommon {
 }
 
 //Interface idea
+export interface IFileUpload{
+  public_id: string,
+  url: string,
+  name: string,
+  _id: string
+}
+
 export interface IIdea {
   _id?: string;
-  user_id: string;
-  category_id: string;
-  submission_id: string;
+  user_id: IUser;
+  category_id: IDetailCategory;
+  submission_id: ISubmission;
   cloudinary_id: string;
   title: string;
   content: string;
   description: string;
-  files: any[];
+  files: IFileUpload[];
   anonymously: boolean;
   accept: boolean;
   view: number;
+  createdAt: string;
+  [index: string]: any
 }
 
 export interface IDetailIdea extends ICommon {
