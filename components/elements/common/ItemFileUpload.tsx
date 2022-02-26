@@ -5,8 +5,9 @@ import * as React from 'react';
 export interface IItemFileUploadProps {
   src: string;
   fileName: string;
-  onRemoveFile: (index: number) => void;
+  onRemoveFile?: (index: number) => void;
   index: number;
+  url_file?: string;
 }
 
 export default function ItemFileUpload({
@@ -14,6 +15,7 @@ export default function ItemFileUpload({
   fileName,
   onRemoveFile,
   index,
+  url_file,
 }: IItemFileUploadProps) {
   return (
     <Space
@@ -28,27 +30,35 @@ export default function ItemFileUpload({
     >
       <Space size={20}>
         <img src={src} width={50} />
-        <div>{fileName}</div>
+        {url_file ? (
+          <div>
+            <a href={url_file} download>{fileName}</a>
+          </div>
+        ) : (
+          <div>{fileName}</div>
+        )}
       </Space>
-      <Space>
-        <Space
-          align="center"
-          style={{
-            borderRadius: '50%',
-            border: '2px solid #FF7070',
-            width: 30,
-            height: 30,
-            justifyContent: 'center',
-          }}
-        >
-          <CloseOutlined
+      {onRemoveFile && (
+        <Space>
+          <Space
+            align="center"
             style={{
-              color: '#FF7070',
+              borderRadius: '50%',
+              border: '2px solid #FF7070',
+              width: 30,
+              height: 30,
+              justifyContent: 'center',
             }}
-            onClick={() => onRemoveFile(index)}
-          />
+          >
+            <CloseOutlined
+              style={{
+                color: '#FF7070',
+              }}
+              onClick={() => onRemoveFile(index)}
+            />
+          </Space>
         </Space>
-      </Space>
+      )}
     </Space>
   );
 }
