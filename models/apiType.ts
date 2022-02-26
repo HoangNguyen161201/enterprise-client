@@ -57,6 +57,7 @@ export interface IUser {
     public_id: string;
     url: string;
   };
+  deleted: boolean;
   department_id?: any;
   [index: string]: any;
 }
@@ -129,11 +130,11 @@ export interface IallCategories extends ICommon {
 }
 
 //Interface idea
-export interface IFileUpload{
-  public_id: string,
-  url: string,
-  name: string,
-  _id: string
+export interface IFileUpload {
+  public_id: string;
+  url: string;
+  name: string;
+  _id: string;
 }
 
 export interface IIdea {
@@ -150,7 +151,7 @@ export interface IIdea {
   accept: boolean;
   view: number;
   createdAt: string;
-  [index: string]: any
+  [index: string]: any;
 }
 
 export interface IDetailIdea extends ICommon {
@@ -159,4 +160,28 @@ export interface IDetailIdea extends ICommon {
 
 export interface IAllIdeas extends ICommon {
   ideas: IIdea[];
+}
+
+export interface IUrlDowloadZip extends ICommon {
+  url: string;
+}
+
+//Interface comment
+export interface IComment {
+  anonymously: boolean;
+  _id: string;
+  content: string;
+  user_id: IUser;
+  idea_id?: string;
+  createdAt: string;
+  updatedAt: string;
+  [index: string]: any;
+}
+
+export interface ICommentResponse extends IComment {
+  replies: IComment[];
+}
+
+export interface IallComments extends ICommon {
+  comments: ICommentResponse[];
 }

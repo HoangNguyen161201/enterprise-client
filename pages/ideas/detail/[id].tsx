@@ -21,9 +21,9 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { ChangeEventHandler, useEffect, useEffect as UseEffect, useState } from 'react';
 import { Infor } from 'components/elements/common';
-import { ICommon, IDetailIdea, IUser } from 'models/apiType';
+import { IallComments, ICommon, IDetailIdea, IUser } from 'models/apiType';
 import { NextPageWithLayout } from 'models/layoutType';
-import { getCurrentUser, getDetailIdea, getDetailUser } from 'queries';
+import { getCurrentUser, getDetailIdea, getDetailUser, getUrlDownloadZip } from 'queries';
 import { convert } from 'html-to-text';
 
 //CSS quill
@@ -36,12 +36,17 @@ import { dataTypeFile } from 'utils/dataTypeFile';
 import ItemFileUpload from 'components/elements/common/ItemFileUpload';
 import { commentMutation } from 'mutations/comment';
 import { AxiosError } from 'axios';
+import { getallComments } from 'queries/comment';
+import ItemComment from 'components/elements/common/ItemComment';
+import InputComment from 'components/elements/common/InputComment';
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 export interface IDetailEmployeeProps {
   detailIdea: IDetailIdea;
+  allComments: IallComments;
 }
 
+//element
 const ItemDetailIdea = ({ title, content }: { title: string; content: string }) => {
   return (
     <Row wrap={false}>
@@ -62,19 +67,18 @@ const ItemDetailIdea = ({ title, content }: { title: string; content: string }) 
   );
 };
 
-const DetailIdea: NextPageWithLayout = ({ detailIdea }: IDetailEmployeeProps) => {
+const DetailIdea: NextPageWithLayout = ({ detailIdea, allComments }: IDetailEmployeeProps) => {
   const { query } = useRouter();
   const { useBreakpoint } = Grid;
   const { lg } = useBreakpoint();
+
+  //State anonymously and content comment
+  const [anonymously, setAnonymously] = useState<boolean>(false);
 
   //Get id from router to get detail data
   const {
     query: { id },
   } = useRouter();
-
-  //State anonymously and content comment
-  const [anonymously, setAnonymously] = useState<boolean>(false);
-  const [contentComment, setContentComment] = useState<string>('');
 
   //State match final closure date
   const [isMatchFinalTime, setIsMatchFinalTime] = useState<boolean>(false);
@@ -92,6 +96,18 @@ const DetailIdea: NextPageWithLayout = ({ detailIdea }: IDetailEmployeeProps) =>
     detailIdea
   );
 
+  //Get all comments
+  const { error: errorComments, data: dataComments } = getallComments(
+    id as string,
+    dataUser?.accessToken.token,
+    allComments
+  );
+
+  //Get url dowload zip
+  const { data: dataURLZip, refetch: refetchDataURLZip } = getUrlDownloadZip(
+    dataDetailIdea?.idea.cloudinary_id as string
+  );
+
   //Set is match final closure date
   useEffect(() => {
     if (dataDetailIdea && dataDetailIdea.idea.submission_id.final_closure_date) {
@@ -99,6 +115,9 @@ const DetailIdea: NextPageWithLayout = ({ detailIdea }: IDetailEmployeeProps) =>
         new Date(dataDetailIdea.idea.submission_id.final_closure_date) > new Date();
       setIsMatchFinalTime(valueCheckTime);
     }
+
+    //Refetch get url dowload zip
+    refetchDataURLZip();
   }, [dataDetailIdea]);
 
   //  Mutation call api to add comment
@@ -126,15 +145,19 @@ const DetailIdea: NextPageWithLayout = ({ detailIdea }: IDetailEmployeeProps) =>
         content: errorGetUser.response?.data.err,
       });
     }
-  }, [errorGetUser]);
 
-  UseEffect(() => {
+    if (errorComments) {
+      message.error({
+        content: errorComments.response?.data.err,
+      });
+    }
+
     if (errorDetailIdea) {
       message.error({
         content: errorDetailIdea.response?.data.err,
       });
     }
-  }, [errorDetailIdea]);
+  }, [errorGetUser, errorComments, errorDetailIdea]);
 
   //Generate img type file
   const generateImgFile = (nameFile: string) => {
@@ -146,13 +169,8 @@ const DetailIdea: NextPageWithLayout = ({ detailIdea }: IDetailEmployeeProps) =>
     return `/assets/files/${typeFile}.svg`;
   };
 
-  //Handle change comment
-  const onChangeComment: ChangeEventHandler<HTMLInputElement> = (e) => {
-    setContentComment(e.target.value);
-  };
-
   //Handle add comment
-  const onAddComment = () => {
+  const onAddComment = (contentComment: string) => {
     if (!contentComment) {
       message.error({
         content: 'Pleas enter your comment.',
@@ -162,6 +180,7 @@ const DetailIdea: NextPageWithLayout = ({ detailIdea }: IDetailEmployeeProps) =>
         content: contentComment,
         idea_id: dataDetailIdea?.idea._id as string,
         user_id: dataUser?.user._id,
+        anonymously,
       });
     }
   };
@@ -178,7 +197,11 @@ const DetailIdea: NextPageWithLayout = ({ detailIdea }: IDetailEmployeeProps) =>
         <Breadcrumb.Item>View Detail Idea</Breadcrumb.Item>
       </Breadcrumb>
 
-      <Card title="View Detail Employee" style={{ width: '100%', marginTop: '20px' }}>
+      <Card
+        title="View Detail Employee"
+        style={{ width: '100%', marginTop: '20px' }}
+        extra={dataURLZip?.url && <a href={dataURLZip?.url}>Dowload all files</a>}
+      >
         <Space direction="vertical" size={20}>
           <span
             className="font-5"
@@ -196,7 +219,11 @@ const DetailIdea: NextPageWithLayout = ({ detailIdea }: IDetailEmployeeProps) =>
               {dataDetailIdea && new Date(dataDetailIdea.idea.createdAt).toLocaleString()}
             </span>
           </Space>
-          <Divider />
+          <Divider
+            style={{
+              margin: 0,
+            }}
+          />
           <ItemDetailIdea
             title="Submission"
             content={(dataDetailIdea && dataDetailIdea.idea.submission_id.name) as string}
@@ -213,7 +240,11 @@ const DetailIdea: NextPageWithLayout = ({ detailIdea }: IDetailEmployeeProps) =>
             title="Description"
             content={(dataDetailIdea && dataDetailIdea.idea.description) as string}
           />
-          <Divider />
+          <Divider
+            style={{
+              margin: 0,
+            }}
+          />
 
           <ReactQuill
             theme="bubble"
@@ -223,7 +254,11 @@ const DetailIdea: NextPageWithLayout = ({ detailIdea }: IDetailEmployeeProps) =>
             value={dataDetailIdea && dataDetailIdea.idea.content}
             readOnly
           />
-          <Divider />
+          <Divider
+            style={{
+              margin: 0,
+            }}
+          />
           {dataDetailIdea &&
             dataDetailIdea.idea.files.map((file, index) => (
               <ItemFileUpload
@@ -234,7 +269,11 @@ const DetailIdea: NextPageWithLayout = ({ detailIdea }: IDetailEmployeeProps) =>
                 url_file={file.url}
               />
             ))}
-          <Divider />
+          <Divider
+            style={{
+              margin: 0,
+            }}
+          />
           <Space
             wrap
             size={20}
@@ -268,8 +307,11 @@ const DetailIdea: NextPageWithLayout = ({ detailIdea }: IDetailEmployeeProps) =>
               <span>10</span>
             </Space>
           </Space>
-          <Divider />
-
+          <Divider
+            style={{
+              margin: 0,
+            }}
+          />
           <Space
             wrap
             size={20}
@@ -300,50 +342,27 @@ const DetailIdea: NextPageWithLayout = ({ detailIdea }: IDetailEmployeeProps) =>
             )}
           </Space>
 
-          {isMatchFinalTime && (
-            <Spin spinning={mutationAddComment.isLoading}>
-              <Row
-                wrap={false}
-                style={{
-                  border: '1px solid #07456F15',
-                  width: '100%',
-                  padding: '10px 15px',
-                  borderRadius: 50,
-                }}
-              >
-                <Col
-                  flex={'auto'}
-                  style={{
-                    paddingRight: 10,
-                  }}
-                >
-                  <input
-                    defaultValue={contentComment}
-                    onChange={onChangeComment}
-                    style={{
-                      border: 'none',
-                      outline: 'none',
-                      width: '100%',
-                    }}
-                  />
-                </Col>
-                <Col>
-                  <SendOutlined
-                    onClick={onAddComment}
-                    style={{
-                      fontSize: 20,
-                      color: '#009F9D85',
-                      cursor: 'pointer',
-                    }}
-                  />
-                </Col>
-              </Row>
-            </Spin>
-          )}
-          {/* <List
-            dataSource={}
-            renderItem={(item) => <List.Item>{item}</List.Item>}
-          /> */}
+          {/* Input comment */}
+          <InputComment
+            isLoading={mutationAddComment.isLoading}
+            showInput={isMatchFinalTime}
+            onAddComment={onAddComment}
+          />
+          <List
+            dataSource={dataComments?.comments}
+            renderItem={(item) => (
+              <List.Item>
+                <ItemComment
+                  idea_id={dataDetailIdea?.idea._id as string}
+                  isMatchFinalTime={isMatchFinalTime}
+                  dataUserRefetch={dataUserRefetch}
+                  dataUser={dataUser}
+                  comment={item}
+                  anonymously={anonymously}
+                />
+              </List.Item>
+            )}
+          />
         </Space>
       </Card>
     </>
@@ -399,8 +418,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
-  const allComment: IDetailIdea = await fetch(
-    `http://localhost:3000/api/ideas/${context.query.id}`,
+  let allComments: IallComments = await fetch(
+    `http://localhost:3000/api/comments/idea/${context.query.id}`,
     {
       method: 'GET',
       headers: {
@@ -409,10 +428,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       } as HeadersInit,
     }
   ).then((e) => e.json());
+  //Check error get all comment
+  if (allComments.statusCode !== 200) {
+    allComments.comments = [];
+  }
 
   return {
     props: {
       detailIdea,
+      allComments,
     },
   };
 };

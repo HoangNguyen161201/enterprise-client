@@ -83,4 +83,5 @@ export interface ICommentForm {
   user_id: string;
   idea_id: string;
   comment_id?: string;
+  anonymously: boolean
 }
