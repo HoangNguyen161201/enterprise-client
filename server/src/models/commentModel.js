@@ -1,18 +1,26 @@
 const mongoose = require('mongoose');
 
 //Define schema
-const replySchema = new mongoose.Schema({
-  user_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'users',
-    required: true,
-  },
-
-  content: {
+const replySchema = new mongoose.Schema(
+  {
+    user_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users',
       required: true,
-      type: String
-  }
-}, {timestamps: true});
+    },
+
+    content: {
+      required: true,
+      type: String,
+    },
+
+    anonymously: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  { timestamps: true }
+);
 
 const commentSchema = new mongoose.Schema(
   {
@@ -32,7 +40,11 @@ const commentSchema = new mongoose.Schema(
     },
     replies: {
       default: [],
-      type: [replySchema]
+      type: [replySchema],
+    },
+    anonymously: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }
