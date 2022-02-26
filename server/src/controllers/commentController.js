@@ -162,6 +162,29 @@ const commentController = {
       msg: 'Delete comment success.',
     });
   }),
+
+  getCommentsByDetail: catchAsyncError(async (req, res) => {
+    const { idea_id } = req.params;
+
+    //Check exist idea
+    const idea = await ideaModel.findById(idea_id);
+    if (!idea)
+      return res.status(400).json({
+        statusCode: 400,
+        err: 'Idea does not exist in system.',
+      });
+
+    //Get comments by idea
+    const comments = await commentModel.find({
+      idea_id,
+    });
+
+    return res.status(200).json({
+      statusCode: 200,
+      msg: 'Get comments by idea success.',
+      comments
+    });
+  }),
 };
 
 module.exports = commentController;
