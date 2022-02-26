@@ -151,7 +151,6 @@ body {
     overflow: hidden;
 }
 
-<<<<<<< HEAD
 .ant-collapse-header {
     padding: 5px 0px !important;
     color: gray !important;
@@ -159,9 +158,8 @@ body {
 
 .ant-collapse-content-box {
     padding-top: 10px!important;
-=======
+}
 .reaction {
     font-size: 24px;
     cursor: pointer;
->>>>>>> 3dcb112650b55ab237995e5f3cf33225873239b6
 }
