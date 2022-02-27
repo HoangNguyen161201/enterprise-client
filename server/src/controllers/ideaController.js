@@ -190,7 +190,7 @@ const ideaController = {
   getByReaction: catchAsyncError(async (req, res) => {}),
 
   getAll: catchAsyncError(async (req, res) => {
-    const { _sort, _sortBy, _limit, _page, _reaction } = req.query;
+    const { _sort, _sortBy, _limit, _page, _reaction, _nameById, _valueById } = req.query;
     if (_reaction) {
       const page = await reactionModel.aggregate([
         {
@@ -279,6 +279,9 @@ const ideaController = {
 
     let filter = new Filter(ideaModel);
     filter = filter.getAll();
+    if (_searchName){
+      filter = filter.searchById({name: _nameById, value: _valueById})
+    }
     if (_sort) {
       filter = filter.sort({ name: _sortBy, NorO: _sort });
     }
