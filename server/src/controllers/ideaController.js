@@ -102,7 +102,7 @@ const ideaController = {
     const { id } = req.params;
 
     //get info update
-    const { title, description, content, category_id, anonymously, files } = req.body;
+    const { title, description, content, category_id, anonymously, files, cloudinary_id } = req.body;
 
     //check idea exist in system
     const idea = await ideaModel.findById(id);
@@ -160,6 +160,7 @@ const ideaController = {
       category_id: category_id ? category_id : undefined,
       anonymously,
       files,
+      cloudinary_id: cloudinary_id ? cloudinary_id : undefined
     });
 
     return res.status(200).json({
