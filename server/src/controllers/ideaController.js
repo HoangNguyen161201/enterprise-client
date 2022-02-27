@@ -205,8 +205,8 @@ const ideaController = {
           $count: 'totalPage',
         },
       ]);
-
-      const data = await reactionModel.aggregate([
+     
+      const result = await reactionModel.aggregate([
         {
           $lookup: {
             from: 'ideas',
@@ -255,6 +255,12 @@ const ideaController = {
           $limit: Number(_limit),
         },
       ]);
+      const data = result.map(item =>{
+        return {
+           ...item._id.idea,
+           totalReaction: item.totalReaction
+        }
+      })
       return res.status(200).json({
         statusCode: 200,
         msg: 'Get All Success',
