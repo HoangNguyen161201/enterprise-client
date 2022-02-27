@@ -12,7 +12,7 @@ import { useState } from 'react';
 const index: NextPageWithLayout = ({detailUser}) => {
   const { useBreakpoint } = Grid;
   const { md } = useBreakpoint();
-  const [page, setPage] = useState(0)
+  const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(6)
   const [reaction, setReaction] = useState(null)
 
@@ -146,7 +146,7 @@ const index: NextPageWithLayout = ({detailUser}) => {
                 AllIdeas?.ideas && AllIdeas.ideas.map((idea)=> (
                     <Idea
                       title={idea.title}
-                      time={'22/12/22'}
+                      time={idea.u }
                       userName={idea.user_id.name}
                       avatar={idea.user_id.avatar.url}
                       count={idea.view}
