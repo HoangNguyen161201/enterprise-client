@@ -83,7 +83,7 @@ const ideaController = {
       description,
       content,
       user_id,
-      category_id: category_id ? category_id : null,
+      category_id: category_id ? category_id : undefined,
       submission_id,
       anonymously,
       files,
@@ -115,26 +115,31 @@ const ideaController = {
     }
 
     //Get submission to check time
-    const submission = await submissionModel.findById(idea.submission_id);
+    if (idea.submission_id) {
+      const submission = await submissionModel.findById(idea.submission_id);
 
-    //Check time closure date
-    const checkTimeClosure = new Date(submission.closure_date) > new Date();
-    if (!checkTimeClosure)
-      return res.status(400).json({
-        err: 'The closure timeout date has expired, you can not update idea.',
-        statusCode: 400,
-      });
-
-    //check category exist in system
-    const category = await categoryModel.findById(category_id);
-
-    if (!category) {
-      return res.status(400).json({
-        err: 'The category does not exist',
-        statusCode: 400,
-      });
+      //Check time closure date
+      const checkTimeClosure = new Date(submission.closure_date) > new Date();
+      if (!checkTimeClosure)
+        return res.status(400).json({
+          err: 'The closure timeout date has expired, you can not update idea.',
+          statusCode: 400,
+        });
     }
 
+    if (category_id) {
+      //check category exist in system
+      const category = await categoryModel.findById(category_id);
+
+      if (!category) {
+        return res.status(400).json({
+          err: 'The category does not exist',
+          statusCode: 400,
+        });
+      }
+    }
+
+    //Check valid data
     const ideaErr = ideaValid.ideaUpdate({
       title,
       description,
@@ -152,7 +157,7 @@ const ideaController = {
       title,
       description,
       content,
-      category_id,
+      category_id: category_id ? category_id : undefined,
       anonymously,
       files,
     });
@@ -205,7 +210,7 @@ const ideaController = {
           $count: 'totalPage',
         },
       ]);
-     
+
       const result = await reactionModel.aggregate([
         {
           $lookup: {
@@ -255,12 +260,12 @@ const ideaController = {
           $limit: Number(_limit),
         },
       ]);
-      const data = result.map(item =>{
+      const data = result.map((item) => {
         return {
-           ...item._id.idea,
-           totalReaction: item.totalReaction
-        }
-      })
+          ...item._id.idea,
+          totalReaction: item.totalReaction,
+        };
+      });
       return res.status(200).json({
         statusCode: 200,
         msg: 'Get All Success',
