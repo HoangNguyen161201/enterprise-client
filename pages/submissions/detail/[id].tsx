@@ -316,7 +316,7 @@ const DetailSubmission: NextPageWithLayout = ({
     },
   });
 
-  const onSubmitFormAddIdea = async (dataForm: ICategoryForm) => {
+  const onSubmitFormAddIdea = async (dataForm: IIdeaForm) => {
     if (!timeClosure.closure_date.isMatchDate) {
       message.error({
         content: 'The closure date has expired, you cannot create a new idea..',
@@ -348,13 +348,13 @@ const DetailSubmission: NextPageWithLayout = ({
 
         //Set again data form
         const newDataForm = {
+          ...dataForm,
           user_id: dataUser?.user._id,
           submission_id: dataDetailSubmission?.submission._id,
           anonymously,
           files,
           content: editorVl,
           cloudinary_id: files.length !== 0 ? cloudinary_id : undefined,
-          ...dataForm,
         };
 
         mutationAddIdea.mutate(newDataForm);
