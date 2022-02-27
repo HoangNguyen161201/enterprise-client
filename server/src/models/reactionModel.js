@@ -17,7 +17,7 @@ const reactionSchema = new mongoose.Schema({
     required: true,
   },
   reactionType_id: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: 'reactionTypes',
     required: true,
   },

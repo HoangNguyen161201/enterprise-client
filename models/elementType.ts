@@ -8,7 +8,9 @@ export interface ICopyAcc {
 export interface IFilter {
   id: string | null
   icon: string
-  isView?: boolean
+  isView: boolean
+  _nameById: string
+  _valueById: string
 }
 
 export interface IOptionSelect {

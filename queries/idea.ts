@@ -53,14 +53,16 @@ export const getDetailIdea = (id: string, accessToken?: string, initial?: IDetai
 interface IOptionIdea {
   _page: number;
   _limit: number;
-  _sort?: number;
-  _sortBy?: string;
-  _reaction?: string | null;
+  _sort: number;
+  _sortBy: string;
+  _reaction: string | null;
+  _nameById: string | null;
+  _valueById: string | null;
 }
 
-export const getAllIdeas = (options: IOptionIdea, accessToken: string | undefined) => {
+export const getAllIdeas = (options: Partial<IOptionIdea>, accessToken: string | undefined) => {
   return useQuery<IAllIdeas, AxiosError>(
-    ['ideas', options._page, options._limit, options._reaction],
+    ['ideas', options._page, options._limit, options._reaction,  options._valueById],
     async () => {
       return await getData({ url: `/api/ideas`, token: accessToken, params: options});
     },
