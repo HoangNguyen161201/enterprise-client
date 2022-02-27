@@ -10,6 +10,8 @@ const userModel = require('../models/userModel');
 const submissionModel = require('../models/submissionModel');
 const reactionModel = require('../models/reactionModel');
 const categoryModel = require('../models/categoryModel');
+const pageIndex = require('../utils/PageIndex');
+const { default: mongoose } = require('mongoose');
 
 const ideaController = {
   create: catchAsyncError(async (req, res) => {
@@ -164,22 +166,113 @@ const ideaController = {
   getByReaction: catchAsyncError(async (req, res) => {}),
 
   getAll: catchAsyncError(async (req, res) => {
-    const { _sort, _sortBy } = req.query;
+    const { _sort, _sortBy, _limit, _page, _reaction } = req.query;
+    if (_reaction) {
+      const page = await reactionModel.aggregate([
+        {
+          $match: {
+            reactionType_id: _reaction,
+          },
+        },
+        {
+          $group: {
+            _id: {
+              reactionType_id: '$reactionType_id',
+              idea_id: '$idea_id',
+            },
+          },
+        },
+        {
+          $count: 'totalPage',
+        },
+      ]);
+     
+      const data = await reactionModel.aggregate([
+        {
+          $lookup: {
+            from: 'ideas',
+            localField: 'idea_id',
+            foreignField: '_id',
+            as: 'idea',
+          },
+        },
+        {
+          $unwind: {
+            path: '$idea',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'idea.user_id',
+            foreignField: '_id',
+            as: 'idea.user',
+          },
+        },
+        {
+          $match: {
+            reactionType_id: _reaction,
+          },
+        },
+        {
+          $group: {
+            _id: {
+              reactionType_id: '$reactionType_id',
+              idea: '$idea',
+            },
+            totalReaction: { $sum: 1 },
+          },
+        },
+        {
+          $sort: {
+            totalReaction: -1,
+          },
+        },
+        {
+          $skip: Number(_page) * Number(_limit),
+        },
+        {
+          $limit: Number(_limit),
+        },
+      ]);
+      return res.status(200).json({
+        statusCode: 200,
+        msg: 'Get All Success',
+        data,
+        page_Index: Math.ceil((page[0].totalPage) / Number(_limit)),
+      });
+    }
+    const page_Index = await pageIndex({ query: ideaModel.find({}), limit: _limit });
+    console.log(page_Index);
+
     let filter = new Filter(ideaModel);
     filter = filter.getAll();
     if (_sort) {
       filter = filter.sort({ name: _sortBy, NorO: _sort });
     }
-    const data = await filter.query;
+    filter = filter.pagination({ page: _page, limit: _limit });
+
+    const data = await filter.query.populate('user_id');
     return res.status(200).json({
       statusCode: 200,
       msg: 'Get All Success',
       data,
+      page_Index,
     });
   }),
 
   getDetail: catchAsyncError(async (req, res) => {
     const { id } = req.params;
+    // const reaction = await reactionModel.aggregate([
+    //   {
+    //     $group: {
+    //       _id: {
+
+    //       }
+    //     }
+    //   }
+    // ])
 
     const idea = await ideaModel
       .findById(id)

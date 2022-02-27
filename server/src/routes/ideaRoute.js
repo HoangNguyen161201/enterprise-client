@@ -15,8 +15,11 @@ ideaRouter.delete('/:id', ideaController.delete);
 
 ideaRouter.get('/', ideaController.getAll);
 
+ideaRouter.get('/reaction', ideaController.getByReaction);
+
 ideaRouter.get('/:id', ideaController.getDetail);
 
 ideaRouter.get('/user/:user_id', ideaController.getIdeaOfUser);
+
 
 module.exports = ideaRouter;
