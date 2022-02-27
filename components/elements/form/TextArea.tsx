@@ -1,7 +1,7 @@
 import { Input as AntInput, Space } from 'antd';
+import { IInput } from 'models/formType';
 import React from 'react';
 import { Controller } from 'react-hook-form';
-import { IInput } from '../../models';
 
 export const TextArea = ({ formSetting, name, label, require = true }: IInput) => {
 
