@@ -67,19 +67,19 @@ export const getAllIdeas = (options: IOptionIdea, accessToken: string | undefine
     {
       enabled: !!accessToken,
       select: (data)=> {
-        console.log(data)
-        if(data.ideas?.length == 0)
-          return data
-        // if(data.ideas[0]?._id.reactionType_id) {
-         
-        //   return {
-        //     statusCode: data.statusCode,
-        //     msg: data.msg,
-        //     page_Index: data.page_Index,
-        //     ideas: []
-        //   }
-        // }
-        return data
+        if(data.ideas.length === 0) return data
+        const ideas = data.ideas.map(idea=> {
+          return {
+            ...idea,
+            count: idea.view | idea.totalReaction | 0
+          }
+        })
+        return {
+          statusCode: data.statusCode,
+          msg: data.msg,
+          ideas,
+          page_Index: data.page_Index
+        }
       }
     }
   );

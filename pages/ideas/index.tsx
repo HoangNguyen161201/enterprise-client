@@ -132,7 +132,7 @@ const index: NextPageWithLayout = ({ detailUser }) => {
                     time={idea.u}
                     userName={idea.user_id.name}
                     avatar={idea.user_id.avatar.url}
-                    count={idea.view}
+                    count={idea.count}
                     description={idea.description}
                     iconReaction={'😡'}
                   />
