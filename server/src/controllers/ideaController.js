@@ -188,23 +188,42 @@ const ideaController = {
     });
   }),
 
-  getByReaction: catchAsyncError(async (req, res) => {}),
+  getByReaction: catchAsyncError(async (req, res) => { }),
 
   getAll: catchAsyncError(async (req, res) => {
-    const { _sort, _sortBy, _limit, _page, _reaction, _nameById, _valueById } = req.query;
+    const {
+      _sort,
+      _sortBy,
+      _limit,
+      _page,
+      _reaction,
+      _nameById,
+      _valueById,
+      _interactive
+    } = req.query;
+
+    const match = () => {
+      if (_interactive && _reaction) {
+        return {
+          $match: {
+            reactionType_id: { $nin: [_reaction] }
+          },
+        }
+      }
+      return {
+        $match: {
+          reactionType_id: _reaction
+        }
+      }
+    }
+
+
     if (_reaction) {
       const page = await reactionModel.aggregate([
-        {
-          $match: {
-            reactionType_id: _reaction,
-          },
-        },
+        match(),
         {
           $group: {
-            _id: {
-              reactionType_id: '$reactionType_id',
-              idea_id: '$idea_id',
-            },
+            _id: '$idea',
           },
         },
         {
@@ -235,19 +254,12 @@ const ideaController = {
             as: 'idea.user',
           },
         },
-        {
-          $match: {
-            reactionType_id: _reaction,
-          },
-        },
+        match(),
         {
           $group: {
-            _id: {
-              reactionType_id: '$reactionType_id',
-              idea: '$idea',
-            },
+            _id: '$idea',
             totalReaction: { $sum: 1 },
-          },
+          }
         },
         {
           $sort: {
@@ -260,28 +272,29 @@ const ideaController = {
         {
           $limit: Number(_limit),
         },
-      ]);
+      ])
+
       const data = result.map((item) => {
         return {
-          ...item._id.idea,
+          ...item._id,
           totalReaction: item.totalReaction,
-          user_id: item._id.idea.user[0],
+          user_id: item._id.user[0],
         };
       });
+
       return res.status(200).json({
         statusCode: 200,
         msg: 'Get All Success',
         ideas: data,
-        page_Index: Math.ceil(page[0].totalPage / Number(_limit)),
+        page_Index: page.length == 0 ? 0 : Math.ceil(page[0].totalPage / Number(_limit)),
       });
     }
     const page_Index = await pageIndex({ query: ideaModel.find({}), limit: _limit });
-    console.log(page_Index);
 
     let filter = new Filter(ideaModel);
     filter = filter.getAll();
-    if (_nameById){
-      filter = filter.searchById({name: _nameById, value: _valueById})
+    if (_nameById) {
+      filter = filter.searchById({ name: _nameById, value: _valueById })
     }
     if (_sort) {
       filter = filter.sort({ name: _sortBy, NorO: _sort });
