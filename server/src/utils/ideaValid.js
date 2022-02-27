@@ -7,9 +7,9 @@ const ideaFillIn = ({ title, description, content, user_id, category_id, submiss
   }
 };
 
-const ideaUpdate = ({ title, description, content, created_date, last_modified_date }) => {
+const ideaUpdate = ({ title, description, content }) => {
   //check exist data
-  if (!title || !description || !content || !user_id  || !submission_id) {
+  if (!title || !description || !content) {
     return 'Please add all fields';
   }
 };
