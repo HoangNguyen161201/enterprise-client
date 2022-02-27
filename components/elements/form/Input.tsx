@@ -4,7 +4,7 @@ import { IInput } from 'models/formType';
 import React, { useState } from 'react';
 import { Controller } from 'react-hook-form';
 
-export const Input = ({
+export const Input = ({  
   type = 'text',
   formSetting,
   name,

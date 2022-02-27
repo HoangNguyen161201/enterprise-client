@@ -45,3 +45,26 @@ export const getDetailIdea = (
     }
   );
 };
+
+interface IOptionIdea {
+  _page: number
+  _limit: string
+  _sort?: number
+  _sortBy?: string
+  _reaction?: string
+}
+
+export const getAllIdeas = (options: IOptionIdea, accessToken: string) => {
+  return useQuery<IDetailIdea, AxiosError>(
+    ['ideas'],
+    async () => {
+      return await getData({ url: `/api/ideas`, token: accessToken });
+    },
+    {
+      enabled: !!accessToken,
+      retry: 1,
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+    }
+  );
+};
