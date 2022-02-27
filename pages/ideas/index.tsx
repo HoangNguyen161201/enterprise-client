@@ -1,20 +1,13 @@
-import { NextPageWithLayout } from 'models/layoutType';
-import { ClientLayout } from 'components/layouts';
-import Head from 'next/head';
 import {
   Avatar,
-  Breadcrumb,
-  Button,
-  Tag,
-  Card,
+  Breadcrumb, Card,
   Col,
-  Collapse,
-  Image,
-  Row,
-  Space,
-  Pagination,
+  Collapse, Pagination, Row,
+  Space, Tag
 } from 'antd';
-import { FileImageOutlined, EyeOutlined } from '@ant-design/icons';
+import { ClientLayout } from 'components/layouts';
+import { NextPageWithLayout } from 'models/layoutType';
+import Head from 'next/head';
 
 const index: NextPageWithLayout = () => {
   return (
@@ -32,7 +25,7 @@ const index: NextPageWithLayout = () => {
       <Card title="View Detail Employee" style={{ width: '100%', marginTop: '20px' }}>
         <Row wrap={false} gutter={[30, 0]}>
           <Col style={{
-              width: 300
+              minWidth: 300
           }}>
             <div>
               <Collapse bordered={false} ghost defaultActiveKey={['1', '2']}>

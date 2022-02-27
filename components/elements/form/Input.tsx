@@ -72,6 +72,7 @@ export const Input = ({
                   {...field}
                   style={{ width: '100%' }}
                   size="large"
+                  disabled={disable}
                   prefix={icon}
                   type={type}
                   placeholder={placeholder || ''}
