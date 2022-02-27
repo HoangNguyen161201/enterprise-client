@@ -230,7 +230,7 @@ const ideaController = {
           },
         },
         {
-          $skip: Number(_page) * Number(_limit),
+          $skip: Number(_page -1) * Number(_limit),
         },
         {
           $limit: Number(_limit),
@@ -239,7 +239,7 @@ const ideaController = {
       return res.status(200).json({
         statusCode: 200,
         msg: 'Get All Success',
-        data,
+        ideas: data,
         page_Index: Math.ceil((page[0].totalPage) / Number(_limit)),
       });
     }
@@ -251,13 +251,13 @@ const ideaController = {
     if (_sort) {
       filter = filter.sort({ name: _sortBy, NorO: _sort });
     }
-    filter = filter.pagination({ page: _page, limit: _limit });
+    filter = filter.pagination({ page: _page -1, limit: _limit });
 
     const data = await filter.query.populate('user_id');
     return res.status(200).json({
       statusCode: 200,
       msg: 'Get All Success',
-      data,
+      ideas: data,
       page_Index,
     });
   }),
