@@ -274,7 +274,11 @@ const ideaController = {
     //   }
     // ])
 
-    const idea = await ideaModel.findById(id);
+    const idea = await ideaModel
+      .findById(id)
+      .populate('user_id')
+      .populate('category_id')
+      .populate('submission_id');
 
     if (!idea)
       return res.status(400).json({

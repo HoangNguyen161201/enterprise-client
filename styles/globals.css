@@ -150,3 +150,16 @@ body {
     border-radius: 5px;
     overflow: hidden;
 }
+
+.ant-collapse-header {
+    padding: 5px 0px !important;
+    color: gray !important;
+}
+
+.ant-collapse-content-box {
+    padding-top: 10px!important;
+}
+.reaction {
+    font-size: 24px;
+    cursor: pointer;
+}

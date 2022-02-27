@@ -12,7 +12,7 @@ const { default: Item } = require('antd/lib/list/Item');
 
 const commentController = {
   create: catchAsyncError(async (req, res) => {
-    const { content, user_id, idea_id, comment_id } = req.body;
+    const { content, user_id, idea_id, comment_id, anonymously } = req.body;
 
     //Check valid data
     const msgError = commentValid.createCommentValid({ content, user_id, idea_id });
@@ -53,6 +53,7 @@ const commentController = {
         {
           user_id,
           content,
+          anonymously
         },
         ...parentComment.replies,
       ];
@@ -64,6 +65,7 @@ const commentController = {
         content,
         user_id,
         idea_id,
+        anonymously
       });
     }
 
@@ -160,6 +162,32 @@ const commentController = {
     return res.status(200).json({
       statusCode: 200,
       msg: 'Delete comment success.',
+    });
+  }),
+
+  getCommentsByDetail: catchAsyncError(async (req, res) => {
+    const { idea_id } = req.params;
+
+    //Check exist idea
+    const idea = await ideaModel.findById(idea_id);
+    if (!idea)
+      return res.status(400).json({
+        statusCode: 400,
+        err: 'Idea does not exist in system.',
+      });
+
+    //Get comments by idea
+    const comments = await commentModel.find({
+      idea_id,
+    }).populate('user_id').populate({
+      path: 'replies.user_id',
+      model: 'users'
+    });
+
+    return res.status(200).json({
+      statusCode: 200,
+      msg: 'Get comments by idea success.',
+      comments
     });
   }),
 };

@@ -43,7 +43,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useForm } from 'react-hook-form';
 import 'react-quill/dist/quill.bubble.css';
-import {ItemIdea} from 'components/elements/common'
+import { ItemIdea } from 'components/elements/common';
 //CSS
 import 'react-quill/dist/quill.snow.css';
 import { dataTypeFile } from 'utils/dataTypeFile';
@@ -317,45 +317,51 @@ const DetailSubmission: NextPageWithLayout = ({
   });
 
   const onSubmitFormAddIdea = async (dataForm: ICategoryForm) => {
-    if (!editorVl) {
+    if (!timeClosure.closure_date.isMatchDate) {
       message.error({
-        content: 'Please enter field content idea.',
+        content: 'The closure date has expired, you cannot create a new idea..',
       });
     } else {
-      //Handle submit file
-      let files = [];
+      if (!editorVl) {
+        message.error({
+          content: 'Please enter field content idea.',
+        });
+      } else {
+        //Handle submit file
+        let files = [];
 
-      //Set cloud dinary id files
-      const cloudinary_id = uuidv4();
+        //Set cloud dinary id files
+        const cloudinary_id = uuidv4();
 
-      if (filesUpload && filesUpload.length !== 0) {
-        setIsLoadUpFile(true);
+        if (filesUpload && filesUpload.length !== 0) {
+          setIsLoadUpFile(true);
 
-        //Up files
-        files = await uploadFile(filesUpload, [
-          detailSubmission.submission._id,
-          dataUser?.user._id,
+          //Up files
+          files = await uploadFile(filesUpload, [
+            detailSubmission.submission._id,
+            dataUser?.user._id,
+            cloudinary_id,
+          ]);
+
+          setIsLoadUpFile(false);
+        }
+
+        //Set again data form
+        const newDataForm = {
+          user_id: dataUser?.user._id,
+          submission_id: dataDetailSubmission?.submission._id,
+          anonymously,
+          files,
+          content: editorVl,
           cloudinary_id,
-        ]);
+          ...dataForm,
+        };
 
-        setIsLoadUpFile(false);
+        mutationAddIdea.mutate(newDataForm);
+
+        //Clear Idea
+        onClearData();
       }
-
-      //Set again data form
-      const newDataForm = {
-        user_id: dataUser?.user._id,
-        submission_id: dataDetailSubmission?.submission._id,
-        anonymously,
-        files,
-        content: editorVl,
-        cloudinary_id,
-        ...dataForm,
-      };
-
-      mutationAddIdea.mutate(newDataForm);
-
-      //Clear Idea
-      onClearData();
     }
   };
 
@@ -610,7 +616,7 @@ const DetailSubmission: NextPageWithLayout = ({
               type="primary"
               icon={<CloudUploadOutlined />}
             >
-              Submit 
+              Submit
             </Button>
           </Space>
 
@@ -625,9 +631,7 @@ const DetailSubmission: NextPageWithLayout = ({
           <List
             itemLayout="horizontal"
             dataSource={dataIdeasCurrentUser?.ideas}
-            renderItem={(item) => (
-              <ItemIdea item={item} onDeleteIdea={onDeleteIdea}/>
-            )}
+            renderItem={(item) => <ItemIdea item={item} onDeleteIdea={onDeleteIdea} />}
           />
         </Space>
       </Card>
@@ -660,7 +664,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   //Check role
-  if (dataAccess.user.role !== 'admin') {
+  if (dataAccess.user.role === 'admin') {
     return {
       notFound: true,
     };
