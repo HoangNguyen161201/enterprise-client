@@ -258,7 +258,8 @@ const ideaController = {
       const data = result.map(item =>{
         return {
            ...item._id.idea,
-           totalReaction: item.totalReaction
+           totalReaction: item.totalReaction,
+           user_id: item.user[0]
         }
       })
       return res.status(200).json({
