@@ -11,6 +11,8 @@ export interface IFilter {
   isView: boolean
   _nameById: string
   _valueById: string
+  _reaction: string
+  _interactive: number
 }
 
 export interface IOptionSelect {

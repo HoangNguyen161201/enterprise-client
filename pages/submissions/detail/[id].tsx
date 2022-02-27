@@ -1,16 +1,10 @@
 //Import
 import {
-  CloudUploadOutlined,
-  DeleteOutlined,
-  FieldTimeOutlined,
-  FileAddOutlined,
-  FileSearchOutlined,
-  FileTextOutlined,
-  FolderViewOutlined,
+  CloudUploadOutlined, FieldTimeOutlined, FileSearchOutlined,
+  FileTextOutlined
 } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
-  Badge,
   Breadcrumb,
   Button,
   Card,
@@ -20,35 +14,36 @@ import {
   Row,
   Space,
   Spin,
-  Switch,
+  Switch
 } from 'antd';
 import { AxiosError } from 'axios';
+import { ItemIdea } from 'components/elements/common';
 import ItemFileUpload from 'components/elements/common/ItemFileUpload';
 import RowTable from 'components/elements/common/RowTable';
 import { Input, Select, TextArea } from 'components/elements/form';
 import { ClientLayout } from 'components/layouts';
 import { IallCategories, IAllIdeas, ICommon, IDetailSubmission } from 'models/apiType';
 import { IOptionSelect } from 'models/elementType';
-import { ICategoryForm, IIdeaForm, IUserForm } from 'models/formType';
+import { IIdeaForm } from 'models/formType';
 import { NextPageWithLayout } from 'models/layoutType';
 import { fileMutation } from 'mutations/file';
 import { IdeaMutaion } from 'mutations/idea';
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { getCurrentUser, getDetailSubmission, getIdeasCurrentUser } from 'queries';
 import { getallCategories } from 'queries/category';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect as UseEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useForm } from 'react-hook-form';
 import 'react-quill/dist/quill.bubble.css';
-import { ItemIdea } from 'components/elements/common';
 //CSS
 import 'react-quill/dist/quill.snow.css';
 import { dataTypeFile } from 'utils/dataTypeFile';
 import { uploadFile } from 'utils/uploadFile';
-import { validateAddUser, validateCategory } from 'utils/validate';
+import { validateCategory } from 'utils/validate';
 import { v4 as uuidv4 } from 'uuid';
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
@@ -67,7 +62,7 @@ const DetailSubmission: NextPageWithLayout = ({
 
   //Get access token
   const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
-  useEffect(() => {
+  UseEffect(() => {
     dataUserRefetch();
   }, []);
 
@@ -175,7 +170,7 @@ const DetailSubmission: NextPageWithLayout = ({
     refetch: rfCategories,
   } = getallCategories(dataUser?.accessToken.token, allCategories);
   //Set data select departmen
-  useEffect(() => {
+  UseEffect(() => {
     if (dataAllCategories && dataAllCategories.categories) {
       const valueSetCategorySl: IOptionSelect[] = dataAllCategories.categories.map((category) => {
         return {
@@ -201,7 +196,7 @@ const DetailSubmission: NextPageWithLayout = ({
   });
 
   //Set data select departmen
-  useEffect(() => {
+  UseEffect(() => {
     if (dataAllCategories && dataAllCategories.categories) {
       const valueSetCategorySl: IOptionSelect[] = dataAllCategories.categories.map((category) => {
         return {
@@ -215,7 +210,7 @@ const DetailSubmission: NextPageWithLayout = ({
   }, [dataAllCategories]);
 
   //Set closure date when have data detail submission
-  useEffect(() => {
+  UseEffect(() => {
     if (dataDetailSubmission) {
       setTimeClosure({
         closure_date: {
@@ -231,7 +226,7 @@ const DetailSubmission: NextPageWithLayout = ({
   }, [dataDetailSubmission]);
 
   //Check exist and show error
-  useEffect(() => {
+  UseEffect(() => {
     if (errorGetUser) {
       message.error({
         content: errorGetUser.response?.data.err,
@@ -378,7 +373,7 @@ const DetailSubmission: NextPageWithLayout = ({
   };
 
   //Clear data when user cancel up idea
-  useEffect(() => {
+  UseEffect(() => {
     if (!isShowFormIdea) {
       onClearData();
     }
@@ -559,7 +554,7 @@ const DetailSubmission: NextPageWithLayout = ({
                 size={20}
                 {...getRootProps()}
               >
-                <img src="/assets/uploadFiles.svg" />
+                <img alt='upload_file' src="/assets/uploadFiles.svg" />
                 <input {...getInputProps()} />
                 {isDragActive ? (
                   <p

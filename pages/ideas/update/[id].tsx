@@ -25,7 +25,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { getCurrentUser, getDetailIdea, getDetailSubmission } from 'queries';
 import { getallCategories } from 'queries/category';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect as UseEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useForm } from 'react-hook-form';
 import 'react-quill/dist/quill.bubble.css';
@@ -48,7 +48,7 @@ const DetailSubmission: NextPageWithLayout = ({
 }: IDetailSubmissionProps) => {
   //Get access token
   const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
-  useEffect(() => {
+  UseEffect(() => {
     dataUserRefetch();
   }, []);
 
@@ -81,7 +81,7 @@ const DetailSubmission: NextPageWithLayout = ({
   } = getDetailIdea(id as string, dataUser?.accessToken.token, detailIdea);
 
   //set again content, old files upload and anonymously when have idea
-  useEffect(() => {
+  UseEffect(() => {
     if (dataDetailIdea) {
       setEditorVl(dataDetailIdea.idea.content ? dataDetailIdea.idea.content : '');
       setAnonymously(dataDetailIdea.idea.anonymously ? dataDetailIdea.idea.anonymously : false);
@@ -135,7 +135,7 @@ const DetailSubmission: NextPageWithLayout = ({
     refetch: rfCategories,
   } = getallCategories(dataUser?.accessToken.token, allCategories);
   //Set data select departmen
-  useEffect(() => {
+  UseEffect(() => {
     if (dataAllCategories && dataAllCategories.categories) {
       const valueSetCategorySl: IOptionSelect[] = dataAllCategories.categories.map((category) => {
         return {
@@ -149,7 +149,7 @@ const DetailSubmission: NextPageWithLayout = ({
   }, [dataAllCategories]);
 
   //Check exist and show error
-  useEffect(() => {
+  UseEffect(() => {
     if (errorGetUser) {
       message.error({
         content: errorGetUser.response?.data.err,
@@ -443,7 +443,7 @@ const DetailSubmission: NextPageWithLayout = ({
               size={20}
               {...getRootProps()}
             >
-              <img src="/assets/uploadFiles.svg" />
+              <img alt={'upload_img'} src="/assets/uploadFiles.svg" />
               <input {...getInputProps()} />
               {isDragActive ? (
                 <p

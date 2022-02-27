@@ -1,7 +1,7 @@
 import { DeleteOutlined, EditOutlined, MoreOutlined } from '@ant-design/icons';
 import { Col, Dropdown, Menu, Space } from 'antd';
 import React from 'react';
-import { IDetailCategory } from '../../../models';
+import { IDetailCategory } from 'models/apiType';
 
 interface ICategory {
   data: IDetailCategory

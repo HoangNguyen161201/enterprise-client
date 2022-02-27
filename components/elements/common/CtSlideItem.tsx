@@ -7,12 +7,10 @@ export const CtSlideItem = ({ct, handleCReaction}: {ct: ICategoryForm, handleCRe
   return (
     <motion.div whileTap={{
         backgroundColor: '#009F9D',
-        color: 'white',
         scale: 0.9,
 
     }} whileHover={{
         backgroundColor: '#009F9D80',
-        color: 'white',
         scale: 1.1,
     }}
     onClick={()=> {
@@ -24,9 +22,9 @@ export const CtSlideItem = ({ct, handleCReaction}: {ct: ICategoryForm, handleCRe
     }}
       style={{
         fontWeight: 500,
-        height: 40,
+        height: 35,
         color: '#07456f',
-        lineHeight: '40px',
+        lineHeight: '35px',
         paddingLeft: 22,
         borderRadius: 5,
         whiteSpace: 'nowrap',
