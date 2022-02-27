@@ -102,7 +102,7 @@ const ideaController = {
     const { id } = req.params;
 
     //get info update
-    const { title, description, content, category_id, anonymously, files } = req.body;
+    const { title, description, content, category_id, anonymously, files, cloudinary_id } = req.body;
 
     //check idea exist in system
     const idea = await ideaModel.findById(id);
@@ -115,26 +115,31 @@ const ideaController = {
     }
 
     //Get submission to check time
-    const submission = await submissionModel.findById(idea.submission_id);
+    if (idea.submission_id) {
+      const submission = await submissionModel.findById(idea.submission_id);
 
-    //Check time closure date
-    const checkTimeClosure = new Date(submission.closure_date) > new Date();
-    if (!checkTimeClosure)
-      return res.status(400).json({
-        err: 'The closure timeout date has expired, you can not update idea.',
-        statusCode: 400,
-      });
-
-    //check category exist in system
-    const category = await categoryModel.findById(category_id);
-
-    if (!category) {
-      return res.status(400).json({
-        err: 'The category does not exist',
-        statusCode: 400,
-      });
+      //Check time closure date
+      const checkTimeClosure = new Date(submission.closure_date) > new Date();
+      if (!checkTimeClosure)
+        return res.status(400).json({
+          err: 'The closure timeout date has expired, you can not update idea.',
+          statusCode: 400,
+        });
     }
 
+    if (category_id) {
+      //check category exist in system
+      const category = await categoryModel.findById(category_id);
+
+      if (!category) {
+        return res.status(400).json({
+          err: 'The category does not exist',
+          statusCode: 400,
+        });
+      }
+    }
+
+    //Check valid data
     const ideaErr = ideaValid.ideaUpdate({
       title,
       description,
@@ -152,9 +157,10 @@ const ideaController = {
       title,
       description,
       content,
-      category_id,
+      category_id: category_id ? category_id : null,
       anonymously,
       files,
+      cloudinary_id: cloudinary_id ? cloudinary_id : null
     });
 
     return res.status(200).json({
@@ -185,7 +191,7 @@ const ideaController = {
   getByReaction: catchAsyncError(async (req, res) => {}),
 
   getAll: catchAsyncError(async (req, res) => {
-    const { _sort, _sortBy, _limit, _page, _reaction } = req.query;
+    const { _sort, _sortBy, _limit, _page, _reaction, _nameById, _valueById } = req.query;
     if (_reaction) {
       const page = await reactionModel.aggregate([
         {
@@ -274,6 +280,9 @@ const ideaController = {
 
     let filter = new Filter(ideaModel);
     filter = filter.getAll();
+    if (_searchName){
+      filter = filter.searchById({name: _nameById, value: _valueById})
+    }
     if (_sort) {
       filter = filter.sort({ name: _sortBy, NorO: _sort });
     }

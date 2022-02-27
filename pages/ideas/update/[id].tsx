@@ -63,24 +63,6 @@ const DetailSubmission: NextPageWithLayout = ({
   const [oldFilesRemoveUpload, setOldFilesRemoveUpload] = useState<IFileUpload[]>([]);
   const [anonymously, setAnonymously] = useState<boolean>(false);
 
-  //  Mutation call api to add idea
-  const mutationUpdateIdea = IdeaMutaion.update({
-    options: {
-      onSuccess: (data: ICommon) => {
-        message.success({
-          content: data.msg,
-        });
-      },
-      onError: (error: AxiosError) => {
-        message.error({
-          content: error.response?.data.err || 'Update Idea false.',
-        });
-      },
-    },
-    dataUserRefetch: dataUserRefetch,
-    token: dataUser?.accessToken.token,
-  });
-
   //Handle change content editor
   const handleChange = (value: any) => {
     setEditorVl(value);
@@ -92,11 +74,11 @@ const DetailSubmission: NextPageWithLayout = ({
   } = useRouter();
 
   //Get detail data idea
-  const { error: errorDetailIdea, data: dataDetailIdea } = getDetailIdea(
-    id as string,
-    dataUser?.accessToken.token,
-    detailIdea
-  );
+  const {
+    error: errorDetailIdea,
+    data: dataDetailIdea,
+    refetch: refetchDataDetailIdea,
+  } = getDetailIdea(id as string, dataUser?.accessToken.token, detailIdea);
 
   //set again content, old files upload and anonymously when have idea
   useEffect(() => {
@@ -107,7 +89,44 @@ const DetailSubmission: NextPageWithLayout = ({
     }
   }, [dataDetailIdea]);
 
-  console.log('sadfasdf', oldFilesUpload);
+  //  Mutation call api to add file
+  const mutationDeleteFiles = fileMutation.delete({
+    options: {
+      onError: (error: AxiosError) => {
+        message.error({
+          content: error.response?.data.err || 'Delete files false.',
+        });
+      },
+    },
+  });
+
+  //  Mutation call api to add idea
+  const mutationUpdateIdea = IdeaMutaion.update({
+    options: {
+      onSuccess: (data: ICommon) => {
+        message.success({
+          content: data.msg,
+        });
+
+        //Remove old file
+        oldFilesRemoveUpload.forEach((item) => {
+          mutationDeleteFiles.mutate({ public_id: item.public_id });
+        });
+
+        //Reset data
+        refetchDataDetailIdea();
+        setFilesUpload([]);
+        setOldFilesRemoveUpload([]);
+      },
+      onError: (error: AxiosError) => {
+        message.error({
+          content: error.response?.data.err || 'Update Idea false.',
+        });
+      },
+    },
+    dataUserRefetch: dataUserRefetch,
+    token: dataUser?.accessToken.token,
+  });
 
   //Get all data categories
   const {
@@ -115,20 +134,6 @@ const DetailSubmission: NextPageWithLayout = ({
     data: dataAllCategories,
     refetch: rfCategories,
   } = getallCategories(dataUser?.accessToken.token, allCategories);
-  //Set data select departmen
-  useEffect(() => {
-    if (dataAllCategories && dataAllCategories.categories) {
-      const valueSetCategorySl: IOptionSelect[] = dataAllCategories.categories.map((category) => {
-        return {
-          value: category._id,
-          label: category.name,
-        };
-      });
-
-      setCategoriesSelect(valueSetCategorySl);
-    }
-  }, [dataAllCategories]);
-
   //Set data select departmen
   useEffect(() => {
     if (dataAllCategories && dataAllCategories.categories) {
@@ -200,6 +205,7 @@ const DetailSubmission: NextPageWithLayout = ({
   const onRemoveFileOld = (index: number) => {
     //set old files upload to state will remove
     setOldFilesRemoveUpload([oldFilesUpload[index], ...oldFilesRemoveUpload]);
+    console.log(oldFilesRemoveUpload);
 
     const newOldFilesUpload = oldFilesUpload.filter((file, indexFile) => {
       if (indexFile !== index) {
@@ -253,6 +259,9 @@ const DetailSubmission: NextPageWithLayout = ({
         setIsLoadUpFile(false);
       }
 
+      //Concact new files with old files upload
+      files = oldFilesUpload.concat(files);
+
       //Set again data form
       const newDataForm = {
         ...dataForm,
@@ -260,11 +269,29 @@ const DetailSubmission: NextPageWithLayout = ({
         files,
         content: editorVl,
         cloudinary_id: files.length !== 0 ? cloudinary_id : undefined,
-        _id: detailIdea?.idea?._id,
+        _id: dataDetailIdea?.idea._id,
       };
 
+      //Update file
       mutationUpdateIdea.mutate(newDataForm);
     }
+  };
+
+  //Clear data update
+  const onClearData = () => {
+    setEditorVl(dataDetailIdea?.idea.content ? dataDetailIdea.idea.content : '');
+    setAnonymously(dataDetailIdea?.idea.anonymously ? dataDetailIdea.idea.anonymously : false);
+    setOldFilesUpload(dataDetailIdea?.idea.files ? dataDetailIdea.idea.files : []);
+    setFilesUpload([]);
+    setOldFilesRemoveUpload([]);
+
+    formSetting.reset({
+      title: dataDetailIdea?.idea?.title,
+      category_id: dataDetailIdea?.idea?.category_id?._id
+        ? dataDetailIdea?.idea.category_id._id
+        : '',
+      description: dataDetailIdea?.idea?.description,
+    });
   };
 
   return (
@@ -279,7 +306,11 @@ const DetailSubmission: NextPageWithLayout = ({
         <Breadcrumb.Item>Update Idea</Breadcrumb.Item>
       </Breadcrumb>
 
-      <Card title="Update Your Idea" style={{ width: '100%', marginTop: '20px' }}>
+      <Card
+        extra={<a onClick={onClearData}>Reset</a>}
+        title="Update Your Idea"
+        style={{ width: '100%', marginTop: '20px' }}
+      >
         <Space
           direction="vertical"
           size={20}
@@ -371,7 +402,7 @@ const DetailSubmission: NextPageWithLayout = ({
               color: 'gray',
             }}
           >
-            Old file upload
+            {`Old file upload (${dataDetailIdea?.idea?.files?.length} files)`}
           </span>
 
           {/* old file upload */}
@@ -517,6 +548,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   //Redirect 404 page when not have idea
   if (detailIdea.statusCode !== 200) {
+    return {
+      notFound: true,
+    };
+  }
+
+  //Check if idea not of current user
+  if (detailUser.user._id !== detailIdea.idea.user_id._id) {
     return {
       notFound: true,
     };
