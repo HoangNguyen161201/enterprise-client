@@ -100,11 +100,11 @@ const DetailIdea: NextPageWithLayout = ({
   );
 
   //Get all comments
-  const { error: errorComments, data: dataComments } = getallComments(
-    id as string,
-    dataUser?.accessToken.token,
-    allComments
-  );
+  const {
+    error: errorComments,
+    data: dataComments,
+    refetch: refetchDataComments,
+  } = getallComments(id as string, dataUser?.accessToken.token, allComments);
 
   //Get url dowload zip
   const { data: dataURLZip, refetch: refetchDataURLZip } = getUrlDownloadZip(
@@ -144,6 +144,9 @@ const DetailIdea: NextPageWithLayout = ({
         message.success({
           content: data.msg,
         });
+
+        //Fetch again all comment when add new comment
+        refetchDataComments();
       },
       onError: (error: AxiosError) => {
         message.error({
@@ -371,6 +374,7 @@ const DetailIdea: NextPageWithLayout = ({
             renderItem={(item) => (
               <List.Item>
                 <ItemComment
+                  refetchDataComments = {refetchDataComments}
                   idea_id={dataDetailIdea?.idea._id as string}
                   isMatchFinalTime={isMatchFinalTime}
                   dataUserRefetch={dataUserRefetch}
