@@ -9,16 +9,15 @@ const download = async (req: NextApiRequest, res: NextApiResponse) => {
     });
   const { tag } = req.body;
 
-  const data = await cloudinary.utils.download_zip_url({
+  const url = await cloudinary.utils.download_zip_url({
     tags: [tag],
     resource_type: 'raw',
   })
 
-  console.log(data)
-
   res.status(200).json({
     statusCode: 200,
     msg: 'Download file success',
+    url
   });
 };
 

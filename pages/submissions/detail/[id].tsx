@@ -328,7 +328,7 @@ const DetailSubmission: NextPageWithLayout = ({
         });
       } else {
         //Handle submit file
-        let files = [];
+        let files: any[] = [];
 
         //Set cloud dinary id files
         const cloudinary_id = uuidv4();
@@ -353,7 +353,7 @@ const DetailSubmission: NextPageWithLayout = ({
           anonymously,
           files,
           content: editorVl,
-          cloudinary_id,
+          cloudinary_id: files.length !== 0 ? cloudinary_id : undefined,
           ...dataForm,
         };
 
