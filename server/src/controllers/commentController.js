@@ -38,6 +38,17 @@ const commentController = {
         err: 'Idea does not exist in system.',
       });
 
+    //get submission to check final closure date
+    const submission = await submissionModel.findById(idea.submission_id);
+
+    //Check time closure date
+    const checkTimeFinalClosure = new Date(submission.final_closure_date) > new Date();
+    if (!checkTimeFinalClosure)
+      return res.status(400).json({
+        err: 'The final closure timeout date has expired, can not comment.',
+        statusCode: 400,
+      });
+
     //Check exist id comment parent
     if (comment_id) {
       //Check exist parent comment
@@ -174,17 +185,6 @@ const commentController = {
       return res.status(400).json({
         statusCode: 400,
         err: 'Idea does not exist in system.',
-      });
-
-    //get submission to check final closure date
-    const submission = await submissionModel.findById(idea.submission_id);
-
-    //Check time closure date
-    const checkTimeFinalClosure = new Date(submission.final_closure_date) > new Date();
-    if (!checkTimeFinalClosure)
-      return res.status(400).json({
-        err: 'The final closure timeout date has expired, can not comment.',
-        statusCode: 400,
       });
 
     //Get comments by idea

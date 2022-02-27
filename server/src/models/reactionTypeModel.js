@@ -6,6 +6,7 @@ const reactionTypeSchema = new mongoose.Schema({
     type: String,
     require: true,
     unique: true,
+    icon: String,
   },
 });
 
