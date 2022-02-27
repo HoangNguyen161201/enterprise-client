@@ -13,7 +13,7 @@ import { authMutation } from 'mutations/auth';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter as UseRouter } from 'next/router';
-import { getCurrentUser } from 'queries';
+import { getCurrentUser } from 'queries/auth';
 import { useMemo as UseMemo } from 'react';
 import { useForm as UseForm } from 'react-hook-form';
 import { validateLogin } from 'utils/validate';

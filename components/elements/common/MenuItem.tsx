@@ -1,7 +1,7 @@
 import { Menu } from 'antd';
 import Link from 'next/link';
 import {useEffect as UseEffect, useState as UseState} from 'react';
-import { getCurrentUser } from '../../../queries';
+import { getCurrentUser } from 'queries/auth';
 
 export interface IMenuItemProps {
   key: string;

@@ -4,7 +4,7 @@ import { IInput } from 'models/formType';
 import React, { useState } from 'react';
 import { Controller } from 'react-hook-form';
 
-export const Input = ({
+export const Input = ({  
   type = 'text',
   formSetting,
   name,
@@ -72,6 +72,7 @@ export const Input = ({
                   {...field}
                   style={{ width: '100%' }}
                   size="large"
+                  disabled={disable}
                   prefix={icon}
                   type={type}
                   placeholder={placeholder || ''}

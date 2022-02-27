@@ -5,6 +5,12 @@ export interface ICopyAcc {
   handleSetAcc: (acc: ILogin) => void;
 }
 
+export interface IFilter {
+  id: string | null
+  icon: string
+  isView?: boolean
+}
+
 export interface IOptionSelect {
     label: any
     value: any

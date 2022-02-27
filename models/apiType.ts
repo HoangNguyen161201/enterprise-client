@@ -138,7 +138,7 @@ export interface IFileUpload {
 }
 
 export interface IIdea {
-  _id?: string;
+  _id?: any;
   user_id: IUser;
   category_id: IDetailCategory;
   submission_id: ISubmission;
@@ -160,11 +160,23 @@ export interface IDetailIdea extends ICommon {
 
 export interface IAllIdeas extends ICommon {
   ideas: IIdea[];
+  page_Index?: number
 }
 
 export interface IUrlDowloadZip extends ICommon {
   url: string;
 }
+
+export interface Ireaction {
+  _id: string
+  name: string  
+  icon: string
+}
+
+export interface Ireactions extends ICommon {
+  reactionTypes: Ireaction[]
+}
+
 
 //Interface comment
 export interface IComment {

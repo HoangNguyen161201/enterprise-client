@@ -1,22 +1,67 @@
-import { NextPageWithLayout } from 'models/layoutType';
+import { Breadcrumb, Card, Col, Collapse, Grid, InputNumber, Pagination, Row } from 'antd';
+import { Reaction } from 'components/elements/common';
+import Idea from 'components/elements/common/Idea';
 import { ClientLayout } from 'components/layouts';
+import { IDetailUser } from 'models/apiType';
+import { IFilter } from 'models/elementType';
+import { NextPageWithLayout } from 'models/layoutType';
+import { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import {
-  Avatar,
-  Breadcrumb,
-  Button,
-  Tag,
-  Card,
-  Col,
-  Collapse,
-  Image,
-  Row,
-  Space,
-  Pagination,
-} from 'antd';
-import { FileImageOutlined, EyeOutlined } from '@ant-design/icons';
+import { getCurrentUser, getallCategories } from 'queries';
+import { getAllIdeas } from 'queries/idea';
+import { getReactType } from 'queries/reaction';
+import { useEffect, useState } from 'react';
 
-const index: NextPageWithLayout = () => {
+var timeOutLimit: NodeJS.Timeout;
+
+const index: NextPageWithLayout = ({ detailUser }) => {
+  const { useBreakpoint } = Grid;
+  const { md } = useBreakpoint();
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(6);
+  const [reaction, setReaction] = useState<string | null>(null);
+  const [icon, setIcon] = useState('👁');
+
+  const {
+    data: dataUser,
+    error: errorGetUser,
+    refetch: dataUserRefetch,
+  } = getCurrentUser(detailUser);
+
+  const { data: DataCt, error: errorCt, refetch: refetchCt } = getallCategories(detailUser);
+
+  const {
+    data: AllIdeas,
+    error: errorIdeas,
+    refetch: refetchIdeas,
+    isLoading: isLoadingIdeas,
+  } = getAllIdeas(
+    {
+      _limit: limit,
+      _page: page,
+      _sort: -1,
+      _sortBy: 'view',
+      _reaction: reaction,
+    },
+    dataUser?.accessToken.token
+  );
+
+  useEffect(() => {
+    console.log(errorIdeas?.response?.data);
+  }, [errorIdeas]);
+
+  const handleCReaction = ({ isView = false, id, icon }: IFilter) => {
+    if (isView) {
+      setReaction(null);
+    } else {
+      setReaction(id);
+    }
+    setIcon(icon);
+    setPage(1);
+    setLimit(6);
+  };
+
+  const { data: allReaction, error: errorReaction, refetch: refetchReaction } = getReactType();
   return (
     <>
       <Head>
@@ -30,19 +75,29 @@ const index: NextPageWithLayout = () => {
       </Breadcrumb>
 
       <Card title="View Detail Employee" style={{ width: '100%', marginTop: '20px' }}>
-        <Row wrap={false} gutter={[30, 0]}>
-          <Col style={{
-              width: 300
-          }}>
+        <Row wrap={md ? false : true} gutter={[30, 30]}>
+          <Col
+            span={md ? undefined : 24}
+            style={{
+              minWidth: 300,
+            }}
+          >
             <div>
               <Collapse bordered={false} ghost defaultActiveKey={['1', '2']}>
                 <Collapse.Panel header={'All'} key="1">
                   <div
+                    onClick={() => {
+                      handleCReaction({
+                        isView: true,
+                        icon: '👁',
+                        id: null,
+                      });
+                    }}
                     style={{
                       fontWeight: 500,
                       height: 40,
-                      background: 'black',
-                      color: 'white',
+                      // background: 'black',
+                      color: '#07456f',
                       lineHeight: '40px',
                       paddingLeft: 22,
                       borderRadius: 5,
@@ -50,633 +105,101 @@ const index: NextPageWithLayout = () => {
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       paddingRight: '15px',
+                      cursor: 'pointer',
                     }}
                   >
-                    Category 1 fg fdg df dfg dfg df
+                    View
                   </div>
                 </Collapse.Panel>
-                <Collapse.Panel header="Reaction" key="2">
-                  <div
-                    style={{
-                      paddingLeft: '22px',
-                      height: '40px',
-                    }}
-                  >
-                    <span
-                      className="font-4"
-                      style={{
-                        marginRight: 10,
-                      }}
-                    >
-                      🤣
-                    </span>
-                    <span className="font-2">Fun</span>
-                  </div>
+                {allReaction?.reactionTypes && (
+                  <Collapse.Panel header="Reaction" key="2">
+                    {allReaction.reactionTypes.map((reaction) => (
+                      <Reaction
+                        handleCReaction={handleCReaction}
+                        id={reaction._id}
+                        key={reaction._id}
+                        name={reaction.name}
+                        icon={reaction.icon}
+                      />
+                    ))}
+                  </Collapse.Panel>
+                )}
 
-                  <div
-                    style={{
-                      paddingLeft: '22px',
-                      height: '40px',
-                    }}
-                  >
-                    <span
-                      className="font-4"
-                      style={{
-                        marginRight: 10,
-                      }}
-                    >
-                      😭
-                    </span>
-                    <span className="font-2">Sad</span>
-                  </div>
-
-                  <div
-                    style={{
-                      paddingLeft: '22px',
-                      height: '40px',
-                    }}
-                  >
-                    <span
-                      className="font-4"
-                      style={{
-                        marginRight: 10,
-                      }}
-                    >
-                      😡
-                    </span>
-                    <span className="font-2">Angry</span>
-                  </div>
-                </Collapse.Panel>
                 <Collapse.Panel header="Category" key="3">
-                  <div
-                    style={{
-                      fontWeight: 500,
-                      height: 40,
-                      background: 'black',
-                      color: 'white',
-                      lineHeight: '40px',
-                      paddingLeft: 22,
-                      borderRadius: 5,
-                    }}
-                  >
-                    Category 1
-                  </div>
+                  {DataCt?.categories &&
+                    DataCt.categories.map((ct) => (
+                      <div
+                        style={{
+                          fontWeight: 500,
+                          height: 40,
+                          background: 'black',
+                          color: 'white',
+                          lineHeight: '40px',
+                          paddingLeft: 22,
+                          borderRadius: 5,
+                        }}
+                      >
+                        Category 1
+                      </div>
+                    ))}
                 </Collapse.Panel>
               </Collapse>
             </div>
           </Col>
-          <Col flex="auto">
-            <Row gutter={[0, 30]}>
-              <Col span={24}>
-                <Space size={20} align="start">
-                  <Avatar
-                    size={'large'}
+          {errorIdeas || isLoadingIdeas ? (
+            ''
+          ) : (
+            <Col span={md ? undefined : 24} flex="auto">
+              <Row gutter={[0, 30]}>
+                {AllIdeas?.ideas &&
+                  AllIdeas.ideas.map((idea, key: number) => (
+                    <Idea
+                      key={key}
+                      title={idea.title}
+                      time={idea.u}
+                      userName={idea.user_id.name}
+                      avatar={idea.user_id.avatar.url}
+                      count={idea.count}
+                      description={idea.description}
+                      iconReaction={icon}
+                    />
+                  ))}
+              </Row>
+              {Number(AllIdeas?.page_Index) <= 1 ? (
+                ''
+              ) : (
+                <div
+                  style={{
+                    marginTop: 30,
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                  }}
+                >
+                  <InputNumber
                     style={{
-                      border: '2px solid #07456F30',
+                      marginRight: 10,
                     }}
-                    src="https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg"
-                  >
-                    nguyen
-                  </Avatar>
-                  <Space direction="vertical" size={'middle'}>
-                    <Space direction="vertical">
-                      <Space size={'middle'}>
-                        <span>Nguyen quang hoang</span>
-                        <span
-                          style={{
-                            color: 'gray',
-                          }}
-                        >
-                          20/12/2022
-                        </span>
-                      </Space>
-                      <span
-                        className="font-3"
-                        style={{
-                          fontWeight: 'bold',
-                          color: '#07456F',
-                        }}
-                      >
-                        This is title
-                      </span>
-                      <span
-                        style={{
-                          color: 'gray',
-                        }}
-                      >
-                        This is title This is title This is titleThis is title This is title This is
-                        title This is title This is title s is title This is title{' '}
-                      </span>
-                    </Space>
-
-                    <Tag
-                      color="processing"
-                      icon={
-                        <span
-                          style={{
-                            marginRight: 8,
-                          }}
-                        >
-                          🤣
-                        </span>
-                      }
-                    >
-                      3 View
-                    </Tag>
-                  </Space>
-                </Space>
-              </Col>
-
-              <Col span={24}>
-                <Space size={20} align="start">
-                  <Avatar
-                    size={'large'}
-                    style={{
-                      border: '2px solid #07456F30',
+                    min={1}
+                    value={limit}
+                    onChange={(vl) => {
+                      clearTimeout(timeOutLimit);
+                      timeOutLimit = setTimeout(() => {
+                        setLimit(vl);
+                      }, 500);
                     }}
-                    src="https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg"
-                  >
-                    nguyen
-                  </Avatar>
-                  <Space direction="vertical" size={'middle'}>
-                    <Space direction="vertical">
-                      <Space size={'middle'}>
-                        <span>Nguyen quang hoang</span>
-                        <span
-                          style={{
-                            color: 'gray',
-                          }}
-                        >
-                          20/12/2022
-                        </span>
-                      </Space>
-                      <span
-                        className="font-3"
-                        style={{
-                          fontWeight: 'bold',
-                          color: '#07456F',
-                        }}
-                      >
-                        This is title
-                      </span>
-                      <span
-                        style={{
-                          color: 'gray',
-                        }}
-                      >
-                        This is title This is title This is titleThis is title This is title This is
-                        title This is title This is title s is title This is title{' '}
-                      </span>
-                    </Space>
-
-                    <Tag
-                      color="processing"
-                      icon={
-                        <span
-                          style={{
-                            marginRight: 8,
-                          }}
-                        >
-                          🤣
-                        </span>
-                      }
-                    >
-                      3 View
-                    </Tag>
-                  </Space>
-                </Space>
-              </Col>
-
-              <Col span={24}>
-                <Space size={20} align="start">
-                  <Avatar
-                    size={'large'}
-                    style={{
-                      border: '2px solid #07456F30',
+                  />
+                  <Pagination
+                    current={page}
+                    onChange={(pg) => {
+                      setPage(pg);
                     }}
-                    src="https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg"
-                  >
-                    nguyen
-                  </Avatar>
-                  <Space direction="vertical" size={'middle'}>
-                    <Space direction="vertical">
-                      <Space size={'middle'}>
-                        <span>Nguyen quang hoang</span>
-                        <span
-                          style={{
-                            color: 'gray',
-                          }}
-                        >
-                          20/12/2022
-                        </span>
-                      </Space>
-                      <span
-                        className="font-3"
-                        style={{
-                          fontWeight: 'bold',
-                          color: '#07456F',
-                        }}
-                      >
-                        This is title
-                      </span>
-                      <span
-                        style={{
-                          color: 'gray',
-                        }}
-                      >
-                        This is title This is title This is titleThis is title This is title This is
-                        title This is title This is title s is title This is title{' '}
-                      </span>
-                    </Space>
-
-                    <Tag
-                      color="processing"
-                      icon={
-                        <span
-                          style={{
-                            marginRight: 8,
-                          }}
-                        >
-                          🤣
-                        </span>
-                      }
-                    >
-                      3 View
-                    </Tag>
-                  </Space>
-                </Space>
-              </Col>
-
-              <Col span={24}>
-                <Space size={20} align="start">
-                  <Avatar
-                    size={'large'}
-                    style={{
-                      border: '2px solid #07456F30',
-                    }}
-                    src="https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg"
-                  >
-                    nguyen
-                  </Avatar>
-                  <Space direction="vertical" size={'middle'}>
-                    <Space direction="vertical">
-                      <Space size={'middle'}>
-                        <span>Nguyen quang hoang</span>
-                        <span
-                          style={{
-                            color: 'gray',
-                          }}
-                        >
-                          20/12/2022
-                        </span>
-                      </Space>
-                      <span
-                        className="font-3"
-                        style={{
-                          fontWeight: 'bold',
-                          color: '#07456F',
-                        }}
-                      >
-                        This is title
-                      </span>
-                      <span
-                        style={{
-                          color: 'gray',
-                        }}
-                      >
-                        This is title This is title This is titleThis is title This is title This is
-                        title This is title This is title s is title This is title{' '}
-                      </span>
-                    </Space>
-
-                    <Tag
-                      color="processing"
-                      icon={
-                        <span
-                          style={{
-                            marginRight: 8,
-                          }}
-                        >
-                          🤣
-                        </span>
-                      }
-                    >
-                      3 View
-                    </Tag>
-                  </Space>
-                </Space>
-              </Col>
-
-              <Col span={24}>
-                <Space size={20} align="start">
-                  <Avatar
-                    size={'large'}
-                    style={{
-                      border: '2px solid #07456F30',
-                    }}
-                    src="https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg"
-                  >
-                    nguyen
-                  </Avatar>
-                  <Space direction="vertical" size={'middle'}>
-                    <Space direction="vertical">
-                      <Space size={'middle'}>
-                        <span>Nguyen quang hoang</span>
-                        <span
-                          style={{
-                            color: 'gray',
-                          }}
-                        >
-                          20/12/2022
-                        </span>
-                      </Space>
-                      <span
-                        className="font-3"
-                        style={{
-                          fontWeight: 'bold',
-                          color: '#07456F',
-                        }}
-                      >
-                        This is title
-                      </span>
-                      <span
-                        style={{
-                          color: 'gray',
-                        }}
-                      >
-                        This is title This is title This is titleThis is title This is title This is
-                        title This is title This is title s is title This is title{' '}
-                      </span>
-                    </Space>
-
-                    <Tag
-                      color="processing"
-                      icon={
-                        <span
-                          style={{
-                            marginRight: 8,
-                          }}
-                        >
-                          🤣
-                        </span>
-                      }
-                    >
-                      3 View
-                    </Tag>
-                  </Space>
-                </Space>
-              </Col>
-
-              <Col span={24}>
-                <Space size={20} align="start">
-                  <Avatar
-                    size={'large'}
-                    style={{
-                      border: '2px solid #07456F30',
-                    }}
-                    src="https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg"
-                  >
-                    nguyen
-                  </Avatar>
-                  <Space direction="vertical" size={'middle'}>
-                    <Space direction="vertical">
-                      <Space size={'middle'}>
-                        <span>Nguyen quang hoang</span>
-                        <span
-                          style={{
-                            color: 'gray',
-                          }}
-                        >
-                          20/12/2022
-                        </span>
-                      </Space>
-                      <span
-                        className="font-3"
-                        style={{
-                          fontWeight: 'bold',
-                          color: '#07456F',
-                        }}
-                      >
-                        This is title
-                      </span>
-                      <span
-                        style={{
-                          color: 'gray',
-                        }}
-                      >
-                        This is title This is title This is titleThis is title This is title This is
-                        title This is title This is title s is title This is title{' '}
-                      </span>
-                    </Space>
-
-                    <Tag
-                      color="processing"
-                      icon={
-                        <span
-                          style={{
-                            marginRight: 8,
-                          }}
-                        >
-                          🤣
-                        </span>
-                      }
-                    >
-                      3 View
-                    </Tag>
-                  </Space>
-                </Space>
-              </Col>
-
-              <Col span={24}>
-                <Space size={20} align="start">
-                  <Avatar
-                    size={'large'}
-                    style={{
-                      border: '2px solid #07456F30',
-                    }}
-                    src="https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg"
-                  >
-                    nguyen
-                  </Avatar>
-                  <Space direction="vertical" size={'middle'}>
-                    <Space direction="vertical">
-                      <Space size={'middle'}>
-                        <span>Nguyen quang hoang</span>
-                        <span
-                          style={{
-                            color: 'gray',
-                          }}
-                        >
-                          20/12/2022
-                        </span>
-                      </Space>
-                      <span
-                        className="font-3"
-                        style={{
-                          fontWeight: 'bold',
-                          color: '#07456F',
-                        }}
-                      >
-                        This is title
-                      </span>
-                      <span
-                        style={{
-                          color: 'gray',
-                        }}
-                      >
-                        This is title This is title This is titleThis is title This is title This is
-                        title This is title This is title s is title This is title{' '}
-                      </span>
-                    </Space>
-
-                    <Tag
-                      color="processing"
-                      icon={
-                        <span
-                          style={{
-                            marginRight: 8,
-                          }}
-                        >
-                          🤣
-                        </span>
-                      }
-                    >
-                      3 View
-                    </Tag>
-                  </Space>
-                </Space>
-              </Col>
-
-              <Col span={24}>
-                <Space size={20} align="start">
-                  <Avatar
-                    size={'large'}
-                    style={{
-                      border: '2px solid #07456F30',
-                    }}
-                    src="https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg"
-                  >
-                    nguyen
-                  </Avatar>
-                  <Space direction="vertical" size={'middle'}>
-                    <Space direction="vertical">
-                      <Space size={'middle'}>
-                        <span>Nguyen quang hoang</span>
-                        <span
-                          style={{
-                            color: 'gray',
-                          }}
-                        >
-                          20/12/2022
-                        </span>
-                      </Space>
-                      <span
-                        className="font-3"
-                        style={{
-                          fontWeight: 'bold',
-                          color: '#07456F',
-                        }}
-                      >
-                        This is title
-                      </span>
-                      <span
-                        style={{
-                          color: 'gray',
-                        }}
-                      >
-                        This is title This is title This is titleThis is title This is title This is
-                        title This is title This is title s is title This is title{' '}
-                      </span>
-                    </Space>
-
-                    <Tag
-                      color="processing"
-                      icon={
-                        <span
-                          style={{
-                            marginRight: 8,
-                          }}
-                        >
-                          🤣
-                        </span>
-                      }
-                    >
-                      3 View
-                    </Tag>
-                  </Space>
-                </Space>
-              </Col>
-
-              <Col span={24}>
-                <Space size={20} align="start">
-                  <Avatar
-                    size={'large'}
-                    style={{
-                      border: '2px solid #07456F30',
-                    }}
-                    src="https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg"
-                  >
-                    nguyen
-                  </Avatar>
-                  <Space direction="vertical" size={'middle'}>
-                    <Space direction="vertical">
-                      <Space size={'middle'}>
-                        <span>Nguyen quang hoang</span>
-                        <span
-                          style={{
-                            color: 'gray',
-                          }}
-                        >
-                          20/12/2022
-                        </span>
-                      </Space>
-                      <span
-                        className="font-3"
-                        style={{
-                          fontWeight: 'bold',
-                          color: '#07456F',
-                        }}
-                      >
-                        This is title
-                      </span>
-                      <span
-                        style={{
-                          color: 'gray',
-                        }}
-                      >
-                        This is title This is title This is titleThis is title This is title This is
-                        title This is title This is title s is title This is title{' '}
-                      </span>
-                    </Space>
-
-                    <Tag
-                      color="processing"
-                      icon={
-                        <span
-                          style={{
-                            marginRight: 8,
-                          }}
-                        >
-                          🤣
-                        </span>
-                      }
-                    >
-                      3 View
-                    </Tag>
-                  </Space>
-                </Space>
-              </Col>
-            </Row>
-            <div
-              style={{
-                marginTop: 30,
-                display: 'flex',
-                justifyContent: 'flex-end',
-              }}
-            >
-              <Pagination defaultCurrent={1} defaultPageSize={1} total={5} />
-            </div>
-          </Col>
+                    defaultPageSize={1}
+                    total={AllIdeas?.page_Index}
+                  />
+                </div>
+              )}
+            </Col>
+          )}
         </Row>
       </Card>
     </>
@@ -685,3 +208,36 @@ const index: NextPageWithLayout = () => {
 
 index.getLayout = ClientLayout;
 export default index;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  //Check login
+  const detailUser: IDetailUser = await fetch(`http://localhost:3000/api/auth/accesstoken`, {
+    method: 'GET',
+    headers: {
+      cookie: context.req.headers.cookie,
+    } as HeadersInit,
+  }).then((e) => e.json());
+
+  //Redirect login page when error
+  if (detailUser.statusCode !== 200) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+  }
+
+  //Check role
+  if (detailUser.user.role === 'admin') {
+    return {
+      notFound: true,
+    };
+  }
+
+  return {
+    props: {
+      detailUser,
+    },
+  };
+};

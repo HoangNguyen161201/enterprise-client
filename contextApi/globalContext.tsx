@@ -1,5 +1,5 @@
 import { createContext, useEffect } from 'react';
-import { getCurrentUser } from '../queries';
+import { getCurrentUser } from 'queries/auth';
 import { useRouter } from 'next/router';
 import { AnimatePresence, motion } from 'framer-motion';
 

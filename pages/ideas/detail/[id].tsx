@@ -1,45 +1,38 @@
 //Import
-import { IdcardOutlined, MailOutlined, SendOutlined, TeamOutlined } from '@ant-design/icons';
 import {
   Avatar,
   Breadcrumb,
   Card,
   Col,
   Divider,
-  Grid,
-  Input,
-  List,
+  Grid, List,
   message,
   Row,
-  Space,
-  Spin,
-  Switch,
+  Space, Switch
 } from 'antd';
+import { AxiosError } from 'axios';
+import InputComment from 'components/elements/common/InputComment';
+import ItemComment from 'components/elements/common/ItemComment';
+import ItemFileUpload from 'components/elements/common/ItemFileUpload';
 import { ClientLayout } from 'components/layouts';
-import { GetServerSideProps } from 'next';
-import Head from 'next/head';
-import { useRouter } from 'next/router';
-import { ChangeEventHandler, useEffect, useEffect as UseEffect, useState } from 'react';
-import { Infor } from 'components/elements/common';
-import { IallComments, ICommon, IDetailIdea, IDetailUser, IUser } from 'models/apiType';
+import { IallComments, ICommon, IDetailIdea, IDetailUser } from 'models/apiType';
 import { NextPageWithLayout } from 'models/layoutType';
-import { getCurrentUser, getDetailIdea, getDetailUser, getUrlDownloadZip } from 'queries';
-import { convert } from 'html-to-text';
-
-//CSS quill
-import 'react-quill/dist/quill.snow.css';
-import 'react-quill/dist/quill.bubble.css';
-
+import { commentMutation } from 'mutations/comment';
+import { GetServerSideProps } from 'next';
 //Dynamic import quill
 import dynamic from 'next/dynamic';
-import { dataTypeFile } from 'utils/dataTypeFile';
-import ItemFileUpload from 'components/elements/common/ItemFileUpload';
-import { commentMutation } from 'mutations/comment';
-import { AxiosError } from 'axios';
+import Head from 'next/head';
+import { useRouter } from 'next/router';
+import { getCurrentUser, getDetailIdea, getUrlDownloadZip } from 'queries';
 import { getallComments } from 'queries/comment';
-import ItemComment from 'components/elements/common/ItemComment';
-import InputComment from 'components/elements/common/InputComment';
+import { useEffect, useEffect as UseEffect, useState } from 'react';
+import 'react-quill/dist/quill.bubble.css';
+//CSS quill
+import 'react-quill/dist/quill.snow.css';
+import { dataTypeFile } from 'utils/dataTypeFile';
 import { postData } from 'utils/fetchData';
+
+
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 export interface IDetailEmployeeProps {
