@@ -241,7 +241,9 @@ const DetailSubmission: NextPageWithLayout = ({
       let files: any[] = [];
 
       //Set cloud dinary id files
-      const cloudinary_id = dataDetailIdea?.idea.cloudinary_id ? dataDetailIdea?.idea.cloudinary_id : uuidv4();
+      const cloudinary_id = dataDetailIdea?.idea.cloudinary_id
+        ? dataDetailIdea?.idea.cloudinary_id
+        : uuidv4();
 
       if (filesUpload && filesUpload.length !== 0) {
         setIsLoadUpFile(true);
@@ -258,6 +260,7 @@ const DetailSubmission: NextPageWithLayout = ({
         files,
         content: editorVl,
         cloudinary_id: files.length !== 0 ? cloudinary_id : undefined,
+        _id: detailIdea?.idea?._id,
       };
 
       mutationUpdateIdea.mutate(newDataForm);
