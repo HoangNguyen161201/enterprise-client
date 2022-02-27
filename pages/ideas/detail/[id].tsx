@@ -225,7 +225,7 @@ const DetailIdea: NextPageWithLayout = ({
       </Breadcrumb>
 
       <Card
-        title="View Detail Employee"
+        title="View Detail Idea"
         style={{ width: '100%', marginTop: '20px' }}
         extra={dataURLZip?.url && <a href={dataURLZip?.url}>Dowload all files</a>}
       >

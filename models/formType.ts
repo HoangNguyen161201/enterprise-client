@@ -67,6 +67,7 @@ export interface IAssignUsers {
 }
 
 export interface IIdeaForm {
+  _id: string;
   user_id: string;
   category_id: string;
   submission_id: string;
