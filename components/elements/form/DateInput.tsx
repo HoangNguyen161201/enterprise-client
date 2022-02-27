@@ -1,8 +1,8 @@
 import { Space, DatePicker } from 'antd';
 import React from 'react';
 import { Controller } from 'react-hook-form';
-import { IInput } from '../../../models';
 import moment from 'moment'
+import { IInput } from 'models/formType';
 
 export const DateInput = ({
   formSetting,

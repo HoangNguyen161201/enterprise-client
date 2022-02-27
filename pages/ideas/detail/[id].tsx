@@ -378,7 +378,7 @@ const DetailIdea: NextPageWithLayout = ({
                   idea_id={dataDetailIdea?.idea._id as string}
                   isMatchFinalTime={isMatchFinalTime}
                   dataUserRefetch={dataUserRefetch}
-                  dataUser={dataUser}
+                  dataUser={dataUser as IDetailUser}
                   comment={item}
                   anonymously={anonymously}
                 />
