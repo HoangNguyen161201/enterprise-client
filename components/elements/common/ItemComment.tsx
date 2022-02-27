@@ -82,6 +82,7 @@ export default function ItemComment({
           width: '100%',
           marginTop: 20,
         }}
+        align="start"
       >
         {comment.anonymously ? (
           <Avatar icon={<UserOutlined />} />

@@ -21,7 +21,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { ChangeEventHandler, useEffect, useEffect as UseEffect, useState } from 'react';
 import { Infor } from 'components/elements/common';
-import { IallComments, ICommon, IDetailIdea, IUser } from 'models/apiType';
+import { IallComments, ICommon, IDetailIdea, IDetailUser, IUser } from 'models/apiType';
 import { NextPageWithLayout } from 'models/layoutType';
 import { getCurrentUser, getDetailIdea, getDetailUser, getUrlDownloadZip } from 'queries';
 import { convert } from 'html-to-text';
@@ -39,11 +39,13 @@ import { AxiosError } from 'axios';
 import { getallComments } from 'queries/comment';
 import ItemComment from 'components/elements/common/ItemComment';
 import InputComment from 'components/elements/common/InputComment';
+import { postData } from 'utils/fetchData';
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 export interface IDetailEmployeeProps {
   detailIdea: IDetailIdea;
   allComments: IallComments;
+  detailUser: IDetailUser;
 }
 
 //element
@@ -67,7 +69,11 @@ const ItemDetailIdea = ({ title, content }: { title: string; content: string }) 
   );
 };
 
-const DetailIdea: NextPageWithLayout = ({ detailIdea, allComments }: IDetailEmployeeProps) => {
+const DetailIdea: NextPageWithLayout = ({
+  detailIdea,
+  allComments,
+  detailUser,
+}: IDetailEmployeeProps) => {
   const { query } = useRouter();
   const { useBreakpoint } = Grid;
   const { lg } = useBreakpoint();
@@ -84,7 +90,11 @@ const DetailIdea: NextPageWithLayout = ({ detailIdea, allComments }: IDetailEmpl
   const [isMatchFinalTime, setIsMatchFinalTime] = useState<boolean>(false);
 
   //Get access token
-  const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
+  const {
+    data: dataUser,
+    error: errorGetUser,
+    refetch: dataUserRefetch,
+  } = getCurrentUser(detailUser);
   UseEffect(() => {
     dataUserRefetch();
   }, []);
@@ -119,6 +129,20 @@ const DetailIdea: NextPageWithLayout = ({ detailIdea, allComments }: IDetailEmpl
     //Refetch get url dowload zip
     refetchDataURLZip();
   }, [dataDetailIdea]);
+
+  //Add view user
+  useEffect(() => {
+    if (dataUser && dataDetailIdea) {
+      postData({
+        url: '/api/views',
+        body: {
+          user_id: dataUser.user._id,
+          idea_id: dataDetailIdea.idea._id,
+        },
+        token: dataUser.accessToken.token,
+      });
+    }
+  }, [dataUser, dataDetailIdea]);
 
   //  Mutation call api to add comment
   const mutationAddComment = commentMutation.add({
@@ -218,6 +242,7 @@ const DetailIdea: NextPageWithLayout = ({ detailIdea, allComments }: IDetailEmpl
             <span>
               {dataDetailIdea && new Date(dataDetailIdea.idea.createdAt).toLocaleString()}
             </span>
+            <span>{dataDetailIdea && `(${dataDetailIdea.idea.view}) view`}</span>
           </Space>
           <Divider
             style={{
@@ -375,16 +400,15 @@ export default DetailIdea;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   //Check login
-  const res: any = await fetch(`http://localhost:3000/api/auth/accesstoken`, {
+  const detailUser: IDetailUser = await fetch(`http://localhost:3000/api/auth/accesstoken`, {
     method: 'GET',
     headers: {
       cookie: context.req.headers.cookie,
     } as HeadersInit,
-  });
-  const dataAccess = await res.json();
+  }).then((e) => e.json());
 
   //Redirect login page when error
-  if (dataAccess.statusCode !== 200) {
+  if (detailUser.statusCode !== 200) {
     return {
       redirect: {
         destination: '/login',
@@ -394,7 +418,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   //Check role
-  if (dataAccess.user.role === 'admin') {
+  if (detailUser.user.role === 'admin') {
     return {
       notFound: true,
     };
@@ -406,7 +430,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       method: 'GET',
       headers: {
         cookie: context.req.headers.cookie,
-        authorization: dataAccess.accessToken.token,
+        authorization: detailUser.accessToken.token,
       } as HeadersInit,
     }
   ).then((e) => e.json());
@@ -424,7 +448,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       method: 'GET',
       headers: {
         cookie: context.req.headers.cookie,
-        authorization: dataAccess.accessToken.token,
+        authorization: detailUser.accessToken.token,
       } as HeadersInit,
     }
   ).then((e) => e.json());
@@ -437,6 +461,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     props: {
       detailIdea,
       allComments,
+      detailUser,
     },
   };
 };
