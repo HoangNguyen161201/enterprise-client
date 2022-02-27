@@ -66,6 +66,9 @@ export const getAllIdeas = (options: IOptionIdea, accessToken: string | undefine
     },
     {
       enabled: !!accessToken,
+      retry: 1,
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
       select: (data)=> {
         if(data.ideas.length === 0) return data
         const ideas = data.ideas.map(idea=> {

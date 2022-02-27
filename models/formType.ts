@@ -23,6 +23,7 @@ export interface IDepartmentForm {
 
 export interface ICategoryForm {
   id?: string;
+  _id?: string
   name?: string;
   description?: string;
 }

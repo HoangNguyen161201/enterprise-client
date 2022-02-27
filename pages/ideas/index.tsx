@@ -1,22 +1,16 @@
-import {
-  Breadcrumb,
-  Card,
-  Col,
-  Collapse, Grid,
-  InputNumber, Pagination,
-  Row
-} from 'antd';
+import { Breadcrumb, Card, Col, Collapse, Grid, InputNumber, Pagination, Row } from 'antd';
 import { Reaction } from 'components/elements/common';
 import Idea from 'components/elements/common/Idea';
 import { ClientLayout } from 'components/layouts';
 import { IDetailUser } from 'models/apiType';
+import { IFilter } from 'models/elementType';
 import { NextPageWithLayout } from 'models/layoutType';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import { getCurrentUser } from 'queries/auth';
+import { getCurrentUser, getallCategories } from 'queries';
 import { getAllIdeas } from 'queries/idea';
 import { getReactType } from 'queries/reaction';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 var timeOutLimit: NodeJS.Timeout;
 
@@ -24,8 +18,9 @@ const index: NextPageWithLayout = ({ detailUser }) => {
   const { useBreakpoint } = Grid;
   const { md } = useBreakpoint();
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(1);
+  const [limit, setLimit] = useState(6);
   const [reaction, setReaction] = useState<string | null>(null);
+  const [icon, setIcon] = useState('👁');
 
   const {
     data: dataUser,
@@ -33,10 +28,13 @@ const index: NextPageWithLayout = ({ detailUser }) => {
     refetch: dataUserRefetch,
   } = getCurrentUser(detailUser);
 
+  const { data: DataCt, error: errorCt, refetch: refetchCt } = getallCategories(detailUser);
+
   const {
     data: AllIdeas,
     error: errorIdeas,
     refetch: refetchIdeas,
+    isLoading: isLoadingIdeas,
   } = getAllIdeas(
     {
       _limit: limit,
@@ -48,9 +46,20 @@ const index: NextPageWithLayout = ({ detailUser }) => {
     dataUser?.accessToken.token
   );
 
-  const handleCReaction = (id: string)=> {
-    setReaction(id)
-  }
+  useEffect(() => {
+    console.log(errorIdeas?.response?.data);
+  }, [errorIdeas]);
+
+  const handleCReaction = ({ isView = false, id, icon }: IFilter) => {
+    if (isView) {
+      setReaction(null);
+    } else {
+      setReaction(id);
+    }
+    setIcon(icon);
+    setPage(1);
+    setLimit(6);
+  };
 
   const { data: allReaction, error: errorReaction, refetch: refetchReaction } = getReactType();
   return (
@@ -77,11 +86,18 @@ const index: NextPageWithLayout = ({ detailUser }) => {
               <Collapse bordered={false} ghost defaultActiveKey={['1', '2']}>
                 <Collapse.Panel header={'All'} key="1">
                   <div
+                    onClick={() => {
+                      handleCReaction({
+                        isView: true,
+                        icon: '👁',
+                        id: null,
+                      });
+                    }}
                     style={{
                       fontWeight: 500,
                       height: 40,
-                      background: 'black',
-                      color: 'white',
+                      // background: 'black',
+                      color: '#07456f',
                       lineHeight: '40px',
                       paddingLeft: 22,
                       borderRadius: 5,
@@ -89,89 +105,101 @@ const index: NextPageWithLayout = ({ detailUser }) => {
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       paddingRight: '15px',
+                      cursor: 'pointer',
                     }}
                   >
-                    Category 1 fg fdg df dfg dfg df
+                    View
                   </div>
                 </Collapse.Panel>
                 {allReaction?.reactionTypes && (
                   <Collapse.Panel header="Reaction" key="2">
-                    {
-                      allReaction.reactionTypes.map(reaction=> (
-                        <Reaction handleCReaction={handleCReaction} id={reaction._id} key={reaction._id} name={reaction.name} icon={reaction.icon}/>
-                      ))
-                    }
+                    {allReaction.reactionTypes.map((reaction) => (
+                      <Reaction
+                        handleCReaction={handleCReaction}
+                        id={reaction._id}
+                        key={reaction._id}
+                        name={reaction.name}
+                        icon={reaction.icon}
+                      />
+                    ))}
                   </Collapse.Panel>
                 )}
 
                 <Collapse.Panel header="Category" key="3">
-                  <div
-                    style={{
-                      fontWeight: 500,
-                      height: 40,
-                      background: 'black',
-                      color: 'white',
-                      lineHeight: '40px',
-                      paddingLeft: 22,
-                      borderRadius: 5,
-                    }}
-                  >
-                    Category 1
-                  </div>
+                  {DataCt?.categories &&
+                    DataCt.categories.map((ct) => (
+                      <div
+                        style={{
+                          fontWeight: 500,
+                          height: 40,
+                          background: 'black',
+                          color: 'white',
+                          lineHeight: '40px',
+                          paddingLeft: 22,
+                          borderRadius: 5,
+                        }}
+                      >
+                        Category 1
+                      </div>
+                    ))}
                 </Collapse.Panel>
               </Collapse>
             </div>
           </Col>
-          <Col span={md ? undefined : 24} flex="auto">
-            <Row gutter={[0, 30]}>
-              {AllIdeas?.ideas &&
-                AllIdeas.ideas.map((idea, key: number) => (
-                  <Idea
-                  key={key}
-                    title={idea.title}
-                    time={idea.u}
-                    userName={idea.user_id.name}
-                    avatar={idea.user_id.avatar.url}
-                    count={idea.count}
-                    description={idea.description}
-                    iconReaction={'😡'}
-                  />
-                ))}
-            </Row>
-            <div
-              style={{
-                marginTop: 30,
-                display: 'flex',
-                justifyContent: 'flex-end',
-              }}
-            >
-              <InputNumber
-                style={{
-                  marginRight: 10,
-                }}
-                min={1}
-                value={limit}
-                onChange={(vl) => {
-                  clearTimeout(timeOutLimit);
-                  timeOutLimit = setTimeout(() => {
-                    setLimit(vl);
-                  }, 500);
-                }}
-              />
+          {errorIdeas || isLoadingIdeas ? (
+            ''
+          ) : (
+            <Col span={md ? undefined : 24} flex="auto">
+              <Row gutter={[0, 30]}>
+                {AllIdeas?.ideas &&
+                  AllIdeas.ideas.map((idea, key: number) => (
+                    <Idea
+                      key={key}
+                      title={idea.title}
+                      time={idea.u}
+                      userName={idea.user_id.name}
+                      avatar={idea.user_id.avatar.url}
+                      count={idea.count}
+                      description={idea.description}
+                      iconReaction={icon}
+                    />
+                  ))}
+              </Row>
               {Number(AllIdeas?.page_Index) <= 1 ? (
                 ''
               ) : (
-                <Pagination
-                  current={page}
-                  onChange={(pg) => {
-                    setPage(pg);
+                <div
+                  style={{
+                    marginTop: 30,
+                    display: 'flex',
+                    justifyContent: 'flex-end',
                   }}
-                  defaultPageSize={1}
-                  total={AllIdeas?.page_Index}
-                />
+                >
+                  <InputNumber
+                    style={{
+                      marginRight: 10,
+                    }}
+                    min={1}
+                    value={limit}
+                    onChange={(vl) => {
+                      clearTimeout(timeOutLimit);
+                      timeOutLimit = setTimeout(() => {
+                        setLimit(vl);
+                      }, 500);
+                    }}
+                  />
+                  <Pagination
+                    current={page}
+                    onChange={(pg) => {
+                      setPage(pg);
+                    }}
+                    defaultPageSize={1}
+                    total={AllIdeas?.page_Index}
+                  />
+                </div>
               )}
-            </div>
-          </Col>
+            </Col>
+          )}
         </Row>
       </Card>
     </>
