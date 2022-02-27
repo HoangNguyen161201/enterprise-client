@@ -47,6 +47,7 @@ const ideaSchema = new mongoose.Schema(
     },
     cloudinary_id: {
       type: String,
+      default: null,
     },
     anonymously: {
       type: Boolean,
