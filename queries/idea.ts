@@ -60,12 +60,27 @@ interface IOptionIdea {
 
 export const getAllIdeas = (options: IOptionIdea, accessToken: string | undefined) => {
   return useQuery<IAllIdeas, AxiosError>(
-    ['ideas'],
+    ['ideas', options._page, options._limit, options._reaction],
     async () => {
       return await getData({ url: `/api/ideas`, token: accessToken, params: options});
     },
     {
       enabled: !!accessToken,
+      select: (data)=> {
+        console.log(data)
+        if(data.ideas?.length == 0)
+          return data
+        // if(data.ideas[0]?._id.reactionType_id) {
+         
+        //   return {
+        //     statusCode: data.statusCode,
+        //     msg: data.msg,
+        //     page_Index: data.page_Index,
+        //     ideas: []
+        //   }
+        // }
+        return data
+      }
     }
   );
 };

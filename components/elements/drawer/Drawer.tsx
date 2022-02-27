@@ -10,7 +10,7 @@ import {
 import { Drawer as AntDrawer, Menu } from 'antd';
 import Link from 'next/link';
 import { useEffect as UseEffect, useState as UseState } from 'react';
-import { getCurrentUser } from '../../../queries';
+import { getCurrentUser } from 'queries/auth';
 
 const { SubMenu } = Menu;
 
