@@ -2,7 +2,7 @@ import { AxiosError } from 'axios';
 import { IMutation } from 'models/apiType';
 import { IIdeaForm } from 'models/formType';
 import { useMutation } from 'react-query';
-import { deleteData, getData, postData } from '../utils/fetchData';
+import { deleteData, getData, postData, putData } from '../utils/fetchData';
 
 export const IdeaMutaion = {
   add: ({ options, dataUserRefetch, token }: IMutation) => {
@@ -27,6 +27,22 @@ export const IdeaMutaion = {
         dataUserRefetch && dataUserRefetch();
         return deleteData({
           url: `/api/ideas/${idea_id}`,
+          token,
+        });
+      },
+      {
+        ...options,
+      }
+    );
+  },
+
+  update: ({ options, dataUserRefetch, token }: IMutation) => {
+    return useMutation<any, AxiosError, Partial<IIdeaForm>>(
+      ({_id, ...dataForm}) => {
+        dataUserRefetch && dataUserRefetch();
+        return putData({
+          url: `/api/ideas/${_id}`,
+          body: dataForm,
           token,
         });
       },
