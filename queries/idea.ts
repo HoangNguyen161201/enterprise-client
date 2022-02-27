@@ -1,20 +1,28 @@
 import { AxiosError } from 'axios';
 import { useQuery } from 'react-query';
-import { IAllIdeas, IDetailIdea } from '../models/apiType';
-import { getData } from '../utils/fetchData';
+import { IAllIdeas, IDetailIdea, IUrlDowloadZip } from '../models/apiType';
+import { getData, postData } from '../utils/fetchData';
 
 export interface IQueryGetIdeasCurrentUser {
-    user_id: string 
-    submission_id: string
-    accessToken?: string
-    initial?: IAllIdeas
+  user_id: string;
+  submission_id: string;
+  accessToken?: string;
+  initial?: IAllIdeas;
 }
 
-export const getIdeasCurrentUser = ({user_id, submission_id, accessToken, initial}:IQueryGetIdeasCurrentUser) => {
+export const getIdeasCurrentUser = ({
+  user_id,
+  submission_id,
+  accessToken,
+  initial,
+}: IQueryGetIdeasCurrentUser) => {
   return useQuery<IAllIdeas, AxiosError>(
     ['ideas', 'current-user'],
     async () => {
-      return await getData({ url: `/api/ideas/user/${user_id}?submission_id=${submission_id}`, token: accessToken });
+      return await getData({
+        url: `/api/ideas/user/${user_id}?submission_id=${submission_id}`,
+        token: accessToken,
+      });
     },
     {
       enabled: !!accessToken && !!submission_id && !!user_id,
@@ -26,11 +34,7 @@ export const getIdeasCurrentUser = ({user_id, submission_id, accessToken, initia
   );
 };
 
-export const getDetailIdea = (
-  id: string,
-  accessToken?: string,
-  initial?: IDetailIdea
-) => {
+export const getDetailIdea = (id: string, accessToken?: string, initial?: IDetailIdea) => {
   return useQuery<IDetailIdea, AxiosError>(
     ['idea', id],
     async () => {
@@ -47,21 +51,38 @@ export const getDetailIdea = (
 };
 
 interface IOptionIdea {
-  _page: number
-  _limit: string
-  _sort?: number
-  _sortBy?: string
-  _reaction?: string
+  _page: number;
+  _limit: number;
+  _sort?: number;
+  _sortBy?: string;
+  _reaction?: string | null;
 }
 
-export const getAllIdeas = (options: IOptionIdea, accessToken: string) => {
-  return useQuery<IDetailIdea, AxiosError>(
+export const getAllIdeas = (options: IOptionIdea, accessToken: string | undefined) => {
+  return useQuery<IAllIdeas, AxiosError>(
     ['ideas'],
     async () => {
-      return await getData({ url: `/api/ideas`, token: accessToken });
+      return await getData({ url: `/api/ideas`, token: accessToken, params: options});
     },
     {
       enabled: !!accessToken,
+    }
+  );
+};
+
+export const getUrlDownloadZip = (tag: string) => {
+  return useQuery<IUrlDowloadZip, AxiosError>(
+    ['url-zip', tag],
+    async () => {
+      return await postData({
+        url: `/api/image/download`,
+        body: {
+          tag,
+        },
+      });
+    },
+    {
+      enabled: !!tag,
       retry: 1,
       refetchOnWindowFocus: false,
       refetchOnMount: false,

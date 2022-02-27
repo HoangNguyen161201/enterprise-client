@@ -1,12 +1,34 @@
 import { Avatar, Breadcrumb, Card, Col, Collapse, Pagination, Row, Space, Tag, Grid } from 'antd';
 import Idea from 'components/elements/common/Idea';
 import { ClientLayout } from 'components/layouts';
+import { IDetailUser } from 'models/apiType';
 import { NextPageWithLayout } from 'models/layoutType';
+import { GetServerSideProps } from 'next';
 import Head from 'next/head';
+import { getCurrentUser } from 'queries/auth';
+import { getAllIdeas } from 'queries/idea';
+import { useState } from 'react';
 
-const index: NextPageWithLayout = () => {
+const index: NextPageWithLayout = ({detailUser}) => {
   const { useBreakpoint } = Grid;
   const { md } = useBreakpoint();
+  const [page, setPage] = useState(0)
+  const [limit, setLimit] = useState(6)
+  const [reaction, setReaction] = useState(null)
+
+  const {
+    data: dataUser,
+    error: errorGetUser,
+    refetch: dataUserRefetch,
+  } = getCurrentUser(detailUser);
+
+  const {data: AllIdeas, error: errorIdeas, refetch: refetchIdeas} = getAllIdeas({
+    _limit: limit,
+    _page: page,
+    _sort: -1,
+    _sortBy: 'view',
+    _reaction: reaction
+  }, dataUser?.accessToken.token)
   return (
     <>
       <Head>
@@ -120,15 +142,19 @@ const index: NextPageWithLayout = () => {
           </Col>
           <Col span={md ? undefined : 24} flex="auto">
             <Row gutter={[0, 30]}>
-              <Idea
-                title={'This is title'}
-                time={'22/12/22'}
-                userName="hoang nguyen"
-                avatar={'http'}
-                count={12}
-                description={'this is description'}
-                iconReaction={'😡'}
-              />
+              {
+                AllIdeas?.ideas && AllIdeas.ideas.map((idea)=> (
+                    <Idea
+                      title={idea.title}
+                      time={'22/12/22'}
+                      userName={idea.user_id.name}
+                      avatar={idea.user_id.avatar.url}
+                      count={idea.view}
+                      description={idea.description}
+                      iconReaction={'😡'}
+                    />
+                ))
+              }
             </Row>
             <div
               style={{
@@ -148,3 +174,37 @@ const index: NextPageWithLayout = () => {
 
 index.getLayout = ClientLayout;
 export default index;
+
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  //Check login
+  const detailUser: IDetailUser = await fetch(`http://localhost:3000/api/auth/accesstoken`, {
+    method: 'GET',
+    headers: {
+      cookie: context.req.headers.cookie,
+    } as HeadersInit,
+  }).then((e) => e.json());
+
+  //Redirect login page when error
+  if (detailUser.statusCode !== 200) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+  }
+
+  //Check role
+  if (detailUser.user.role === 'admin') {
+    return {
+      notFound: true,
+    };
+  }
+
+  return {
+    props: {
+      detailUser
+    },
+  };
+};
