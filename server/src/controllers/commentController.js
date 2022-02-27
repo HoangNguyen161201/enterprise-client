@@ -5,6 +5,7 @@ const catchAsyncError = require('../helpers/catchAsyncError');
 const userModel = require('../models/userModel');
 const ideaModel = require('../models/ideaModel');
 const commentModel = require('../models/commentModel');
+const submissionModed = require('../models/submissionModel');
 
 //Import valid
 const commentValid = require('../utils/commentValid');
@@ -39,7 +40,7 @@ const commentController = {
       });
 
     //get submission to check final closure date
-    const submission = await submissionModel.findById(idea.submission_id);
+    const submission = await submissionModed.findById(idea.submission_id);
 
     //Check time closure date
     const checkTimeFinalClosure = new Date(submission.final_closure_date) > new Date();
