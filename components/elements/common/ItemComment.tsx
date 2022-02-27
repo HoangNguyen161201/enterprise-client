@@ -1,7 +1,8 @@
 import { UserOutlined } from '@ant-design/icons';
-import { Avatar, Divider, List, message, Skeleton, Space } from 'antd';
+import { Avatar, List, message, Space } from 'antd';
 import { AxiosError } from 'axios';
 import { ICommentResponse, ICommon } from 'models/apiType';
+import moment from 'moment';
 import { commentMutation } from 'mutations/comment';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -15,6 +16,7 @@ export interface IItemCommentProps {
   isMatchFinalTime: boolean;
   idea_id: string;
   anonymously: boolean;
+  refetchDataComments: any;
 }
 
 export default function ItemComment({
@@ -24,6 +26,7 @@ export default function ItemComment({
   isMatchFinalTime,
   idea_id,
   anonymously,
+  refetchDataComments,
 }: IItemCommentProps) {
   //State show input reply
   const [isShowInput, setIsShowInput] = useState<boolean>(false);
@@ -40,6 +43,9 @@ export default function ItemComment({
         message.success({
           content: data.msg,
         });
+
+        //Fetch again comment
+        refetchDataComments();
       },
       onError: (error: AxiosError) => {
         message.error({
@@ -110,7 +116,7 @@ export default function ItemComment({
                 fontSize: 12,
               }}
             >
-              {comment.createdAt}
+              {moment(comment.createdAt).fromNow()}
             </span>
           </Space>
           <span>{comment.content}</span>
@@ -126,7 +132,7 @@ export default function ItemComment({
                   setIsShowInput(!isShowInput);
                 }}
               >
-                Reply
+                {isShowInput ? 'Hide Reply' : 'Rely'}
               </span>
 
               <span
@@ -137,11 +143,14 @@ export default function ItemComment({
                 onClick={() => {
                   setisShowReplies(!isShowReplies);
                 }}
-              >{`Show replies (${comment.replies.length})`}</span>
+              >
+                {isShowReplies
+                  ? `Hide replies (${comment.replies.length})`
+                  : `Show replies (${comment.replies.length})`}
+              </span>
             </Space>
           )}
         </Space>
-        {/* Input comment */}
       </Space>
 
       {isMatchFinalTime && (
@@ -159,7 +168,7 @@ export default function ItemComment({
           />
         </Space>
       )}
-        
+
       <List
         style={{
           paddingLeft: 50,

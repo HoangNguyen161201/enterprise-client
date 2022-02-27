@@ -3,6 +3,7 @@ import { Avatar, Space } from 'antd';
 import { IComment } from 'models/apiType';
 import Link from 'next/link';
 import * as React from 'react';
+import moment from 'moment';
 
 export interface IItemReplyCommentProps {
   comment: IComment;
@@ -52,7 +53,7 @@ export default function ItemReplyComment({ comment }: IItemReplyCommentProps) {
                 fontSize: 12,
               }}
             >
-              {comment.createdAt}
+              {moment(comment.createdAt).fromNow()}
             </span>
           </Space>
           <span>{comment.content}</span>
