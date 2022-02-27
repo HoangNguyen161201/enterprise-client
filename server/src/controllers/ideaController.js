@@ -102,7 +102,7 @@ const ideaController = {
     const { id } = req.params;
 
     //get info update
-    const { title, description, content, last_modified_date, category_id } = req.body;
+    const { title, description, content, category_id, anonymously, files } = req.body;
 
     //check idea exist in system
     const idea = await ideaModel.findById(id);
@@ -114,12 +114,31 @@ const ideaController = {
       });
     }
 
+    //Get submission to check time
+    const submission = await submissionModel.findById(idea.submission_id);
+
+    //Check time closure date
+    const checkTimeClosure = new Date(submission.closure_date) > new Date();
+    if (!checkTimeClosure)
+      return res.status(400).json({
+        err: 'The closure timeout date has expired, you can not update idea.',
+        statusCode: 400,
+      });
+
+    //check category exist in system
+    const category = await categoryModel.findById(category_id);
+
+    if (!category) {
+      return res.status(400).json({
+        err: 'The category does not exist',
+        statusCode: 400,
+      });
+    }
+
     const ideaErr = ideaValid.ideaUpdate({
       title,
       description,
       content,
-      last_modified_date,
-      category_id,
     });
 
     if (ideaErr)
@@ -133,9 +152,9 @@ const ideaController = {
       title,
       description,
       content,
-      last_modified_date,
       category_id,
-      anoymous,
+      anonymously,
+      files,
     });
 
     return res.status(200).json({
@@ -230,7 +249,7 @@ const ideaController = {
           },
         },
         {
-          $skip: Number(_page -1) * Number(_limit),
+          $skip: Number(_page - 1) * Number(_limit),
         },
         {
           $limit: Number(_limit),
@@ -246,7 +265,7 @@ const ideaController = {
         statusCode: 200,
         msg: 'Get All Success',
         ideas: data,
-        page_Index: Math.ceil((page[0].totalPage) / Number(_limit)),
+        page_Index: Math.ceil(page[0].totalPage / Number(_limit)),
       });
     }
     const page_Index = await pageIndex({ query: ideaModel.find({}), limit: _limit });
@@ -257,7 +276,7 @@ const ideaController = {
     if (_sort) {
       filter = filter.sort({ name: _sortBy, NorO: _sort });
     }
-    filter = filter.pagination({ page: _page -1, limit: _limit });
+    filter = filter.pagination({ page: _page - 1, limit: _limit });
 
     const data = await filter.query.populate('user_id');
     return res.status(200).json({
