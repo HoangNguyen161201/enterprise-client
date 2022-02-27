@@ -83,7 +83,7 @@ const ideaController = {
       description,
       content,
       user_id,
-      category_id: category_id ? category_id : undefined,
+      category_id: category_id ? category_id : null,
       submission_id,
       anonymously,
       files,
@@ -157,10 +157,10 @@ const ideaController = {
       title,
       description,
       content,
-      category_id: category_id ? category_id : undefined,
+      category_id: category_id ? category_id : null,
       anonymously,
       files,
-      cloudinary_id: cloudinary_id ? cloudinary_id : undefined
+      cloudinary_id: cloudinary_id ? cloudinary_id : null
     });
 
     return res.status(200).json({
