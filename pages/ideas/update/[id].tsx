@@ -205,6 +205,7 @@ const DetailSubmission: NextPageWithLayout = ({
   const onRemoveFileOld = (index: number) => {
     //set old files upload to state will remove
     setOldFilesRemoveUpload([oldFilesUpload[index], ...oldFilesRemoveUpload]);
+    console.log(oldFilesRemoveUpload);
 
     const newOldFilesUpload = oldFilesUpload.filter((file, indexFile) => {
       if (indexFile !== index) {
@@ -256,10 +257,10 @@ const DetailSubmission: NextPageWithLayout = ({
         //Up files
         files = await uploadFile(filesUpload, [dataUser?.user._id, cloudinary_id]);
         setIsLoadUpFile(false);
-
-        //Concact new files with old files upload
-        files = files.concat(oldFilesUpload)
       }
+
+      //Concact new files with old files upload
+      files = oldFilesUpload.concat(files);
 
       //Set again data form
       const newDataForm = {
@@ -271,6 +272,7 @@ const DetailSubmission: NextPageWithLayout = ({
         _id: dataDetailIdea?.idea._id,
       };
 
+      //Update file
       mutationUpdateIdea.mutate(newDataForm);
     }
   };
@@ -400,7 +402,7 @@ const DetailSubmission: NextPageWithLayout = ({
               color: 'gray',
             }}
           >
-            Old file upload
+            {`Old file upload (${dataDetailIdea?.idea?.files?.length} files)`}
           </span>
 
           {/* old file upload */}
