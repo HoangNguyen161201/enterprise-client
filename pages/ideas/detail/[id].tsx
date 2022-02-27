@@ -22,10 +22,10 @@ import { GetServerSideProps } from 'next';
 //Dynamic import quill
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
+import { useRouter as UseRouter } from 'next/router';
 import { getCurrentUser, getDetailIdea, getUrlDownloadZip } from 'queries';
 import { getallComments } from 'queries/comment';
-import { useEffect, useEffect as UseEffect, useState } from 'react';
+import { useEffect as UseEffect, useState as UseState } from 'react';
 import 'react-quill/dist/quill.bubble.css';
 //CSS quill
 import 'react-quill/dist/quill.snow.css';
@@ -67,20 +67,20 @@ const DetailIdea: NextPageWithLayout = ({
   allComments,
   detailUser,
 }: IDetailEmployeeProps) => {
-  const { query } = useRouter();
+  const { query } = UseRouter();
   const { useBreakpoint } = Grid;
   const { lg } = useBreakpoint();
 
   //State anonymously and content comment
-  const [anonymously, setAnonymously] = useState<boolean>(false);
+  const [anonymously, setAnonymously] = UseState<boolean>(false);
 
   //Get id from router to get detail data
   const {
     query: { id },
-  } = useRouter();
+  } = UseRouter();
 
   //State match final closure date
-  const [isMatchFinalTime, setIsMatchFinalTime] = useState<boolean>(false);
+  const [isMatchFinalTime, setIsMatchFinalTime] = UseState<boolean>(false);
 
   //Get access token
   const {
@@ -112,7 +112,7 @@ const DetailIdea: NextPageWithLayout = ({
   );
 
   //Set is match final closure date
-  useEffect(() => {
+  UseEffect(() => {
     if (dataDetailIdea && dataDetailIdea.idea.submission_id.final_closure_date) {
       const valueCheckTime =
         new Date(dataDetailIdea.idea.submission_id.final_closure_date) > new Date();
@@ -124,7 +124,7 @@ const DetailIdea: NextPageWithLayout = ({
   }, [dataDetailIdea]);
 
   //Add view user
-  useEffect(() => {
+  UseEffect(() => {
     if (dataUser && dataDetailIdea) {
       postData({
         url: '/api/views',

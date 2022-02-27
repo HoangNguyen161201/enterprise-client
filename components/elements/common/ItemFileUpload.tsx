@@ -1,5 +1,6 @@
 import { CloseOutlined } from '@ant-design/icons';
 import { Space } from 'antd';
+import Image from 'next/image';
 import * as React from 'react';
 
 export interface IItemFileUploadProps {
@@ -29,7 +30,7 @@ export default function ItemFileUpload({
       }}
     >
       <Space size={20}>
-        <img src={src} width={50} />
+        <img alt={'file_upload'} src={src} width={50} />
         {url_file ? (
           <div>
             <a href={url_file} download>{fileName}</a>

@@ -1,8 +1,9 @@
 import { FileTextOutlined } from '@ant-design/icons';
 import { Avatar, Button, Col, Drawer, Row, Space, Alert } from 'antd';
 import { UseFormReturn } from 'react-hook-form';
-import { IOptionSelect, IUser } from '../../../models';
-import { roleSelect } from '../../../utils/dataSelect';
+import { IUser } from 'models/apiType';
+import { IOptionSelect } from 'models/elementType';
+import { roleSelect } from 'utils/dataSelect';
 import { Select, Input } from '../form';
 
 export interface IDrawerUpdateUserProps {

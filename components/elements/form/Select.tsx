@@ -1,6 +1,7 @@
 import React from 'react';
 import { Space, Select as AntSelect } from 'antd';
-import { IInput, IOptionSelect } from '../../models';
+import { IInput } from 'models/formType';
+import { IOptionSelect } from 'models/elementType';
 import { Controller } from 'react-hook-form';
 
 export const Select = ({ formSetting, name, label, placeholder, require = true, data }: IInput) => {

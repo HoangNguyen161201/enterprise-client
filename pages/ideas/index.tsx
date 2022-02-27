@@ -14,27 +14,30 @@ import {
 import { CtSlideItem, Reaction } from 'components/elements/common';
 import Idea from 'components/elements/common/Idea';
 import { ClientLayout } from 'components/layouts';
+import { motion } from 'framer-motion';
 import { IDetailUser } from 'models/apiType';
 import { IFilter } from 'models/elementType';
 import { NextPageWithLayout } from 'models/layoutType';
+import moment from 'moment';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { getCurrentUser, getallCategories } from 'queries';
 import { getAllIdeas } from 'queries/idea';
 import { getReactType } from 'queries/reaction';
-import { useEffect, useState } from 'react';
+import { useEffect as UseEffect, useState as UseState} from 'react';
 
 var timeOutLimit: NodeJS.Timeout;
 
 const index: NextPageWithLayout = ({ detailUser }) => {
-  const { useBreakpoint } = Grid;
-  const { md } = useBreakpoint();
-  const [_page, setPage] = useState(1);
-  const [_limit, setLimit] = useState(6);
-  const [_nameById, setNameById] = useState<string | null>(null);
-  const [_valueById, setValueById] = useState<string | null>(null);
-  const [_reaction, setReaction] = useState<string | null>(null);
-  const [icon, setIcon] = useState('👁');
+  const { useBreakpoint: UseBreakpoint} = Grid;
+  const { md } = UseBreakpoint();
+  const [_page, setPage] = UseState(1);
+  const [_limit, setLimit] = UseState(6);
+  const [_nameById, setNameById] = UseState<string | null>(null);
+  const [_valueById, setValueById] = UseState<string | null>(null);
+  const [_reaction, setReaction] = UseState<string | null>(null);
+  const [_interactive, setInteractive] = UseState<number | null>(null);
+  const [icon, setIcon] = UseState('👁');
 
   const {
     data: dataUser,
@@ -58,13 +61,12 @@ const index: NextPageWithLayout = ({ detailUser }) => {
       _reaction,
       _nameById,
       _valueById,
+      _interactive,
     },
     dataUser?.accessToken.token
   );
 
-  console.log(AllIdeas);
-
-  useEffect(() => {
+  UseEffect(() => {
     console.log(errorIdeas?.response?.data);
   }, [errorIdeas]);
 
@@ -74,6 +76,8 @@ const index: NextPageWithLayout = ({ detailUser }) => {
     icon,
     _nameById,
     _valueById,
+    _interactive,
+    _reaction,
   }: Partial<IFilter>) => {
     if (isView) {
       setReaction(null);
@@ -87,6 +91,17 @@ const index: NextPageWithLayout = ({ detailUser }) => {
       setNameById(null);
       setValueById(null);
     }
+    if (_reaction) {
+      setReaction(_reaction);
+    } else {
+      setReaction(null);
+    }
+    if (_interactive) {
+      setInteractive(_interactive);
+    } else {
+      setInteractive(null);
+    }
+
     if (icon) return setIcon(icon);
     setPage(1);
     setLimit(6);
@@ -116,7 +131,15 @@ const index: NextPageWithLayout = ({ detailUser }) => {
             <div>
               <Collapse bordered={false} ghost defaultActiveKey={['1', '2']}>
                 <Collapse.Panel header={'All'} key="1">
-                  <div
+                  <motion.div
+                    whileTap={{
+                      backgroundColor: '#009F9D',
+                      scale: 0.9,
+                    }}
+                    whileHover={{
+                      backgroundColor: '#009F9D80',
+                      scale: 1.1,
+                    }}
                     onClick={() => {
                       handleCReaction({
                         isView: true,
@@ -126,10 +149,9 @@ const index: NextPageWithLayout = ({ detailUser }) => {
                     }}
                     style={{
                       fontWeight: 500,
-                      height: 40,
-                      // background: 'black',
+                      height: 35,
                       color: '#07456f',
-                      lineHeight: '40px',
+                      lineHeight: '35px',
                       paddingLeft: 22,
                       borderRadius: 5,
                       whiteSpace: 'nowrap',
@@ -140,26 +162,24 @@ const index: NextPageWithLayout = ({ detailUser }) => {
                     }}
                   >
                     View
-                  </div>
+                  </motion.div>
                 </Collapse.Panel>
                 {allReaction?.reactionTypes && (
-                  <Collapse.Panel header="Reaction" key="2">
-                    <Space direction='vertical' size={'small'}>
-                      {allReaction.reactionTypes.map((reaction) => (
-                        <Reaction
-                          handleCReaction={handleCReaction}
-                          id={reaction._id}
-                          key={reaction._id}
-                          name={reaction.name}
-                          icon={reaction.icon}
-                        />
-                      ))}
+                  <Collapse.Panel header="Interaction" key="2">
+                    <Space direction="vertical" size={'small'}>
+                      <Reaction
+                        handleCReaction={handleCReaction}
+                        name={'High interaction'}
+                        icon={'👍'}
+                      />
+
+                      <Reaction handleCReaction={handleCReaction} name={'Dislike'} icon={'👎'} />
                     </Space>
                   </Collapse.Panel>
                 )}
 
                 <Collapse.Panel header="Category" key="3">
-                  <Space direction='vertical' size={'small'}>
+                  <Space direction="vertical" size={'small'}>
                     {DataCt?.categories &&
                       DataCt.categories.map((ct) => (
                         <CtSlideItem handleCReaction={handleCReaction} ct={ct} key={ct._id} />
@@ -197,11 +217,12 @@ const index: NextPageWithLayout = ({ detailUser }) => {
             <Col span={md ? undefined : 24} flex="auto">
               <Row gutter={[0, 30]}>
                 {AllIdeas?.ideas &&
-                  AllIdeas.ideas.map((idea, key: number) => (
+                  AllIdeas.ideas.map((idea) => (
                     <Idea
-                      key={key}
+                    id={idea._id}
+                      key={idea._id}
                       title={idea.title}
-                      time={idea.u}
+                      time={moment(new Date(idea.createdAt)).fromNow()}
                       userName={idea.user_id.name}
                       avatar={idea.user_id.avatar.url}
                       count={idea.count}

@@ -12,7 +12,7 @@ import { submMutation } from 'mutations/submission';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { getallSubmissions, getCurrentUser } from 'queries';
-import { useEffect, useEffect as UseEffect, useState, useState as UseState } from 'react';
+import { useEffect as UseEffect, useState as UseState } from 'react';
 import { useForm as UseForm } from 'react-hook-form';
 import { validateSubmission } from 'utils/validate';
 
@@ -24,19 +24,19 @@ const index: NextPageWithLayout = ({ result }: submisionPage) => {
   const [isOpenSlImg, setIsOpenSlImg] = UseState(false);
   const [imgs, setImgs] = UseState<string[] | null>(null);
   const [page, setPage] = UseState<number>(1);
-  const [search, setSearch] = useState('');
-  const [searchFirst, setSearchFirst] = useState('')
-  const [date, setDate] = useState('');
-  const [searchDate, setSearchDate] = useState<any>(null)
-  const [submissionUd, setSubmissionUd] = useState<ISubmissionForm | null | undefined>(null);
-  const [statusForm, setStatusForm] = useState<'create' | 'update'>('create');
+  const [search, setSearch] = UseState('');
+  const [searchFirst, setSearchFirst] = UseState('')
+  const [date, setDate] = UseState('');
+  const [searchDate, setSearchDate] = UseState<any>(null)
+  const [submissionUd, setSubmissionUd] = UseState<ISubmissionForm | null | undefined>(null);
+  const [statusForm, setStatusForm] = UseState<'create' | 'update'>('create');
   const [imgSubmission, setImgSubmission] = UseState(
     'https://res.cloudinary.com/hoang161201/image/upload/v1645274633/Group_92_grzovc.svg'
   );
   let timeOutSearch: NodeJS.Timeout, timeOutSearchTime: NodeJS.Timeout
   
-  const [idDelete, setIdDelete] = useState('');
-  useEffect(()=> {
+  const [idDelete, setIdDelete] = UseState('');
+  UseEffect(()=> {
     timeOutSearch = setTimeout(()=> {
       setSearch(searchFirst)
       setPage(1)
@@ -44,7 +44,7 @@ const index: NextPageWithLayout = ({ result }: submisionPage) => {
     return ()=> clearTimeout(timeOutSearch)
   }, [searchFirst])
 
-  useEffect(()=> {
+  UseEffect(()=> {
     timeOutSearchTime = setTimeout(()=> {
       console.log(searchDate)
       setDate(searchDate)
