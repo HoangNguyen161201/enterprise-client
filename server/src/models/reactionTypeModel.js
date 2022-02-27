@@ -6,8 +6,11 @@ const reactionTypeSchema = new mongoose.Schema({
     type: String,
     require: true,
     unique: true,
-    icon: String,
+    
   },
+  icon: {
+    type: String,
+  }
 });
 
 module.exports = mongoose.model('reactiontypes', reactionTypeSchema);
