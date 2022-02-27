@@ -1,5 +1,17 @@
-import { Breadcrumb, Card, Col, Collapse, Grid, InputNumber, Pagination, Row } from 'antd';
-import { Reaction } from 'components/elements/common';
+import {
+  Breadcrumb,
+  Card,
+  Col,
+  Collapse,
+  Empty,
+  Grid,
+  InputNumber,
+  Pagination,
+  Row,
+  Space,
+  Spin,
+} from 'antd';
+import { CtSlideItem, Reaction } from 'components/elements/common';
 import Idea from 'components/elements/common/Idea';
 import { ClientLayout } from 'components/layouts';
 import { IDetailUser } from 'models/apiType';
@@ -17,9 +29,11 @@ var timeOutLimit: NodeJS.Timeout;
 const index: NextPageWithLayout = ({ detailUser }) => {
   const { useBreakpoint } = Grid;
   const { md } = useBreakpoint();
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(6);
-  const [reaction, setReaction] = useState<string | null>(null);
+  const [_page, setPage] = useState(1);
+  const [_limit, setLimit] = useState(6);
+  const [_nameById, setNameById] = useState<string | null>(null);
+  const [_valueById, setValueById] = useState<string | null>(null);
+  const [_reaction, setReaction] = useState<string | null>(null);
   const [icon, setIcon] = useState('👁');
 
   const {
@@ -37,26 +51,43 @@ const index: NextPageWithLayout = ({ detailUser }) => {
     isLoading: isLoadingIdeas,
   } = getAllIdeas(
     {
-      _limit: limit,
-      _page: page,
+      _limit,
+      _page,
       _sort: -1,
       _sortBy: 'view',
-      _reaction: reaction,
+      _reaction,
+      _nameById,
+      _valueById,
     },
     dataUser?.accessToken.token
   );
+
+  console.log(AllIdeas);
 
   useEffect(() => {
     console.log(errorIdeas?.response?.data);
   }, [errorIdeas]);
 
-  const handleCReaction = ({ isView = false, id, icon }: IFilter) => {
+  const handleCReaction = ({
+    isView = false,
+    id,
+    icon,
+    _nameById,
+    _valueById,
+  }: Partial<IFilter>) => {
     if (isView) {
       setReaction(null);
     } else {
-      setReaction(id);
+      setReaction(id as string);
     }
-    setIcon(icon);
+    if (_nameById && _valueById) {
+      setNameById(_nameById);
+      setValueById(_valueById);
+    } else {
+      setNameById(null);
+      setValueById(null);
+    }
+    if (icon) return setIcon(icon);
     setPage(1);
     setLimit(6);
   };
@@ -113,41 +144,55 @@ const index: NextPageWithLayout = ({ detailUser }) => {
                 </Collapse.Panel>
                 {allReaction?.reactionTypes && (
                   <Collapse.Panel header="Reaction" key="2">
-                    {allReaction.reactionTypes.map((reaction) => (
-                      <Reaction
-                        handleCReaction={handleCReaction}
-                        id={reaction._id}
-                        key={reaction._id}
-                        name={reaction.name}
-                        icon={reaction.icon}
-                      />
-                    ))}
+                    <Space direction='vertical' size={'small'}>
+                      {allReaction.reactionTypes.map((reaction) => (
+                        <Reaction
+                          handleCReaction={handleCReaction}
+                          id={reaction._id}
+                          key={reaction._id}
+                          name={reaction.name}
+                          icon={reaction.icon}
+                        />
+                      ))}
+                    </Space>
                   </Collapse.Panel>
                 )}
 
                 <Collapse.Panel header="Category" key="3">
-                  {DataCt?.categories &&
-                    DataCt.categories.map((ct) => (
-                      <div
-                        style={{
-                          fontWeight: 500,
-                          height: 40,
-                          background: 'black',
-                          color: 'white',
-                          lineHeight: '40px',
-                          paddingLeft: 22,
-                          borderRadius: 5,
-                        }}
-                      >
-                        Category 1
-                      </div>
-                    ))}
+                  <Space direction='vertical' size={'small'}>
+                    {DataCt?.categories &&
+                      DataCt.categories.map((ct) => (
+                        <CtSlideItem handleCReaction={handleCReaction} ct={ct} key={ct._id} />
+                      ))}
+                  </Space>
                 </Collapse.Panel>
               </Collapse>
             </div>
           </Col>
-          {errorIdeas || isLoadingIdeas ? (
-            ''
+          {isLoadingIdeas ? (
+            <Space
+              style={{
+                height: 300,
+                display: 'flex',
+                justifyContent: 'center',
+              }}
+              direction="vertical"
+              align="center"
+            >
+              <Spin spinning={true} />
+            </Space>
+          ) : errorIdeas || AllIdeas?.ideas.length == 0 ? (
+            <Space
+              style={{
+                height: 300,
+                display: 'flex',
+                justifyContent: 'center',
+              }}
+              direction="vertical"
+              align="center"
+            >
+              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+            </Space>
           ) : (
             <Col span={md ? undefined : 24} flex="auto">
               <Row gutter={[0, 30]}>
@@ -180,7 +225,7 @@ const index: NextPageWithLayout = ({ detailUser }) => {
                       marginRight: 10,
                     }}
                     min={1}
-                    value={limit}
+                    value={_limit}
                     onChange={(vl) => {
                       clearTimeout(timeOutLimit);
                       timeOutLimit = setTimeout(() => {
@@ -189,7 +234,7 @@ const index: NextPageWithLayout = ({ detailUser }) => {
                     }}
                   />
                   <Pagination
-                    current={page}
+                    current={_page}
                     onChange={(pg) => {
                       setPage(pg);
                     }}

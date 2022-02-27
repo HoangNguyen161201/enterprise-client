@@ -280,7 +280,7 @@ const ideaController = {
 
     let filter = new Filter(ideaModel);
     filter = filter.getAll();
-    if (_searchName){
+    if (_nameById){
       filter = filter.searchById({name: _nameById, value: _valueById})
     }
     if (_sort) {
