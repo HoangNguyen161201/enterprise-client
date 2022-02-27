@@ -53,7 +53,7 @@ const commentController = {
         {
           user_id,
           content,
-          anonymously
+          anonymously,
         },
         ...parentComment.replies,
       ];
@@ -65,7 +65,7 @@ const commentController = {
         content,
         user_id,
         idea_id,
-        anonymously
+        anonymously,
       });
     }
 
@@ -176,18 +176,32 @@ const commentController = {
         err: 'Idea does not exist in system.',
       });
 
+    //get submission to check final closure date
+    const submission = await submissionModel.findById(idea.submission_id);
+
+    //Check time closure date
+    const checkTimeFinalClosure = new Date(submission.final_closure_date) > new Date();
+    if (!checkTimeFinalClosure)
+      return res.status(400).json({
+        err: 'The final closure timeout date has expired, can not comment.',
+        statusCode: 400,
+      });
+
     //Get comments by idea
-    const comments = await commentModel.find({
-      idea_id,
-    }).populate('user_id').populate({
-      path: 'replies.user_id',
-      model: 'users'
-    });
+    const comments = await commentModel
+      .find({
+        idea_id,
+      })
+      .populate('user_id')
+      .populate({
+        path: 'replies.user_id',
+        model: 'users',
+      });
 
     return res.status(200).json({
       statusCode: 200,
       msg: 'Get comments by idea success.',
-      comments
+      comments,
     });
   }),
 };
