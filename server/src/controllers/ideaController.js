@@ -264,10 +264,7 @@ const ideaController = {
         return {
           ...item._id.idea,
           totalReaction: item.totalReaction,
-<<<<<<< HEAD
-=======
           user_id: item._id.idea.user[0],
->>>>>>> 7bacbad24f974067e14007496a139606bb0f96e1
         };
       });
       return res.status(200).json({
