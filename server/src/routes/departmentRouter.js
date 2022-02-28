@@ -9,9 +9,13 @@ const departmentRouter = express.Router();
 //Import middleware
 const authorization = require('../middlewares/authorization');
 
-departmentRouter.post('/', departmentController.create);
+departmentRouter.post('/', authorization(['admin', 'qa_manager']), departmentController.create);
 
-departmentRouter.post('/delete-many', departmentController.deleteMany);
+departmentRouter.post(
+  '/delete-many',
+  authorization(['admin', 'qa_manager']),
+  departmentController.deleteMany
+);
 
 departmentRouter.post(
   '/:id/assign',
@@ -19,11 +23,11 @@ departmentRouter.post(
   departmentController.assign
 );
 
-departmentRouter.get('/', departmentController.getAll);
+departmentRouter.get('/', authorization([]), departmentController.getAll);
 
-departmentRouter.get('/:id', departmentController.getDetail);
+departmentRouter.get('/:id', authorization([]), departmentController.getDetail);
 
-departmentRouter.get('/user/:id', departmentController.getDetailByUser);
+departmentRouter.get('/user/:id', authorization([]), departmentController.getDetailByUser);
 
 departmentRouter.put('/:id', authorization(['admin', 'qa_manager']), departmentController.update);
 

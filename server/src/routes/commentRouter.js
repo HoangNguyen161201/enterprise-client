@@ -9,12 +9,28 @@ const commentRouter = express.Router();
 //Import middleware
 const authorization = require('../middlewares/authorization');
 
-commentRouter.post('/', commentController.create);
+commentRouter.post(
+  '/',
+  authorization(['qa_manager', 'qa_coordinator', 'department_manager', 'staff']),
+  commentController.create
+);
 
-commentRouter.put('/:comment_id', commentController.update);
+commentRouter.put(
+  '/:comment_id',
+  authorization(['qa_manager', 'qa_coordinator', 'department_manager', 'staff']),
+  commentController.update
+);
 
-commentRouter.delete('/:comment_id', commentController.delete);
+commentRouter.delete(
+  '/:comment_id',
+  authorization(['qa_manager', 'qa_coordinator', 'department_manager', 'staff']),
+  commentController.delete
+);
 
-commentRouter.get('/idea/:idea_id', commentController.getCommentsByDetail);
+commentRouter.get(
+  '/idea/:idea_id',
+  authorization(['qa_manager', 'qa_coordinator', 'department_manager', 'staff']),
+  commentController.getCommentsByDetail
+);
 
 module.exports = commentRouter;

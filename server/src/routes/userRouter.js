@@ -10,30 +10,40 @@ const userRouter = express.Router();
 const authorization = require('../middlewares/authorization');
 
 //Handle user routes
-userRouter.post('/', userController.create);
+userRouter.post('/', authorization(['admin', 'qa_manager']), userController.create);
 
-userRouter.post('/assign', userController.assignDepartment);
+userRouter.post('/assign', authorization(['admin', 'qa_manager']), userController.assignDepartment);
 
-userRouter.post('/assign-many', userController.manyAssignDepartment);
+userRouter.post(
+  '/assign-many',
+  authorization(['admin', 'qa_manager']),
+  userController.manyAssignDepartment
+);
 
-userRouter.post('/remove-assign-many', userController.removeManyAssignDepartment);
+userRouter.post(
+  '/remove-assign-many',
+  authorization(['admin', 'qa_manager']),
+  userController.removeManyAssignDepartment
+);
 
-userRouter.post('/delete-many', userController.deleteMany);
+userRouter.post('/delete-many', authorization(['admin', 'qa_manager']), userController.deleteMany);
 
-userRouter.put('/:id', userController.update);
+userRouter.put('/:id', authorization(['admin', 'qa_manager']), userController.update);
 
-userRouter.delete('/remove-assign/:id', userController.removeAssignDepartment);
+userRouter.delete(
+  '/remove-assign/:id',
+  authorization(['admin', 'qa_manager']),
+  userController.removeAssignDepartment
+);
 
-userRouter.delete('/:id',  userController.delete);
+userRouter.delete('/:id', authorization(['admin', 'qa_manager']), userController.delete);
 
-userRouter.get('/', userController.getAll);
+userRouter.get('/', authorization([]), userController.getAll);
 
-userRouter.get('/role/:role', userController.getRole);
+userRouter.get('/role/:role', authorization([]), userController.getRole);
 
-userRouter.get('/not-department', userController.getNotDepartment);
+userRouter.get('/not-department', authorization([]), userController.getNotDepartment);
 
-userRouter.get('/:id', authorization(['admin', 'qa_manager']), userController.getDetail);
-
-
+userRouter.get('/:id', authorization([]), userController.getDetail);
 
 module.exports = userRouter;
