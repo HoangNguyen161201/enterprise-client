@@ -3,8 +3,8 @@ class Filter {
   constructor(query) {
     this.query = query;
   }
-  getAll() {
-    this.query = this.query.find({});
+  getAll(find) {
+    this.query = this.query.find(find || {});
     return this;
   }
   search({ name, query }) {

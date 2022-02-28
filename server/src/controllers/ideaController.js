@@ -196,35 +196,38 @@ const ideaController = {
       _sortBy,
       _limit,
       _page,
-      _reaction,
       _nameById,
       _valueById,
-      _interactive
+      _interactive,
+      _reaction,
+      _search
+
     } = req.query;
 
-    const match = () => {
-      if (_interactive && _reaction) {
+    if (_interactive || _reaction) {
+      const match = ()=> {
+        if(_reaction) {
+          return {
+            $match: {
+              reactionType_id: _reaction,
+              'idea.accept': true 
+            }
+          }
+        }
+  
         return {
           $match: {
-            reactionType_id: { $nin: [_reaction] }
-          },
+            reactionType_id: {$nin: ['']},
+            'idea.accept': true  
+          }
         }
       }
-      return {
-        $match: {
-          reactionType_id: _reaction
-        }
-      }
-    }
-
-
-    if (_reaction) {
       const page = await reactionModel.aggregate([
         match(),
         {
           $group: {
-            _id: '$idea',
-          },
+            _id: '$idea_id',
+          }
         },
         {
           $count: 'totalPage',
@@ -292,9 +295,14 @@ const ideaController = {
     const page_Index = await pageIndex({ query: ideaModel.find({}), limit: _limit });
 
     let filter = new Filter(ideaModel);
-    filter = filter.getAll();
+    filter = filter.getAll({
+      accept: true
+    });
     if (_nameById) {
       filter = filter.searchById({ name: _nameById, value: _valueById })
+    }
+    if (_search) {
+      filter = filter.search({name: 'title', query: _search})
     }
     if (_sort) {
       filter = filter.sort({ name: _sortBy, NorO: _sort });
@@ -312,15 +320,6 @@ const ideaController = {
 
   getDetail: catchAsyncError(async (req, res) => {
     const { id } = req.params;
-    // const reaction = await reactionModel.aggregate([
-    //   {
-    //     $group: {
-    //       _id: {
-
-    //       }
-    //     }
-    //   }
-    // ])
 
     const idea = await ideaModel
       .findById(id)

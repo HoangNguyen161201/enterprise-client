@@ -55,15 +55,16 @@ interface IOptionIdea {
   _limit: number;
   _sort: number;
   _sortBy: string;
-  _reaction: string | null;
   _nameById: string | null;
   _valueById: string | null;
   _interactive: number | null
+  _reaction: string | null,
+  _search: string
 }
 
 export const getAllIdeas = (options: Partial<IOptionIdea>, accessToken: string | undefined) => {
   return useQuery<IAllIdeas, AxiosError>(
-    ['ideas', options._page, options._limit, options._reaction,  options._valueById, options._interactive],
+    ['ideas',  options._search, options._page, options._limit,  options._valueById, options._interactive, options._reaction],
     async () => {
       return await getData({ url: `/api/ideas`, token: accessToken, params: options});
     },

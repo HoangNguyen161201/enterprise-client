@@ -1,3 +1,4 @@
+import { UserOutlined } from '@ant-design/icons';
 import { Avatar, Col, Space, Tag } from 'antd';
 import Link from 'next/link';
 import React from 'react';
@@ -11,6 +12,7 @@ interface IIideaItem {
   iconReaction: String;
   count: Number;
   id: String;
+  anonymously: boolean;
 }
 
 export default function Idea({
@@ -21,27 +23,36 @@ export default function Idea({
   description,
   iconReaction,
   count,
+  anonymously,
   id,
 }: IIideaItem) {
   return (
     <Link href={`/ideas/detail/${id}`} passHref={true}>
-      <Col style={{
-        cursor: 'pointer'
-      }} span={24}>
+      <Col
+        style={{
+          cursor: 'pointer',
+        }}
+        span={24}
+      >
         <Space size={20} align="start">
-          <Avatar
-            size={'large'}
-            style={{
-              border: '2px solid #07456F30',
-            }}
-            src="https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg"
-          >
-            nguyen
-          </Avatar>
+          {anonymously ? (
+            <Avatar size="large" icon={<UserOutlined />} />
+          ) : (
+            <Avatar
+              size={'large'}
+              style={{
+                border: '2px solid #07456F30',
+              }}
+              src={avatar}
+            >
+              nguyen
+            </Avatar>
+          )}
+
           <Space direction="vertical" size={'middle'}>
             <Space direction="vertical">
               <Space size={'middle'}>
-                <span>{userName}</span>
+                <span>{anonymously? '--------------------' : userName}</span>
                 <span
                   style={{
                     color: 'gray',
