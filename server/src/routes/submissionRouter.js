@@ -6,15 +6,18 @@ const submissionController = require('../controllers/submissionControllers');
 //creat submissionRouter
 const submissionRouter = express.Router();
 
+//Import middleware
+const authorization = require('../middlewares/authorization');
+
 //Handle submission routes
-submissionRouter.post('/', submissionController.create);
+submissionRouter.post('/', authorization(['admin', 'qa_manager']), submissionController.create);
 
-submissionRouter.put('/:id', submissionController.update);
+submissionRouter.put('/:id', authorization(['admin', 'qa_manager']), submissionController.update);
 
-submissionRouter.delete('/:id', submissionController.delete);
+submissionRouter.delete('/:id',authorization(['admin', 'qa_manager']), submissionController.delete);
 
-submissionRouter.get('/', submissionController.getAll);
+submissionRouter.get('/', authorization([]), submissionController.getAll);
 
-submissionRouter.get('/:id', submissionController.getDetail);
+submissionRouter.get('/:id', authorization([]), submissionController.getDetail);
 
 module.exports = submissionRouter;

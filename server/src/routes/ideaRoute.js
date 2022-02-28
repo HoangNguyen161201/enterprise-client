@@ -6,20 +6,50 @@ const ideaController = require('../controllers/ideaController');
 //Create ideaRouter
 const ideaRouter = express.Router();
 
+//Import middleware
+const authorization = require('../middlewares/authorization');
+
 //Handle idea routes
-ideaRouter.post('/', ideaController.create);
+ideaRouter.post(
+  '/',
+  authorization(['qa_manager', 'qa_coordinator', 'department_manager', 'staff']),
+  ideaController.create
+);
 
-ideaRouter.put('/:id', ideaController.update);
+ideaRouter.put(
+  '/:id',
+  authorization(['qa_manager', 'qa_coordinator', 'department_manager', 'staff']),
+  ideaController.update
+);
 
-ideaRouter.delete('/:id', ideaController.delete);
+ideaRouter.delete(
+  '/:id',
+  authorization(['qa_manager', 'qa_coordinator', 'department_manager', 'staff']),
+  ideaController.delete
+);
 
-ideaRouter.get('/', ideaController.getAll);
+ideaRouter.get(
+  '/',
+  authorization(['qa_manager', 'qa_coordinator', 'department_manager', 'staff']),
+  ideaController.getAll
+);
 
-ideaRouter.get('/reaction', ideaController.getByReaction);
+ideaRouter.get(
+  '/reaction',
+  authorization(['qa_manager', 'qa_coordinator', 'department_manager', 'staff']),
+  ideaController.getByReaction
+);
 
-ideaRouter.get('/:id', ideaController.getDetail);
+ideaRouter.get(
+  '/:id',
+  authorization(['qa_manager', 'qa_coordinator', 'department_manager', 'staff']),
+  ideaController.getDetail
+);
 
-ideaRouter.get('/user/:user_id', ideaController.getIdeaOfUser);
-
+ideaRouter.get(
+  '/user/:user_id',
+  authorization(['qa_manager', 'qa_coordinator', 'department_manager', 'staff']),
+  ideaController.getIdeaOfUser
+);
 
 module.exports = ideaRouter;
