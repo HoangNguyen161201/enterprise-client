@@ -157,13 +157,19 @@ export interface IIdea {
   [index: string]: any;
 }
 
+export interface IReaction {
+  _id: string;
+  count: number;
+}
+
 export interface IDetailIdea extends ICommon {
+  countReactions?: IReaction[];
   idea: IIdea;
 }
 
 export interface IAllIdeas extends ICommon {
   ideas: IIdea[];
-  page_Index?: number
+  page_Index?: number;
 }
 
 export interface IUrlDowloadZip extends ICommon {
@@ -171,15 +177,14 @@ export interface IUrlDowloadZip extends ICommon {
 }
 
 export interface Ireaction {
-  _id: string
-  name: string  
-  icon: string
+  _id: string;
+  name: string;
+  icon: string;
 }
 
 export interface Ireactions extends ICommon {
-  reactionTypes: Ireaction[]
+  reactionTypes: Ireaction[];
 }
-
 
 //Interface comment
 export interface IComment {
@@ -199,4 +204,15 @@ export interface ICommentResponse extends IComment {
 
 export interface IallComments extends ICommon {
   comments: ICommentResponse[];
+}
+
+//Interface reaction
+export interface IReaction {
+  _id: string;
+  user_id: string;
+  idea_id: string;
+  [index: string]: any;
+}
+export interface IReactionUserIdea extends ICommon {
+  reaction: IReaction;
 }
