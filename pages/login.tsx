@@ -5,11 +5,12 @@ import { AxiosError } from 'axios';
 import { CopyAcc } from 'components/elements/common';
 import { Input, Select } from 'components/elements/form';
 import Accounts from 'DataAccount.json';
-import { IAccessToken } from 'models/apiType';
+import { IAccessToken, IDetailUser } from 'models/apiType';
 import { IOptionSelect } from 'models/elementType';
 import { ILogin } from 'models/formType';
 import { NextPageWithLayout } from 'models/layoutType';
 import { authMutation } from 'mutations/auth';
+import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter as UseRouter } from 'next/router';
@@ -195,3 +196,31 @@ const login: NextPageWithLayout = () => {
 };
 
 export default login;
+
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  //Check login
+  const detailUser: IDetailUser = await fetch(`http://localhost:3000/api/auth/accesstoken`, {
+    method: 'GET',
+    headers: {
+      cookie: context.req.headers.cookie,
+    } as HeadersInit,
+  }).then((e) => e.json());
+
+  //Redirect login page when error
+  if (detailUser.statusCode === 200) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      detailUser,
+    },
+  };
+};
+

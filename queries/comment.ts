@@ -5,7 +5,7 @@ import { getData } from '../utils/fetchData';
 
 export const getallComments = (idea_id: string, accessToken?: string, initial?: IallComments) => {
   return useQuery<IallComments, AxiosError>(
-    ['categories'],
+    ['comments'],
     async () => {
       return await getData({ url: `/api/comments/idea/${idea_id}`, token: accessToken });
     },
