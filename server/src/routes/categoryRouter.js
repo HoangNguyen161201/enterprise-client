@@ -16,8 +16,8 @@ categoryRouter.put('/:id', authorization(['admin', 'qa_manager']), categoryContr
 
 categoryRouter.delete('/:id', authorization(['admin', 'qa_manager']), categoryController.delete);
 
-categoryRouter.get('/', authorization([]), categoryController.getAll);
+categoryRouter.get('/', categoryController.getAll);
 
-categoryRouter.get('/:id', authorization([]), categoryController.getDetail);
+categoryRouter.get('/:id', categoryController.getDetail);
 
 module.exports = categoryRouter;
