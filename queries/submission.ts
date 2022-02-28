@@ -5,7 +5,7 @@ import { getData } from '../utils/fetchData';
 
 export const getallSubmissions = (accessToken?: string, initial?: ISubmissions, params?: any) => {
     return useQuery<any, AxiosError>(
-      ['submissions', params._page, params._search],
+      ['submissions', params._page, params._search, params._time],
       async () => {
         return await getData({ url: `/api/submissions`, token: accessToken, params});
       },
