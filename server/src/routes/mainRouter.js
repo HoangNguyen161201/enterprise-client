@@ -29,7 +29,7 @@ mainRouter = (app) => {
   
   app.use('/api/reactions', reactionRouter);
 
-  app.use('/api/reactiontypes', reactionTypeRouter); 
+  app.use('/api/reaction-types', reactionTypeRouter); 
 
   app.use('/api/comments', commentRouter); 
 };
