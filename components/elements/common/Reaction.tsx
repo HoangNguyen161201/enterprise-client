@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { IFilter } from 'models/elementType';
 import React from 'react';
 
-export const Reaction = ({icon, name, handleCReaction}: {icon: string, name: string, handleCReaction: (option: Partial<IFilter>)=> void}) => {
+export const Reaction = ({icon, name, handleCReaction, id= null}: {icon: string, name: string, id?: any, handleCReaction: (option: Partial<IFilter>)=> void}) => {
   return (
     <motion.div
     whileTap={{
@@ -14,15 +14,16 @@ export const Reaction = ({icon, name, handleCReaction}: {icon: string, name: str
       scale: 1.1,
   }}
     onClick={()=> {
-      if(name == 'Dislike') return handleCReaction({
-          icon: '👎',
-          _reaction: '621b2e96fafde5326f09db29',
-        })
+      if(id) return  handleCReaction({
+        icon,
+        _reaction: id
+      })
       return handleCReaction({
-          icon: '👍🤣',
-          _reaction: '621b2e96fafde5326f09db29',
-          _interactive: 1
-        })
+        icon: '👍🤣',
+        _interactive: 1
+      })
+
+       
     }}
       style={{
         paddingLeft: '22px',

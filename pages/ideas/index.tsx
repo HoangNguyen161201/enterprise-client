@@ -5,6 +5,7 @@ import {
   Collapse,
   Empty,
   Grid,
+  Input,
   InputNumber,
   Pagination,
   Row,
@@ -21,15 +22,15 @@ import { NextPageWithLayout } from 'models/layoutType';
 import moment from 'moment';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import { getCurrentUser, getallCategories } from 'queries';
+import { getallCategories, getCurrentUser } from 'queries';
 import { getAllIdeas } from 'queries/idea';
 import { getReactType } from 'queries/reaction';
-import { useEffect as UseEffect, useState as UseState} from 'react';
+import { useState as UseState } from 'react';
 
 var timeOutLimit: NodeJS.Timeout;
 
 const index: NextPageWithLayout = ({ detailUser }) => {
-  const { useBreakpoint: UseBreakpoint} = Grid;
+  const { useBreakpoint: UseBreakpoint } = Grid;
   const { md } = UseBreakpoint();
   const [_page, setPage] = UseState(1);
   const [_limit, setLimit] = UseState(6);
@@ -37,6 +38,8 @@ const index: NextPageWithLayout = ({ detailUser }) => {
   const [_valueById, setValueById] = UseState<string | null>(null);
   const [_reaction, setReaction] = UseState<string | null>(null);
   const [_interactive, setInteractive] = UseState<number | null>(null);
+  const [searchFirst, setSearchFirst] = UseState('');
+  const [_search, setSearch] = UseState('');
   const [icon, setIcon] = UseState('👁');
 
   const {
@@ -58,31 +61,32 @@ const index: NextPageWithLayout = ({ detailUser }) => {
       _page,
       _sort: -1,
       _sortBy: 'view',
-      _reaction,
       _nameById,
       _valueById,
       _interactive,
+      _reaction,
+      _search
     },
     dataUser?.accessToken.token
   );
 
-  UseEffect(() => {
-    console.log(errorIdeas?.response?.data);
-  }, [errorIdeas]);
-
   const handleCReaction = ({
     isView = false,
-    id,
     icon,
     _nameById,
     _valueById,
     _interactive,
     _reaction,
   }: Partial<IFilter>) => {
+    setSearch('')
+    setSearchFirst('')
     if (isView) {
-      setReaction(null);
+      setInteractive(null);
+    }
+    if (_reaction) {
+      setReaction(_reaction);
     } else {
-      setReaction(id as string);
+      setReaction(null);
     }
     if (_nameById && _valueById) {
       setNameById(_nameById);
@@ -91,11 +95,7 @@ const index: NextPageWithLayout = ({ detailUser }) => {
       setNameById(null);
       setValueById(null);
     }
-    if (_reaction) {
-      setReaction(_reaction);
-    } else {
-      setReaction(null);
-    }
+
     if (_interactive) {
       setInteractive(_interactive);
     } else {
@@ -131,49 +131,77 @@ const index: NextPageWithLayout = ({ detailUser }) => {
             <div>
               <Collapse bordered={false} ghost defaultActiveKey={['1', '2']}>
                 <Collapse.Panel header={'All'} key="1">
-                  <motion.div
-                    whileTap={{
-                      backgroundColor: '#009F9D',
-                      scale: 0.9,
-                    }}
-                    whileHover={{
-                      backgroundColor: '#009F9D80',
-                      scale: 1.1,
-                    }}
-                    onClick={() => {
-                      handleCReaction({
-                        isView: true,
-                        icon: '👁',
-                        id: null,
-                      });
-                    }}
-                    style={{
-                      fontWeight: 500,
-                      height: 35,
-                      color: '#07456f',
-                      lineHeight: '35px',
-                      paddingLeft: 22,
-                      borderRadius: 5,
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      paddingRight: '15px',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    View
-                  </motion.div>
+                  <Space direction="vertical" size={'small'}>
+                    <Input.Search
+                      value={searchFirst}
+                      onChange={(event)=> {
+                        setSearchFirst(event.target.value)
+                      }}
+                      onSearch={(value) => {
+                        setSearch(value)
+                        setReaction(null)
+                        setValueById(null)
+                        setNameById(null)
+                        setInteractive(null)
+                      }}
+                      allowClear
+                      placeholder="Enter title"
+                      style={{
+                        borderRadius: 5,
+                      }}
+                    />
+                    <motion.div
+                      whileTap={{
+                        backgroundColor: '#009F9D',
+                        scale: 0.9,
+                      }}
+                      whileHover={{
+                        backgroundColor: '#009F9D80',
+                        scale: 1.1,
+                      }}
+                      onClick={() => {
+                        handleCReaction({
+                          isView: true,
+                          icon: '👁',
+                          id: null,
+                        });
+                      }}
+                      style={{
+                        fontWeight: 500,
+                        height: 35,
+                        color: '#07456f',
+                        lineHeight: '35px',
+                        paddingLeft: 22,
+                        borderRadius: 5,
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        paddingRight: '15px',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      View
+                    </motion.div>
+                  </Space>
                 </Collapse.Panel>
                 {allReaction?.reactionTypes && (
-                  <Collapse.Panel header="Interaction" key="2">
+                  <Collapse.Panel header="Reaction" key="2">
                     <Space direction="vertical" size={'small'}>
                       <Reaction
                         handleCReaction={handleCReaction}
                         name={'High interaction'}
                         icon={'👍'}
                       />
-
-                      <Reaction handleCReaction={handleCReaction} name={'Dislike'} icon={'👎'} />
+                      {allReaction &&
+                        allReaction.reactionTypes.map((reaction) => (
+                          <Reaction
+                            key={reaction._id}
+                            id={reaction._id}
+                            handleCReaction={handleCReaction}
+                            name={reaction.name}
+                            icon={reaction.icon}
+                          />
+                        ))}
                     </Space>
                   </Collapse.Panel>
                 )}
@@ -219,7 +247,7 @@ const index: NextPageWithLayout = ({ detailUser }) => {
                 {AllIdeas?.ideas &&
                   AllIdeas.ideas.map((idea) => (
                     <Idea
-                    id={idea._id}
+                      id={idea._id}
                       key={idea._id}
                       title={idea.title}
                       time={moment(new Date(idea.createdAt)).fromNow()}
@@ -228,6 +256,7 @@ const index: NextPageWithLayout = ({ detailUser }) => {
                       count={idea.count}
                       description={idea.description}
                       iconReaction={icon}
+                      anonymously={idea.anonymously}
                     />
                   ))}
               </Row>
