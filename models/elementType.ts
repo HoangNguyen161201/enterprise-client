@@ -31,6 +31,7 @@ export interface IFieldCard extends ICol {
     label: string
     content: string
     view?: boolean
+    user_id?: string
 }
 
 export interface IColumn {
@@ -46,6 +47,7 @@ export interface IUsersNotDepartment {
 }
 
 export interface IStaff extends ICol{
+  id: string
   employee_id?: number
   name: string
   role: string

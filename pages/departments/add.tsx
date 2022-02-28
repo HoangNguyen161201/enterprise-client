@@ -4,7 +4,7 @@ import { Breadcrumb, Button, Card, message, Space } from 'antd';
 import { AxiosError } from 'axios';
 import { Input, TextArea } from 'components/elements/form';
 import { ClientLayout } from 'components/layouts';
-import { ICommon } from 'models/apiType';
+import { ICommon, IDetailUser } from 'models/apiType';
 import { NextPageWithLayout } from 'models/layoutType';
 import { departmentMutation } from 'mutations/department';
 import { GetServerSideProps } from 'next';
@@ -14,11 +14,13 @@ import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import { validateAddDepartment } from 'utils/validate';
 
-export interface IAddDepartmentProps {}
+export interface IAddDepartmentProps {
+  detailUser: IDetailUser
+}
 
-const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
+const AddDepartment: NextPageWithLayout = ({detailUser}: IAddDepartmentProps) => {
   //Get access token
-  const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
+  const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser(detailUser);
 
   //  call api to add deartment
   const mutationAddDepartment = departmentMutation.add({
@@ -33,10 +35,10 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
         message.error({
           content: error.response?.data.err || 'Create department false.',
         });
-      }
+      },
     },
-    token: dataUser?.accessToken.token
-  })
+    token: dataUser?.accessToken.token,
+  });
 
   //Check exist and show error
   React.useEffect(() => {
@@ -57,9 +59,6 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
   });
 
   const onSubmit = async ({ name, description }: { name: string; description: string }) => {
-    //Refetch again let get accesstoken pass to api
-    await dataUserRefetch();
-
     //Post add data department
     mutationAddDepartment.mutate({ name, description });
   };
@@ -127,17 +126,15 @@ AddDepartment.getLayout = ClientLayout;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   //Check login
-  const res = await fetch('http://localhost:3000/api/auth/accesstoken', {
+  const detailUser: IDetailUser = await fetch(`http://localhost:3000/api/auth/accesstoken`, {
     method: 'GET',
     headers: {
       cookie: context.req.headers.cookie,
     } as HeadersInit,
-  });
-
-  const data = await res.json();
+  }).then((e) => e.json());
 
   //Redirect login page when error
-  if (res.status !== 200) {
+  if (detailUser.statusCode !== 200) {
     return {
       redirect: {
         destination: '/login',
@@ -147,13 +144,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   //Check role
-  if (data.user.role !== 'admin') {
+  if (detailUser.user.role !== 'admin' && detailUser.user.role !== 'qa_manager') {
     return {
       notFound: true,
     };
   }
 
   return {
-    props: {},
+    props: {detailUser},
   };
 };

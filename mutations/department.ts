@@ -90,7 +90,7 @@ export const departmentMutation = {
   delete: ({ options, dataUserRefetch, token }: IMutation) => {
     return useMutation<any, AxiosError, string>(
       (id) => {
-        dataUserRefetch();
+        dataUserRefetch && dataUserRefetch();
         return deleteData({ url: `/api/departments/${id}`, token });
       },
       {
