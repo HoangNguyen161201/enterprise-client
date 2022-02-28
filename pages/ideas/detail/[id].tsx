@@ -5,10 +5,12 @@ import {
   Card,
   Col,
   Divider,
-  Grid, List,
+  Grid,
+  List,
   message,
   Row,
-  Space, Switch
+  Space,
+  Switch,
 } from 'antd';
 import { AxiosError } from 'axios';
 import InputComment from 'components/elements/common/InputComment';
@@ -31,7 +33,6 @@ import 'react-quill/dist/quill.bubble.css';
 import 'react-quill/dist/quill.snow.css';
 import { dataTypeFile } from 'utils/dataTypeFile';
 import { postData } from 'utils/fetchData';
-
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
@@ -69,7 +70,7 @@ const DetailIdea: NextPageWithLayout = ({
 }: IDetailEmployeeProps) => {
   const { query } = UseRouter();
   const { useBreakpoint } = Grid;
-  const { lg } = useBreakpoint();
+  const { lg } = useBreakpoint();  
 
   //State anonymously and content comment
   const [anonymously, setAnonymously] = UseState<boolean>(false);
@@ -374,7 +375,7 @@ const DetailIdea: NextPageWithLayout = ({
             renderItem={(item) => (
               <List.Item>
                 <ItemComment
-                  refetchDataComments = {refetchDataComments}
+                  refetchDataComments={refetchDataComments}
                   idea_id={dataDetailIdea?.idea._id as string}
                   isMatchFinalTime={isMatchFinalTime}
                   dataUserRefetch={dataUserRefetch}
@@ -449,9 +450,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       } as HeadersInit,
     }
   ).then((e) => e.json());
-  //Check error get all comment
+
+  //Redirect 404 page when not have allComments
   if (allComments.statusCode !== 200) {
-    allComments.comments = [];
+    return {
+      notFound: true,
+    };
   }
 
   return {

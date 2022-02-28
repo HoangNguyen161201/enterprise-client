@@ -49,12 +49,16 @@ const DetailSubmission: NextPageWithLayout = ({
   detailSubmission,
   allCategories,
   allIdeaCurrentUser,
-  detailUser
+  detailUser,
 }: IDetailSubmissionProps) => {
   console.log(allIdeaCurrentUser);
 
   //Get access token
-  const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser(detailUser);
+  const {
+    data: dataUser,
+    error: errorGetUser,
+    refetch: dataUserRefetch,
+  } = getCurrentUser(detailUser);
   UseEffect(() => {
     dataUserRefetch();
   }, []);
@@ -661,7 +665,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
   ).then((e) => e.json());
 
-  //Redirect 404 page when not have submission
+  //Redirect 404 page when not have allCategories
   if (detailSubmission.statusCode !== 200) {
     return {
       notFound: true,
@@ -677,6 +681,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     } as HeadersInit,
   }).then((e) => e.json());
 
+  //Redirect 404 page when not have allCategories
+  if (allCategories.statusCode !== 200) {
+    return {
+      notFound: true,
+    };
+  }
+
   // Get all detail by user and submission
   const allIdeaCurrentUser: IAllIdeas = await fetch(
     `http://localhost:3000/api/ideas/user/${detailUser.user._id}/?submission_id=${context.query.id}`,
@@ -689,12 +700,19 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
   ).then((e) => e.json());
 
+  //Redirect 404 page when not have allIdeaCurrentUser
+  if (allIdeaCurrentUser.statusCode !== 200) {
+    return {
+      notFound: true,
+    };
+  }
+
   return {
     props: {
       detailSubmission,
       allCategories,
       allIdeaCurrentUser,
-      detailUser
+      detailUser,
     },
   };
 };
