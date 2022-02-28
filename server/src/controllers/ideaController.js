@@ -11,7 +11,7 @@ const submissionModel = require('../models/submissionModel');
 const reactionModel = require('../models/reactionModel');
 const categoryModel = require('../models/categoryModel');
 const pageIndex = require('../utils/PageIndex');
-const { default: mongoose } = require('mongoose');
+const { default: mongoose, mongo } = require('mongoose');
 
 const ideaController = {
   create: catchAsyncError(async (req, res) => {
@@ -102,7 +102,8 @@ const ideaController = {
     const { id } = req.params;
 
     //get info update
-    const { title, description, content, category_id, anonymously, files, cloudinary_id } = req.body;
+    const { title, description, content, category_id, anonymously, files, cloudinary_id } =
+      req.body;
 
     //check idea exist in system
     const idea = await ideaModel.findById(id);
@@ -160,7 +161,7 @@ const ideaController = {
       category_id: category_id ? category_id : null,
       anonymously,
       files,
-      cloudinary_id: cloudinary_id ? cloudinary_id : null
+      cloudinary_id: cloudinary_id ? cloudinary_id : null,
     });
 
     return res.status(200).json({
@@ -188,7 +189,7 @@ const ideaController = {
     });
   }),
 
-  getByReaction: catchAsyncError(async (req, res) => { }),
+  getByReaction: catchAsyncError(async (req, res) => {}),
 
   getAll: catchAsyncError(async (req, res) => {
     const {
@@ -200,8 +201,7 @@ const ideaController = {
       _valueById,
       _interactive,
       _reaction,
-      _search
-
+      _search,
     } = req.query;
 
     if (_interactive || _reaction) {
@@ -210,24 +210,37 @@ const ideaController = {
           return {
             $match: {
               reactionType_id: _reaction,
+<<<<<<< HEAD
               'idea.accept': true
             }
           }
+=======
+              'idea.accept': true,
+            },
+          };
+>>>>>>> 89ebf0bf24ec0721e3ad9b9c5d1ef191aa9f7d48
         }
 
         return {
           $match: {
             reactionType_id: { $nin: [''] },
+<<<<<<< HEAD
             'idea.accept': true
           }
         }
       }
+=======
+            'idea.accept': true,
+          },
+        };
+      };
+>>>>>>> 89ebf0bf24ec0721e3ad9b9c5d1ef191aa9f7d48
       const page = await reactionModel.aggregate([
         match(),
         {
           $group: {
             _id: '$idea_id',
-          }
+          },
         },
         {
           $count: 'totalPage',
@@ -236,9 +249,12 @@ const ideaController = {
 
       const result = await reactionModel.aggregate([
         {
+          $addFields: { idea_id2: { $toObjectId: '$idea_id' } },
+        },
+        {
           $lookup: {
             from: 'ideas',
-            localField: 'idea_id',
+            localField: 'idea_id2',
             foreignField: '_id',
             as: 'idea',
           },
@@ -262,7 +278,7 @@ const ideaController = {
           $group: {
             _id: '$idea',
             totalReaction: { $sum: 1 },
-          }
+          },
         },
         {
           $sort: {
@@ -275,7 +291,7 @@ const ideaController = {
         {
           $limit: Number(_limit),
         },
-      ])
+      ]);
 
       const data = result.map((item) => {
         return {
@@ -296,13 +312,17 @@ const ideaController = {
 
     let filter = new Filter(ideaModel);
     filter = filter.getAll({
-      accept: true
+      accept: true,
     });
     if (_nameById) {
-      filter = filter.searchById({ name: _nameById, value: _valueById })
+      filter = filter.searchById({ name: _nameById, value: _valueById });
     }
     if (_search) {
+<<<<<<< HEAD
       filter = filter.search({ name: 'title', query: _search })
+=======
+      filter = filter.search({ name: 'title', query: _search });
+>>>>>>> 89ebf0bf24ec0721e3ad9b9c5d1ef191aa9f7d48
     }
     if (_sort) {
       filter = filter.sort({ name: _sortBy, NorO: _sort });
@@ -334,10 +354,27 @@ const ideaController = {
         err: 'The Idea does not exist',
         statusCode: 400,
       });
+
+    console.log(id);
+    const countReactions = await reactionModel.aggregate([
+      {
+        $match: {
+          idea_id: id,
+        },
+      },
+      {
+        $group: {
+          _id: '$reactionType_id',
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+    console.log(countReaction);
     return res.status(200).json({
       statusCode: 200,
       msg: ' Get topic success',
       idea,
+      countReactions,
     });
   }),
 
