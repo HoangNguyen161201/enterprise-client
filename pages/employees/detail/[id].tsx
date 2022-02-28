@@ -7,15 +7,19 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect as UseEffect } from 'react';
 import { Infor } from 'components/elements/common';
-import { IUser } from 'models/apiType';
+import { IDetailUser, IUser } from 'models/apiType';
 import { NextPageWithLayout } from 'models/layoutType';
 import { getCurrentUser, getDetailUser } from 'queries';
 
 export interface IDetailEmployeeProps {
   detailUser: { user: IUser; [index: string]: any };
+  detailCurrentUser: IDetailUser;
 }
 
-const DetailEmployee: NextPageWithLayout = ({ detailUser }: IDetailEmployeeProps) => {
+const DetailEmployee: NextPageWithLayout = ({
+  detailUser,
+  detailCurrentUser,
+}: IDetailEmployeeProps) => {
   const { query } = useRouter();
   const { useBreakpoint } = Grid;
   const { lg } = useBreakpoint();
@@ -26,7 +30,7 @@ const DetailEmployee: NextPageWithLayout = ({ detailUser }: IDetailEmployeeProps
   } = useRouter();
 
   //Get access token
-  const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
+  const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser(detailCurrentUser);
   UseEffect(() => {
     dataUserRefetch();
   }, []);
@@ -64,7 +68,6 @@ const DetailEmployee: NextPageWithLayout = ({ detailUser }: IDetailEmployeeProps
       <Breadcrumb>
         <Breadcrumb.Item>Home</Breadcrumb.Item>
         <Breadcrumb.Item>Employees</Breadcrumb.Item>
-        <Breadcrumb.Item>All Employees</Breadcrumb.Item>
         <Breadcrumb.Item>View Detail Employee</Breadcrumb.Item>
       </Breadcrumb>
 
@@ -129,8 +132,15 @@ const DetailEmployee: NextPageWithLayout = ({ detailUser }: IDetailEmployeeProps
                 <Infor
                   color="#0F0A3C"
                   Icon={TeamOutlined}
-                  title={dataDetailUser?.user?.department_id?.name ? `${dataDetailUser.user.department_id.name}` : "none"}
-                  url={dataDetailUser?.user?.department_id?._id && `/departments/detail/${dataDetailUser?.user?.department_id?._id}`}
+                  title={
+                    dataDetailUser?.user?.department_id?.name
+                      ? `${dataDetailUser.user.department_id.name}`
+                      : 'none'
+                  }
+                  url={
+                    dataDetailUser?.user?.department_id?._id &&
+                    `/departments/detail/${dataDetailUser?.user?.department_id?._id}`
+                  }
                 />
               </Space>
             </Col>
@@ -174,29 +184,20 @@ export default DetailEmployee;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   //Check login
-  const res = await fetch(`http://localhost:3000/api/auth/accesstoken`, {
+  const detailCurrentUser: IDetailUser = await fetch(`http://localhost:3000/api/auth/accesstoken`, {
     method: 'GET',
     headers: {
       cookie: context.req.headers.cookie,
     } as HeadersInit,
-  });
-
-  const data = await res.json();
+  }).then((e) => e.json());
 
   //Redirect login page when error
-  if (res.status !== 200) {
+  if (detailCurrentUser.statusCode !== 200) {
     return {
       redirect: {
         destination: '/login',
         permanent: false,
       },
-    };
-  }
-
-  //Check role
-  if (data.user.role !== 'admin') {
-    return {
-      notFound: true,
     };
   }
 
@@ -206,14 +207,22 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       method: 'GET',
       headers: {
         cookie: context.req.headers.cookie,
-        authorization: data.accessToken.token,
+        authorization: detailCurrentUser.accessToken.token,
       } as HeadersInit,
     }
   ).then((e) => e.json());
 
+  //Redirect 404 page when not have detail detailUser
+  if (detailUser.statusCode !== 200) {
+    return {
+      notFound: true,
+    };
+  }
+
   return {
     props: {
       detailUser,
+      detailCurrentUser,
     },
   };
 };

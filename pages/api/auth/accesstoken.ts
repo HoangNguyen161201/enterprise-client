@@ -39,6 +39,8 @@ export default function handle(req: NextApiRequest, res: NextApiResponse<any>) {
                 body += chunk;
             });
 
+            
+            
             proxyRes.on("end", function () {
                 try {
                     const { err, statusCode } = JSON.parse(body);

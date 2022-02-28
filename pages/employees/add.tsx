@@ -4,7 +4,7 @@ import { Breadcrumb, Button, Card, Col, message, Row, Space } from 'antd';
 import { AxiosError } from 'axios';
 import { Input, Select } from 'components/elements/form';
 import { ClientLayout } from 'components/layouts';
-import { ICommon, IDepartments } from 'models/apiType';
+import { ICommon, IDepartments, IDetailUser } from 'models/apiType';
 import { IOptionSelect } from 'models/elementType';
 import { IUserForm } from 'models/formType';
 import { NextPageWithLayout } from 'models/layoutType';
@@ -19,14 +19,19 @@ import { validateAddUser } from 'utils/validate';
 
 export interface IAddEmployeeProps {
   allDepartments: IDepartments;
+  detailUser: IDetailUser;
 }
 
-const AddEmployee: NextPageWithLayout = ({ allDepartments }: IAddEmployeeProps) => {
+const AddEmployee: NextPageWithLayout = ({ allDepartments, detailUser }: IAddEmployeeProps) => {
   //Data select department
   const [departmentSl, setDepartmentSL] = React.useState<IOptionSelect[]>([]);
 
   //Get access token
-  const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
+  const {
+    data: dataUser,
+    error: errorGetUser,
+    refetch: dataUserRefetch,
+  } = getCurrentUser(detailUser);
 
   //Get all data departments
   const { error: errorAllDepartments, data: dataAllDepartments } = getAllDepartments(
@@ -86,9 +91,8 @@ const AddEmployee: NextPageWithLayout = ({ allDepartments }: IAddEmployeeProps) 
         });
       },
     },
-    dataUserRefetch: dataUserRefetch 
-  })
-  
+    dataUserRefetch: dataUserRefetch,
+  });
 
   // setting form
   const formSetting = useForm<IUserForm>({
@@ -104,9 +108,6 @@ const AddEmployee: NextPageWithLayout = ({ allDepartments }: IAddEmployeeProps) 
   });
 
   const onSubmit = async (dataForm: IUserForm) => {
-    //Refetch again let get accesstoken pass to api
-    await dataUserRefetch();
-
     //Post add data user
     mutationAddUser.mutate(dataForm);
   };
@@ -230,17 +231,15 @@ AddEmployee.getLayout = ClientLayout;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   //Check login
-  const res = await fetch('http://localhost:3000/api/auth/accesstoken', {
+  const detailUser: IDetailUser = await fetch(`http://localhost:3000/api/auth/accesstoken`, {
     method: 'GET',
     headers: {
       cookie: context.req.headers.cookie,
     } as HeadersInit,
-  });
-
-  const data = await res.json();
+  }).then((e) => e.json());
 
   //Redirect login page when error
-  if (res.status !== 200) {
+  if (detailUser.statusCode !== 200) {
     return {
       redirect: {
         destination: '/login',
@@ -250,7 +249,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   //Check role
-  if (data.user.role !== 'admin') {
+  if (detailUser.user.role !== 'admin' && detailUser.user.role !== 'qa_manager') {
     return {
       notFound: true,
     };
@@ -261,12 +260,21 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     method: 'GET',
     headers: {
       cookie: context.req.headers.cookie,
+      authorization: detailUser.accessToken.token,
     } as HeadersInit,
-  }).then((e) => e.json());
+  }).then((e) => e.json());  
+
+  //Redirect 404 page when not have detail allDepartments
+  if (allDepartments.statusCode !== 200) {
+    return {
+      notFound: true,
+    };
+  }
 
   return {
     props: {
       allDepartments,
+      detailUser,
     },
   };
 };

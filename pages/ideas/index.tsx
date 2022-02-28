@@ -10,7 +10,7 @@ import {
   Pagination,
   Row,
   Space,
-  Spin,
+  Spin
 } from 'antd';
 import { CtSlideItem, Reaction } from 'components/elements/common';
 import Idea from 'components/elements/common/Idea';
@@ -65,7 +65,7 @@ const index: NextPageWithLayout = ({ detailUser }) => {
       _valueById,
       _interactive,
       _reaction,
-      _search
+      _search,
     },
     dataUser?.accessToken.token
   );
@@ -78,8 +78,8 @@ const index: NextPageWithLayout = ({ detailUser }) => {
     _interactive,
     _reaction,
   }: Partial<IFilter>) => {
-    setSearch('')
-    setSearchFirst('')
+    setSearch('');
+    setSearchFirst('');
     if (isView) {
       setInteractive(null);
     }
@@ -111,16 +111,15 @@ const index: NextPageWithLayout = ({ detailUser }) => {
   return (
     <>
       <Head>
-        <title> Ideals</title>
+        <title>All Ideas Page</title>
       </Head>
 
       <Breadcrumb>
         <Breadcrumb.Item>Home</Breadcrumb.Item>
         <Breadcrumb.Item>Ideas</Breadcrumb.Item>
-        <Breadcrumb.Item>View Detail Idea</Breadcrumb.Item>
       </Breadcrumb>
 
-      <Card title="View Detail Employee" style={{ width: '100%', marginTop: '20px' }}>
+      <Card title="View All Ideas" style={{ width: '100%', marginTop: '20px' }}>
         <Row wrap={md ? false : true} gutter={[30, 30]}>
           <Col
             span={md ? undefined : 24}
@@ -134,15 +133,15 @@ const index: NextPageWithLayout = ({ detailUser }) => {
                   <Space direction="vertical" size={'small'}>
                     <Input.Search
                       value={searchFirst}
-                      onChange={(event)=> {
-                        setSearchFirst(event.target.value)
+                      onChange={(event) => {
+                        setSearchFirst(event.target.value);
                       }}
                       onSearch={(value) => {
-                        setSearch(value)
-                        setReaction(null)
-                        setValueById(null)
-                        setNameById(null)
-                        setInteractive(null)
+                        setSearch(value);
+                        setReaction(null);
+                        setValueById(null);
+                        setNameById(null);
+                        setInteractive(null);
                       }}
                       allowClear
                       placeholder="Enter title"
@@ -243,7 +242,9 @@ const index: NextPageWithLayout = ({ detailUser }) => {
             </Space>
           ) : (
             <Col span={md ? undefined : 24} flex="auto">
-              <Row gutter={[0, 30]}>
+              <Row gutter={[0, 30]} style={{
+                minHeight: 500
+              }}>
                 {AllIdeas?.ideas &&
                   AllIdeas.ideas.map((idea) => (
                     <Idea
@@ -260,39 +261,36 @@ const index: NextPageWithLayout = ({ detailUser }) => {
                     />
                   ))}
               </Row>
-              {Number(AllIdeas?.page_Index) <= 1 ? (
-                ''
-              ) : (
-                <div
+
+              <div
+                style={{
+                  marginTop: 30,
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                }}
+              >
+                <InputNumber
                   style={{
-                    marginTop: 30,
-                    display: 'flex',
-                    justifyContent: 'flex-end',
+                    marginRight: 10,
                   }}
-                >
-                  <InputNumber
-                    style={{
-                      marginRight: 10,
-                    }}
-                    min={1}
-                    value={_limit}
-                    onChange={(vl) => {
-                      clearTimeout(timeOutLimit);
-                      timeOutLimit = setTimeout(() => {
-                        setLimit(vl);
-                      }, 500);
-                    }}
-                  />
-                  <Pagination
-                    current={_page}
-                    onChange={(pg) => {
-                      setPage(pg);
-                    }}
-                    defaultPageSize={1}
-                    total={AllIdeas?.page_Index}
-                  />
-                </div>
-              )}
+                  min={1}
+                  value={_limit}
+                  onChange={(vl) => {
+                    clearTimeout(timeOutLimit);
+                    timeOutLimit = setTimeout(() => {
+                      setLimit(vl);
+                    }, 500);
+                  }}
+                />
+                <Pagination
+                  current={_page}
+                  onChange={(pg) => {
+                    setPage(pg);
+                  }}
+                  defaultPageSize={1}
+                  total={AllIdeas?.page_Index}
+                />
+              </div>
             </Col>
           )}
         </Row>

@@ -1,16 +1,28 @@
-import { LogoutOutlined, MoreOutlined, ProfileOutlined } from '@ant-design/icons';
+import { LogoutOutlined, MenuOutlined, MoreOutlined, ProfileOutlined } from '@ant-design/icons';
 import { Button, message, Layout, Space, Typography, Avatar, Menu, Dropdown, Divider } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useState } from 'react';
 import { useMutation } from 'react-query';
 import { ILogout } from 'models/apiType';
 import { getCurrentUser } from 'queries/auth';
 import { postData } from 'utils/fetchData';
+import { Drawer } from '../drawer';
 
 const { Header } = Layout;
 
-export const HeaderComponent = ()=> {
+export const HeaderComponent = () => {
+  //Setting drawer
+  const [visible, setVisible] = useState(false);
+
+  const showDrawer = () => {
+    setVisible(true);
+  };
+
+  const closeDrawer = () => {
+    setVisible(false);
+  };
+
   //Get data current user
   const { data: dataUser } = getCurrentUser();
 
@@ -65,7 +77,9 @@ export const HeaderComponent = ()=> {
         <span>{dataUser?.user?.name}</span>
       </Space>
       <Divider />
-      <Menu.Item icon={<ProfileOutlined />} key="1">Profile</Menu.Item>
+      <Menu.Item icon={<ProfileOutlined />} key="1">
+        Profile
+      </Menu.Item>
       <Menu.Item icon={<LogoutOutlined />} key="2" onClick={onLogout}>
         Logout
       </Menu.Item>
@@ -87,19 +101,32 @@ export const HeaderComponent = ()=> {
             display: 'flex',
           }}
         >
-          <span
-            style={{
-              fontSize: '16px',
-              fontWeight: 'bold',
-            }}
-          >
-            CMS
-          </span>
+          <Space size={20} align="center">
+            <span
+              style={{
+                fontSize: '16px',
+                fontWeight: 'bold',
+                color: "#009F9D"
+              }}
+            >
+              CMS
+            </span>
+
+            <MenuOutlined
+              onClick={showDrawer}
+              style={{
+                fontSize: '20px',
+              }}
+            />
+          </Space>
+
           {dataUser ? (
-            <Dropdown overlay={menu} trigger={["click", "hover"]} placement="bottomRight">
-              <Space style={{
-                cursor: "pointer"
-              }}>
+            <Dropdown overlay={menu} trigger={['click', 'hover']} placement="bottomRight">
+              <Space
+                style={{
+                  cursor: 'pointer',
+                }}
+              >
                 <Avatar
                   style={{
                     border: '1px solid #009F9D',
@@ -122,7 +149,16 @@ export const HeaderComponent = ()=> {
             </Button>
           )}
         </Space>
+
+        <Drawer
+          visible={visible}
+          title="Task selection"
+          onClose={closeDrawer}
+          placement="left"
+          closable={true}
+          key="left"
+        />
       </Header>
     </>
   );
-}
+};

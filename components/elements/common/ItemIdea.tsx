@@ -1,6 +1,13 @@
-import { DeleteOutlined, EyeInvisibleOutlined, EyeOutlined, FileAddOutlined, FolderViewOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  EyeInvisibleOutlined,
+  EyeOutlined,
+  FileAddOutlined,
+  FolderViewOutlined,
+} from '@ant-design/icons';
 import { List, Space } from 'antd';
 import { IIdea } from 'models/apiType';
+import Link from 'next/link';
 import * as React from 'react';
 
 export interface IItemIdeaProps {
@@ -28,7 +35,13 @@ export const ItemIdea = ({ item, onDeleteIdea }: IItemIdeaProps) => {
                 fontWeight: 'bold',
               }}
             >
-              {item.title}
+              {item.accept ? (
+                <Link href={`/ideas/detail/${item._id}`}>
+                  <a>{item.title}</a>
+                </Link>
+              ) : (
+                item.title
+              )}
             </span>
             <Space size={20}>
               <Space
@@ -65,11 +78,7 @@ export const ItemIdea = ({ item, onDeleteIdea }: IItemIdeaProps) => {
               </Space>
 
               <Space>
-                {
-                  item.anonymously 
-                  ? (<EyeInvisibleOutlined />)
-                  : (<EyeOutlined />)
-                }
+                {item.anonymously ? <EyeInvisibleOutlined /> : <EyeOutlined />}
                 <span>{item.anonymously ? 'Anonymous information' : 'Public information'}</span>
               </Space>
             </Space>

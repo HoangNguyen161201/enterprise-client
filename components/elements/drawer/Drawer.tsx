@@ -1,6 +1,7 @@
 import {
   AppstoreAddOutlined,
   AppstoreOutlined,
+  CloudUploadOutlined,
   FolderViewOutlined,
   HomeOutlined,
   TeamOutlined,
@@ -174,18 +175,12 @@ export const Drawer = ({ onClose, ...props }: IProps) => {
             </Menu.Item>
           </SubMenu>
 
-          <Menu.Item
-            key="3"
-            icon={<UploadOutlined />}
-            onClick={onClose}
-            style={{
-              display: isShowByRole.admin || isShowByRole.qa_manager ? 'block' : 'none',
-            }}
-          >
+          <Menu.Item key="3" icon={<UploadOutlined />} onClick={onClose}>
             <Link href={'/submissions'}>
               <a>Submissions</a>
             </Link>
           </Menu.Item>
+
           <Menu.Item
             key="4"
             icon={<AppstoreOutlined />}
@@ -196,6 +191,16 @@ export const Drawer = ({ onClose, ...props }: IProps) => {
           >
             <Link href={'/categories'}>
               <a>Categories</a>
+            </Link>
+          </Menu.Item>
+
+          <Menu.Item
+            key="5"
+            icon={<CloudUploadOutlined />}
+            onClick={onClose}
+          >
+            <Link href={'/ideas'}>
+              <a>Ideas</a>
             </Link>
           </Menu.Item>
         </Menu>

@@ -1,14 +1,17 @@
 import { MoreOutlined } from '@ant-design/icons';
 import { Button, Col, Image, Space } from 'antd';
 import React from 'react';
-import {ISubmissionForm } from 'models/formType'
+import { ISubmissionForm } from 'models/formType';
+import { IDetailUser } from 'models/apiType';
+import Link from 'next/link';
 
 interface ICard {
-    item: ISubmissionForm
-    more: (item: ISubmissionForm)=> void
-    [index: string]: any
+  item: ISubmissionForm;
+  more: (item: ISubmissionForm) => void;
+  current_user: IDetailUser;
+  [index: string]: any;
 }
-export const Card = ({item, more}: ICard)=> {
+export const Card = ({ item, more, current_user }: ICard) => {
   return (
     <Col xl={8} lg={12} md={24}>
       <Space direction="vertical" size={15}>
@@ -31,25 +34,35 @@ export const Card = ({item, more}: ICard)=> {
               display: 'block',
             }}
           >
-            {item.name}
+            {current_user && current_user.user?.role !== 'admin' ? (
+              <Link href={`/submissions/detail/${item._id}`}>
+                <a>{item.name}</a>
+              </Link>
+            ) : (
+              item.name
+            )}
           </span>
           <span style={{ color: 'gray' }}>{item.description}</span>
         </div>
-        <Button
-          onClick={() => more(item)}
-          size="large"
-          type="ghost"
-          style={{
-            position: 'absolute',
-            background: 'white',
-            top: 25,
-            right: 40,
-          }}
-          shape="circle"
-        >
-          <MoreOutlined />
-        </Button>
+
+        {(current_user && current_user.user?.role === 'admin') ||
+          (current_user && current_user.user?.role === 'qa_manager' && (
+            <Button
+              onClick={() => more(item)}
+              size="large"
+              type="ghost"
+              style={{
+                position: 'absolute',
+                background: 'white',
+                top: 25,
+                right: 40,
+              }}
+              shape="circle"
+            >
+              <MoreOutlined />
+            </Button>
+          ))}
       </Space>
     </Col>
   );
-}
+};
