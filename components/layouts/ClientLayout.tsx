@@ -7,16 +7,6 @@ import {Drawer} from '../elements/drawer';
 const { Footer, Sider, Content } = Layout;
 
 export const ClientLayout: NextLayout = ({ children }) => {
-  const [visible, setVisible] = useState(false);
-
-  const showDrawer = () => {
-    setVisible(true);
-  };
-
-  const closeDrawer = () => {
-    setVisible(false);
-  };
-
   return (
     <>
       <Layout
@@ -33,12 +23,6 @@ export const ClientLayout: NextLayout = ({ children }) => {
             background: 'white',
           }}
         >
-          <MenuOutlined
-            onClick={showDrawer}
-            style={{
-              fontSize: '24px',
-            }}
-          />
           <div
             style={{
               paddingTop: '20px',
@@ -48,14 +32,6 @@ export const ClientLayout: NextLayout = ({ children }) => {
           </div>
         </Content>
       </Layout>
-      <Drawer
-        visible={visible}
-        title="Task selection"
-        onClose={closeDrawer}
-        placement="left"
-        closable={true}
-        key="left"
-      />
     </>
   );
 };
