@@ -30,7 +30,7 @@ ideaRouter.delete(
 
 ideaRouter.get(
   '/',
-  authorization(['qa_manager', 'qa_coordinator', 'department_manager', 'staff']),
+  // authorization(['qa_manager', 'qa_coordinator', 'department_manager', 'staff']),
   ideaController.getAll
 );
 
@@ -42,7 +42,7 @@ ideaRouter.get(
 
 ideaRouter.get(
   '/:id',
-  authorization(['qa_manager', 'qa_coordinator', 'department_manager', 'staff']),
+  // authorization(['qa_manager', 'qa_coordinator', 'department_manager', 'staff']),
   ideaController.getDetail
 );
 

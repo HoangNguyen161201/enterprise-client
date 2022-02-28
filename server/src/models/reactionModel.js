@@ -7,12 +7,12 @@ const reactionSchema = new mongoose.Schema({
     default: () => Date.now(),
   },
   user_id: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: 'users',
     required: true,
   },
   idea_id: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: 'ideas',
     required: true,
   },
