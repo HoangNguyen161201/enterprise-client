@@ -166,7 +166,8 @@ const userController = {
             //Update new department user count
             department.count_users = ++department.count_users;
             await department.save();
-          }``
+          }
+          ``;
 
           //update data by id
           await userModel.findByIdAndUpdate(id, { name, email, role, department_id });
@@ -230,14 +231,13 @@ const userController = {
     }
     console.log(id);
     //delete user by id
-    userModel.deleteById(id, function(err){
-      if(err)
-      return res.status(400).json({
-        err: 'Something wrent wrong',
-        statusCode: 400,
-      })      
-      
-    })
+    userModel.deleteById(id, function (err) {
+      if (err)
+        return res.status(400).json({
+          err: 'Something wrent wrong',
+          statusCode: 400,
+        });
+    });
 
     return res.status(200).json({
       statusCode: 200,
@@ -278,7 +278,7 @@ const userController = {
   }),
 
   getAll: catchAsyncError(async (req, res) => {
-    const users = await userModel.find({}).select('-password');
+    const users = await userModel.find({ deleted: false }).select('-password');
     return res.status(200).json({
       statusCode: 200,
       msg: 'Get all users success',
@@ -407,13 +407,25 @@ const userController = {
         });
       }
 
+      //Check department have user same role, if have will not update users count of department
+      const userSameRoleAssigned = await userModel.findOne({
+        role: user.role,
+        department_id: departmentId,
+      });
+
       //Update user department
       user.department_id = department._id;
       await user.save();
 
-      //Update count users of department
-      department.count_users = ++department.count_users;
-      await department.save();
+      //Remove user same role assigned out of department
+      if (userSameRoleAssigned) {
+        userSameRoleAssigned.department_id = null;
+        await userSameRoleAssigned.save();
+      } else {
+        //Update count users of department
+        department.count_users = ++department.count_users;
+        await department.save();
+      }
 
       return res.status(200).json({
         statusCode: 200,

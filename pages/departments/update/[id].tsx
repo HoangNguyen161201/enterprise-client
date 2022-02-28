@@ -2,35 +2,33 @@ import { FileTextOutlined } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Breadcrumb, Button, Card, message, Space } from 'antd';
 import { AxiosError } from 'axios';
+import { Input, TextArea } from 'components/elements/form';
+import { ClientLayout } from 'components/layouts';
+import { ICommon, IDetailDepartment, IDetailUser } from 'models/apiType';
+import { NextPageWithLayout } from 'models/layoutType';
+import { departmentMutation } from 'mutations/department';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter as UseRouter } from 'next/router';
-import { useEffect as UseEffect } from 'react';
-import { useForm as UseForm } from 'react-hook-form';
-import { useMutation } from 'react-query';
-import { Input, TextArea } from 'components/elements/form';
-import { ClientLayout } from 'components/layouts';
-import { NextPageWithLayout } from 'models/layoutType';
-import { IDepartmentForm } from 'models/formType';
 import { getCurrentUser } from 'queries';
 import { getDetailDepartment } from 'queries/department';
-import { putData } from 'utils/fetchData';
+import { useEffect as UseEffect } from 'react';
+import { useForm as UseForm } from 'react-hook-form';
 import { validateAddDepartment } from 'utils/validate';
-import { departmentMutation } from 'mutations/department';
-import { ICommon, IDetailDepartment } from 'models/apiType';
 
 export interface IUpdateDepartmetnProps {
   detailDepartment: IDetailDepartment;
+  detailUser: IDetailUser;
 }
 
-const UpdateDepartmetn: NextPageWithLayout = ({ detailDepartment }: IUpdateDepartmetnProps) => {
+const UpdateDepartmetn: NextPageWithLayout = ({ detailDepartment, detailUser }: IUpdateDepartmetnProps) => {
   //Get id from router to get old data
   const {
     query: { id },
   } = UseRouter();
 
   //Get access token
-  const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
+  const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser(detailUser);
 
   //Get old data department
   const { error: errorDepartment, data: dataDepartment } = getDetailDepartment(
@@ -95,7 +93,7 @@ const UpdateDepartmetn: NextPageWithLayout = ({ detailDepartment }: IUpdateDepar
       },
       onError: (error: AxiosError) => {
         message.error({
-          content: error.response?.data.err || 'Create department false.',
+          content: error.response?.data.err || 'Update department false.',
         });
       },
     },
@@ -111,9 +109,6 @@ const UpdateDepartmetn: NextPageWithLayout = ({ detailDepartment }: IUpdateDepar
     name: string;
     description: string;
   }) => {
-    //Refetch again data user let get accesstoken
-    await dataUserRefetch();
-
     //Put data update department
     mutationUpdateDepartment.mutate({ id, name, description });
   };
@@ -192,16 +187,15 @@ export default UpdateDepartmetn;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   //Check login
-  const res: any = await fetch(`http://localhost:3000/api/auth/accesstoken`, {
+  const detailUser: IDetailUser = await fetch(`http://localhost:3000/api/auth/accesstoken`, {
     method: 'GET',
     headers: {
       cookie: context.req.headers.cookie,
     } as HeadersInit,
-  });
-  const dataAccess = await res.json();
+  }).then((e) => e.json());
 
   //Redirect login page when error
-  if (dataAccess.statusCode !== 200) {
+  if (detailUser.statusCode !== 200) {
     return {
       redirect: {
         destination: '/login',
@@ -211,25 +205,24 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   //Check role
-  if (dataAccess.user.role !== 'admin' && dataAccess.user.role !== 'qa_manager') {
+  if (detailUser.user.role !== 'admin' && detailUser.user.role !== 'qa_manager') {
     return {
       notFound: true,
     };
   }
 
-  //Get detail department
   const detailDepartment: IDetailDepartment = await fetch(
     `http://localhost:3000/api/departments/${context.query.id}`,
     {
       method: 'GET',
       headers: {
         cookie: context.req.headers.cookie,
-        authorization: dataAccess.accessToken.token
+        authorization: detailUser.accessToken.token,
       } as HeadersInit,
     }
   ).then((e) => e.json());
 
-  //Redirect 404 page when not have department
+  //Redirect 404 page when not have detail department
   if (detailDepartment.statusCode !== 200) {
     return {
       notFound: true,
@@ -239,6 +232,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       detailDepartment,
+      detailUser,
     },
   };
 };

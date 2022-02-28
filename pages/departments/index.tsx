@@ -4,13 +4,13 @@ import {
   ProfileOutlined,
   QuestionCircleOutlined,
   SearchOutlined,
-  UsergroupAddOutlined
+  UsergroupAddOutlined,
 } from '@ant-design/icons';
 import { Breadcrumb, Button, Card, Input, message, Popconfirm, Space, Table, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { AxiosError } from 'axios';
 import { ClientLayout } from 'components/layouts';
-import { ICommon } from 'models/apiType';
+import { ICommon, IDetailUser } from 'models/apiType';
 import { NextPageWithLayout } from 'models/layoutType';
 import { departmentMutation } from 'mutations/department';
 import { GetServerSideProps } from 'next';
@@ -20,9 +20,11 @@ import { getAllDepartments, getCurrentUser } from 'queries';
 import { useEffect as UseEffect, useMemo as UseMemo, useState as UseState } from 'react';
 import column from 'utils/configTB';
 
-export interface IAddDepartmentProps {}
+export interface IAddDepartmentProps {
+  detailUser: IDetailUser
+}
 
-const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
+const AddDepartment: NextPageWithLayout = ({detailUser}: IAddDepartmentProps) => {
   // get all departments
   const [departments, setDepartments] = UseState<any>([]);
 
@@ -36,7 +38,7 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
   });
   const [isLoadingDlAll, setIsLoadingDlAll] = UseState(false);
   //Get access token
-  const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
+  const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser(detailUser);
 
   //Get data all departments
   const { error: errorDepartments, data, refetch } = getAllDepartments(dataUser?.accessToken.token);
@@ -51,8 +53,9 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
         refetch();
       },
       onError: (error: AxiosError) => {
-        const data = error.response?.data;
-        message.error(data.err);
+        message.error({
+          content: error.response?.data?.err
+        });
         setIsLoadingDl({ key: '', isLoading: false });
       },
     },
@@ -132,7 +135,6 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
             value={selectedKeys[0]}
             onPressEnter={() => confirm()}
             onChange={(e) => {
-              console.log([e.target.value]);
               return setSelectedKeys(e.target.value ? [e.target.value] : []);
             }}
           />
@@ -208,7 +210,6 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
                 title="Are you sure?"
                 okButtonProps={{
                   onClick: async () => {
-                    await dataUserRefetch();
                     setIsLoadingDl((state) => ({
                       ...state,
                       isLoading: true,
@@ -259,7 +260,6 @@ const AddDepartment: NextPageWithLayout = (props: IAddDepartmentProps) => {
             title="Are you sure?"
             okButtonProps={{
               onClick: async () => {
-                await dataUserRefetch();
                 setIsLoadingDlAll(true);
                 handleDlAll.mutate(departmentsSl);
               },
@@ -302,22 +302,33 @@ export default AddDepartment;
 AddDepartment.getLayout = ClientLayout;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const res = await fetch('http://localhost:3000/api/auth/accesstoken', {
+  //Check login
+  const detailUser: IDetailUser = await fetch(`http://localhost:3000/api/auth/accesstoken`, {
     method: 'GET',
     headers: {
       cookie: context.req.headers.cookie,
     } as HeadersInit,
-  });
+  }).then((e) => e.json());
 
-  const result = await res.json();
-  if (result.statusCode == 401)
+  //Redirect login page when error
+  if (detailUser.statusCode !== 200) {
     return {
       redirect: {
         destination: '/login',
         permanent: false,
       },
     };
+  }
+
+  //Check role
+  if (detailUser.user.role !== 'admin' && detailUser.user.role !== 'qa_manager') {
+    return {
+      notFound: true,
+    };
+  }
   return {
-    props: {},
+    props: {
+      detailUser
+    },
   };
 };

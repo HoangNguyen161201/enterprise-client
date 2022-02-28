@@ -2,8 +2,9 @@ import { EyeOutlined } from '@ant-design/icons';
 import { Button, Col, Image, Space } from 'antd';
 import { IStaff } from 'models/elementType';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
-export const User = ({ image, name, role, employee_id, xs, sm, lg, xl }: IStaff) => {
+export const User = ({ image, name, role, employee_id, xs, sm, lg, xl, id }: IStaff) => {
   return (
     <Col xs={xs} sm={sm} lg={lg} xl={xl}>
       <motion.div
@@ -47,7 +48,9 @@ export const User = ({ image, name, role, employee_id, xs, sm, lg, xl }: IStaff)
             }}
           >
             <span style={{ color: 'gray' }}>{role}</span>
-            <Button shape="circle" type="primary" icon={<EyeOutlined />} />
+            <Link href={`/users/detail/${id}`} passHref>
+              <Button shape="circle" type="primary" icon={<EyeOutlined />} />
+            </Link>
           </Space>
         </Space>
       </motion.div>

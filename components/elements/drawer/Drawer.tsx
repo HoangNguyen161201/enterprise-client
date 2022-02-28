@@ -178,9 +178,6 @@ export const Drawer = ({ onClose, ...props }: IProps) => {
             key="3"
             icon={<UploadOutlined />}
             onClick={onClose}
-            style={{
-              display: isShowByRole.admin || isShowByRole.qa_manager ? 'block' : 'none',
-            }}
           >
             <Link href={'/submissions'}>
               <a>Submissions</a>

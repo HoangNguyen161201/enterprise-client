@@ -9,7 +9,7 @@ export const getDetailDepartment = (
   accessToken?: string,
   initial?: IDetailDepartment
 ) => {
-  return useQuery<any, AxiosError>(
+  return useQuery<IDetailDepartment, AxiosError>(
     ['department', id],
     async () => {
       return await getData({ url: `/api/departments/${id}`, token: accessToken });

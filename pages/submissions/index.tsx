@@ -1,10 +1,20 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Breadcrumb, Button, Card as AntCard, DatePicker, Input, message, Pagination, Row, Space } from 'antd';
+import {
+  Breadcrumb,
+  Button,
+  Card as AntCard,
+  DatePicker,
+  Input,
+  message,
+  Pagination,
+  Row,
+  Space,
+} from 'antd';
 import axios, { AxiosError } from 'axios';
 import { Card } from 'components/elements/common';
 import { DrawerImg, DrawerSubm } from 'components/elements/drawer';
 import { ClientLayout } from 'components/layouts';
-import { ICommon, ISubmission, ISubmissions } from 'models/apiType';
+import { ICommon, IDetailUser, ISubmission, ISubmissions } from 'models/apiType';
 import { ISubmissionForm } from 'models/formType';
 import { NextPageWithLayout } from 'models/layoutType';
 import moment from 'moment';
@@ -18,40 +28,41 @@ import { validateSubmission } from 'utils/validate';
 
 interface submisionPage {
   result: ISubmissions;
+  detailUser: IDetailUser;
 }
-const index: NextPageWithLayout = ({ result }: submisionPage) => {
+const index: NextPageWithLayout = ({ result, detailUser }: submisionPage) => {
   const [isOpen, setIsopen] = UseState(false);
   const [isOpenSlImg, setIsOpenSlImg] = UseState(false);
   const [imgs, setImgs] = UseState<string[] | null>(null);
   const [page, setPage] = UseState<number>(1);
   const [search, setSearch] = UseState('');
-  const [searchFirst, setSearchFirst] = UseState('')
+  const [searchFirst, setSearchFirst] = UseState('');
   const [date, setDate] = UseState('');
-  const [searchDate, setSearchDate] = UseState<any>(null)
+  const [searchDate, setSearchDate] = UseState<any>(null);
   const [submissionUd, setSubmissionUd] = UseState<ISubmissionForm | null | undefined>(null);
   const [statusForm, setStatusForm] = UseState<'create' | 'update'>('create');
   const [imgSubmission, setImgSubmission] = UseState(
     'https://res.cloudinary.com/hoang161201/image/upload/v1645274633/Group_92_grzovc.svg'
   );
-  let timeOutSearch: NodeJS.Timeout, timeOutSearchTime: NodeJS.Timeout
-  
-  const [idDelete, setIdDelete] = UseState('');
-  UseEffect(()=> {
-    timeOutSearch = setTimeout(()=> {
-      setSearch(searchFirst)
-      setPage(1)
-    }, 1000)
-    return ()=> clearTimeout(timeOutSearch)
-  }, [searchFirst])
+  let timeOutSearch: NodeJS.Timeout, timeOutSearchTime: NodeJS.Timeout;
 
-  UseEffect(()=> {
-    timeOutSearchTime = setTimeout(()=> {
-      console.log(searchDate)
-      setDate(searchDate)
-      setPage(1)
-    }, 1000)
-    return ()=> clearTimeout(timeOutSearchTime)
-  }, [searchDate])
+  const [idDelete, setIdDelete] = UseState('');
+  UseEffect(() => {
+    timeOutSearch = setTimeout(() => {
+      setSearch(searchFirst);
+      setPage(1);
+    }, 1000);
+    return () => clearTimeout(timeOutSearch);
+  }, [searchFirst]);
+
+  UseEffect(() => {
+    timeOutSearchTime = setTimeout(() => {
+      console.log(searchDate);
+      setDate(searchDate);
+      setPage(1);
+    }, 1000);
+    return () => clearTimeout(timeOutSearchTime);
+  }, [searchDate]);
 
   // setting form
   const formSetting = UseForm<ISubmissionForm>({
@@ -119,7 +130,11 @@ const index: NextPageWithLayout = ({ result }: submisionPage) => {
   }, [statusForm]);
 
   //Get access token
-  const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
+  const {
+    data: dataUser,
+    error: errorGetUser,
+    refetch: dataUserRefetch,
+  } = getCurrentUser(detailUser);
 
   // get all submission
   const {
@@ -129,8 +144,7 @@ const index: NextPageWithLayout = ({ result }: submisionPage) => {
   } = getallSubmissions(dataUser?.accessToken.token, result, {
     _page: page,
     _search: search,
-    _time: date
-
+    _time: date,
   });
 
   const addSubmission = submMutation.add({
@@ -199,12 +213,11 @@ const index: NextPageWithLayout = ({ result }: submisionPage) => {
   return (
     <>
       <Head>
-        <title>Submission</title>
+        <title>Submissions Page</title>
       </Head>
       <Breadcrumb>
         <Breadcrumb.Item>Home</Breadcrumb.Item>
-        <Breadcrumb.Item>Submission</Breadcrumb.Item>
-        <Breadcrumb.Item>Add Submission</Breadcrumb.Item>
+        <Breadcrumb.Item>Submissions</Breadcrumb.Item>
       </Breadcrumb>
 
       <AntCard
@@ -252,7 +265,12 @@ const index: NextPageWithLayout = ({ result }: submisionPage) => {
           <Row gutter={[30, 30]}>
             {dataSubmissions?.submissions &&
               dataSubmissions?.submissions.map((item: ISubmission) => (
-                <Card item={item} more={more} key={item._id} />
+                <Card
+                  item={item}
+                  more={more}
+                  key={item._id}
+                  current_user={dataUser as IDetailUser}
+                />
               ))}
           </Row>
           <Space direction="vertical" align="end">
@@ -280,17 +298,15 @@ export default index;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   //Check login
-  const res = await fetch('http://localhost:3000/api/auth/accesstoken', {
+  const detailUser: IDetailUser = await fetch(`http://localhost:3000/api/auth/accesstoken`, {
     method: 'GET',
     headers: {
       cookie: context.req.headers.cookie,
     } as HeadersInit,
-  });
-
-  const data = await res.json();
+  }).then((e) => e.json());
 
   //Redirect login page when error
-  if (res.status !== 200) {
+  if (detailUser.statusCode !== 200) {
     return {
       redirect: {
         destination: '/login',
@@ -299,24 +315,19 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
-  //Check role
-  if (data.user.role !== 'admin') {
-    return {
-      notFound: true,
-    };
-  }
-
   //Get all data users
   const result: ISubmissions = await fetch(`http://localhost:3000/api/submissions?_page=1`, {
     method: 'GET',
     headers: {
       cookie: context.req.headers.cookie,
+      authorization: detailUser.accessToken.token,
     } as HeadersInit,
   }).then((e) => e.json());
 
   return {
     props: {
       result,
+      detailUser,
     },
   };
 };
