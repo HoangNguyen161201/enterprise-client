@@ -673,6 +673,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     method: 'GET',
     headers: {
       cookie: context.req.headers.cookie,
+      authorization: detailUser.accessToken.token,
     } as HeadersInit,
   }).then((e) => e.json());
 
@@ -683,6 +684,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       method: 'GET',
       headers: {
         cookie: context.req.headers.cookie,
+        authorization: detailUser.accessToken.token,
       } as HeadersInit,
     }
   ).then((e) => e.json());

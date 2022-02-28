@@ -111,16 +111,15 @@ const index: NextPageWithLayout = ({ detailUser }) => {
   return (
     <>
       <Head>
-        <title> Ideals</title>
+        <title>All Ideas Page</title>
       </Head>
 
       <Breadcrumb>
         <Breadcrumb.Item>Home</Breadcrumb.Item>
         <Breadcrumb.Item>Ideas</Breadcrumb.Item>
-        <Breadcrumb.Item>View Detail Idea</Breadcrumb.Item>
       </Breadcrumb>
 
-      <Card title="View Detail Employee" style={{ width: '100%', marginTop: '20px' }}>
+      <Card title="View All Ideas" style={{ width: '100%', marginTop: '20px' }}>
         <Row wrap={md ? false : true} gutter={[30, 30]}>
           <Col
             span={md ? undefined : 24}
