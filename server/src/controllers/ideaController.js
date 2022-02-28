@@ -205,20 +205,20 @@ const ideaController = {
     } = req.query;
 
     if (_interactive || _reaction) {
-      const match = ()=> {
-        if(_reaction) {
+      const match = () => {
+        if (_reaction) {
           return {
             $match: {
               reactionType_id: _reaction,
-              'idea.accept': true 
+              'idea.accept': true
             }
           }
         }
-  
+
         return {
           $match: {
-            reactionType_id: {$nin: ['']},
-            'idea.accept': true  
+            reactionType_id: { $nin: [''] },
+            'idea.accept': true
           }
         }
       }
@@ -302,12 +302,14 @@ const ideaController = {
       filter = filter.searchById({ name: _nameById, value: _valueById })
     }
     if (_search) {
-      filter = filter.search({name: 'title', query: _search})
+      filter = filter.search({ name: 'title', query: _search })
     }
     if (_sort) {
       filter = filter.sort({ name: _sortBy, NorO: _sort });
     }
-    filter = filter.pagination({ page: _page - 1, limit: _limit });
+    if (_page && _limit) {
+      filter = filter.pagination({ page: _page - 1, limit: _limit });
+    }
 
     const data = await filter.query.populate('user_id');
     return res.status(200).json({

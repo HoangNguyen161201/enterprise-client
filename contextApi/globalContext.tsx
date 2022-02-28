@@ -25,7 +25,7 @@ function GlobalContextProvider({ children }: IGlobalConttextProps) {
 
   return (
     <GlobalContext.Provider value={value}>
-      <AnimatePresence exitBeforeEnter>
+      {/* <AnimatePresence exitBeforeEnter>
         <motion.div
           style={{
             overflowX: 'hidden'
@@ -34,10 +34,10 @@ function GlobalContextProvider({ children }: IGlobalConttextProps) {
           key={route}
           initial={{ opacity: 0, y: -50 }}
           exit={{ opacity: 0, x: 250, transition: { duration: 0.7 } }}
-        >
+        > */}
           {children}
-        </motion.div>
-      </AnimatePresence>
+        {/* </motion.div>
+      </AnimatePresence> */}
     </GlobalContext.Provider>
   );
 }

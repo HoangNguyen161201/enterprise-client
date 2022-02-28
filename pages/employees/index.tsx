@@ -70,6 +70,7 @@ const Employees: NextPageWithLayout = ({
   const showDrawer = () => {
     setVisible(true);
   };
+  
   const onClose = () => {
     setVisible(false);
   };
