@@ -1,28 +1,19 @@
 //Import
 import {
-  CloudUploadOutlined, FieldTimeOutlined, FileSearchOutlined,
-  FileTextOutlined
+  CloudUploadOutlined,
+  FieldTimeOutlined,
+  FileSearchOutlined,
+  FileTextOutlined,
 } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
-import {
-  Breadcrumb,
-  Button,
-  Card,
-  Col,
-  List,
-  message,
-  Row,
-  Space,
-  Spin,
-  Switch
-} from 'antd';
+import { Breadcrumb, Button, Card, Col, List, message, Row, Space, Spin, Switch } from 'antd';
 import { AxiosError } from 'axios';
 import { ItemIdea } from 'components/elements/common';
 import ItemFileUpload from 'components/elements/common/ItemFileUpload';
 import RowTable from 'components/elements/common/RowTable';
 import { Input, Select, TextArea } from 'components/elements/form';
 import { ClientLayout } from 'components/layouts';
-import { IallCategories, IAllIdeas, ICommon, IDetailSubmission } from 'models/apiType';
+import { IallCategories, IAllIdeas, ICommon, IDetailSubmission, IDetailUser } from 'models/apiType';
 import { IOptionSelect } from 'models/elementType';
 import { IIdeaForm } from 'models/formType';
 import { NextPageWithLayout } from 'models/layoutType';
@@ -51,17 +42,19 @@ export interface IDetailSubmissionProps {
   detailSubmission: IDetailSubmission;
   allCategories: IallCategories;
   allIdeaCurrentUser: IAllIdeas;
+  detailUser: IDetailUser;
 }
 
 const DetailSubmission: NextPageWithLayout = ({
   detailSubmission,
   allCategories,
   allIdeaCurrentUser,
+  detailUser
 }: IDetailSubmissionProps) => {
   console.log(allIdeaCurrentUser);
 
   //Get access token
-  const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
+  const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser(detailUser);
   UseEffect(() => {
     dataUserRefetch();
   }, []);
@@ -554,7 +547,7 @@ const DetailSubmission: NextPageWithLayout = ({
                 size={20}
                 {...getRootProps()}
               >
-                <img alt='upload_file' src="/assets/uploadFiles.svg" />
+                <img alt="upload_file" src="/assets/uploadFiles.svg" />
                 <input {...getInputProps()} />
                 {isDragActive ? (
                   <p
@@ -640,28 +633,20 @@ export default DetailSubmission;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   //Check login
-  const res: any = await fetch(`http://localhost:3000/api/auth/accesstoken`, {
+  const detailUser: IDetailUser = await fetch(`http://localhost:3000/api/auth/accesstoken`, {
     method: 'GET',
     headers: {
       cookie: context.req.headers.cookie,
     } as HeadersInit,
-  });
-  const dataAccess = await res.json();
+  }).then((e) => e.json());
 
   //Redirect login page when error
-  if (dataAccess.statusCode !== 200) {
+  if (detailUser.statusCode !== 200) {
     return {
       redirect: {
         destination: '/login',
         permanent: false,
       },
-    };
-  }
-
-  //Check role
-  if (dataAccess.user.role === 'admin') {
-    return {
-      notFound: true,
     };
   }
 
@@ -671,7 +656,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       method: 'GET',
       headers: {
         cookie: context.req.headers.cookie,
-        authorization: dataAccess.accessToken.token,
+        authorization: detailUser.accessToken.token,
       } as HeadersInit,
     }
   ).then((e) => e.json());
@@ -693,7 +678,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   // Get all detail by user and submission
   const allIdeaCurrentUser: IAllIdeas = await fetch(
-    `http://localhost:3000/api/ideas/user/${dataAccess.user._id}/?submission_id=${context.query.id}`,
+    `http://localhost:3000/api/ideas/user/${detailUser.user._id}/?submission_id=${context.query.id}`,
     {
       method: 'GET',
       headers: {
@@ -707,6 +692,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       detailSubmission,
       allCategories,
       allIdeaCurrentUser,
+      detailUser
     },
   };
 };

@@ -55,6 +55,13 @@ const departmentController = {
         statusCode: 400,
       });
 
+    //Check root
+    if (department.root)
+      return res.status(400).json({
+        err: 'The root department could not be update.',
+        statusCode: 400,
+      });
+
     //Update
     await departmentModel.findByIdAndUpdate(id, {
       name,
@@ -75,7 +82,7 @@ const departmentController = {
     const department = await departmentModel.findById(id);
     if (!department)
       return res.status(400).json({
-        msg: 'This department does not exist in the system.',
+        err: 'This department does not exist in the system.',
         statusCode: 400,
       });
 
@@ -92,7 +99,7 @@ const departmentController = {
 
     if (!users || users.length !== 0)
       return res.status(400).json({
-        msg: 'Please remove all assigned users from this department.',
+        err: 'Please remove all assigned users from this department.',
         statusCode: 400,
       });
 
@@ -141,6 +148,7 @@ const departmentController = {
         .select('-password');
       if (users.length !== 0) {
         countDepartmentsHasUsers = ++countDepartmentsHasUsers;
+        canDelete = false;
       }
 
       //Check can delele

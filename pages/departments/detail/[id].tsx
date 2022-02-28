@@ -8,16 +8,20 @@ import { useRouter } from 'next/router';
 import { useEffect as UseEffect, useState } from 'react';
 import { FieldCard, User } from 'components/elements/common';
 import { ClientLayout } from 'components/layouts';
-import { IDetailDepartment,  IUser } from 'models/apiType';
+import { IDetailDepartment, IDetailUser, IUser } from 'models/apiType';
 import { NextPageWithLayout } from 'models/layoutType';
-import { getCurrentUser  } from 'queries/auth';
+import { getCurrentUser } from 'queries/auth';
 import { getDetailDepartment } from 'queries/department';
 
 export interface IDetailDepartmentProps {
   detailDepartment: IDetailDepartment;
+  detailUser: IDetailUser;
 }
 
-const DetailDepartment: NextPageWithLayout = ({ detailDepartment }: IDetailDepartmentProps) => {
+const DetailDepartment: NextPageWithLayout = ({
+  detailDepartment,
+  detailUser,
+}: IDetailDepartmentProps) => {
   const { query } = useRouter();
 
   const [isShow, setIsShow] = useState(false);
@@ -27,7 +31,11 @@ const DetailDepartment: NextPageWithLayout = ({ detailDepartment }: IDetailDepar
   } = useRouter();
 
   //Get access token
-  const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
+  const {
+    data: dataUser,
+    error: errorGetUser,
+    refetch: dataUserRefetch,
+  } = getCurrentUser(detailUser);
   UseEffect(() => {
     dataUserRefetch();
   }, []);
@@ -65,7 +73,6 @@ const DetailDepartment: NextPageWithLayout = ({ detailDepartment }: IDetailDepar
       <Breadcrumb>
         <Breadcrumb.Item>Home</Breadcrumb.Item>
         <Breadcrumb.Item>Departments</Breadcrumb.Item>
-        <Breadcrumb.Item>All Departments</Breadcrumb.Item>
         <Breadcrumb.Item>View Detail Department</Breadcrumb.Item>
       </Breadcrumb>
 
@@ -75,39 +82,52 @@ const DetailDepartment: NextPageWithLayout = ({ detailDepartment }: IDetailDepar
           <FieldCard
             lg={12}
             label="ID Department"
-            content={dataDepartment ? dataDepartment.department._id : ''}
+            content={dataDepartment ? dataDepartment.department?._id : ''}
           />
           <FieldCard
             lg={12}
-            view={dataDepartment?.department_manager ? true : false}
+            view={dataDepartment?.department.department_manager ? true : false}
+            user_id={
+              dataDepartment?.department.department_manager
+                ? dataDepartment?.department.department_manager._id
+                : undefined
+            }
             label="Department Manager"
             content={
-              dataDepartment?.department_manager?.email
-                ? dataDepartment.department_manager.email
-                : ''
+              dataDepartment ? (dataDepartment.department?.department_manager?.email as string) : ''
             }
           />
           <FieldCard
             lg={12}
-            view={dataDepartment?.qa_coordinator ? true : false}
+            view={dataDepartment?.department.qa_coordinator ? true : false}
+            user_id={
+              dataDepartment?.department.qa_coordinator
+                ? dataDepartment?.department.qa_coordinator._id
+                : undefined
+            }
             label="QA Coordinator"
             content={
-              dataDepartment?.qa_coordinator?.email ? dataDepartment?.qa_coordinator?.email : ''
+              dataDepartment ? (dataDepartment.department?.qa_coordinator?.email as string) : ''
             }
           />
           <FieldCard
             lg={12}
-            view={dataDepartment?.qa_manager ? true : false}
+            view={dataDepartment?.department.qa_manager ? true : false}
+            user_id={
+              dataDepartment?.department.qa_manager
+                ? dataDepartment?.department.qa_manager._id
+                : undefined
+            }
             label="QA Manager"
-            content={dataDepartment?.qa_manager?.email ? dataDepartment?.qa_manager?.email : ''}
+            content={dataDepartment ? (dataDepartment.department?.qa_manager?.email as string) : ''}
           />
 
           <FieldCard
             xs={24}
             xl={24}
-            view={dataDepartment?.qa_coordinator ? true : false}
+            view={false}
             label="Description"
-            content={dataDepartment ? dataDepartment.department.description : ''}
+            content={dataDepartment ? dataDepartment.department?.description : ''}
           />
         </Row>
         <Space
@@ -137,6 +157,7 @@ const DetailDepartment: NextPageWithLayout = ({ detailDepartment }: IDetailDepar
                 if (!isShow && key <= 7)
                   return (
                     <User
+                      id={item._id}
                       key={key}
                       xs={24}
                       sm={12}
@@ -156,6 +177,7 @@ const DetailDepartment: NextPageWithLayout = ({ detailDepartment }: IDetailDepar
                       sm={12}
                       lg={8}
                       xl={6}
+                      id={item._id}
                       image={item.avatar.url}
                       name={item.name}
                       role={item.role}
@@ -164,19 +186,21 @@ const DetailDepartment: NextPageWithLayout = ({ detailDepartment }: IDetailDepar
                   );
               })}
           </Row>
-          {dataDepartment?.department?.staffs?.length > 8 && !isShow && (
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <Button
-                icon={<ArrowDownOutlined />}
-                type="default"
-                size="large"
-                style={{ borderRadius: 5 }}
-                onClick={() => setIsShow(true)}
-              >
-                Show more
-              </Button>
-            </div>
-          )}
+          {dataDepartment?.department?.staffs &&
+            dataDepartment.department.staffs.length > 8 &&
+            !isShow && (
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <Button
+                  icon={<ArrowDownOutlined />}
+                  type="default"
+                  size="large"
+                  style={{ borderRadius: 5 }}
+                  onClick={() => setIsShow(true)}
+                >
+                  Show more
+                </Button>
+              </div>
+            )}
         </Space>
       </Card>
     </>
@@ -189,17 +213,15 @@ export default DetailDepartment;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   //Check login
-  const res = await fetch(`http://localhost:3000/api/auth/accesstoken`, {
+  const detailUser: IDetailUser = await fetch(`http://localhost:3000/api/auth/accesstoken`, {
     method: 'GET',
     headers: {
       cookie: context.req.headers.cookie,
     } as HeadersInit,
-  });
-
-  const data = await res.json();
+  }).then((e) => e.json());
 
   //Redirect login page when error
-  if (res.status !== 200) {
+  if (detailUser.statusCode !== 200) {
     return {
       redirect: {
         destination: '/login',
@@ -209,7 +231,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   //Check role
-  if (data.user.role !== 'admin') {
+  if (detailUser.user.role !== 'admin' && detailUser.user.role !== 'qa_manager') {
     return {
       notFound: true,
     };
@@ -221,13 +243,22 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       method: 'GET',
       headers: {
         cookie: context.req.headers.cookie,
+        authorization: detailUser.accessToken.token,
       } as HeadersInit,
     }
   ).then((e) => e.json());
 
+  //Redirect 404 page when not have detail department
+  if (detailDepartment.statusCode !== 200) {
+    return {
+      notFound: true,
+    };
+  }
+
   return {
     props: {
       detailDepartment,
+      detailUser,
     },
   };
 };

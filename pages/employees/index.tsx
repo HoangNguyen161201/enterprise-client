@@ -1,20 +1,31 @@
 import {
   DeleteOutlined,
-  EyeOutlined, MoreOutlined,
+  EyeOutlined,
+  MoreOutlined,
   QuestionCircleOutlined,
   SearchOutlined,
-  UploadOutlined
+  UploadOutlined,
 } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
-  Breadcrumb, Button,
-  Card, Dropdown, Image, Input, Menu, message, Popconfirm, Space, Table, Tag
+  Breadcrumb,
+  Button,
+  Card,
+  Dropdown,
+  Image,
+  Input,
+  Menu,
+  message,
+  Popconfirm,
+  Space,
+  Table,
+  Tag,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { AxiosError } from 'axios';
 import { DrawerUpdateUser } from 'components/elements/drawer';
 import { ClientLayout } from 'components/layouts';
-import { IAllUsers, ICommon, IDepartments, IUser } from 'models/apiType';
+import { IAllUsers, ICommon, IDepartments, IDetailUser, IUser } from 'models/apiType';
 import { IOptionSelect } from 'models/elementType';
 import { IUserForm } from 'models/formType';
 import { NextPageWithLayout } from 'models/layoutType';
@@ -31,9 +42,14 @@ import { validateUpdateUser } from '../../utils/validate';
 export interface IEmployeesProps {
   allUsers: IAllUsers;
   allDepartments: IDepartments;
+  detailUser: IDetailUser;
 }
 
-const Employees: NextPageWithLayout = ({ allUsers, allDepartments }: IEmployeesProps) => {
+const Employees: NextPageWithLayout = ({
+  allUsers,
+  allDepartments,
+  detailUser,
+}: IEmployeesProps) => {
   //Visibble drawer udpate employee
   const [visible, setVisible] = React.useState(false);
 
@@ -68,7 +84,11 @@ const Employees: NextPageWithLayout = ({ allUsers, allDepartments }: IEmployeesP
   const [usersSl, setUsersSl] = React.useState<null | string[]>(null);
 
   //Get access token
-  const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
+  const {
+    data: dataUser,
+    error: errorGetUser,
+    refetch: dataUserRefetch,
+  } = getCurrentUser(detailUser);
 
   //Get all data user
   const {
@@ -103,7 +123,7 @@ const Employees: NextPageWithLayout = ({ allUsers, allDepartments }: IEmployeesP
   React.useEffect(() => {
     let newDataSourceUsers: Partial<IUser>[] = [];
     if (dataAllUsers) {
-      newDataSourceUsers = dataAllUsers.users.map((user: IUser) => {
+      newDataSourceUsers = dataAllUsers?.users?.map((user: IUser) => {
         return {
           key: user._id,
           employee_id: user.employee_id,
@@ -145,8 +165,8 @@ const Employees: NextPageWithLayout = ({ allUsers, allDepartments }: IEmployeesP
         });
       },
     },
-    token: dataUser?.accessToken.token
-  })
+    token: dataUser?.accessToken.token,
+  });
 
   //  mutation call api to delete many Users
   const mutationDeleteManyUser = EmplMutation.deleteMany({
@@ -165,8 +185,8 @@ const Employees: NextPageWithLayout = ({ allUsers, allDepartments }: IEmployeesP
         });
       },
     },
-    token: dataUser?.accessToken.token
-  })
+    token: dataUser?.accessToken.token,
+  });
 
   //  mutation call api to update User
   const mutationUpdateUser = EmplMutation.update({
@@ -185,8 +205,8 @@ const Employees: NextPageWithLayout = ({ allUsers, allDepartments }: IEmployeesP
       },
     },
     dataUserRefetch: dataUserRefetch,
-    token: dataUser?.accessToken.token
-  })
+    token: dataUser?.accessToken.token,
+  });
 
   //Check exist and show error
   React.useEffect(() => {
@@ -199,9 +219,6 @@ const Employees: NextPageWithLayout = ({ allUsers, allDepartments }: IEmployeesP
 
   //Function handle delete user
   const deleteUser = async (id: string) => {
-    //Refetch again let get accesstoken pass to api
-    await dataUserRefetch();
-
     //Delete user
     mutationDeleteUser.mutate({
       id,
@@ -210,9 +227,6 @@ const Employees: NextPageWithLayout = ({ allUsers, allDepartments }: IEmployeesP
 
   //Function handle delete many users
   const deleteManyUser = async (users: string[]) => {
-    //Refetch again let get accesstoken pass to api
-    await dataUserRefetch();
-
     //Delete users
     mutationDeleteManyUser.mutate({
       users,
@@ -510,17 +524,15 @@ Employees.getLayout = ClientLayout;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   //Check login
-  const res = await fetch('http://localhost:3000/api/auth/accesstoken', {
+  const detailUser: IDetailUser = await fetch(`http://localhost:3000/api/auth/accesstoken`, {
     method: 'GET',
     headers: {
       cookie: context.req.headers.cookie,
     } as HeadersInit,
-  });
-
-  const data = await res.json();
+  }).then((e) => e.json());
 
   //Redirect login page when error
-  if (res.status !== 200) {
+  if (detailUser.statusCode !== 200) {
     return {
       redirect: {
         destination: '/login',
@@ -530,7 +542,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   //Check role
-  if (data.user.role !== 'admin') {
+  if (detailUser.user.role !== 'admin' && detailUser.user.role !== 'qa_manager') {
     return {
       notFound: true,
     };
@@ -541,21 +553,38 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     method: 'GET',
     headers: {
       cookie: context.req.headers.cookie,
+      authorization: detailUser.accessToken.token,
     } as HeadersInit,
   }).then((e) => e.json());
+
+  //Redirect 404 page when not have allUsers
+  if (allUsers.statusCode !== 200) {
+    return {
+      notFound: true,
+    };
+  }
 
   //Get all department
   const allDepartments: IDepartments = await fetch(`http://localhost:3000/api/departments`, {
     method: 'GET',
     headers: {
       cookie: context.req.headers.cookie,
+      authorization: detailUser.accessToken.token,
     } as HeadersInit,
   }).then((e) => e.json());
+
+  //Redirect 404 page when not have allDepartments
+  if (allDepartments.statusCode !== 200) {
+    return {
+      notFound: true,
+    };
+  }
 
   return {
     props: {
       allUsers,
       allDepartments,
+      detailUser,
     },
   };
 };

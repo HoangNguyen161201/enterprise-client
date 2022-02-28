@@ -5,7 +5,7 @@ import {
   SearchOutlined,
   UserAddOutlined,
   UsergroupAddOutlined,
-  UserSwitchOutlined
+  UserSwitchOutlined,
 } from '@ant-design/icons';
 import {
   Breadcrumb,
@@ -18,13 +18,13 @@ import {
   Row,
   Space,
   Table,
-  Tag
+  Tag,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { AxiosError } from 'axios';
 import { ButtonAssign } from 'components/elements/common';
 import { ClientLayout } from 'components/layouts';
-import { ICommon, IDetailDepartment, IUser } from 'models/apiType';
+import { ICommon, IDetailDepartment, IDetailUser, IUser } from 'models/apiType';
 import { IUsersNotDepartment } from 'models/elementType';
 import { IAssignUsers } from 'models/formType';
 import { NextPageWithLayout } from 'models/layoutType';
@@ -37,13 +37,12 @@ import { getAllDepartments, getDetailDepartment, getUsersNotDepartment } from 'q
 import { useEffect as UseEffect, useMemo as UseMemo, useState as UseState } from 'react';
 import column from 'utils/configTB';
 
-
-
 export interface IAssignDepartmentProps {
   detailDepartment: IDetailDepartment;
+  detailUser: IDetailUser;
 }
 
-const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepartmentProps) => {
+const AssignDepartment: NextPageWithLayout = ({ detailDepartment, detailUser }: IAssignDepartmentProps) => {
   //Get id from router to get old data
   const {
     query: { id },
@@ -67,7 +66,7 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
     console.log(staffsSl);
   }, [staffsSl]);
 
-  const [staffs, setStaffs] = UseState<IUser[]>([]);
+  const [staffs, setStaffs] = UseState<Partial<IUser>[]>([]);
 
   // set loading when delete department, delete all departments
   const [isLoadingDl, setIsLoadingDl] = UseState({
@@ -75,9 +74,8 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
     isLoading: false,
   });
 
-  
   //Get access token
-  const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
+  const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser(detailUser);
   UseEffect(() => {
     dataUserRefetch();
   }, []);
@@ -116,13 +114,12 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
         setStaffsSl(null);
       },
     },
-    token: dataUser?.accessToken.token
-
-  })
+    token: dataUser?.accessToken.token,
+  });
 
   // remove staff in department
   const handleDl = departmentMutation.removeStaff({
-    dataUserRefetch: dataUserRefetch, 
+    dataUserRefetch: dataUserRefetch,
     options: {
       onSuccess: (data: ICommon) => {
         message.success(data.msg);
@@ -133,10 +130,10 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
         const data = error.response?.data;
         message.error(data.err);
         setIsLoadingDl({ key: '', isLoading: false });
-      }
+      },
     },
-    token: dataUser?.accessToken.token
-  })
+    token: dataUser?.accessToken.token,
+  });
 
   //Check exist and show error
   UseEffect(() => {
@@ -199,7 +196,7 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
   // set data source to table
   UseEffect(() => {
     if (dataDepartment?.department?.staffs) {
-      const getStaffs = dataDepartment.department.staffs.map((staff: IUser) => ({
+      const getStaffs: Partial<IUser>[] = dataDepartment.department.staffs.map((staff: IUser) => ({
         key: staff._id,
         employee_id: staff.employee_id,
         name_avatar: { name: staff.name, avatar: staff.avatar.url },
@@ -340,11 +337,10 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
         message.error({
           content: error.response?.data.err || 'Assign user false.',
         });
-      }
+      },
     },
-    token: dataUser?.accessToken.token 
-  })
-  
+    token: dataUser?.accessToken.token,
+  });
 
   //Mutation Assign one user
   const mutationAssignManyUsers = departmentMutation.AssignManyUser({
@@ -366,8 +362,8 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
         });
       },
     },
-    token: dataUser?.accessToken.token 
-  })
+    token: dataUser?.accessToken.token,
+  });
 
   //Function on assign one user
   const onAssignOneUser = ({ userId, departmentId }: IAssignUsers) => {
@@ -440,7 +436,7 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
               dataUsers={userNotDepartment.staffs}
               assignType="many"
               handleOk={onAssignManyUsers}
-              departmentId={dataDepartment?.department?._id}
+              departmentId={dataDepartment?.department?._id as string}
               xs={24}
               lg={12}
               xl={8}
@@ -454,7 +450,7 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
               dataUsers={userNotDepartment.QACoordinators}
               assignType="one"
               handleOk={onAssignOneUser}
-              departmentId={dataDepartment?.department?._id}
+              departmentId={dataDepartment?.department?._id as string}
               xs={24}
               lg={12}
               xl={8}
@@ -468,7 +464,7 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment }: IAssignDepar
               dataUsers={userNotDepartment.DepartmentManagers}
               assignType="one"
               handleOk={onAssignOneUser}
-              departmentId={dataDepartment?.department?._id}
+              departmentId={dataDepartment?.department?._id as string}
               xs={24}
               lg={12}
               xl={8}
@@ -509,17 +505,15 @@ export default AssignDepartment;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   //Check login
-  const res = await fetch(`http://localhost:3000/api/auth/accesstoken`, {
+  const detailUser: IDetailUser = await fetch(`http://localhost:3000/api/auth/accesstoken`, {
     method: 'GET',
     headers: {
       cookie: context.req.headers.cookie,
     } as HeadersInit,
-  });
-
-  const data = await res.json();
+  }).then((e) => e.json());
 
   //Redirect login page when error
-  if (res.status !== 200) {
+  if (detailUser.statusCode !== 200) {
     return {
       redirect: {
         destination: '/login',
@@ -529,7 +523,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   //Check role
-  if (data.user.role !== 'admin') {
+  if (detailUser.user.role !== 'admin' && detailUser.user.role !== 'qa_manager') {
     return {
       notFound: true,
     };
@@ -541,13 +535,22 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       method: 'GET',
       headers: {
         cookie: context.req.headers.cookie,
+        authorization: detailUser.accessToken.token,
       } as HeadersInit,
     }
   ).then((e) => e.json());
 
+  //Redirect 404 page when not have detail department
+  if (detailDepartment.statusCode !== 200) {
+    return {
+      notFound: true,
+    };
+  }
+
   return {
     props: {
       detailDepartment,
+      detailUser,
     },
   };
 };

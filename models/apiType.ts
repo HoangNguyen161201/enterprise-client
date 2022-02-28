@@ -40,6 +40,9 @@ export interface IDetailDepartment extends ICommon {
     description: string;
     count_users: number;
     staffs: Array<IUser>;
+    qa_coordinator?: IUser;
+    qa_manager?: IUser;
+    department_manager?: IUser;
     [index: string]: any;
   };
 }

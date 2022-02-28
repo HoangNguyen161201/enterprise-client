@@ -63,11 +63,11 @@ const authController = {
     //Check live refresh token
     const rf_token = await req.cookies.refresh_token;
     if (!rf_token)
-      return res.status(401).json({
-        err: 'Please login now!',
-        statusCode: 401,
-      });
-
+    return res.status(401).json({
+      err: 'Please login now!',
+      statusCode: 401,
+    });
+    
     //Check refresh verify
     const result = await jwt.verify(rf_token, process.env.REFRESH_TOKEN_SECRET, {
       ignoreExpiration: true,
@@ -90,11 +90,11 @@ const authController = {
     //Check user exist in system
     const user = await userModel.findById(result.id).select('-password');
     if (!user)
-      return res.status(400).json({
-        err: 'User does not exist.',
-        statusCode: 400,
-      });
-
+    return res.status(400).json({
+      err: 'User does not exist.',
+      statusCode: 400,
+    });
+    
     //Create new access token
     const access_token = await createAccessToken({
       id: user._id,
