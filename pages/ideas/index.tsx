@@ -65,7 +65,7 @@ const index: NextPageWithLayout = ({ detailUser }) => {
       _valueById,
       _interactive,
       _reaction,
-      _search
+      _search,
     },
     dataUser?.accessToken.token
   );
@@ -78,8 +78,8 @@ const index: NextPageWithLayout = ({ detailUser }) => {
     _interactive,
     _reaction,
   }: Partial<IFilter>) => {
-    setSearch('')
-    setSearchFirst('')
+    setSearch('');
+    setSearchFirst('');
     if (isView) {
       setInteractive(null);
     }
@@ -111,16 +111,15 @@ const index: NextPageWithLayout = ({ detailUser }) => {
   return (
     <>
       <Head>
-        <title> Ideals</title>
+        <title>All Ideas Page</title>
       </Head>
 
       <Breadcrumb>
         <Breadcrumb.Item>Home</Breadcrumb.Item>
         <Breadcrumb.Item>Ideas</Breadcrumb.Item>
-        <Breadcrumb.Item>View Detail Idea</Breadcrumb.Item>
       </Breadcrumb>
 
-      <Card title="View Detail Employee" style={{ width: '100%', marginTop: '20px' }}>
+      <Card title="View All Ideas" style={{ width: '100%', marginTop: '20px' }}>
         <Row wrap={md ? false : true} gutter={[30, 30]}>
           <Col
             span={md ? undefined : 24}
@@ -134,15 +133,15 @@ const index: NextPageWithLayout = ({ detailUser }) => {
                   <Space direction="vertical" size={'small'}>
                     <Input.Search
                       value={searchFirst}
-                      onChange={(event)=> {
-                        setSearchFirst(event.target.value)
+                      onChange={(event) => {
+                        setSearchFirst(event.target.value);
                       }}
                       onSearch={(value) => {
-                        setSearch(value)
-                        setReaction(null)
-                        setValueById(null)
-                        setNameById(null)
-                        setInteractive(null)
+                        setSearch(value);
+                        setReaction(null);
+                        setValueById(null);
+                        setNameById(null);
+                        setInteractive(null);
                       }}
                       allowClear
                       placeholder="Enter title"
