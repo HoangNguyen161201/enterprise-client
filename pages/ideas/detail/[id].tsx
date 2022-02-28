@@ -431,7 +431,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         authorization: detailUser.accessToken.token,
       } as HeadersInit,
     }
-  ).then((e) => e.json());
+  ).then((e) => e.json());  
+
+  console.log(detailIdea);
+
 
   //Redirect 404 page when not have detailIdea
   if (detailIdea.statusCode !== 200) {
