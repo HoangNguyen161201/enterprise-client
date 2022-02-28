@@ -227,17 +227,13 @@ const index: NextPageWithLayout = ({ result, detailUser }: submisionPage) => {
             <Button key={'add_sumission'} onClick={() => setIsopen(true)} type="link">
               Add new
             </Button>
-            <Input
-              value={searchFirst}
-              onChange={(event) => {
-                setSearchFirst(event.target.value);
-              }}
-            />
-            <DatePicker
-              onChange={(value) => {
-                setSearchDate(value);
-              }}
-            />
+            <Input value={searchFirst} onChange={(event)=> {
+              setSearchFirst(event.target.value)
+            }}/>
+            <DatePicker format="YYYY-MM-DD HH:mm:ss" showTime showToday onChange={(value)=> {
+      
+              setSearchDate(moment(value).toISOString())
+            }} />
           </Space>
         }
         style={{ width: '100%', marginTop: '20px' }}

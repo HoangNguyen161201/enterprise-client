@@ -10,7 +10,7 @@ import {
   Pagination,
   Row,
   Space,
-  Spin,
+  Spin
 } from 'antd';
 import { CtSlideItem, Reaction } from 'components/elements/common';
 import Idea from 'components/elements/common/Idea';
@@ -242,7 +242,9 @@ const index: NextPageWithLayout = ({ detailUser }) => {
             </Space>
           ) : (
             <Col span={md ? undefined : 24} flex="auto">
-              <Row gutter={[0, 30]}>
+              <Row gutter={[0, 30]} style={{
+                minHeight: 500
+              }}>
                 {AllIdeas?.ideas &&
                   AllIdeas.ideas.map((idea) => (
                     <Idea
@@ -259,39 +261,36 @@ const index: NextPageWithLayout = ({ detailUser }) => {
                     />
                   ))}
               </Row>
-              {Number(AllIdeas?.page_Index) <= 1 ? (
-                ''
-              ) : (
-                <div
+
+              <div
+                style={{
+                  marginTop: 30,
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                }}
+              >
+                <InputNumber
                   style={{
-                    marginTop: 30,
-                    display: 'flex',
-                    justifyContent: 'flex-end',
+                    marginRight: 10,
                   }}
-                >
-                  <InputNumber
-                    style={{
-                      marginRight: 10,
-                    }}
-                    min={1}
-                    value={_limit}
-                    onChange={(vl) => {
-                      clearTimeout(timeOutLimit);
-                      timeOutLimit = setTimeout(() => {
-                        setLimit(vl);
-                      }, 500);
-                    }}
-                  />
-                  <Pagination
-                    current={_page}
-                    onChange={(pg) => {
-                      setPage(pg);
-                    }}
-                    defaultPageSize={1}
-                    total={AllIdeas?.page_Index}
-                  />
-                </div>
-              )}
+                  min={1}
+                  value={_limit}
+                  onChange={(vl) => {
+                    clearTimeout(timeOutLimit);
+                    timeOutLimit = setTimeout(() => {
+                      setLimit(vl);
+                    }, 500);
+                  }}
+                />
+                <Pagination
+                  current={_page}
+                  onChange={(pg) => {
+                    setPage(pg);
+                  }}
+                  defaultPageSize={1}
+                  total={AllIdeas?.page_Index}
+                />
+              </div>
             </Col>
           )}
         </Row>
