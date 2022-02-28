@@ -11,6 +11,7 @@ import {
   Row,
   Space,
   Switch,
+  Tooltip,
 } from 'antd';
 import { AxiosError } from 'axios';
 import InputComment from 'components/elements/common/InputComment';
@@ -25,7 +26,13 @@ import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import { useRouter as UseRouter } from 'next/router';
-import { getCurrentUser, getDetailIdea, getUrlDownloadZip } from 'queries';
+import {
+  getCurrentUser,
+  getDetailIdea,
+  getReactionUserIdea,
+  getReactType,
+  getUrlDownloadZip,
+} from 'queries';
 import { getallComments } from 'queries/comment';
 import { useEffect as UseEffect, useState as UseState } from 'react';
 import 'react-quill/dist/quill.bubble.css';
@@ -68,10 +75,6 @@ const DetailIdea: NextPageWithLayout = ({
   allComments,
   detailUser,
 }: IDetailEmployeeProps) => {
-  const { query } = UseRouter();
-  const { useBreakpoint } = Grid;
-  const { lg } = useBreakpoint();  
-
   //State anonymously and content comment
   const [anonymously, setAnonymously] = UseState<boolean>(false);
 
@@ -93,11 +96,21 @@ const DetailIdea: NextPageWithLayout = ({
     dataUserRefetch();
   }, []);
 
+  //Get all reaction types
+  const { data: dataAllReaction, error: errorReaction, refetch: refetchReaction } = getReactType();
+  console.log(dataAllReaction);
+
   //Get detail data idea
   const { error: errorDetailIdea, data: dataDetailIdea } = getDetailIdea(
     id as string,
     dataUser?.accessToken.token,
     detailIdea
+  );
+
+  //Get reaction of current user and current detail idea
+  const { data: dataReactionUserIdea, error: errReactionUserIdea } = getReactionUserIdea(
+    dataUser?.user?._id,
+    dataDetailIdea?.idea?._id
   );
 
   //Get all comments
@@ -178,7 +191,22 @@ const DetailIdea: NextPageWithLayout = ({
         content: errorDetailIdea.response?.data.err,
       });
     }
-  }, [errorGetUser, errorComments, errorDetailIdea]);
+
+    if (errorReaction) {
+      message.error({
+        content: errorReaction.response?.data.err,
+      });
+    }
+
+    if (errReactionUserIdea) {
+      message.error({
+        content: errReactionUserIdea.response?.data.err,
+      });
+    }
+  }, [errorGetUser, errorComments, errorDetailIdea, errorReaction, errReactionUserIdea]);
+
+  console.log("fdgsdfgd", dataReactionUserIdea);
+  
 
   //Generate img type file
   const generateImgFile = (nameFile: string) => {
@@ -304,30 +332,15 @@ const DetailIdea: NextPageWithLayout = ({
               width: '100%',
             }}
           >
-            <Space size={10}>
-              <span className="reaction">👍</span>
-              <span>10</span>
-            </Space>
-            <Space size={10}>
-              <span className="reaction">👎</span>
-              <span>10</span>
-            </Space>
-            <Space size={10}>
-              <span className="reaction">🤣</span>
-              <span>10</span>
-            </Space>
-            <Space size={10}>
-              <span className="reaction">😭</span>
-              <span>10</span>
-            </Space>
-            <Space size={10}>
-              <span className="reaction">😍</span>
-              <span>10</span>
-            </Space>
-            <Space size={10}>
-              <span className="reaction">😡</span>
-              <span>10</span>
-            </Space>
+            {dataAllReaction &&
+              dataAllReaction.reactionTypes.map((item, index) => (
+                <Space key={index} size={10}>
+                  <Tooltip title={item.name}>
+                    <span className="reaction">{item.icon}</span>
+                  </Tooltip>
+                  <span>10</span>
+                </Space>
+              ))}
           </Space>
           <Divider
             style={{
@@ -431,10 +444,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         authorization: detailUser.accessToken.token,
       } as HeadersInit,
     }
-  ).then((e) => e.json());  
-
-  console.log(detailIdea);
-
+  ).then((e) => e.json());
 
   //Redirect 404 page when not have detailIdea
   if (detailIdea.statusCode !== 200) {
