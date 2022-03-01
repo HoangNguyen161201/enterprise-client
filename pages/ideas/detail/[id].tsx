@@ -10,6 +10,7 @@ import {
   message,
   Row,
   Space,
+  Spin,
   Switch,
   Tooltip,
 } from 'antd';
@@ -309,7 +310,10 @@ const DetailIdea: NextPageWithLayout = ({
       <Card
         title="View Detail Idea"
         style={{ width: '100%', marginTop: '20px' }}
-        extra={dataURLZip?.url && <a href={dataURLZip?.url}>Dowload all files</a>}
+        extra={
+          detailIdea?.idea?.cloudinary_id &&
+          dataURLZip?.url && <a href={dataURLZip?.url}>Dowload all files</a>
+        }
       >
         <Space direction="vertical" size={20}>
           <span
@@ -392,17 +396,19 @@ const DetailIdea: NextPageWithLayout = ({
               width: '100%',
             }}
           >
-            {reactionCountDetail &&
-              reactionCountDetail.map((item, index) => (
-                <Space key={index} size={10}>
-                  <Tooltip title={item.name}>
-                    <span className="reaction" onClick={() => onAddReaction(item._id)}>
-                      {item.icon}
-                    </span>
-                  </Tooltip>
-                  <span>{item.count}</span>
-                </Space>
-              ))}
+            <Spin spinning={mutationAddReaction.isLoading}>
+              {reactionCountDetail &&
+                reactionCountDetail.map((item, index) => (
+                  <Space key={index} size={10}>
+                    <Tooltip title={item.name}>
+                      <span className="reaction" onClick={() => onAddReaction(item._id)}>
+                        {item.icon}
+                      </span>
+                    </Tooltip>
+                    <span>{item.count}</span>
+                  </Space>
+                ))}
+            </Spin>
           </Space>
           <Divider
             style={{
@@ -512,6 +518,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   //Redirect 404 page when not have detailIdea
   if (detailIdea.statusCode !== 200) {
+    return {
+      notFound: true,
+    };
+  }
+
+  //Check accept and role idea
+  if (!detailIdea.idea.accept && detailUser.user.role !== 'qa_manager') {
     return {
       notFound: true,
     };

@@ -4,7 +4,7 @@ import { AxiosError } from 'axios';
 import { Category } from 'components/elements/common';
 import { DrawerCt } from 'components/elements/drawer';
 import { ClientLayout } from 'components/layouts';
-import { IallCategories, ICommon, IDetailCategory } from 'models/apiType';
+import { IallCategories, ICommon, IDetailCategory, IDetailUser } from 'models/apiType';
 import { NextPageWithLayout } from 'models/layoutType';
 import { CtMutation } from 'mutations/category';
 import { GetServerSideProps } from 'next';
@@ -14,7 +14,6 @@ import { getallCategories } from 'queries/category';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { validCategory } from 'utils/validate';
-
 
 export interface ICategoriesProps {
   allCategories: IallCategories;
@@ -102,6 +101,7 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
   //  mutation call api to add Category
   const mutationAddCategory = CtMutation.add({
     dataUserRefetch: dataUserRefetch,
+    token: dataUser?.accessToken.token,
     options: {
       onSuccess: (data: ICommon) => {
         message.success({
@@ -122,6 +122,7 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
   //  mutation call api to update Category
   const mutationUpdateCategory = CtMutation.update({
     dataUserRefetch: dataUserRefetch,
+    token: dataUser?.accessToken.token,
     options: {
       onSuccess: (data: ICommon) => {
         message.success({
@@ -142,6 +143,7 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
   //  mutation call api to delete Category
   const mutationDeleteCategory = CtMutation.delete({
     dataUserRefetch: dataUserRefetch,
+    token: dataUser?.accessToken.token,
     options: {
       onSuccess: (data: ICommon) => {
         message.success({
@@ -245,17 +247,15 @@ Categories.getLayout = ClientLayout;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   //Check login
-  const res = await fetch('http://localhost:3000/api/auth/accesstoken', {
+  const detailUser: IDetailUser = await fetch(`http://localhost:3000/api/auth/accesstoken`, {
     method: 'GET',
     headers: {
       cookie: context.req.headers.cookie,
     } as HeadersInit,
-  });
-
-  const data = await res.json();
+  }).then((e) => e.json());
 
   //Redirect login page when error
-  if (res.status !== 200) {
+  if (detailUser.statusCode !== 200) {
     return {
       redirect: {
         destination: '/login',
@@ -265,7 +265,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   //Check role
-  if (data.user.role !== 'admin') {
+  if (detailUser.user.role !== 'admin' && detailUser.user.role !== 'qa_manager') {
     return {
       notFound: true,
     };
