@@ -1,4 +1,4 @@
-const categoryValid = require('../utils/categoryValid');
+  const categoryValid = require('../utils/categoryValid');
 
 //Import middleware
 const catchAsyncError = require('../helpers/catchAsyncError');

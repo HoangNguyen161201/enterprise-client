@@ -107,7 +107,6 @@ const DetailIdea: NextPageWithLayout = ({
     error: errorReaction,
     refetch: refetchAllReaction,
   } = getReactType();
-  console.log(dataAllReaction);
 
   //Get detail data idea
   const {
@@ -235,8 +234,6 @@ const DetailIdea: NextPageWithLayout = ({
     }
   }, [errorGetUser, errorComments, errorDetailIdea, errorReaction, errReactionUserIdea]);
 
-  console.log('fdgsdfgd', dataReactionUserIdea);
-
   //Generate img type file
   const generateImgFile = (nameFile: string) => {
     let typeFile = nameFile.split('.')[1];
@@ -275,14 +272,17 @@ const DetailIdea: NextPageWithLayout = ({
   //Set count number reaction detail of current idea
   useEffect(() => {
     if (dataAllReaction && dataDetailIdea) {
+      
       const dataReactionCountDetail: Ireaction[] = dataAllReaction.reactionTypes.map(
         (itemReactionType) => {
           let count = 0;
           dataDetailIdea.countReactions?.map((itemReactionDetail) => {
-            if (itemReactionType._id === itemReactionDetail._id) {
+            console.log(dataAllReaction, dataDetailIdea);
+            if (itemReactionType._id == itemReactionDetail._id) {
               count = itemReactionDetail.count;
-            }
+            }    
           });
+          
           return {
             ...itemReactionType,
             count,

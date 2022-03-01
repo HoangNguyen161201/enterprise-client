@@ -113,7 +113,7 @@ const ideaController = {
         err: 'The Idea does not exist',
         statusCode: 400,
       });
-    }
+    } 
 
     //Get submission to check time
     if (idea.submission_id) {
@@ -344,7 +344,7 @@ const ideaController = {
       });
 
     
-    const countReaction = await reactionModel.aggregate([
+    const countReactions = await reactionModel.aggregate([
       {
         $match: {
           idea_id: id,
@@ -362,7 +362,7 @@ const ideaController = {
       statusCode: 200,
       msg: ' Get topic success',
       idea,
-      countReaction,
+      countReactions,
     });
   }),
 
@@ -400,6 +400,26 @@ const ideaController = {
       ideas,
     });
   }),
+
+  setAccept: catchAsyncError(async (req, res)=> {
+    const {id_idea} = req.body
+    const idea = await ideaModel.findById(id_idea)
+    if(!idea) {
+      return res.status(400).json({
+        err: 'Idea not found',
+        statusCode: 400,
+      });
+    }
+    console.log(id_idea)
+    await ideaModel.findByIdAndUpdate(id_idea, {
+      accept: true
+    })
+
+    return res.status(200).json({
+      msg: 'Update accept success',
+      statusCode: 200,
+    });
+  })
 };
 
 module.exports = ideaController;

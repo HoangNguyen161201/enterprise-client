@@ -4,8 +4,8 @@ import { IDetailSubmission, ISubmissions } from '../models/apiType';
 import { getData } from '../utils/fetchData';
 
 export const getallSubmissions = (accessToken?: string, initial?: ISubmissions, params?: any) => {
-    return useQuery<any, AxiosError>(
-      ['submissions', params._page, params._search, params._time],
+    return useQuery<ISubmissions, AxiosError>(
+      params ? ['submissions', params._page, params._search, params._time]: 'submissions',
       async () => {
         return await getData({ url: `/api/submissions`, token: accessToken, params});
       },
