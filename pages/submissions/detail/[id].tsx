@@ -378,8 +378,8 @@ const DetailSubmission: NextPageWithLayout = ({
 
   //Handle delete idea
   const onDeleteIdea = (idea_id: string, cloudinary_id: string) => {
-    mutationDeleteFiles.mutate({ tag: cloudinary_id });
     mutationDeleteIdea.mutate({ idea_id });
+    mutationDeleteFiles.mutate({ tag: cloudinary_id });
   };
 
   return (
@@ -623,7 +623,7 @@ const DetailSubmission: NextPageWithLayout = ({
           <List
             itemLayout="horizontal"
             dataSource={dataIdeasCurrentUser?.ideas}
-            renderItem={(item) => <ItemIdea item={item} onDeleteIdea={onDeleteIdea} />}
+            renderItem={(item) => <ItemIdea closure_date={timeClosure.closure_date} item={item} onDeleteIdea={onDeleteIdea} />}
           />
         </Space>
       </Card>
