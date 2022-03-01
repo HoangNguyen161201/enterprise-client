@@ -4,8 +4,10 @@ import {
   EyeOutlined,
   FileAddOutlined,
   FolderViewOutlined,
+  MoreOutlined,
+  UploadOutlined,
 } from '@ant-design/icons';
-import { List, Space } from 'antd';
+import { Button, Dropdown, List, Menu, Space } from 'antd';
 import { IIdea } from 'models/apiType';
 import Link from 'next/link';
 import * as React from 'react';
@@ -13,9 +15,46 @@ import * as React from 'react';
 export interface IItemIdeaProps {
   item: IIdea;
   onDeleteIdea: (idea_id: string, cloudinary_id: string) => void;
+  closure_date: {
+    value: string;
+    isMatchDate: boolean;
+  };
 }
 
-export const ItemIdea = ({ item, onDeleteIdea }: IItemIdeaProps) => {
+export const ItemIdea = ({ item, onDeleteIdea, closure_date }: IItemIdeaProps) => {
+  const menu = (
+    <Menu>
+      <Menu.Item
+        onClick={() => {
+          onDeleteIdea(item._id as string, item.cloudinary_id);
+        }}
+      >
+        <Space>
+          <DeleteOutlined
+            style={{
+              fontSize: 16,
+              color: '#009F9D',
+            }}
+          />
+          <span>Delete Idea</span>
+        </Space>
+      </Menu.Item>
+      <Menu.Item>
+        <Link href={`/ideas/update/${item._id}`} passHref>
+          <Space>
+            <UploadOutlined
+              style={{
+                fontSize: 16,
+                color: '#009F9D',
+              }}
+            />
+            <span>Update Idea</span>
+          </Space>
+        </Link>
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <List.Item>
       <Space
@@ -85,15 +124,16 @@ export const ItemIdea = ({ item, onDeleteIdea }: IItemIdeaProps) => {
           </Space>
         </Space>
 
-        <DeleteOutlined
-          style={{
-            fontSize: 16,
-            color: '#FF0000',
-          }}
-          onClick={() => {
-            onDeleteIdea(item._id as string, item.cloudinary_id);
-          }}
-        />
+        {closure_date.isMatchDate && (
+          <Dropdown arrow overlay={menu} trigger={['click', 'hover']} placement="topRight">
+            <MoreOutlined
+              style={{
+                fontSize: 16,
+                cursor: 'pointer',
+              }}
+            />
+          </Dropdown>
+        )}
       </Space>
     </List.Item>
   );

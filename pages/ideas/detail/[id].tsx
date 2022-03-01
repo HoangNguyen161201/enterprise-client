@@ -10,6 +10,7 @@ import {
   message,
   Row,
   Space,
+  Spin,
   Switch,
   Tooltip,
 } from 'antd';
@@ -18,6 +19,7 @@ import InputComment from 'components/elements/common/InputComment';
 import ItemComment from 'components/elements/common/ItemComment';
 import ItemFileUpload from 'components/elements/common/ItemFileUpload';
 import { ClientLayout } from 'components/layouts';
+import { GlobalContext } from 'contextApi/globalContext';
 import { IallComments, ICommon, IDetailIdea, IDetailUser, Ireaction } from 'models/apiType';
 import { IReactionForm } from 'models/formType';
 import { NextPageWithLayout } from 'models/layoutType';
@@ -36,7 +38,13 @@ import {
   getUrlDownloadZip,
 } from 'queries';
 import { getallComments } from 'queries/comment';
-import { useEffect, useEffect as UseEffect, useState, useState as UseState } from 'react';
+import {
+  useContext,
+  useEffect,
+  useEffect as UseEffect,
+  useState,
+  useState as UseState,
+} from 'react';
 import 'react-quill/dist/quill.bubble.css';
 //CSS quill
 import 'react-quill/dist/quill.snow.css';
@@ -77,6 +85,9 @@ const DetailIdea: NextPageWithLayout = ({
   allComments,
   detailUser,
 }: IDetailEmployeeProps) => {
+  //Get socket
+  const { socket } = useContext(GlobalContext);
+
   //State anonymously and content comment
   const [anonymously, setAnonymously] = UseState<boolean>(false);
 
@@ -87,6 +98,23 @@ const DetailIdea: NextPageWithLayout = ({
   const {
     query: { id },
   } = UseRouter();
+
+  //Join room socket
+  UseEffect(() => {
+    //Join room
+    if (socket && id) {
+      socket.emit('join_room', id);
+    }
+
+    //Leave room
+    function leaveRoom() {
+      if (socket && id) {
+        socket.emit('leave_room', id);
+      }
+    }
+
+    return leaveRoom;
+  }, [socket, id]);
 
   //State match final closure date
   const [isMatchFinalTime, setIsMatchFinalTime] = UseState<boolean>(false);
@@ -169,6 +197,9 @@ const DetailIdea: NextPageWithLayout = ({
 
         //Fetch again all comments when add new comment
         refetchDataComments();
+        if (socket && id) {
+          socket.emit('new_comment', id);
+        }
       },
       onError: (error: AxiosError) => {
         message.error({
@@ -294,6 +325,16 @@ const DetailIdea: NextPageWithLayout = ({
     }
   }, [dataDetailIdea, dataAllReaction]);
 
+  //Handle event socket
+  UseEffect(() => {
+    //Join room
+    if (socket) {
+      socket.on('new_comment', () => {
+        refetchDataComments();
+      });
+    }
+  }, [socket]);
+
   return (
     <>
       <Head>
@@ -309,7 +350,10 @@ const DetailIdea: NextPageWithLayout = ({
       <Card
         title="View Detail Idea"
         style={{ width: '100%', marginTop: '20px' }}
-        extra={dataURLZip?.url && <a href={dataURLZip?.url}>Dowload all files</a>}
+        extra={
+          detailIdea?.idea?.cloudinary_id &&
+          dataURLZip?.url && <a href={dataURLZip?.url}>Dowload all files</a>
+        }
       >
         <Space direction="vertical" size={20}>
           <span
@@ -392,17 +436,19 @@ const DetailIdea: NextPageWithLayout = ({
               width: '100%',
             }}
           >
-            {reactionCountDetail &&
-              reactionCountDetail.map((item, index) => (
-                <Space key={index} size={10}>
-                  <Tooltip title={item.name}>
-                    <span className="reaction" onClick={() => onAddReaction(item._id)}>
-                      {item.icon}
-                    </span>
-                  </Tooltip>
-                  <span>{item.count}</span>
-                </Space>
-              ))}
+            <Spin spinning={mutationAddReaction.isLoading}>
+              {reactionCountDetail &&
+                reactionCountDetail.map((item, index) => (
+                  <Space key={index} size={10}>
+                    <Tooltip title={item.name}>
+                      <span className="reaction" onClick={() => onAddReaction(item._id)}>
+                        {item.icon}
+                      </span>
+                    </Tooltip>
+                    <span>{item.count}</span>
+                  </Space>
+                ))}
+            </Spin>
           </Space>
           <Divider
             style={{
@@ -512,6 +558,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   //Redirect 404 page when not have detailIdea
   if (detailIdea.statusCode !== 200) {
+    return {
+      notFound: true,
+    };
+  }
+
+  //Check accept and role idea
+  if (!detailIdea.idea.accept && detailUser.user.role !== 'qa_manager') {
     return {
       notFound: true,
     };
