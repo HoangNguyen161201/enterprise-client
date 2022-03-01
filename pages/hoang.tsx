@@ -53,6 +53,7 @@ const hoang: NextPageWithLayout = ({
     {
       _sort: -1,
       _sortBy: 'view',
+      
     },
     dataUser?.accessToken.token,
     data
@@ -263,7 +264,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   //Get all data users
   const data: IAllIdeas = await fetch(
-    `http://localhost:3000/api/ideas?_sort=-1&_sortBy=view&_page=1&_limit=1`,
+    `http://localhost:3000/api/ideas?_sort=-1&_sortBy=view`,
     {
       method: 'GET',
       headers: {
@@ -273,6 +274,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
   ).then((e) => e.json());
 
+  console.log(data)
   return {
     props: {
       data,

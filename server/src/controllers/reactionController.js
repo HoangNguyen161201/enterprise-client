@@ -51,7 +51,7 @@ const reactionController = {
         statusCode: 400,
         err: 'Idea does not exist in system.',
       });
-
+      
     //Check exist reaction, if exist will delete
     const reactTion = await reactionModel.findOne({
       user_id,
