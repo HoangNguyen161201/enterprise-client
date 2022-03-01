@@ -168,7 +168,7 @@ const DetailIdea: NextPageWithLayout = ({
           content: data.msg,
         });
 
-        //Fetch again all comment when add new comment
+        //Fetch again all comments when add new comment
         refetchDataComments();
       },
       onError: (error: AxiosError) => {
