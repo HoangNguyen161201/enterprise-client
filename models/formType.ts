@@ -23,7 +23,7 @@ export interface IDepartmentForm {
 
 export interface ICategoryForm {
   id?: string;
-  _id?: string
+  _id?: string;
   name?: string;
   description?: string;
 }
@@ -91,4 +91,10 @@ export interface ICommentForm {
 export interface IViewForm {
   user_id: string;
   idea_id: string;
+}
+
+export interface IReactionForm {
+  user_id: string;
+  idea_id: string;
+  reactionType_id: string;
 }

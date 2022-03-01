@@ -18,9 +18,11 @@ import InputComment from 'components/elements/common/InputComment';
 import ItemComment from 'components/elements/common/ItemComment';
 import ItemFileUpload from 'components/elements/common/ItemFileUpload';
 import { ClientLayout } from 'components/layouts';
-import { IallComments, ICommon, IDetailIdea, IDetailUser } from 'models/apiType';
+import { IallComments, ICommon, IDetailIdea, IDetailUser, Ireaction } from 'models/apiType';
+import { IReactionForm } from 'models/formType';
 import { NextPageWithLayout } from 'models/layoutType';
 import { commentMutation } from 'mutations/comment';
+import { IReactionMutaion } from 'mutations/reaction';
 import { GetServerSideProps } from 'next';
 //Dynamic import quill
 import dynamic from 'next/dynamic';
@@ -34,7 +36,7 @@ import {
   getUrlDownloadZip,
 } from 'queries';
 import { getallComments } from 'queries/comment';
-import { useEffect as UseEffect, useState as UseState } from 'react';
+import { useEffect, useEffect as UseEffect, useState, useState as UseState } from 'react';
 import 'react-quill/dist/quill.bubble.css';
 //CSS quill
 import 'react-quill/dist/quill.snow.css';
@@ -78,6 +80,9 @@ const DetailIdea: NextPageWithLayout = ({
   //State anonymously and content comment
   const [anonymously, setAnonymously] = UseState<boolean>(false);
 
+  //State detail and number reaction
+  const [reactionCountDetail, setReactionCountDetail] = useState<Ireaction[]>([]);
+
   //Get id from router to get detail data
   const {
     query: { id },
@@ -97,15 +102,19 @@ const DetailIdea: NextPageWithLayout = ({
   }, []);
 
   //Get all reaction types
-  const { data: dataAllReaction, error: errorReaction, refetch: refetchReaction } = getReactType();
+  const {
+    data: dataAllReaction,
+    error: errorReaction,
+    refetch: refetchAllReaction,
+  } = getReactType();
   console.log(dataAllReaction);
 
   //Get detail data idea
-  const { error: errorDetailIdea, data: dataDetailIdea } = getDetailIdea(
-    id as string,
-    dataUser?.accessToken.token,
-    detailIdea
-  );
+  const {
+    error: errorDetailIdea,
+    data: dataDetailIdea,
+    refetch: refetchDetailIdea,
+  } = getDetailIdea(id as string, dataUser?.accessToken.token, detailIdea);
 
   //Get reaction of current user and current detail idea
   const { data: dataReactionUserIdea, error: errReactionUserIdea } = getReactionUserIdea(
@@ -172,6 +181,27 @@ const DetailIdea: NextPageWithLayout = ({
     token: dataUser?.accessToken.token,
   });
 
+  //Mutation add reaction
+  const mutationAddReaction = IReactionMutaion.add({
+    options: {
+      onSuccess: (data: ICommon) => {
+        message.success({
+          content: data.msg,
+        });
+
+        //refetch data
+        refetchDetailIdea();
+      },
+      onError: (error: AxiosError) => {
+        message.error({
+          content: error.response?.data.err || 'Add reaction false.',
+        });
+      },
+    },
+    dataUserRefetch: dataUserRefetch,
+    token: dataUser?.accessToken.token,
+  });
+
   //Check exist and show error
   UseEffect(() => {
     if (errorGetUser) {
@@ -205,8 +235,7 @@ const DetailIdea: NextPageWithLayout = ({
     }
   }, [errorGetUser, errorComments, errorDetailIdea, errorReaction, errReactionUserIdea]);
 
-  console.log("fdgsdfgd", dataReactionUserIdea);
-  
+  console.log('fdgsdfgd', dataReactionUserIdea);
 
   //Generate img type file
   const generateImgFile = (nameFile: string) => {
@@ -233,6 +262,37 @@ const DetailIdea: NextPageWithLayout = ({
       });
     }
   };
+
+  //Handle add reaction
+  const onAddReaction = (reactionType_id: string) => {
+    mutationAddReaction.mutate({
+      user_id: dataUser && dataUser.user._id,
+      idea_id: dataDetailIdea && dataDetailIdea.idea._id,
+      reactionType_id,
+    });
+  };
+
+  //Set count number reaction detail of current idea
+  useEffect(() => {
+    if (dataAllReaction && dataDetailIdea) {
+      const dataReactionCountDetail: Ireaction[] = dataAllReaction.reactionTypes.map(
+        (itemReactionType) => {
+          let count = 0;
+          dataDetailIdea.countReactions?.map((itemReactionDetail) => {
+            if (itemReactionType._id === itemReactionDetail._id) {
+              count = itemReactionDetail.count;
+            }
+          });
+          return {
+            ...itemReactionType,
+            count,
+          };
+        }
+      );
+
+      setReactionCountDetail(dataReactionCountDetail);
+    }
+  }, [dataDetailIdea, dataAllReaction]);
 
   return (
     <>
@@ -332,13 +392,15 @@ const DetailIdea: NextPageWithLayout = ({
               width: '100%',
             }}
           >
-            {dataAllReaction &&
-              dataAllReaction.reactionTypes.map((item, index) => (
+            {reactionCountDetail &&
+              reactionCountDetail.map((item, index) => (
                 <Space key={index} size={10}>
                   <Tooltip title={item.name}>
-                    <span className="reaction">{item.icon}</span>
+                    <span className="reaction" onClick={() => onAddReaction(item._id)}>
+                      {item.icon}
+                    </span>
                   </Tooltip>
-                  <span>10</span>
+                  <span>{item.count}</span>
                 </Space>
               ))}
           </Space>
@@ -378,11 +440,13 @@ const DetailIdea: NextPageWithLayout = ({
           </Space>
 
           {/* Input comment */}
-          <InputComment
-            isLoading={mutationAddComment.isLoading}
-            showInput={isMatchFinalTime}
-            onAddComment={onAddComment}
-          />
+          {isMatchFinalTime && (
+            <InputComment
+              isLoading={mutationAddComment.isLoading}
+              showInput={isMatchFinalTime}
+              onAddComment={onAddComment}
+            />
+          )}
           <List
             dataSource={dataComments?.comments}
             renderItem={(item) => (

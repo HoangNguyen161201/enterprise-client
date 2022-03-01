@@ -68,6 +68,12 @@ const reactionController = {
       });
     }
 
+    //Delete all reaction of user and idea
+    await reactionModel.deleteMany({
+      user_id,
+      idea_id,
+    });
+
     //Create reaction
     await reactionModel.create({
       user_id,
@@ -81,22 +87,22 @@ const reactionController = {
     });
   }),
 
-  getReactionUser: catchAsyncError(async (req,res) => {
-    const {user_id} = req.params
-    const {idea_id} = req.query
+  getReactionUser: catchAsyncError(async (req, res) => {
+    const { user_id } = req.params;
+    const { idea_id } = req.query;
 
     //Get reaction by user and idea id
     const reaction = await reactionModel.findOne({
-      user_id, 
-      idea_id
-    })
+      user_id,
+      idea_id,
+    });
 
     return res.status(200).json({
       statusCode: 200,
       msg: `Get reaction by user and idea success.`,
-      reaction
+      reaction,
     });
-  })
+  }),
 };
 
 module.exports = reactionController;

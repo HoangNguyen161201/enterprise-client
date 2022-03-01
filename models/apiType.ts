@@ -180,6 +180,7 @@ export interface Ireaction {
   _id: string;
   name: string;
   icon: string;
+  count?: number;
 }
 
 export interface Ireactions extends ICommon {
