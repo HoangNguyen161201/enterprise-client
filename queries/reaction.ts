@@ -7,7 +7,7 @@ export const getReactType = () => {
     return useQuery<Ireactions, AxiosError>(
       ['reactType'],
       async () => {
-        return await getData({ url: '/api/reactiontypes'});
+        return await getData({ url: '/api/reaction-types'});
       }
     );
   };

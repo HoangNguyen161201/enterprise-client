@@ -210,31 +210,18 @@ const ideaController = {
           return {
             $match: {
               reactionType_id: _reaction,
-<<<<<<< HEAD
               'idea.accept': true
             }
           }
-=======
-              'idea.accept': true,
-            },
-          };
->>>>>>> 89ebf0bf24ec0721e3ad9b9c5d1ef191aa9f7d48
         }
 
         return {
           $match: {
             reactionType_id: { $nin: [''] },
-<<<<<<< HEAD
             'idea.accept': true
           }
         }
       }
-=======
-            'idea.accept': true,
-          },
-        };
-      };
->>>>>>> 89ebf0bf24ec0721e3ad9b9c5d1ef191aa9f7d48
       const page = await reactionModel.aggregate([
         match(),
         {
@@ -318,11 +305,7 @@ const ideaController = {
       filter = filter.searchById({ name: _nameById, value: _valueById });
     }
     if (_search) {
-<<<<<<< HEAD
       filter = filter.search({ name: 'title', query: _search })
-=======
-      filter = filter.search({ name: 'title', query: _search });
->>>>>>> 89ebf0bf24ec0721e3ad9b9c5d1ef191aa9f7d48
     }
     if (_sort) {
       filter = filter.sort({ name: _sortBy, NorO: _sort });
@@ -355,8 +338,8 @@ const ideaController = {
         statusCode: 400,
       });
 
-    console.log(id);
-    const countReactions = await reactionModel.aggregate([
+    
+    const countReaction = await reactionModel.aggregate([
       {
         $match: {
           idea_id: id,
@@ -369,12 +352,12 @@ const ideaController = {
         },
       },
     ]);
-    console.log(countReaction);
+    
     return res.status(200).json({
       statusCode: 200,
       msg: ' Get topic success',
       idea,
-      countReactions,
+      countReaction,
     });
   }),
 
