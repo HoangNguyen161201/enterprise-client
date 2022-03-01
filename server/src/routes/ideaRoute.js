@@ -17,6 +17,12 @@ ideaRouter.post(
 );
 
 ideaRouter.put(
+  '/accept',
+  authorization(['qa_manager', 'qa_coordinator', 'department_manager', 'staff']),
+  ideaController.setAccept
+);
+
+ideaRouter.put(
   '/:id',
   authorization(['qa_manager', 'qa_coordinator', 'department_manager', 'staff']),
   ideaController.update

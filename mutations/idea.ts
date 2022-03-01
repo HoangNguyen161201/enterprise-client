@@ -51,4 +51,22 @@ export const IdeaMutaion = {
       }
     );
   },
+
+  setAccept: ({ options, dataUserRefetch, token }: IMutation) => {
+    return useMutation<any, AxiosError, {id_idea: string}>(
+      ({id_idea}) => {
+        dataUserRefetch && dataUserRefetch();
+        return putData({
+          url: `/api/ideas/accept`,
+          body: {
+            id_idea
+          },
+          token,
+        });
+      },
+      {
+        ...options,
+      }
+    );
+  },
 };

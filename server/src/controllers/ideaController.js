@@ -113,7 +113,7 @@ const ideaController = {
         err: 'The Idea does not exist',
         statusCode: 400,
       });
-    }
+    } 
 
     //Get submission to check time
     if (idea.submission_id) {
@@ -202,6 +202,7 @@ const ideaController = {
       _interactive,
       _reaction,
       _search,
+      _accept
     } = req.query;
 
     if (_interactive || _reaction) {
@@ -210,18 +211,18 @@ const ideaController = {
           return {
             $match: {
               reactionType_id: _reaction,
-              'idea.accept': true,
-            },
-          };
+              'idea.accept': true
+            }
+          }
         }
 
         return {
           $match: {
             reactionType_id: { $nin: [''] },
-            'idea.accept': true,
-          },
-        };
-      };
+            'idea.accept': true
+          }
+        }
+      }
       const page = await reactionModel.aggregate([
         match(),
         {
@@ -298,19 +299,25 @@ const ideaController = {
     const page_Index = await pageIndex({ query: ideaModel.find({}), limit: _limit });
 
     let filter = new Filter(ideaModel);
-    filter = filter.getAll({
-      accept: true,
-    });
+    if(_accept) {
+      filter = filter.getAll({
+        accept: true,
+      });
+    } else {
+      filter = filter.getAll();
+    }
     if (_nameById) {
       filter = filter.searchById({ name: _nameById, value: _valueById });
     }
     if (_search) {
-      filter = filter.search({ name: 'title', query: _search });
+      filter = filter.search({ name: 'title', query: _search })
     }
     if (_sort) {
       filter = filter.sort({ name: _sortBy, NorO: _sort });
     }
-    filter = filter.pagination({ page: _page - 1, limit: _limit });
+    if (_page && _limit) {
+      filter = filter.pagination({ page: _page - 1, limit: _limit });
+    }
 
     const data = await filter.query.populate('user_id');
     return res.status(200).json({
@@ -335,6 +342,8 @@ const ideaController = {
         err: 'The Idea does not exist',
         statusCode: 400,
       });
+
+    
     const countReactions = await reactionModel.aggregate([
       {
         $match: {
@@ -348,7 +357,7 @@ const ideaController = {
         },
       },
     ]);
-
+    
     return res.status(200).json({
       statusCode: 200,
       msg: ' Get topic success',
@@ -391,6 +400,26 @@ const ideaController = {
       ideas,
     });
   }),
+
+  setAccept: catchAsyncError(async (req, res)=> {
+    const {id_idea} = req.body
+    const idea = await ideaModel.findById(id_idea)
+    if(!idea) {
+      return res.status(400).json({
+        err: 'Idea not found',
+        statusCode: 400,
+      });
+    }
+    console.log(id_idea)
+    await ideaModel.findByIdAndUpdate(id_idea, {
+      accept: true
+    })
+
+    return res.status(200).json({
+      msg: 'Update accept success',
+      statusCode: 200,
+    });
+  })
 };
 
 module.exports = ideaController;
