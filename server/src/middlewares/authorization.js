@@ -33,7 +33,6 @@ const authHelper = (roles) => {
 
       //Get user token
       const user = await userModel.findById(id).select('-password');
-      console.log(user);
 
       //Check public
       if (!roles || roles.length === 0) return next();
