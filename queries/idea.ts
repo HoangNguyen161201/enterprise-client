@@ -60,6 +60,7 @@ interface IOptionIdea {
   _interactive: number | null
   _reaction: string | null,
   _search: string
+  _accept: number
 }
 
 export const getAllIdeas = (options: Partial<IOptionIdea>, accessToken: string | undefined,  initial?: IAllIdeas) => {

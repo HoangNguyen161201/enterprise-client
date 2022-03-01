@@ -202,6 +202,7 @@ const ideaController = {
       _interactive,
       _reaction,
       _search,
+      _accept
     } = req.query;
 
     if (_interactive || _reaction) {
@@ -298,9 +299,13 @@ const ideaController = {
     const page_Index = await pageIndex({ query: ideaModel.find({}), limit: _limit });
 
     let filter = new Filter(ideaModel);
-    filter = filter.getAll({
-      accept: true,
-    });
+    if(_accept) {
+      filter = filter.getAll({
+        accept: true,
+      });
+    } else {
+      filter = filter.getAll();
+    }
     if (_nameById) {
       filter = filter.searchById({ name: _nameById, value: _valueById });
     }
@@ -374,7 +379,6 @@ const ideaController = {
     const { submission_id } = req.query;
 
     const user = await userModel.findById(user_id);
-    console.log(user);
 
     if (!user)
       return res.status(400).json({

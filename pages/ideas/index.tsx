@@ -10,7 +10,7 @@ import {
   Pagination,
   Row,
   Space,
-  Spin
+  Spin,
 } from 'antd';
 import { CtSlideItem, Reaction } from 'components/elements/common';
 import Idea from 'components/elements/common/Idea';
@@ -66,6 +66,7 @@ const index: NextPageWithLayout = ({ detailUser }) => {
       _interactive,
       _reaction,
       _search,
+      _accept: 1,
     },
     dataUser?.accessToken.token
   );
@@ -242,9 +243,12 @@ const index: NextPageWithLayout = ({ detailUser }) => {
             </Space>
           ) : (
             <Col span={md ? undefined : 24} flex="auto">
-              <Row gutter={[0, 30]} style={{
-                minHeight: 500
-              }}>
+              <Row
+                gutter={[0, 30]}
+                style={{
+                  minHeight: 500,
+                }}
+              >
                 {AllIdeas?.ideas &&
                   AllIdeas.ideas.map((idea) => (
                     <Idea

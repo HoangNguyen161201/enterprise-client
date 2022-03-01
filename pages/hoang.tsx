@@ -1,5 +1,5 @@
-import { SearchOutlined } from '@ant-design/icons';
-import { Breadcrumb, Card, Input, Table, Space, Image, Button, Tag } from 'antd';
+import { ProfileOutlined, SearchOutlined } from '@ant-design/icons';
+import { Breadcrumb, Card, Input, Table, Space, Image, Button, Tag, DatePicker } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { ClientLayout } from 'components/layouts';
 import { IAllIdeas, IDetailUser, ISubmission, IUser } from 'models/apiType';
@@ -7,6 +7,7 @@ import { NextPageWithLayout } from 'models/layoutType';
 import moment from 'moment';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { getCurrentUser } from 'queries/auth';
 import { getAllIdeas } from 'queries/idea';
 import { useEffect, useMemo, useState } from 'react';
@@ -19,18 +20,23 @@ const hoang: NextPageWithLayout = ({
   detailUser: IDetailUser;
   data: IAllIdeas;
 }) => {
-  const [dataSource, setDataSource] = useState<{
-    key: string,
-    name_avatar: {
-      name: string
-      avatar: string
-    },
-    title: string
-    description:string
-    time: string
-    submission: ISubmission
-    accept: boolean
-  }[] | undefined>([]);
+  const {push}= useRouter()
+  const [dataSource, setDataSource] = useState<
+    | {
+        key: string;
+        name_avatar: {
+          name: string;
+          avatar: string;
+        };
+        title: string;
+        view: number;
+        time: string;
+        submission: ISubmission;
+        accept: boolean;
+        [index: string]: any;
+      }[]
+    | undefined
+  >([]);
   //Get access token
   const {
     data: dataUser,
@@ -53,23 +59,24 @@ const hoang: NextPageWithLayout = ({
   );
 
   useEffect(() => {
-    if(AllIdeas?.ideas.length !== 0) {
-      const result = AllIdeas?.ideas.map(idea=> {
+    if (AllIdeas?.ideas.length !== 0) {
+      const result = AllIdeas?.ideas.map((idea) => {
         return {
           key: idea._id,
           name_avatar: {
             name: idea.user_id.name,
-            avatar: idea.user_id.avatar.url
+            avatar: idea.user_id.avatar.url,
           },
           title: idea.title,
-          description: idea.description,
-          time: idea.createdAt,
+          view: idea.view,
+          time: moment(idea.createdAt).format('YYYY-MM-DD'),
           submission: idea.submission_id,
-          accept: idea.accept
-        }
-      })
-      setDataSource(result)
-    } 
+          accept: idea.accept,
+          detail: '',
+        };
+      });
+      setDataSource(result);
+    }
   }, [AllIdeas]);
 
   const columns = useMemo<ColumnsType<any>>(
@@ -92,6 +99,16 @@ const hoang: NextPageWithLayout = ({
             <span>{value.name}</span>
           </Space>
         ),
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+          <Input
+            placeholder="Search"
+            value={selectedKeys[0]}
+            onPressEnter={() => confirm()}
+            onChange={(e) => {
+              return setSelectedKeys(e.target.value ? [e.target.value] : []);
+            }}
+          />
+        ),
         onFilter: (value, record) => record.name_avatar.name.includes(value),
         filterIcon: <SearchOutlined />,
       },
@@ -113,35 +130,55 @@ const hoang: NextPageWithLayout = ({
       },
 
       {
-        ...column({ title: 'description' }),
-        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-          <Input
-            placeholder="Search"
-            value={selectedKeys[0]}
-            onPressEnter={() => confirm()}
-            onChange={(e) => {
-              return setSelectedKeys(e.target.value ? [e.target.value] : []);
-            }}
-          />
-        ),
-        onFilter: (value, record) => record.name.includes(value),
-        filterIcon: <SearchOutlined />,
+        ...column({ title: 'view' }),
       },
 
       {
         ...column({ title: 'time' }),
-        render: (value)=> {
-          const time = moment(value)
-          return `${time.year()}-${time.month()}-${time.date()}`
-        }
+        render: (value) => {
+          return <span style={{ whiteSpace: 'nowrap' }}>{value}</span>;
+        },
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+          <DatePicker
+            onChange={(time) => {
+              setSelectedKeys(time ? [moment(time).format('YYYY-MM-DD')] : []);
+              confirm();
+            }}
+          />
+        ),
+        onFilter: (value, record) => {
+          console.log(new Date('2022-2-2'));
+          return new Date(value as string) <= new Date(record.time);
+        },
+        filterIcon: <SearchOutlined />,
       },
-      {   
+      {
         ...column({ title: 'accept' }),
-        render: (value)=> {
-          if(value) 
-            return <Tag color={'green'}>Accepted</Tag>
-          return <Button >Accept</Button>
-        }
+        filters: [
+          {
+            text: 'Accepted',
+            value: true,
+          },
+          {
+            text: 'Not Accepted',
+            value: false,
+          },
+        ],
+        onFilter: (value, record) => {
+          return value == record.accept;
+        },
+        render: (value) => {
+          return <Tag color={value ? 'green' : 'red'}>{value ? 'Accepted' : 'Accept'}</Tag>;
+        },
+      },
+      {
+        ...column({ title: 'detail' }),
+        render: (_, record) => (
+          <ProfileOutlined
+            onClick={() => push(`/ideas/detail/${record.key}`, undefined, { shallow: true })}
+            style={{ color: '#07456F' }}
+          />
+        ),
       },
 
       // {
@@ -184,7 +221,6 @@ const hoang: NextPageWithLayout = ({
     []
   );
 
-
   return (
     <>
       <Head>
@@ -196,7 +232,7 @@ const hoang: NextPageWithLayout = ({
       </Breadcrumb>
 
       <Card title="Submissions" style={{ width: '100%', marginTop: '20px' }}>
-        <Table columns={columns} dataSource={dataSource}/>
+        <Table columns={columns} dataSource={dataSource} />
       </Card>
     </>
   );
