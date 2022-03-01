@@ -1,21 +1,37 @@
-import { createContext, useEffect } from 'react';
+import { createContext, ReactElement, ReactNode, useEffect, useState } from 'react';
 import { getCurrentUser } from 'queries/auth';
 import { useRouter } from 'next/router';
 import { AnimatePresence, motion } from 'framer-motion';
+import { NextPage } from 'next';
+import io, { Socket } from 'socket.io-client';
 
 //Types
+interface DefaultEventsMap {
+  [event: string]: (...args: any[]) => void;
+}
+
 interface IGlobalConttextProps {
-  children: any;
+  children: ReactNode | ReactElement | NextPage;
+}
+
+interface IGlobalContext {
+  socket: Socket<DefaultEventsMap, DefaultEventsMap> | null;
 }
 
 //Create context
-const GlobalContext = createContext({});
+const GlobalContext = createContext<IGlobalContext>({
+  socket: null,
+});
 
 //Context provider function
 function GlobalContextProvider({ children }: IGlobalConttextProps) {
   const { refetch } = getCurrentUser();
-  const value = {};
   const { push, route } = useRouter();
+
+  //State socket
+  const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
+
+  //Refetch get current user
   useEffect(() => {
     const firstLogin = localStorage.getItem('first-login');
     if (firstLogin === 'true') {
@@ -23,12 +39,29 @@ function GlobalContextProvider({ children }: IGlobalConttextProps) {
     }
   }, []);
 
+  //Setting socket
+  useEffect(() => {
+    const socketIo = io(process.env.API_URL as string);
+    socketIo.emit('connection');
+    setSocket(socketIo);
+
+    function cleanup() {
+      socketIo.disconnect();
+    }
+
+    return cleanup;
+  }, []);
+
+  const value = {
+    socket,
+  };
+
   return (
     <GlobalContext.Provider value={value}>
       <AnimatePresence exitBeforeEnter>
         <motion.div
           style={{
-            overflowX: 'hidden'
+            overflowX: 'hidden',
           }}
           animate={{ opacity: 1, y: 0, x: 0 }}
           key={route}
