@@ -1,22 +1,47 @@
 const nodemailer = require('nodemailer');
+const mailNotice = require('../utils/mailNotice');
 
 //import Midlleware
 const catchAsyncError = require('../helpers/catchAsyncError');
-
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: 'hoangdev161201@gmail.com',
-    pass: 'kingspear1999',
-  },
-  from: 'hoanghpang@gmail.com',
-  port: 465,
-  secure: true,
-});
-
+const userModel = require('../models/userModel');
 
 const sendMailController = {
-    commentNotice: catchAsyncError(async (req, res) => {
-        
-    })
+  commentNotice: catchAsyncError(async (req, res) => {
+    const { email } = req.body;
+
+    await mailNotice({
+      email,
+      subject: 'You received a new comment',
+      text: 'Your ideas got new comment',
+      html: '<p style="text-align:center;color:red">Enterprise Web</p>',
+    });
+    return res.status(200).json({
+      statusCode: 200,
+      msg: 'Send email success',
+    });
+  }),
+  ideaNotice: catchAsyncError(async (req, res) => {
+    const { user_Id } = req.body;
+
+    const data = await userModel.findById(user_Id).select('department_id');
+    console.log(data);
+    const user = await userModel
+      .findOne({ department_id: data, role: 'qa_coordinator' })
+      .select('email');
+
+    if (user) {
+      await mailNotice({
+        email,
+        subject: 'Department got new idea',
+        text: 'Department got new idea',
+        html: '<p style="text-align:center;color:red">Enterprise Web</p>',
+      });
+      return res.status(200).json({
+        statusCode: 200,
+        msg: 'Send email success',
+      });
+    }
+  }),
 };
+
+module.exports = sendMailController;

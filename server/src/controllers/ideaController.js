@@ -350,7 +350,6 @@ const ideaController = {
         },
       },
     ]);
-    console.log(countReaction);
     return res.status(200).json({
       statusCode: 200,
       msg: ' Get topic success',
