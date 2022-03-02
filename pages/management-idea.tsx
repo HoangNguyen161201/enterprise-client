@@ -379,7 +379,7 @@ const managementIdea: NextPageWithLayout = ({
                 setNameById(null);
                 setValueById(null);
               } else {
-                setNameById('submission_id');
+                setNameById('submission_id'); 
                 setValueById(value);
               }
              
