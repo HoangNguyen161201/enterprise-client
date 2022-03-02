@@ -9,7 +9,7 @@ const reactionRouter = express.Router();
 //Import middleware
 const authorization = require('../middlewares/authorization');
 
-reactionRouter.post('/', authorization(['admin', 'qa_manager']), reactionController.create);
+reactionRouter.post('/', authorization([]), reactionController.create);
 
 reactionRouter.get('/user/:user_id', reactionController.getReactionUser);
 

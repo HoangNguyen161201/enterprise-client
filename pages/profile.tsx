@@ -1,33 +1,24 @@
 //Import
 import { IdcardOutlined, MailOutlined, TeamOutlined } from '@ant-design/icons';
 import { Avatar, Breadcrumb, Card, Col, Grid, List, message, Row, Space } from 'antd';
+import { Infor, ItemIdea } from 'components/elements/common';
 import { ClientLayout } from 'components/layouts';
+import { IDetailUser } from 'models/apiType';
+import { NextPageWithLayout } from 'models/layoutType';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
+import { getCurrentUser, getIdeasAcceptUser } from 'queries';
 import { useEffect as UseEffect } from 'react';
-import { Infor, ItemIdea } from 'components/elements/common';
-import { IDetailUser, IUser } from 'models/apiType';
-import { NextPageWithLayout } from 'models/layoutType';
-import { getCurrentUser, getDetailUser, getIdeasAcceptUser } from 'queries';
 
 export interface IDetailEmployeeProps {
-  detailUser: { user: IUser; [index: string]: any };
   detailCurrentUser: IDetailUser;
 }
 
 const DetailEmployee: NextPageWithLayout = ({
-  detailUser,
   detailCurrentUser,
 }: IDetailEmployeeProps) => {
-  const { query } = useRouter();
   const { useBreakpoint } = Grid;
   const { lg } = useBreakpoint();
-
-  //Get id from router to get old data
-  const {
-    query: { id },
-  } = useRouter();
 
   //Get access token
   const {
@@ -41,18 +32,11 @@ const DetailEmployee: NextPageWithLayout = ({
 
   //Get Idea accept user
   const { data: dataIdeasAccept, error: errDataIdeasAccept } = getIdeasAcceptUser({
-    user_id: id as string,
+    user_id: dataUser?.user._id,
     accessToken: dataUser?.accessToken.token,
   });
 
   console.log(dataIdeasAccept);
-
-  //Get detail data user
-  const { error: errorDetailUser, data: dataDetailUser } = getDetailUser(
-    id as string,
-    dataUser?.accessToken.token,
-    detailUser
-  );
 
   //Check exist and show error
   UseEffect(() => {
@@ -67,27 +51,20 @@ const DetailEmployee: NextPageWithLayout = ({
         content: errDataIdeasAccept.response?.data.err,
       });
     }
-
-    if (errorDetailUser) {
-      message.error({
-        content: errorDetailUser.response?.data.err,
-      });
-    }
-  }, [errorGetUser, errDataIdeasAccept, errorDetailUser]);
+  }, [errorGetUser, errDataIdeasAccept]);
 
   return (
     <>
       <Head>
-        <title>Detail User Page</title>
+        <title>Profile Page</title>
       </Head>
 
       <Breadcrumb>
         <Breadcrumb.Item>Home</Breadcrumb.Item>
-        <Breadcrumb.Item>Employees</Breadcrumb.Item>
-        <Breadcrumb.Item>View Detail Employee</Breadcrumb.Item>
+        <Breadcrumb.Item>Profile</Breadcrumb.Item>
       </Breadcrumb>
 
-      <Card title="View Detail Employee" style={{ width: '100%', marginTop: '20px' }}>
+      <Card title="View Profile" style={{ width: '100%', marginTop: '20px' }}>
         <Space direction="vertical" size={20}>
           <Row wrap={!lg} gutter={[30, 30]}>
             <Col flex={ lg ? '400px' : undefined} span={lg ? undefined : 24}>
@@ -101,7 +78,7 @@ const DetailEmployee: NextPageWithLayout = ({
                       border: '2px solid #009F9D',
                       borderRadius: 4,
                     }}
-                    src={dataDetailUser?.user?.avatar?.url}
+                    src={dataUser?.user?.avatar?.url}
                   />
                   <div
                     style={{
@@ -115,14 +92,14 @@ const DetailEmployee: NextPageWithLayout = ({
                         display: 'block',
                       }}
                     >
-                      {dataDetailUser?.user?.name}
+                      {dataUser?.user?.name}
                     </span>
                     <span
                       style={{
                         color: 'gray',
                       }}
                     >
-                      {dataDetailUser?.user?.role}
+                      {dataUser?.user?.role}
                     </span>
                   </div>
                 </Space>
@@ -138,13 +115,13 @@ const DetailEmployee: NextPageWithLayout = ({
                 <Infor
                   color="#009F9D"
                   Icon={IdcardOutlined}
-                  title={`epl-${dataDetailUser?.user?.employee_id}`}
+                  title={`epl-${dataUser?.user?.employee_id}`}
                   titleTooltip={'Employee ID'}
                 />
                 <Infor
                   color="#07456F"
                   Icon={MailOutlined}
-                  title={`${dataDetailUser?.user?.email}`}
+                  title={`${dataUser?.user?.email}`}
                   titleTooltip={'Employee Email'}
                 />
                 <Infor
@@ -152,8 +129,8 @@ const DetailEmployee: NextPageWithLayout = ({
                   Icon={TeamOutlined}
                   titleTooltip={'Department'}
                   title={
-                    dataDetailUser?.user?.department_id?.name
-                      ? `${dataDetailUser.user.department_id.name}`
+                    dataUser?.user?.department_id?.name
+                      ? `${dataUser.user.department_id.name}`
                       : 'none'
                   }
                 />
@@ -204,27 +181,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
-  const detailUser: { user: IUser; [index: string]: any } = await fetch(
-    `http://localhost:3000/api/users/${context.query.id}`,
-    {
-      method: 'GET',
-      headers: {
-        cookie: context.req.headers.cookie,
-        authorization: detailCurrentUser.accessToken.token,
-      } as HeadersInit,
-    }
-  ).then((e) => e.json());
-
-  //Redirect 404 page when not have detail detailUser
-  if (detailUser.statusCode !== 200) {
-    return {
-      notFound: true,
-    };
-  }
-
   return {
     props: {
-      detailUser,
       detailCurrentUser,
     },
   };

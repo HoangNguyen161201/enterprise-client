@@ -7,7 +7,7 @@ import {
   MoreOutlined,
   UploadOutlined,
 } from '@ant-design/icons';
-import { Button, Dropdown, List, Menu, Space } from 'antd';
+import { Button, Dropdown, Grid, List, Menu, Space } from 'antd';
 import { IIdea } from 'models/apiType';
 import Link from 'next/link';
 import * as React from 'react';
@@ -15,13 +15,16 @@ import * as React from 'react';
 export interface IItemIdeaProps {
   item: IIdea;
   onDeleteIdea: (idea_id: string, cloudinary_id: string) => void;
-  closure_date: {
+  closure_date?: {
     value: string;
     isMatchDate: boolean;
   };
 }
 
 export const ItemIdea = ({ item, onDeleteIdea, closure_date }: IItemIdeaProps) => {
+  const { useBreakpoint } = Grid;
+  const { lg } = useBreakpoint();
+
   const menu = (
     <Menu>
       <Menu.Item
@@ -65,7 +68,7 @@ export const ItemIdea = ({ item, onDeleteIdea, closure_date }: IItemIdeaProps) =
         align="start"
       >
         <Space size={20} align="start">
-          <span>👉</span>
+          {lg && <span>👉</span>}
 
           <Space direction="vertical" size={20}>
             <span
@@ -101,11 +104,11 @@ export const ItemIdea = ({ item, onDeleteIdea, closure_date }: IItemIdeaProps) =
                   background: '#CDFFEB',
                 }}
               >
-                {item.category_id ? item.category_id : 'Not have category'}
+                {item.category_id ? item.category_id.name : 'Not have category'}
               </Space>
             </Space>
 
-            <Space size={20}>
+            <Space wrap size={20}>
               <Space>
                 <FileAddOutlined />
                 <span>{item.files.length} file</span>
@@ -124,7 +127,7 @@ export const ItemIdea = ({ item, onDeleteIdea, closure_date }: IItemIdeaProps) =
           </Space>
         </Space>
 
-        {closure_date.isMatchDate && (
+        {closure_date && closure_date.isMatchDate && (
           <Dropdown arrow overlay={menu} trigger={['click', 'hover']} placement="topRight">
             <MoreOutlined
               style={{

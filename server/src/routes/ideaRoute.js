@@ -58,4 +58,10 @@ ideaRouter.get(
   ideaController.getIdeaOfUser
 );
 
+ideaRouter.get(
+  '/accept/:user_id',
+  authorization(['qa_manager', 'qa_coordinator', 'department_manager', 'staff']),
+  ideaController.getIdeaAcceptOfUser
+);
+
 module.exports = ideaRouter;
