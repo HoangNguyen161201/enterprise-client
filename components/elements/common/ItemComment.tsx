@@ -2,11 +2,12 @@ import { UserOutlined } from '@ant-design/icons';
 import { Avatar, Input, List, message, Modal, Space } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import { AxiosError } from 'axios';
+import { GlobalContext } from 'contextApi/globalContext';
 import { ICommentResponse, ICommon, IDetailUser } from 'models/apiType';
 import moment from 'moment';
 import { commentMutation } from 'mutations/comment';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import InputComment from './InputComment';
 import ItemReplyComment from './ItemReplyComment';
 
@@ -29,6 +30,9 @@ export default function ItemComment({
   anonymously,
   refetchDataComments,
 }: IItemCommentProps) {
+  //Get socket
+  const { socket } = useContext(GlobalContext);
+
   //State show input reply
   const [isShowInput, setIsShowInput] = useState<boolean>(false);
   //State show replies
@@ -50,6 +54,11 @@ export default function ItemComment({
 
         //Fetch again comment
         refetchDataComments();
+
+        //emit new socket
+        if (socket && idea_id) {
+          socket.emit('new_comment', idea_id);
+        }
       },
       onError: (error: AxiosError) => {
         message.error({

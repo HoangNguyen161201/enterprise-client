@@ -19,6 +19,7 @@ import InputComment from 'components/elements/common/InputComment';
 import ItemComment from 'components/elements/common/ItemComment';
 import ItemFileUpload from 'components/elements/common/ItemFileUpload';
 import { ClientLayout } from 'components/layouts';
+import { GlobalContext } from 'contextApi/globalContext';
 import { IallComments, ICommon, IDetailIdea, IDetailUser, Ireaction } from 'models/apiType';
 import { IReactionForm } from 'models/formType';
 import { NextPageWithLayout } from 'models/layoutType';
@@ -37,7 +38,13 @@ import {
   getUrlDownloadZip,
 } from 'queries';
 import { getallComments } from 'queries/comment';
-import { useEffect, useEffect as UseEffect, useState, useState as UseState } from 'react';
+import {
+  useContext,
+  useEffect,
+  useEffect as UseEffect,
+  useState,
+  useState as UseState,
+} from 'react';
 import 'react-quill/dist/quill.bubble.css';
 //CSS quill
 import 'react-quill/dist/quill.snow.css';
@@ -78,6 +85,9 @@ const DetailIdea: NextPageWithLayout = ({
   allComments,
   detailUser,
 }: IDetailEmployeeProps) => {
+  //Get socket
+  const { socket } = useContext(GlobalContext);
+
   //State anonymously and content comment
   const [anonymously, setAnonymously] = UseState<boolean>(false);
 
@@ -88,6 +98,23 @@ const DetailIdea: NextPageWithLayout = ({
   const {
     query: { id },
   } = UseRouter();
+
+  //Join room socket
+  UseEffect(() => {
+    //Join room
+    if (socket && id) {
+      socket.emit('join_room', id);
+    }
+
+    //Leave room
+    function leaveRoom() {
+      if (socket && id) {
+        socket.emit('leave_room', id);
+      }
+    }
+
+    return leaveRoom;
+  }, [socket, id]);
 
   //State match final closure date
   const [isMatchFinalTime, setIsMatchFinalTime] = UseState<boolean>(false);
@@ -108,7 +135,6 @@ const DetailIdea: NextPageWithLayout = ({
     error: errorReaction,
     refetch: refetchAllReaction,
   } = getReactType();
-  console.log(dataAllReaction);
 
   //Get detail data idea
   const {
@@ -171,6 +197,9 @@ const DetailIdea: NextPageWithLayout = ({
 
         //Fetch again all comments when add new comment
         refetchDataComments();
+        if (socket && id) {
+          socket.emit('new_comment', id);
+        }
       },
       onError: (error: AxiosError) => {
         message.error({
@@ -236,8 +265,6 @@ const DetailIdea: NextPageWithLayout = ({
     }
   }, [errorGetUser, errorComments, errorDetailIdea, errorReaction, errReactionUserIdea]);
 
-  console.log('fdgsdfgd', dataReactionUserIdea);
-
   //Generate img type file
   const generateImgFile = (nameFile: string) => {
     let typeFile = nameFile.split('.')[1];
@@ -276,14 +303,17 @@ const DetailIdea: NextPageWithLayout = ({
   //Set count number reaction detail of current idea
   useEffect(() => {
     if (dataAllReaction && dataDetailIdea) {
+      
       const dataReactionCountDetail: Ireaction[] = dataAllReaction.reactionTypes.map(
         (itemReactionType) => {
           let count = 0;
           dataDetailIdea.countReactions?.map((itemReactionDetail) => {
-            if (itemReactionType._id === itemReactionDetail._id) {
+            console.log(dataAllReaction, dataDetailIdea);
+            if (itemReactionType._id == itemReactionDetail._id) {
               count = itemReactionDetail.count;
-            }
+            }    
           });
+          
           return {
             ...itemReactionType,
             count,
@@ -294,6 +324,16 @@ const DetailIdea: NextPageWithLayout = ({
       setReactionCountDetail(dataReactionCountDetail);
     }
   }, [dataDetailIdea, dataAllReaction]);
+
+  //Handle event socket
+  UseEffect(() => {
+    //Join room
+    if (socket) {
+      socket.on('new_comment', () => {
+        refetchDataComments();
+      });
+    }
+  }, [socket]);
 
   return (
     <>
