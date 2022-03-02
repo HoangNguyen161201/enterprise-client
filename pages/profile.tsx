@@ -14,9 +14,7 @@ export interface IDetailEmployeeProps {
   detailCurrentUser: IDetailUser;
 }
 
-const DetailEmployee: NextPageWithLayout = ({
-  detailCurrentUser,
-}: IDetailEmployeeProps) => {
+const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmployeeProps) => {
   const { useBreakpoint } = Grid;
   const { lg } = useBreakpoint();
 
@@ -45,13 +43,7 @@ const DetailEmployee: NextPageWithLayout = ({
         content: errorGetUser.response?.data.err,
       });
     }
-
-    if (errDataIdeasAccept) {
-      message.error({
-        content: errDataIdeasAccept.response?.data.err,
-      });
-    }
-  }, [errorGetUser, errDataIdeasAccept]);
+  }, [errorGetUser]);
 
   return (
     <>
@@ -67,7 +59,7 @@ const DetailEmployee: NextPageWithLayout = ({
       <Card title="View Profile" style={{ width: '100%', marginTop: '20px' }}>
         <Space direction="vertical" size={20}>
           <Row wrap={!lg} gutter={[30, 30]}>
-            <Col flex={ lg ? '400px' : undefined} span={lg ? undefined : 24}>
+            <Col flex={lg ? '400px' : undefined} span={lg ? undefined : 24}>
               <Space size={20} direction="vertical">
                 <Space size={20} wrap>
                   <Avatar
@@ -143,7 +135,7 @@ const DetailEmployee: NextPageWithLayout = ({
                   color: 'gray',
                 }}
               >
-                Ideas Accept
+                {`Ideas Accept (${(dataIdeasAccept && dataIdeasAccept.ideas.length) || 0} ideas)`}
               </span>
               <List
                 itemLayout="horizontal"

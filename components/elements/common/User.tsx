@@ -48,7 +48,7 @@ export const User = ({ image, name, role, employee_id, xs, sm, lg, xl, id }: ISt
             }}
           >
             <span style={{ color: 'gray' }}>{role}</span>
-            <Link href={`/users/detail/${id}`} passHref>
+            <Link href={`/employees/detail/${id}`} passHref>
               <Button shape="circle" type="primary" icon={<EyeOutlined />} />
             </Link>
           </Space>

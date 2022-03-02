@@ -1,6 +1,6 @@
 //Import
 import { IdcardOutlined, MailOutlined, TeamOutlined } from '@ant-design/icons';
-import { Avatar, Breadcrumb, Card, Col, Grid, List, message, Row, Space } from 'antd';
+import { Alert, Avatar, Breadcrumb, Card, Col, Grid, List, message, Row, Space } from 'antd';
 import { ClientLayout } from 'components/layouts';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
@@ -62,18 +62,12 @@ const DetailEmployee: NextPageWithLayout = ({
       });
     }
 
-    if (errDataIdeasAccept) {
-      message.error({
-        content: errDataIdeasAccept.response?.data.err,
-      });
-    }
-
     if (errorDetailUser) {
       message.error({
         content: errorDetailUser.response?.data.err,
       });
     }
-  }, [errorGetUser, errDataIdeasAccept, errorDetailUser]);
+  }, [errorGetUser, errorDetailUser]);
 
   return (
     <>
@@ -89,8 +83,11 @@ const DetailEmployee: NextPageWithLayout = ({
 
       <Card title="View Detail Employee" style={{ width: '100%', marginTop: '20px' }}>
         <Space direction="vertical" size={20}>
+          {dataUser && dataUser.user.role === 'admin' && (
+            <Alert message="Admin cannot see the internal ideas of the system." type="warning" />
+          )}
           <Row wrap={!lg} gutter={[30, 30]}>
-            <Col flex={ lg ? '400px' : undefined} span={lg ? undefined : 24}>
+            <Col flex={lg ? '400px' : undefined} span={lg ? undefined : 24}>
               <Space size={20} direction="vertical">
                 <Space size={20} wrap>
                   <Avatar
@@ -166,7 +163,7 @@ const DetailEmployee: NextPageWithLayout = ({
                   color: 'gray',
                 }}
               >
-                Ideas Accept
+                {`Ideas Accept (${dataIdeasAccept && dataIdeasAccept.ideas.length || 0} ideas)`}
               </span>
               <List
                 itemLayout="horizontal"
