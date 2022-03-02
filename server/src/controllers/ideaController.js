@@ -335,8 +335,6 @@ const ideaController = {
         err: 'The Idea does not exist',
         statusCode: 400,
       });
-
-    console.log(id);
     const countReactions = await reactionModel.aggregate([
       {
         $match: {
@@ -371,7 +369,6 @@ const ideaController = {
     const { submission_id } = req.query;
 
     const user = await userModel.findById(user_id);
-    console.log(user);
 
     if (!user)
       return res.status(400).json({

@@ -10,24 +10,34 @@ import {
   message,
   Row,
   Space,
+  Spin,
   Switch,
+  Tooltip,
 } from 'antd';
 import { AxiosError } from 'axios';
 import InputComment from 'components/elements/common/InputComment';
 import ItemComment from 'components/elements/common/ItemComment';
 import ItemFileUpload from 'components/elements/common/ItemFileUpload';
 import { ClientLayout } from 'components/layouts';
-import { IallComments, ICommon, IDetailIdea, IDetailUser } from 'models/apiType';
+import { IallComments, ICommon, IDetailIdea, IDetailUser, Ireaction } from 'models/apiType';
+import { IReactionForm } from 'models/formType';
 import { NextPageWithLayout } from 'models/layoutType';
 import { commentMutation } from 'mutations/comment';
+import { IReactionMutaion } from 'mutations/reaction';
 import { GetServerSideProps } from 'next';
 //Dynamic import quill
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import { useRouter as UseRouter } from 'next/router';
-import { getCurrentUser, getDetailIdea, getUrlDownloadZip } from 'queries';
+import {
+  getCurrentUser,
+  getDetailIdea,
+  getReactionUserIdea,
+  getReactType,
+  getUrlDownloadZip,
+} from 'queries';
 import { getallComments } from 'queries/comment';
-import { useEffect as UseEffect, useState as UseState } from 'react';
+import { useEffect, useEffect as UseEffect, useState, useState as UseState } from 'react';
 import 'react-quill/dist/quill.bubble.css';
 //CSS quill
 import 'react-quill/dist/quill.snow.css';
@@ -68,12 +78,11 @@ const DetailIdea: NextPageWithLayout = ({
   allComments,
   detailUser,
 }: IDetailEmployeeProps) => {
-  const { query } = UseRouter();
-  const { useBreakpoint } = Grid;
-  const { lg } = useBreakpoint();  
-
   //State anonymously and content comment
   const [anonymously, setAnonymously] = UseState<boolean>(false);
+
+  //State detail and number reaction
+  const [reactionCountDetail, setReactionCountDetail] = useState<Ireaction[]>([]);
 
   //Get id from router to get detail data
   const {
@@ -93,11 +102,25 @@ const DetailIdea: NextPageWithLayout = ({
     dataUserRefetch();
   }, []);
 
+  //Get all reaction types
+  const {
+    data: dataAllReaction,
+    error: errorReaction,
+    refetch: refetchAllReaction,
+  } = getReactType();
+  console.log(dataAllReaction);
+
   //Get detail data idea
-  const { error: errorDetailIdea, data: dataDetailIdea } = getDetailIdea(
-    id as string,
-    dataUser?.accessToken.token,
-    detailIdea
+  const {
+    error: errorDetailIdea,
+    data: dataDetailIdea,
+    refetch: refetchDetailIdea,
+  } = getDetailIdea(id as string, dataUser?.accessToken.token, detailIdea);
+
+  //Get reaction of current user and current detail idea
+  const { data: dataReactionUserIdea, error: errReactionUserIdea } = getReactionUserIdea(
+    dataUser?.user?._id,
+    dataDetailIdea?.idea?._id
   );
 
   //Get all comments
@@ -146,12 +169,33 @@ const DetailIdea: NextPageWithLayout = ({
           content: data.msg,
         });
 
-        //Fetch again all comment when add new comment
+        //Fetch again all comments when add new comment
         refetchDataComments();
       },
       onError: (error: AxiosError) => {
         message.error({
           content: error.response?.data.err || 'Add comment false.',
+        });
+      },
+    },
+    dataUserRefetch: dataUserRefetch,
+    token: dataUser?.accessToken.token,
+  });
+
+  //Mutation add reaction
+  const mutationAddReaction = IReactionMutaion.add({
+    options: {
+      onSuccess: (data: ICommon) => {
+        message.success({
+          content: data.msg,
+        });
+
+        //refetch data
+        refetchDetailIdea();
+      },
+      onError: (error: AxiosError) => {
+        message.error({
+          content: error.response?.data.err || 'Add reaction false.',
         });
       },
     },
@@ -178,7 +222,21 @@ const DetailIdea: NextPageWithLayout = ({
         content: errorDetailIdea.response?.data.err,
       });
     }
-  }, [errorGetUser, errorComments, errorDetailIdea]);
+
+    if (errorReaction) {
+      message.error({
+        content: errorReaction.response?.data.err,
+      });
+    }
+
+    if (errReactionUserIdea) {
+      message.error({
+        content: errReactionUserIdea.response?.data.err,
+      });
+    }
+  }, [errorGetUser, errorComments, errorDetailIdea, errorReaction, errReactionUserIdea]);
+
+  console.log('fdgsdfgd', dataReactionUserIdea);
 
   //Generate img type file
   const generateImgFile = (nameFile: string) => {
@@ -206,6 +264,37 @@ const DetailIdea: NextPageWithLayout = ({
     }
   };
 
+  //Handle add reaction
+  const onAddReaction = (reactionType_id: string) => {
+    mutationAddReaction.mutate({
+      user_id: dataUser && dataUser.user._id,
+      idea_id: dataDetailIdea && dataDetailIdea.idea._id,
+      reactionType_id,
+    });
+  };
+
+  //Set count number reaction detail of current idea
+  useEffect(() => {
+    if (dataAllReaction && dataDetailIdea) {
+      const dataReactionCountDetail: Ireaction[] = dataAllReaction.reactionTypes.map(
+        (itemReactionType) => {
+          let count = 0;
+          dataDetailIdea.countReactions?.map((itemReactionDetail) => {
+            if (itemReactionType._id === itemReactionDetail._id) {
+              count = itemReactionDetail.count;
+            }
+          });
+          return {
+            ...itemReactionType,
+            count,
+          };
+        }
+      );
+
+      setReactionCountDetail(dataReactionCountDetail);
+    }
+  }, [dataDetailIdea, dataAllReaction]);
+
   return (
     <>
       <Head>
@@ -221,7 +310,10 @@ const DetailIdea: NextPageWithLayout = ({
       <Card
         title="View Detail Idea"
         style={{ width: '100%', marginTop: '20px' }}
-        extra={dataURLZip?.url && <a href={dataURLZip?.url}>Dowload all files</a>}
+        extra={
+          detailIdea?.idea?.cloudinary_id &&
+          dataURLZip?.url && <a href={dataURLZip?.url}>Dowload all files</a>
+        }
       >
         <Space direction="vertical" size={20}>
           <span
@@ -304,30 +396,19 @@ const DetailIdea: NextPageWithLayout = ({
               width: '100%',
             }}
           >
-            <Space size={10}>
-              <span className="reaction">👍</span>
-              <span>10</span>
-            </Space>
-            <Space size={10}>
-              <span className="reaction">👎</span>
-              <span>10</span>
-            </Space>
-            <Space size={10}>
-              <span className="reaction">🤣</span>
-              <span>10</span>
-            </Space>
-            <Space size={10}>
-              <span className="reaction">😭</span>
-              <span>10</span>
-            </Space>
-            <Space size={10}>
-              <span className="reaction">😍</span>
-              <span>10</span>
-            </Space>
-            <Space size={10}>
-              <span className="reaction">😡</span>
-              <span>10</span>
-            </Space>
+            <Spin spinning={mutationAddReaction.isLoading}>
+              {reactionCountDetail &&
+                reactionCountDetail.map((item, index) => (
+                  <Space key={index} size={10}>
+                    <Tooltip title={item.name}>
+                      <span className="reaction" onClick={() => onAddReaction(item._id)}>
+                        {item.icon}
+                      </span>
+                    </Tooltip>
+                    <span>{item.count}</span>
+                  </Space>
+                ))}
+            </Spin>
           </Space>
           <Divider
             style={{
@@ -365,11 +446,13 @@ const DetailIdea: NextPageWithLayout = ({
           </Space>
 
           {/* Input comment */}
-          <InputComment
-            isLoading={mutationAddComment.isLoading}
-            showInput={isMatchFinalTime}
-            onAddComment={onAddComment}
-          />
+          {isMatchFinalTime && (
+            <InputComment
+              isLoading={mutationAddComment.isLoading}
+              showInput={isMatchFinalTime}
+              onAddComment={onAddComment}
+            />
+          )}
           <List
             dataSource={dataComments?.comments}
             renderItem={(item) => (
@@ -435,6 +518,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   //Redirect 404 page when not have detailIdea
   if (detailIdea.statusCode !== 200) {
+    return {
+      notFound: true,
+    };
+  }
+
+  //Check accept and role idea
+  if (!detailIdea.idea.accept && detailUser.user.role !== 'qa_manager') {
     return {
       notFound: true,
     };

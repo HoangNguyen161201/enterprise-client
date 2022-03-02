@@ -202,57 +202,55 @@ export default function ItemComment({
           </Space>
           <span>{comment.content}</span>
 
-          {isMatchFinalTime && (
-            <Space wrap size={20}>
+          <Space wrap size={20}>
+            <span
+              style={{
+                textDecoration: 'underline',
+                cursor: 'pointer',
+              }}
+              onClick={() => {
+                setIsShowInput(!isShowInput);
+              }}
+            >
+              {isShowInput ? 'Hide Reply' : 'Rely'}
+            </span>
+
+            <span
+              style={{
+                textDecoration: 'underline',
+                cursor: 'pointer',
+              }}
+              onClick={() => {
+                setisShowReplies(!isShowReplies);
+              }}
+            >
+              {isShowReplies
+                ? `Hide replies (${comment.replies.length})`
+                : `Show replies (${comment.replies.length})`}
+            </span>
+
+            {isMatchFinalTime && user._id === dataUser?.user?._id && (
               <span
                 style={{
-                  textDecoration: 'underline',
                   cursor: 'pointer',
                 }}
-                onClick={() => {
-                  setIsShowInput(!isShowInput);
-                }}
+                onClick={() => onDeleteComment({ comment_id: comment._id })}
               >
-                {isShowInput ? 'Hide Reply' : 'Rely'}
+                Delete
               </span>
+            )}
 
+            {isMatchFinalTime && user._id === dataUser?.user?._id && (
               <span
                 style={{
-                  textDecoration: 'underline',
                   cursor: 'pointer',
                 }}
-                onClick={() => {
-                  setisShowReplies(!isShowReplies);
-                }}
+                onClick={showModal}
               >
-                {isShowReplies
-                  ? `Hide replies (${comment.replies.length})`
-                  : `Show replies (${comment.replies.length})`}
+                Update
               </span>
-
-              {isMatchFinalTime && user._id === dataUser?.user?._id && (
-                <span
-                  style={{
-                    cursor: 'pointer',
-                  }}
-                  onClick={() => onDeleteComment({ comment_id: comment._id })}
-                >
-                  Delete
-                </span>
-              )}
-
-              {isMatchFinalTime && user._id === dataUser?.user?._id && (
-                <span
-                  style={{
-                    cursor: 'pointer',
-                  }}
-                  onClick={showModal}
-                >
-                  Update
-                </span>
-              )}
-            </Space>
-          )}
+            )}
+          </Space>
         </Space>
       </Space>
 
