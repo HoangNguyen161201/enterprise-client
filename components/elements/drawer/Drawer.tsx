@@ -198,7 +198,16 @@ export const Drawer = ({ onClose, ...props }: IProps) => {
             key="5"
             icon={<CloudUploadOutlined />}
             onClick={onClose}
+            style={{
+              display: isShowByRole.qa_manager ? 'block' : 'none',
+            }}
           >
+            <Link href={'/management-idea'}>
+              <a>Manage Ideas</a>
+            </Link>
+          </Menu.Item>
+
+          <Menu.Item key="6" icon={<CloudUploadOutlined />} onClick={onClose}>
             <Link href={'/ideas'}>
               <a>Ideas</a>
             </Link>

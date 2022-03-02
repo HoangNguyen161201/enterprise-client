@@ -6,10 +6,10 @@ const submissionRouter = require('./submissionRouter');
 const categoryRouter = require('./categoryRouter');
 const viewRouter = require('./viewRouter');
 const ideaRouter = require('./ideaRoute');
-
 const reactionRouter = require('./reactionRouter');
 const reactionTypeRouter = require('./reactionTypeRouter');
 const commentRouter = require('./commentRouter');
+const staticRouter = require('./staticRouter');
 
 //Config main router
 mainRouter = (app) => {
@@ -32,6 +32,8 @@ mainRouter = (app) => {
   app.use('/api/reaction-types', reactionTypeRouter); 
 
   app.use('/api/comments', commentRouter); 
+
+  app.use('/api/statics', staticRouter); 
 };
 
 module.exports = mainRouter;

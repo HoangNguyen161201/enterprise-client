@@ -113,7 +113,7 @@ const ideaController = {
         err: 'The Idea does not exist',
         statusCode: 400,
       });
-    } 
+    }
 
     //Get submission to check time
     if (idea.submission_id) {
@@ -162,6 +162,7 @@ const ideaController = {
       anonymously,
       files,
       cloudinary_id: cloudinary_id ? cloudinary_id : null,
+      accept: false,
     });
 
     return res.status(200).json({
@@ -202,7 +203,7 @@ const ideaController = {
       _interactive,
       _reaction,
       _search,
-      _accept
+      _accept,
     } = req.query;
 
     if (_interactive || _reaction) {
@@ -211,18 +212,18 @@ const ideaController = {
           return {
             $match: {
               reactionType_id: _reaction,
-              'idea.accept': true
-            }
-          }
+              'idea.accept': true,
+            },
+          };
         }
 
         return {
           $match: {
             reactionType_id: { $nin: [''] },
-            'idea.accept': true
-          }
-        }
-      }
+            'idea.accept': true,
+          },
+        };
+      };
       const page = await reactionModel.aggregate([
         match(),
         {
@@ -299,7 +300,7 @@ const ideaController = {
     const page_Index = await pageIndex({ query: ideaModel.find({}), limit: _limit });
 
     let filter = new Filter(ideaModel);
-    if(_accept) {
+    if (_accept) {
       filter = filter.getAll({
         accept: true,
       });
@@ -310,7 +311,7 @@ const ideaController = {
       filter = filter.searchById({ name: _nameById, value: _valueById });
     }
     if (_search) {
-      filter = filter.search({ name: 'title', query: _search })
+      filter = filter.search({ name: 'title', query: _search });
     }
     if (_sort) {
       filter = filter.sort({ name: _sortBy, NorO: _sort });
@@ -343,7 +344,6 @@ const ideaController = {
         statusCode: 400,
       });
 
-    
     const countReactions = await reactionModel.aggregate([
       {
         $match: {
@@ -357,7 +357,7 @@ const ideaController = {
         },
       },
     ]);
-    
+
     return res.status(200).json({
       statusCode: 200,
       msg: ' Get topic success',
@@ -393,7 +393,7 @@ const ideaController = {
         statusCode: 400,
       });
 
-    const ideas = await ideaModel.find({ submission_id, user_id });
+    const ideas = await ideaModel.find({ submission_id, user_id }).populate('category_id');
     return res.status(200).json({
       msg: 'Get ideas by user success',
       statusCode: 200,
@@ -401,25 +401,46 @@ const ideaController = {
     });
   }),
 
-  setAccept: catchAsyncError(async (req, res)=> {
-    const {id_idea} = req.body
-    const idea = await ideaModel.findById(id_idea)
-    if(!idea) {
+  getIdeaAcceptOfUser: catchAsyncError(async (req, res) => {
+    const { user_id } = req.params;
+
+    const user = await userModel.findById(user_id);
+
+    if (!user)
+      return res.status(400).json({
+        err: 'The user id dose not exist',
+        statusCode: 400,
+      });
+
+    const ideas = await ideaModel
+      .find({ user_id, accept: true, anonymously: false })
+      .populate('category_id');
+    return res.status(200).json({
+      msg: 'Get ideas accept by user success',
+      statusCode: 200,
+      ideas,
+    });
+  }),
+
+  setAccept: catchAsyncError(async (req, res) => {
+    const { id_idea } = req.body;
+    const idea = await ideaModel.findById(id_idea);
+    if (!idea) {
       return res.status(400).json({
         err: 'Idea not found',
         statusCode: 400,
       });
     }
-    console.log(id_idea)
+    console.log(id_idea);
     await ideaModel.findByIdAndUpdate(id_idea, {
-      accept: true
-    })
+      accept: true,
+    });
 
     return res.status(200).json({
       msg: 'Update accept success',
       statusCode: 200,
     });
-  })
+  }),
 };
 
 module.exports = ideaController;
