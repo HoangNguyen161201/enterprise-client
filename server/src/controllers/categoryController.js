@@ -6,6 +6,7 @@ const catchAsyncError = require('../helpers/catchAsyncError');
 //import model
 const categoryModel = require('../models/categoryModel');
 const { getDetail } = require('./userController');
+const ideaModel = require('../models/ideaModel');
 
 const categoryController = {
   create: catchAsyncError(async (req, res) => {
@@ -80,6 +81,15 @@ const categoryController = {
         err: 'The Category is does not exist',
         statusCode: 400,
       });
+    const idea = await ideaModel.findOne({
+      category_id: id,
+    });
+    if (idea) {
+      return res.status(400).json({
+        err: 'Please delete all idea of this category',
+        statusCode: 400,
+      });
+    }
     await categoryModel.findByIdAndDelete(id, req.body);
 
     return res.status(200).json({
@@ -96,7 +106,7 @@ const categoryController = {
       categories,
     });
   }),
-  
+
   getDetail: catchAsyncError(async (req, res) => {
     const { id } = req.params;
     const category = await categoryModel.findById(id);

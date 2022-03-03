@@ -138,7 +138,8 @@ const managementIdea: NextPageWithLayout = ({
   } = getallSubmissions(dataUser?.accessToken.token);
 
   useEffect(() => {
-    if (AllIdeas && AllIdeas?.ideas.length !== 0) {
+    if (AllIdeas?.ideas && AllIdeas?.ideas.length !== 0) {
+      console.log(AllIdeas)
       getExcel(AllIdeas?.ideas)
       const result = AllIdeas?.ideas.map((idea) => {
         return {

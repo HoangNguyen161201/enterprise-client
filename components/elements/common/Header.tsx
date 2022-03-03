@@ -1,11 +1,11 @@
-import { LogoutOutlined, MenuOutlined, MoreOutlined, ProfileOutlined } from '@ant-design/icons';
-import { Button, message, Layout, Space, Typography, Avatar, Menu, Dropdown, Divider } from 'antd';
+import { LogoutOutlined, MenuOutlined, ProfileOutlined } from '@ant-design/icons';
+import { Avatar, Button, Divider, Dropdown, Layout, Menu, message, Space } from 'antd';
+import { ILogout } from 'models/apiType';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
-import { useMutation } from 'react-query';
-import { ILogout } from 'models/apiType';
 import { getCurrentUser } from 'queries/auth';
+import { useState } from 'react';
+import { useMutation } from 'react-query';
 import { postData } from 'utils/fetchData';
 import { Drawer } from '../drawer';
 
@@ -78,7 +78,9 @@ export const HeaderComponent = () => {
       </Space>
       <Divider />
       <Menu.Item icon={<ProfileOutlined />} key="1">
-        Profile
+        <Link href={'/profile'}>
+          <a>Profile</a>
+        </Link>
       </Menu.Item>
       <Menu.Item icon={<LogoutOutlined />} key="2" onClick={onLogout}>
         Logout
@@ -106,7 +108,7 @@ export const HeaderComponent = () => {
               style={{
                 fontSize: '16px',
                 fontWeight: 'bold',
-                color: "#009F9D"
+                color: '#009F9D',
               }}
             >
               CMS

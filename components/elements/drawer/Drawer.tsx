@@ -121,13 +121,7 @@ export const Drawer = ({ onClose, ...props }: IProps) => {
             icon={<TeamOutlined />}
             onClick={onClose}
             style={{
-              display:
-                isShowByRole.staff ||
-                isShowByRole.qa_coordinator ||
-                isShowByRole.department_manager ||
-                isShowByRole.qa_manager
-                  ? 'block'
-                  : 'none',
+              display: isShowByRole.admin ? 'none' : 'block',
             }}
           >
             <Link href={'/my-department'}>
@@ -198,6 +192,22 @@ export const Drawer = ({ onClose, ...props }: IProps) => {
             key="5"
             icon={<CloudUploadOutlined />}
             onClick={onClose}
+            style={{
+              display: isShowByRole.qa_manager ? 'block' : 'none',
+            }}
+          >
+            <Link href={'/management-idea'}>
+              <a>Manage Ideas</a>
+            </Link>
+          </Menu.Item>
+
+          <Menu.Item
+            key="6"
+            icon={<CloudUploadOutlined />}
+            onClick={onClose}
+            style={{
+              display: isShowByRole.qa_manager ? 'block' : 'none',
+            }}
           >
             <Link href={'/ideas'}>
               <a>Ideas</a>
