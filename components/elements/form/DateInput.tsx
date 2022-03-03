@@ -13,8 +13,7 @@ export const DateInput = ({
   const {
     formState: { errors },
     control,
-  } = formSetting;
-  return (
+  } = formSetting;return (
     <Space direction="vertical" size={'small'}>
       <span className="font-1">
         {label} {require && <span className="color-red">*</span>}
