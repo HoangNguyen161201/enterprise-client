@@ -503,6 +503,16 @@ const userController = {
           await user.save();
           countUsersAssign = ++countUsersAssign;
         }
+
+        //Send mail
+        mailNotice({
+          email: user.email,
+          subject: `You have been assigned to the department ${department.name}`,
+          text: `You have been assigned to the department ${
+            department.name
+          } at ${new Date().toString()}`,
+          html: '',
+        });
       }
 
       //Update count users of department
