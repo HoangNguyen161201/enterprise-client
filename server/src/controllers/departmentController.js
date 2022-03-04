@@ -196,6 +196,7 @@ const departmentController = {
       .findOne({
         role: 'qa_manager',
         department_id: department._id,
+        deleted: false,
       })
       .select('-password');
 
@@ -204,6 +205,7 @@ const departmentController = {
       .findOne({
         role: 'qa_coordinator',
         department_id: department._id,
+        deleted: false,
       })
       .select('-password');
 
@@ -212,6 +214,7 @@ const departmentController = {
       .findOne({
         role: 'department_manager',
         department_id: department._id,
+        deleted: false,
       })
       .select('-password');
 
@@ -220,6 +223,7 @@ const departmentController = {
       .find({
         role: 'staff',
         department_id: department._id,
+        deleted: false,
       })
       .select('-password');
 
@@ -269,6 +273,7 @@ const departmentController = {
       .findOne({
         role: 'qa_manager',
         department_id: department._id,
+        deleted: false,
       })
       .select('-password');
 
@@ -277,6 +282,7 @@ const departmentController = {
       .findOne({
         role: 'qa_coordinator',
         department_id: department._id,
+        deleted: false,
       })
       .select('-password');
 
@@ -285,6 +291,7 @@ const departmentController = {
       .findOne({
         role: 'department_manager',
         department_id: department._id,
+        deleted: false,
       })
       .select('-password');
 
@@ -293,6 +300,7 @@ const departmentController = {
       .find({
         role: 'staff',
         department_id: department._id,
+        deleted: false,
       })
       .select('-password');
 

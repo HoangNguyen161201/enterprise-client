@@ -7,6 +7,7 @@ const catchAsyncError = require('../helpers/catchAsyncError');
 //Import model
 const userModel = require('../models/userModel');
 const departmentModel = require('../models/departmentModel');
+const mailNotice = require('../utils/mailNotice');
 
 const userController = {
   create: catchAsyncError(async (req, res) => {
@@ -228,8 +229,12 @@ const userController = {
         department.count_users = --department.count_users;
         await department.save();
       }
+
+      //Remove user out of department
+      user.department_id = null;
+      await user.save();
     }
-    console.log(id);
+
     //delete user by id
     userModel.deleteById(id, function (err) {
       if (err)
@@ -264,6 +269,10 @@ const userController = {
             department.count_users = --department.count_users;
             await department.save();
           }
+
+          //Remove user out of department
+          user.department_id = null;
+          await user.save();
         }
 
         //delete user by id
@@ -313,7 +322,7 @@ const userController = {
         statusCode: 400,
       });
 
-    const users = await userModel.find({ role }).select('-password');
+    const users = await userModel.find({ role, deleted: false }).select('-password');
 
     return res.status(200).json({
       statusCode: 200,
@@ -327,6 +336,7 @@ const userController = {
       .find({
         role: 'staff',
         department_id: undefined,
+        deleted: false,
       })
       .select('-password');
 
@@ -334,6 +344,7 @@ const userController = {
       .find({
         role: 'qa_coordinator',
         department_id: undefined,
+        deleted: false,
       })
       .select('-password');
 
@@ -341,6 +352,7 @@ const userController = {
       .find({
         role: 'department_manager',
         department_id: undefined,
+        deleted: false,
       })
       .select('-password');
 
@@ -399,6 +411,7 @@ const userController = {
         _id: user._id,
         role: user.role,
         department_id: departmentId,
+        deleted: false,
       });
       if (userCheckAssigned) {
         return res.status(400).json({
@@ -426,6 +439,16 @@ const userController = {
         department.count_users = ++department.count_users;
         await department.save();
       }
+
+      //Send mail
+      mailNotice({
+        email: user.email,
+        subject: `You have been assigned to the department ${department.name}`,
+        text: `You have been assigned to the department ${
+          department.name
+        } at ${new Date().toString()}`,
+        html: '',
+      });
 
       return res.status(200).json({
         statusCode: 200,

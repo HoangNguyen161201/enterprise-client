@@ -11,7 +11,7 @@ import { NextPageWithLayout } from 'models/layoutType';
 import { EmplMutation } from 'mutations/employee';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import { getAllDepartments, getallUsers, getCurrentUser } from 'queries';
+import { getAllDepartments, getallUsers, getCurrentUser, getUsersNotDepartment } from 'queries';
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import { roleSelect } from 'utils/dataSelect';
@@ -41,6 +41,9 @@ const AddEmployee: NextPageWithLayout = ({ allDepartments, detailUser }: IAddEmp
 
   //Get all data user
   const { refetch: dataAllUsersRefetch } = getallUsers(dataUser?.accessToken.token);
+
+    //Get list users not have department
+    const { refetch: dataUsersnotDPMRefetch } = getUsersNotDepartment(dataUser?.accessToken.token);
 
   //Set data select departmen
   React.useEffect(() => {
@@ -83,6 +86,7 @@ const AddEmployee: NextPageWithLayout = ({ allDepartments, detailUser }: IAddEmp
         message.success({
           content: data.msg,
         });
+        dataUsersnotDPMRefetch();
         dataAllUsersRefetch();
       },
       onError: (error: AxiosError) => {
