@@ -156,6 +156,7 @@ const DetailDepartment: NextPageWithLayout = ({ detailMyDepartment }: IDetailDep
                       image={item.avatar.url}
                       name={item.name}
                       role={item.role}
+                      id={item._id}
                     />
                   );
                 if (isShow)
@@ -167,6 +168,7 @@ const DetailDepartment: NextPageWithLayout = ({ detailMyDepartment }: IDetailDep
                       sm={12}
                       lg={8}
                       xl={6}
+                      id={item._id}
                       image={item.avatar.url}
                       name={item.name}
                       role={item.role}
