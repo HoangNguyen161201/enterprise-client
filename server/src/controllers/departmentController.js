@@ -95,6 +95,7 @@ const departmentController = {
     //Check if department has user assigned
     const users = await userModel.find({
       department_id: department._id,
+      deleted: false,
     });
 
     if (!users || users.length !== 0)
@@ -140,13 +141,14 @@ const departmentController = {
         countDepartmentsRoot = ++countDepartmentsRoot;
       }
 
-      //Check number user
-      const users = await userModel
-        .find({
+      //Check exist user
+      const userExist = await userModel
+        .findOne({
           department_id: department._id,
+          deleted: false,
         })
         .select('-password');
-      if (users.length !== 0) {
+      if (userExist) {
         countDepartmentsHasUsers = ++countDepartmentsHasUsers;
         canDelete = false;
       }
@@ -196,6 +198,7 @@ const departmentController = {
       .findOne({
         role: 'qa_manager',
         department_id: department._id,
+        deleted: false,
       })
       .select('-password');
 
@@ -204,6 +207,7 @@ const departmentController = {
       .findOne({
         role: 'qa_coordinator',
         department_id: department._id,
+        deleted: false,
       })
       .select('-password');
 
@@ -212,6 +216,7 @@ const departmentController = {
       .findOne({
         role: 'department_manager',
         department_id: department._id,
+        deleted: false,
       })
       .select('-password');
 
@@ -220,6 +225,7 @@ const departmentController = {
       .find({
         role: 'staff',
         department_id: department._id,
+        deleted: false,
       })
       .select('-password');
 
@@ -269,6 +275,7 @@ const departmentController = {
       .findOne({
         role: 'qa_manager',
         department_id: department._id,
+        deleted: false,
       })
       .select('-password');
 
@@ -277,6 +284,7 @@ const departmentController = {
       .findOne({
         role: 'qa_coordinator',
         department_id: department._id,
+        deleted: false,
       })
       .select('-password');
 
@@ -285,6 +293,7 @@ const departmentController = {
       .findOne({
         role: 'department_manager',
         department_id: department._id,
+        deleted: false,
       })
       .select('-password');
 
@@ -293,6 +302,7 @@ const departmentController = {
       .find({
         role: 'staff',
         department_id: department._id,
+        deleted: false,
       })
       .select('-password');
 

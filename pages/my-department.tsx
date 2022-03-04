@@ -5,8 +5,8 @@ import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect as UseEffect, useState } from 'react';
-import {FieldCard, User} from 'components/elements/common';
+import { useEffect, useEffect as UseEffect, useState } from 'react';
+import { FieldCard, User } from 'components/elements/common';
 import { ClientLayout } from 'components/layouts';
 import { NextPageWithLayout } from 'models/layoutType';
 import { IDetailDepartment } from 'models/apiType';
@@ -18,8 +18,6 @@ export interface IDetailDepartmentProps {
 }
 
 const DetailDepartment: NextPageWithLayout = ({ detailMyDepartment }: IDetailDepartmentProps) => {
-  console.log(detailMyDepartment);
-
   const { query } = useRouter();
 
   //Is show button load more
@@ -32,11 +30,16 @@ const DetailDepartment: NextPageWithLayout = ({ detailMyDepartment }: IDetailDep
   }, []);
 
   //Get detail data department
-  const { error: errorDepartment, data: dataDepartment } = getDepartmentByUser(
-    dataUser?.user._id,
-    dataUser?.accessToken.token,
-    detailMyDepartment
-  );
+  const {
+    error: errorDepartment,
+    data: dataDepartment,
+    refetch: refetchDepartment,
+  } = getDepartmentByUser(dataUser?.user._id, dataUser?.accessToken.token, detailMyDepartment);
+  useEffect(() => {
+    if (dataUser) {
+      refetchDepartment();
+    }
+  }, []);
 
   //Check exist and show error
   UseEffect(() => {
@@ -72,39 +75,52 @@ const DetailDepartment: NextPageWithLayout = ({ detailMyDepartment }: IDetailDep
           <FieldCard
             lg={12}
             label="ID Department"
-            content={dataDepartment ? dataDepartment.department._id : ''}
+            content={dataDepartment ? dataDepartment.department?._id : ''}
           />
           <FieldCard
             lg={12}
-            view={dataDepartment?.department_manager ? true : false}
+            view={dataDepartment?.department.department_manager ? true : false}
+            user_id={
+              dataDepartment?.department.department_manager
+                ? dataDepartment?.department.department_manager._id
+                : undefined
+            }
             label="Department Manager"
             content={
-              dataDepartment?.department_manager?.email
-                ? dataDepartment.department_manager.email
-                : ''
+              dataDepartment ? (dataDepartment.department?.department_manager?.email as string) : ''
             }
           />
           <FieldCard
             lg={12}
-            view={dataDepartment?.qa_coordinator ? true : false}
+            view={dataDepartment?.department.qa_coordinator ? true : false}
+            user_id={
+              dataDepartment?.department.qa_coordinator
+                ? dataDepartment?.department.qa_coordinator._id
+                : undefined
+            }
             label="QA Coordinator"
             content={
-              dataDepartment?.qa_coordinator?.email ? dataDepartment?.qa_coordinator?.email : ''
+              dataDepartment ? (dataDepartment.department?.qa_coordinator?.email as string) : ''
             }
           />
           <FieldCard
             lg={12}
-            view={dataDepartment?.qa_manager ? true : false}
+            view={dataDepartment?.department.qa_manager ? true : false}
+            user_id={
+              dataDepartment?.department.qa_manager
+                ? dataDepartment?.department.qa_manager._id
+                : undefined
+            }
             label="QA Manager"
-            content={dataDepartment?.qa_manager?.email ? dataDepartment?.qa_manager?.email : ''}
+            content={dataDepartment ? (dataDepartment.department?.qa_manager?.email as string) : ''}
           />
 
           <FieldCard
             xs={24}
             xl={24}
-            view={dataDepartment?.qa_coordinator ? true : false}
+            view={false}
             label="Description"
-            content={dataDepartment ? dataDepartment.department.description : ''}
+            content={dataDepartment ? dataDepartment.department?.description : ''}
           />
         </Row>
         <Space
@@ -123,9 +139,6 @@ const DetailDepartment: NextPageWithLayout = ({ detailMyDepartment }: IDetailDep
           >
             Staffs
           </h2>
-          <Link href={`/departments/assign/${query.id}`}>
-            <a>Manager</a>
-          </Link>
         </Space>
         <Space direction="vertical" size={30}>
           <Row gutter={[30, 30]}>
@@ -134,6 +147,7 @@ const DetailDepartment: NextPageWithLayout = ({ detailMyDepartment }: IDetailDep
                 if (!isShow && key <= 7)
                   return (
                     <User
+                      id={item._id}
                       key={key}
                       xs={24}
                       sm={12}
@@ -148,6 +162,7 @@ const DetailDepartment: NextPageWithLayout = ({ detailMyDepartment }: IDetailDep
                 if (isShow)
                   return (
                     <User
+                      id={item._id}
                       key={key}
                       xs={24}
                       sm={12}

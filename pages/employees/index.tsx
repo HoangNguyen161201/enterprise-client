@@ -33,7 +33,7 @@ import { EmplMutation } from 'mutations/employee';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
-import { getAllDepartments, getallUsers, getCurrentUser } from 'queries';
+import { getAllDepartments, getallUsers, getCurrentUser, getUsersNotDepartment } from 'queries';
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import column from '../../utils/configTB';
@@ -104,6 +104,9 @@ const Employees: NextPageWithLayout = ({
     allDepartments
   );
 
+  //Get list users not have department
+  const { refetch: dataUsersnotDPMRefetch } = getUsersNotDepartment(dataUser?.accessToken.token);
+
   //Set data select departmen
   React.useEffect(() => {
     if (dataAllDepartments && dataAllDepartments.departments) {
@@ -158,6 +161,7 @@ const Employees: NextPageWithLayout = ({
         message.success({
           content: data.msg,
         });
+        dataUsersnotDPMRefetch();
         dataAllUsersRefetch();
       },
       onError: (error: AxiosError) => {
@@ -177,6 +181,7 @@ const Employees: NextPageWithLayout = ({
         message.success({
           content: data.msg,
         });
+        dataUsersnotDPMRefetch();
         dataAllUsersRefetch();
         setUsersSl(null);
       },
@@ -196,6 +201,7 @@ const Employees: NextPageWithLayout = ({
         message.success({
           content: data.msg,
         });
+        dataUsersnotDPMRefetch();
         dataAllUsersRefetch();
         setUsersSl(null);
       },

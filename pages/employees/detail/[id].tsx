@@ -1,15 +1,15 @@
 //Import
 import { IdcardOutlined, MailOutlined, TeamOutlined } from '@ant-design/icons';
 import { Alert, Avatar, Breadcrumb, Card, Col, Grid, List, message, Row, Space } from 'antd';
+import { Infor, ItemIdea } from 'components/elements/common';
 import { ClientLayout } from 'components/layouts';
+import { IDetailUser, IUser } from 'models/apiType';
+import { NextPageWithLayout } from 'models/layoutType';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useEffect as UseEffect } from 'react';
-import { Infor, ItemIdea } from 'components/elements/common';
-import { IDetailUser, IUser } from 'models/apiType';
-import { NextPageWithLayout } from 'models/layoutType';
 import { getCurrentUser, getDetailUser, getIdeasAcceptUser } from 'queries';
+import { useEffect as UseEffect } from 'react';
 
 export interface IDetailEmployeeProps {
   detailUser: { user: IUser; [index: string]: any };
@@ -44,8 +44,6 @@ const DetailEmployee: NextPageWithLayout = ({
     user_id: id as string,
     accessToken: dataUser?.accessToken.token,
   });
-
-  console.log(dataIdeasAccept);
 
   //Get detail data user
   const { error: errorDetailUser, data: dataDetailUser } = getDetailUser(
@@ -84,7 +82,12 @@ const DetailEmployee: NextPageWithLayout = ({
       <Card title="View Detail Employee" style={{ width: '100%', marginTop: '20px' }}>
         <Space direction="vertical" size={20}>
           {dataUser && dataUser.user.role === 'admin' && (
-            <Alert message="Admin cannot see the internal ideas of the system." type="warning" />
+            <Alert
+              showIcon
+              closable
+              message="Admin cannot see the internal ideas of the system."
+              type="warning"
+            />
           )}
           <Row wrap={!lg} gutter={[30, 30]}>
             <Col flex={lg ? '400px' : undefined} span={lg ? undefined : 24}>
@@ -163,7 +166,7 @@ const DetailEmployee: NextPageWithLayout = ({
                   color: 'gray',
                 }}
               >
-                {`Ideas Accept (${dataIdeasAccept && dataIdeasAccept.ideas.length || 0} ideas)`}
+                {`Ideas Accept (${(dataIdeasAccept && dataIdeasAccept.ideas.length) || 0} ideas)`}
               </span>
               <List
                 itemLayout="horizontal"
