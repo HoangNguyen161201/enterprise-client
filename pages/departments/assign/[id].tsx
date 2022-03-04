@@ -34,7 +34,7 @@ import Head from 'next/head';
 import { useRouter as UseRouter } from 'next/router';
 import { getCurrentUser } from 'queries/auth';
 import { getAllDepartments, getDetailDepartment, getUsersNotDepartment } from 'queries/department';
-import { useEffect as UseEffect, useMemo as UseMemo, useState as UseState } from 'react';
+import { useEffect, useEffect as UseEffect, useMemo as UseMemo, useState as UseState } from 'react';
 import column from 'utils/configTB';
 
 export interface IAssignDepartmentProps {
@@ -42,7 +42,10 @@ export interface IAssignDepartmentProps {
   detailUser: IDetailUser;
 }
 
-const AssignDepartment: NextPageWithLayout = ({ detailDepartment, detailUser }: IAssignDepartmentProps) => {
+const AssignDepartment: NextPageWithLayout = ({
+  detailDepartment,
+  detailUser,
+}: IAssignDepartmentProps) => {
   //Get id from router to get old data
   const {
     query: { id },
@@ -75,7 +78,11 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment, detailUser }: 
   });
 
   //Get access token
-  const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser(detailUser);
+  const {
+    data: dataUser,
+    error: errorGetUser,
+    refetch: dataUserRefetch,
+  } = getCurrentUser(detailUser);
   UseEffect(() => {
     dataUserRefetch();
   }, []);
@@ -89,6 +96,11 @@ const AssignDepartment: NextPageWithLayout = ({ detailDepartment, detailUser }: 
     data: dataDepartment,
     refetch: dataDepartmentRefetch,
   } = getDetailDepartment(id as string, dataUser?.accessToken.token, detailDepartment);
+  useEffect(() => {
+    if (dataUser) {
+      dataDepartmentRefetch();
+    }
+  }, []);
 
   //Get list users not have department
   const {
