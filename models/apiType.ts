@@ -11,6 +11,21 @@ export interface ICommon {
   statusCode?: number;
 }
 
+export interface IStatusIdea extends ICommon {
+  all: number,
+  accept: number,
+  not_accept: number
+}
+
+export interface IStatusIdea extends ICommon {
+  data: {
+    avatar: string
+    name: string
+    _id: string
+    count: number
+  }[]
+}
+
 //Interface auth
 export interface ILogout extends ICommon {}
 
@@ -185,6 +200,40 @@ export interface Ireaction {
 
 export interface Ireactions extends ICommon {
   reactionTypes: Ireaction[];
+}
+
+export interface IcountAll extends ICommon {
+  count_user: number
+  count_department: number
+  count_idea: number
+}
+
+export interface IAcceptStatic extends ICommon {
+  data: number[]
+}
+
+export interface IIdeaByDate extends ICommon {
+  data: {
+    _ids: string[]
+    names: string[]
+    descriptions: string[]
+    count: number[]
+  }
+}
+
+export interface IManyIdeas extends ICommon {
+  data: {
+    email: string
+    avatar: {
+      public_id: string
+      url: string
+    }
+    count: number
+  }
+}
+
+export interface IIdeaByYear extends ICommon {
+  data: number[]
 }
 
 //Interface comment
