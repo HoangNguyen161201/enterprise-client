@@ -121,6 +121,19 @@ export const Drawer = ({ onClose, ...props }: IProps) => {
             icon={<TeamOutlined />}
             onClick={onClose}
             style={{
+              display: isShowByRole.qa_manager ? 'block' : 'none',
+            }}
+          >
+            <Link href={'/dashboard'}>
+              <a>Dashboard</a>
+            </Link>
+          </Menu.Item>
+
+          <Menu.Item
+            key="2"
+            icon={<TeamOutlined />}
+            onClick={onClose}
+            style={{
               display: isShowByRole.admin ? 'none' : 'block',
             }}
           >
