@@ -6,7 +6,19 @@ import {
   FileTextOutlined,
 } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Breadcrumb, Button, Card, Col, List, message, Row, Space, Spin, Switch } from 'antd';
+import {
+  Alert,
+  Breadcrumb,
+  Button,
+  Card,
+  Col,
+  List,
+  message,
+  Row,
+  Space,
+  Spin,
+  Switch,
+} from 'antd';
 import { AxiosError } from 'axios';
 import { ItemIdea } from 'components/elements/common';
 import ItemFileUpload from 'components/elements/common/ItemFileUpload';
@@ -397,6 +409,12 @@ const DetailSubmission: NextPageWithLayout = ({
 
       <Card title="View Detail Employee" style={{ width: '100%', marginTop: '20px' }}>
         <Space direction="vertical" size={20}>
+          <Alert
+            showIcon
+            closable
+            message="All ideas submitted will go through a review process. Unable to post ideas after the closure date."
+            type="warning"
+          />
           <span
             style={{
               fontSize: 14,
@@ -623,7 +641,13 @@ const DetailSubmission: NextPageWithLayout = ({
           <List
             itemLayout="horizontal"
             dataSource={dataIdeasCurrentUser?.ideas}
-            renderItem={(item) => <ItemIdea closure_date={timeClosure.closure_date} item={item} onDeleteIdea={onDeleteIdea} />}
+            renderItem={(item) => (
+              <ItemIdea
+                closure_date={timeClosure.closure_date}
+                item={item}
+                onDeleteIdea={onDeleteIdea}
+              />
+            )}
           />
         </Space>
       </Card>

@@ -84,7 +84,7 @@ const DetailEmployee: NextPageWithLayout = ({
       <Card title="View Detail Employee" style={{ width: '100%', marginTop: '20px' }}>
         <Space direction="vertical" size={20}>
           {dataUser && dataUser.user.role === 'admin' && (
-            <Alert message="Admin cannot see the internal ideas of the system." type="warning" />
+            <Alert showIcon closable message="Admin cannot see the internal ideas of the system." type="warning" />
           )}
           <Row wrap={!lg} gutter={[30, 30]}>
             <Col flex={lg ? '400px' : undefined} span={lg ? undefined : 24}>

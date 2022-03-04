@@ -38,6 +38,7 @@ export const DrawerUpdateUser = ({
         >
           <Alert
             showIcon
+            closable
             message="If you choose the QA Manager or QA Coordinator role, it will be removed from the department and need to be assigned at the department assign page."
             type="warning"
           />
