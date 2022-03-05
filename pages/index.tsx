@@ -7,7 +7,7 @@ const index: NextPageWithLayout = () => {
 
   return (
     <div>
-rtrtg
+rtg
     </div>
   );
 };

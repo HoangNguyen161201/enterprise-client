@@ -242,13 +242,17 @@ const index: NextPageWithLayout = ({ detailUser }) => {
               <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
             </Space>
           ) : (
-            <Col span={md ? undefined : 24} flex="auto">
-              <Row
-                gutter={[0, 30]}
-                style={{
-                  minHeight: 500,
-                }}
-              >
+            <Col
+              style={{
+                minHeight: 500,
+                display: 'flex',
+                 flexDirection: 'column',
+                 justifyContent: 'space-between'
+              }}
+              span={md ? undefined : 24}
+              flex="auto"
+            >
+              <Row gutter={[0, 30]}>
                 {AllIdeas?.ideas &&
                   AllIdeas.ideas.map((idea) => (
                     <Idea
