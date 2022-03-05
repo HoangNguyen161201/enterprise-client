@@ -1,9 +1,10 @@
 import { MoreOutlined } from '@ant-design/icons';
 import { Button, Col, Image, Space } from 'antd';
-import React from 'react';
+import React, { useContext } from 'react';
 import { ISubmissionForm } from 'models/formType';
 import { IDetailUser } from 'models/apiType';
 import Link from 'next/link';
+import { GlobalContext } from 'contextApi/globalContext';
 
 interface ICard {
   item: ISubmissionForm;
@@ -12,6 +13,7 @@ interface ICard {
   [index: string]: any;
 }
 export const Card = ({ item, more, current_user }: ICard) => {
+  const {desColor} = useContext(GlobalContext)
   return (
     <Col xl={8} lg={12} md={24}>
       <Space direction="vertical" size={15}>
@@ -42,7 +44,7 @@ export const Card = ({ item, more, current_user }: ICard) => {
               item.name
             )}
           </span>
-          <span style={{ color: 'gray' }}>{item.description}</span>
+          <span className={`${desColor}`}>{item.description}</span>
         </div>
 
         {(current_user && current_user.user?.role === 'admin') ||

@@ -67,20 +67,53 @@ body {
     color: rgb(248, 123, 123)
 }
 
-.color-1 {
-    color: #0F0A3C
+.color-2 {
+    color: #001529!important
 }
 
-.color-2 {
-    color: #07456F
+.color-1 {
+    color: #07456F!important
 }
 
 .color-3 {
-    color: #009F9D
+    color: #009F9D!important
 }
 
 .color-4 {
-    color: #CDFFEB
+    color: #CDFFEB!important
+}
+
+.color-5 {
+    color: white!important
+}
+
+/*description color*/
+.des-1 {
+    color: gray!important
+}
+
+.des-2 {
+    color: #ffffffb0!important
+}
+
+/*background color*/
+
+.bg-1 {
+    background-color: #001529
+}
+
+.bg-2 {
+    background-color: white
+}
+
+/* boxshadow */
+
+.shadow-d {
+    box-shadow: 25px 23px 42px -3px rgba(0,0,0,0.1)
+}
+
+.shadow-l {
+    box-shadow: 25px 23px 42px -3px rgba(255, 255, 255, 0.192)
 }
 
 /* font */
@@ -161,4 +194,18 @@ body {
 .reaction {
     font-size: 24px;
     cursor: pointer;
+}
+.ant-picker-cell-in-view.ant-picker-cell-range-end .ant-picker-cell-inner, .ant-picker-cell-in-view.ant-picker-cell-range-start .ant-picker-cell-inner, .ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner {
+    background-color: #009F9D;
+}
+
+.ant-btn.ant-btn-primary.ant-btn-sm{
+    background-color: #009F9D;
+}
+
+.card-b {
+    width: 100%;
+    border-radius: 10px;
+    margin-top: 20px;
+    background: transparent
 }

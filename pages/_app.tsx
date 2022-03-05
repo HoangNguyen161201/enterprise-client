@@ -24,12 +24,11 @@ function MyApp({ Component, pageProps, router }: AppPropsWithLayout) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      
-      <Layout>
-        <GlobalContextProvider>
-              <Component {...pageProps}/>
-        </GlobalContextProvider>
-      </Layout>
+      <GlobalContextProvider>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </GlobalContextProvider>
       <ReactQueryDevtools position="bottom-right" />
     </QueryClientProvider>
   );

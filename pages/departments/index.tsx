@@ -6,9 +6,10 @@ import {
   SearchOutlined,
   UsergroupAddOutlined,
 } from '@ant-design/icons';
-import { Breadcrumb, Button, Card, Input, message, Popconfirm, Space, Table, Tag } from 'antd';
+import { Button, Card, Input, message, Popconfirm, Space, Table, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { AxiosError } from 'axios';
+import { BreadCrumb } from 'components/elements/common';
 import { ClientLayout } from 'components/layouts';
 import { ICommon, IDetailUser } from 'models/apiType';
 import { NextPageWithLayout } from 'models/layoutType';
@@ -240,10 +241,13 @@ const AddDepartment: NextPageWithLayout = ({detailUser}: IAddDepartmentProps) =>
         <title>All Departments Page</title>
       </Head>
 
-      <Breadcrumb>
-        <Breadcrumb.Item>Home</Breadcrumb.Item>
-        <Breadcrumb.Item>All Departments</Breadcrumb.Item>
-      </Breadcrumb>
+      <BreadCrumb data={[{
+        url: '/',
+        label: 'Home'
+      }]} main={{
+        url: '/departments',
+        label: 'All departments'
+      }}/>
 
       <Card
         extra={[
@@ -274,7 +278,7 @@ const AddDepartment: NextPageWithLayout = ({detailUser}: IAddDepartmentProps) =>
           </Popconfirm>,
         ]}
         title="All Departments"
-        style={{ width: '100%', marginTop: '20px' }}
+        className='card-b'
       >
         <Space direction="vertical" size={20}></Space>
         <Table

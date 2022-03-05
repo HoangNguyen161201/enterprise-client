@@ -1,9 +1,10 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Breadcrumb, Button, Card, message, Row } from 'antd';
+import { Button, Card, message, Row } from 'antd';
 import { AxiosError } from 'axios';
-import { Category } from 'components/elements/common';
+import { BreadCrumb, Category } from 'components/elements/common';
 import { DrawerCt } from 'components/elements/drawer';
 import { ClientLayout } from 'components/layouts';
+import { GlobalContext } from 'contextApi/globalContext';
 import { IallCategories, ICommon, IDetailCategory, IDetailUser } from 'models/apiType';
 import { NextPageWithLayout } from 'models/layoutType';
 import { CtMutation } from 'mutations/category';
@@ -11,7 +12,7 @@ import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { getCurrentUser } from 'queries/auth';
 import { getallCategories } from 'queries/category';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { validCategory } from 'utils/validate';
 
@@ -20,6 +21,8 @@ export interface ICategoriesProps {
 }
 
 const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => {
+  const {color} = useContext(GlobalContext)
+  
   const [categoryUd, setCategoryUd] = useState<IDetailCategory | null | undefined>(null);
   const [statusForm, setStatusForm] = useState<'create' | 'update'>('create');
   const [isOpen, setIsopen] = useState(false);
@@ -204,11 +207,10 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
         setIsopen={(isOpen: boolean) => setIsopen(isOpen)}
       />
 
-      <Breadcrumb>
-        <Breadcrumb.Item>Home</Breadcrumb.Item>
-        <Breadcrumb.Item>Categories</Breadcrumb.Item>
-      </Breadcrumb>
-
+      <BreadCrumb
+        data={[{ url: '/', label: 'Home' }]}
+        main={{ url: '/categories', label: 'Categories' }}
+      />
       <Card
         extra={[
           <Button
@@ -222,8 +224,8 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
             Add new
           </Button>,
         ]}
-        title="All Categories"
-        style={{ width: '100%', marginTop: '20px' }}
+        title={<span className={`${color}`}>All Categories</span>}
+        className='card-b'
       >
         <Row gutter={[30, 30]}>
           {dataAllCategories?.categories &&
