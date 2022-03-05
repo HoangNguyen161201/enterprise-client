@@ -17,8 +17,6 @@ const validSignUp = ({ name, email, role, password, cf_password }) => {
   //Check enum role
   if (
     role !== 'staff' &&
-    role !== 'admin' &&
-    role !== 'qa_manager' &&
     role !== 'qa_coordinator' &&
     role !== 'department_manager'
   ) {

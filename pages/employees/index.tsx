@@ -19,6 +19,7 @@ import {
   message,
   Popconfirm,
   Space,
+  Spin,
   Table,
   Tag,
   Tooltip,
@@ -157,6 +158,26 @@ const Employees: NextPageWithLayout = ({
   }, [errorAllUsers]);
 
   //  mutation call api to delete User
+  const mutationAddManyUsers = EmplMutation.addMany({
+    dataUserRefetch: dataUserRefetch,
+    options: {
+      onSuccess: (data: ICommon) => {
+        message.success({
+          content: data.msg,
+        });
+        dataUsersnotDPMRefetch();
+        dataAllUsersRefetch();
+      },
+      onError: (error: AxiosError) => {
+        message.error({
+          content: error.response?.data.err || 'Add many employees by import CSV false.',
+        });
+      },
+    },
+    token: dataUser?.accessToken.token,
+  });
+
+  //  mutation call api to delete User
   const mutationDeleteUser = EmplMutation.delete({
     dataUserRefetch: dataUserRefetch,
     options: {
@@ -239,6 +260,14 @@ const Employees: NextPageWithLayout = ({
   const deleteManyUser = async (users: string[]) => {
     //Delete users
     mutationDeleteManyUser.mutate({
+      users,
+    });
+  };
+
+  //Function handle add many users
+  const addManyUsers = async (users: Partial<IUser>[]) => {
+    //Add users
+    mutationAddManyUsers.mutate({
       users,
     });
   };
@@ -466,56 +495,61 @@ const Employees: NextPageWithLayout = ({
         <Breadcrumb.Item>All Employees</Breadcrumb.Item>
       </Breadcrumb>
 
-      <Card
-        extra={[
-          <ImportCSV fieldsValid={["name", "email", "role", "password"]}/>,
-          <Popconfirm
-            key={'delete'}
-            disabled={usersSl == null}
-            icon={
-              <QuestionCircleOutlined
-                style={{
-                  color: '#07456F',
-                }}
-              />
-            }
-            title="Are you sure?"
-            okButtonProps={{
-              onClick: async () => deleteManyUser(usersSl as string[]),
-              loading: mutationDeleteManyUser.isLoading,
-            }}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Button disabled={usersSl == null} type="link">
-              Remove All
-            </Button>
-          </Popconfirm>,
-        ]}
-        title="All Employees"
-        style={{ width: '100%', marginTop: '20px' }}
-      >
-        <Space direction="vertical" size={20}>
-          <Table
-            rowSelection={{
-              type: 'checkbox',
-              getCheckboxProps: (record) => ({
-                disabled: record.root,
-              }),
-              onChange: (selectedRowKeys) => {
-                if (selectedRowKeys.length !== 0) {
-                  setUsersSl(selectedRowKeys as string[]);
-                } else {
-                  setUsersSl(null);
-                }
-              },
-            }}
-            style={{ overflowX: 'auto', fontSize: '16px' }}
-            dataSource={dataSourceUsers}
-            columns={columns}
-          />
-        </Space>
-      </Card>
+      <Spin spinning={mutationAddManyUsers.isLoading}>
+        <Card
+          extra={[
+            <ImportCSV
+              fieldsValid={['name', 'email', 'role', 'password']}
+              onSubmit={addManyUsers}
+            />,
+            <Popconfirm
+              key={'delete'}
+              disabled={usersSl == null}
+              icon={
+                <QuestionCircleOutlined
+                  style={{
+                    color: '#07456F',
+                  }}
+                />
+              }
+              title="Are you sure?"
+              okButtonProps={{
+                onClick: async () => deleteManyUser(usersSl as string[]),
+                loading: mutationDeleteManyUser.isLoading,
+              }}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button disabled={usersSl == null} type="link">
+                Remove All
+              </Button>
+            </Popconfirm>,
+          ]}
+          title="All Employees"
+          style={{ width: '100%', marginTop: '20px' }}
+        >
+          <Space direction="vertical" size={20}>
+            <Table
+              rowSelection={{
+                type: 'checkbox',
+                getCheckboxProps: (record) => ({
+                  disabled: record.root,
+                }),
+                onChange: (selectedRowKeys) => {
+                  if (selectedRowKeys.length !== 0) {
+                    setUsersSl(selectedRowKeys as string[]);
+                  } else {
+                    setUsersSl(null);
+                  }
+                },
+              }}
+              style={{ overflowX: 'auto', fontSize: '16px' }}
+              dataSource={dataSourceUsers}
+              columns={columns}
+            />
+          </Space>
+        </Card>
+      </Spin>
 
       <DrawerUpdateUser
         onClose={onClose}

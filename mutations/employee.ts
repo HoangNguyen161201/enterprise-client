@@ -37,6 +37,25 @@ export const EmplMutation = {
       }
     );
   },
+
+  addMany: ({ options, dataUserRefetch, token }: IMutation) => {
+    return useMutation<any, AxiosError, {users:  Partial<IUser>[]}>(
+      ({users}) => {
+        dataUserRefetch && dataUserRefetch();
+        return postData({
+          url: '/api/users/add-many',
+          body: {
+            users
+          },
+          token,
+        });
+      },
+      {
+        ...options,
+      }
+    );
+  },
+
   update: ({ options, dataUserRefetch, token }: IMutation) => {
     return useMutation<any, AxiosError, { user: IUser }>(
       ({ user }) => {

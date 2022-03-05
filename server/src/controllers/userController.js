@@ -11,7 +11,6 @@ const mailNotice = require('../utils/mailNotice');
 
 const userController = {
   create: catchAsyncError(async (req, res) => {
-    const count = await userModel.count();
     //Get info user to create
     const { name, email, password, cf_password, role, avatar, department_id } = req.body;
 
@@ -104,6 +103,92 @@ const userController = {
 
     return res.status(200).json({
       msg: 'Create User Success!',
+      statusCode: 200,
+    });
+  }),
+
+  CreateMany: catchAsyncError(async (req, res) => {
+    const { users } = req.body;
+    let usersValided = [];
+    let userEmails = [];
+
+    //Check user is array
+    if (!users || !Array.isArray(users))
+      return res.status(400).json({
+        statusCode: 400,
+        err: `Pleas enter full field data from CSV!`,
+      });
+
+    for (let index = 0; index < users.length; index++) {
+      const userItem = users[index];
+
+      //Check valid info sign up
+      const errMsg = userValid.validSignUp({
+        name: userItem.name,
+        email: userItem.email,
+        role: userItem.role,
+        password: userItem.password,
+        cf_password: userItem.password,
+      });
+
+      if (errMsg)
+        return res.status(400).json({
+          err: `Error at index ${userItem.index}. ${errMsg}`,
+          statusCode: 400,
+        });
+
+      //Check email exist in system
+      const user = await userModel.findOne({
+        email: userItem.email,
+      });
+      if (user)
+        return res.status(400).json({
+          err: `Error at index ${userItem.index}. This email already exists.`,
+          statusCode: 400,
+        });
+
+      //Hash Password
+      const passwordHash = await bcrypt.hash(userItem.password, 12);
+
+      //Avatar
+      const avatarUser = {
+        public_id: '',
+        url: `https://avatars.dicebear.com/api/big-smile/${userItem.name}.svg`,
+      };
+
+      const newUser = new userModel({
+        name: userItem.name,
+        email: userItem.email,
+        role: userItem.role,
+        password: passwordHash,
+        avatar: avatarUser,
+      });
+      usersValided.push(newUser);
+      userEmails.push(userItem.email);
+    }
+
+    //Check duplicate email
+    for (let index = 0; index < userEmails.length; index++) {
+      for (let indexCompare = index + 1; indexCompare < userEmails.length; indexCompare++) {
+        if (userEmails[index] == userEmails[indexCompare]) {
+          return res.status(400).json({
+            err: `Duplicate email, please check data CSV.`,
+            statusCode: 400,
+          });
+        }
+      }
+    }
+
+    //Add usser
+    if (usersValided && Array.isArray(usersValided) && usersValided.length > 0) {
+      for (let index = 0; index < usersValided.length; index++) {
+        //Save user
+        await usersValided[index].save();
+      }
+    }
+
+    return res.status(200).json({
+      msg: 'Add employess by import CSV success.',
       statusCode: 200,
     });
   }),
