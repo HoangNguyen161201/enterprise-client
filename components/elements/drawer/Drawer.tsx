@@ -130,7 +130,7 @@ export const Drawer = ({ onClose, ...props }: IProps) => {
           </Menu.Item>
 
           <Menu.Item
-            key="2"
+            key="3"
             icon={<TeamOutlined />}
             onClick={onClose}
             style={{
@@ -182,14 +182,14 @@ export const Drawer = ({ onClose, ...props }: IProps) => {
             </Menu.Item>
           </SubMenu>
 
-          <Menu.Item key="3" icon={<UploadOutlined />} onClick={onClose}>
+          <Menu.Item key="4" icon={<UploadOutlined />} onClick={onClose}>
             <Link href={'/submissions'}>
               <a>Submissions</a>
             </Link>
           </Menu.Item>
 
           <Menu.Item
-            key="4"
+            key="5"
             icon={<AppstoreOutlined />}
             onClick={onClose}
             style={{
@@ -202,7 +202,7 @@ export const Drawer = ({ onClose, ...props }: IProps) => {
           </Menu.Item>
 
           <Menu.Item
-            key="5"
+            key="6"
             icon={<CloudUploadOutlined />}
             onClick={onClose}
             style={{
@@ -215,7 +215,7 @@ export const Drawer = ({ onClose, ...props }: IProps) => {
           </Menu.Item>
 
           <Menu.Item
-            key="6"
+            key="7"
             icon={<CloudUploadOutlined />}
             onClick={onClose}
             style={{
