@@ -46,7 +46,7 @@ const userController = {
     //Avatar
     const avatarUser = avatar || {
       public_id: '',
-      url: `https://avatars.dicebear.com/api/avataaars/${name}.svg`,
+      url: `https://avatars.dicebear.com/api/big-smile/${name}.svg`,
     };
 
     //Check exist department id
