@@ -1,11 +1,13 @@
 import { CloseOutlined, TableOutlined } from '@ant-design/icons';
 import { Button, message, Modal, Space, Tooltip } from 'antd';
+import { IUser } from 'models/apiType';
 import Image from 'next/image';
 import { useState, CSSProperties } from 'react';
 import { useCSVReader, formatFileSize } from 'react-papaparse';
 
 export interface IImportCSVProps {
   fieldsValid: string[];
+  onSubmit: (users: Partial<IUser>[]) => Promise<void>;
 }
 
 //Style Import CSV
@@ -23,7 +25,7 @@ const styles = {
   } as CSSProperties,
 };
 
-export default function ImportCSV({ fieldsValid }: IImportCSVProps) {
+export default function ImportCSV({ fieldsValid, onSubmit }: IImportCSVProps) {
   //State data covert from csv
   const [dataCSV, setDataCSV] = useState<any>(null);
 
@@ -35,8 +37,9 @@ export default function ImportCSV({ fieldsValid }: IImportCSVProps) {
   };
 
   const handleOk = () => {
-    console.log(dataCSV);
-
+    if (Array.isArray(dataCSV)) {
+      onSubmit(dataCSV as Partial<IUser>[]);
+    }
     setIsModalVisible(false);
     setDataCSV(null);
   };
@@ -51,7 +54,7 @@ export default function ImportCSV({ fieldsValid }: IImportCSVProps) {
 
   //Conver data array[array[]] to array[object]
   const convertData = (data: [][]) => {
-    const result = [];
+    let result = [];
     for (let index = 1; index < data.length - 1; index++) {
       let arrItem = data[index];
       const arrItemConver = {
