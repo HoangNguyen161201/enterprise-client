@@ -402,7 +402,7 @@ const managementIdea: NextPageWithLayout = ({
           </Button>,
         ]}
         title="Submissions"
-        style={{ width: '100%', marginTop: '20px' }}
+        className='card-b'
       >
         <Table
           style={{

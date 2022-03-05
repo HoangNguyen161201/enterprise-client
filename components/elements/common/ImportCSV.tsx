@@ -35,7 +35,7 @@ export default function ImportCSV({ fieldsValid, onSubmit }: IImportCSVProps) {
   const showModal = () => {
     setIsModalVisible(true);
   };
-
+ 
   const handleOk = () => {
     if (Array.isArray(dataCSV)) {
       onSubmit(dataCSV as Partial<IUser>[]);

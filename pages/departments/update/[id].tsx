@@ -1,7 +1,8 @@
 import { FileTextOutlined } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Breadcrumb, Button, Card, message, Space } from 'antd';
+import { Button, Card, message, Space } from 'antd';
 import { AxiosError } from 'axios';
+import { BreadCrumb } from 'components/elements/common';
 import { Input, TextArea } from 'components/elements/form';
 import { ClientLayout } from 'components/layouts';
 import { ICommon, IDetailDepartment, IDetailUser } from 'models/apiType';
@@ -128,12 +129,19 @@ const UpdateDepartmetn: NextPageWithLayout = ({ detailDepartment, detailUser }: 
         <title>Update Department Page</title>
       </Head>
 
-      <Breadcrumb>
-        <Breadcrumb.Item>Home</Breadcrumb.Item>
-        <Breadcrumb.Item>Departments</Breadcrumb.Item>
-        <Breadcrumb.Item>All Departments</Breadcrumb.Item>
-        <Breadcrumb.Item>Update Department</Breadcrumb.Item>
-      </Breadcrumb>
+      <BreadCrumb data={[
+        {
+          url: '/',
+          label: 'Home'
+        },
+        {
+          url: '/departments',
+          label: 'All departments'
+        }
+      ]} main={{
+        url: `/departments/update/${id}`,
+        label: 'Update departments'
+      }}/>
 
       <Card
         title="Update Department"
@@ -142,7 +150,7 @@ const UpdateDepartmetn: NextPageWithLayout = ({ detailDepartment, detailUser }: 
             Clear
           </a>
         }
-        style={{ width: '100%', marginTop: '20px' }}
+        className='card-b'
       >
         <form onSubmit={formSetting.handleSubmit(onSubmit)}>
           <Space direction="vertical" size={20}>

@@ -1,7 +1,7 @@
 //Import
 import { IdcardOutlined, MailOutlined, TeamOutlined } from '@ant-design/icons';
-import { Alert, Avatar, Breadcrumb, Card, Col, Grid, List, message, Row, Space } from 'antd';
-import { Infor, ItemIdea } from 'components/elements/common';
+import { Alert, Avatar, Card, Col, Grid, List, message, Row, Space } from 'antd';
+import { BreadCrumb, Infor, ItemIdea } from 'components/elements/common';
 import { ClientLayout } from 'components/layouts';
 import { IDetailUser, IUser } from 'models/apiType';
 import { NextPageWithLayout } from 'models/layoutType';
@@ -73,13 +73,24 @@ const DetailEmployee: NextPageWithLayout = ({
         <title>Detail User Page</title>
       </Head>
 
-      <Breadcrumb>
-        <Breadcrumb.Item>Home</Breadcrumb.Item>
-        <Breadcrumb.Item>Employees</Breadcrumb.Item>
-        <Breadcrumb.Item>View Detail Employee</Breadcrumb.Item>
-      </Breadcrumb>
+      <BreadCrumb
+        data={[
+          {
+            url: '/',
+            label: 'Home',
+          },
+          {
+            url: '/employees',
+            label: 'All employees',
+          },
+        ]}
+        main={{
+          url: `/employees/detail/${id}`,
+          label: 'Detail employee',
+        }}
+      />
 
-      <Card title="View Detail Employee" style={{ width: '100%', marginTop: '20px' }}>
+      <Card title="View Detail Employee" className="card-b">
         <Space direction="vertical" size={20}>
           {dataUser && dataUser.user.role === 'admin' && (
             <Alert

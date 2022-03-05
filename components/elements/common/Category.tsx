@@ -17,7 +17,8 @@ export const Category = ({ data, deleteCategory, openDrawer }: ICategory)=> {
           borderLeft: '5px solid #009F9D',
           padding: '10px 20px',
           borderRadius: 5,
-          height: '100%'
+          height: '100%',
+          background: 'white'
         }}
         direction="vertical"
       >

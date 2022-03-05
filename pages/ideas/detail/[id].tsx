@@ -1,27 +1,24 @@
 //Import
 import {
   Avatar,
-  Breadcrumb,
   Card,
   Col,
-  Divider,
-  Grid,
-  List,
+  Divider, List,
   message,
   Row,
   Space,
   Spin,
   Switch,
-  Tooltip,
+  Tooltip
 } from 'antd';
 import { AxiosError } from 'axios';
+import { BreadCrumb } from 'components/elements/common';
 import InputComment from 'components/elements/common/InputComment';
 import ItemComment from 'components/elements/common/ItemComment';
 import ItemFileUpload from 'components/elements/common/ItemFileUpload';
 import { ClientLayout } from 'components/layouts';
 import { GlobalContext } from 'contextApi/globalContext';
 import { IallComments, ICommon, IDetailIdea, IDetailUser, Ireaction } from 'models/apiType';
-import { IReactionForm } from 'models/formType';
 import { NextPageWithLayout } from 'models/layoutType';
 import { commentMutation } from 'mutations/comment';
 import { IReactionMutaion } from 'mutations/reaction';
@@ -35,7 +32,7 @@ import {
   getDetailIdea,
   getReactionUserIdea,
   getReactType,
-  getUrlDownloadZip,
+  getUrlDownloadZip
 } from 'queries';
 import { getallComments } from 'queries/comment';
 import {
@@ -43,7 +40,7 @@ import {
   useEffect,
   useEffect as UseEffect,
   useState,
-  useState as UseState,
+  useState as UseState
 } from 'react';
 import 'react-quill/dist/quill.bubble.css';
 //CSS quill
@@ -303,7 +300,6 @@ const DetailIdea: NextPageWithLayout = ({
   //Set count number reaction detail of current idea
   useEffect(() => {
     if (dataAllReaction && dataDetailIdea) {
-      
       const dataReactionCountDetail: Ireaction[] = dataAllReaction.reactionTypes.map(
         (itemReactionType) => {
           let count = 0;
@@ -311,9 +307,9 @@ const DetailIdea: NextPageWithLayout = ({
             console.log(dataAllReaction, dataDetailIdea);
             if (itemReactionType._id == itemReactionDetail._id) {
               count = itemReactionDetail.count;
-            }    
+            }
           });
-          
+
           return {
             ...itemReactionType,
             count,
@@ -341,15 +337,26 @@ const DetailIdea: NextPageWithLayout = ({
         <title>Detail Idea Page</title>
       </Head>
 
-      <Breadcrumb>
-        <Breadcrumb.Item>Home</Breadcrumb.Item>
-        <Breadcrumb.Item>Ideas</Breadcrumb.Item>
-        <Breadcrumb.Item>View Detail Idea</Breadcrumb.Item>
-      </Breadcrumb>
+      <BreadCrumb
+        data={[
+          {
+            url: '/',
+            label: 'Home',
+          },
+          {
+            url: '/ideas',
+            label: 'Ideas',
+          },
+        ]}
+        main={{
+          url: `/ideas/detail/${id}`,
+          label: 'Detail idea',
+        }}
+      />
 
       <Card
         title="View Detail Idea"
-        style={{ width: '100%', marginTop: '20px' }}
+        className="card-b"
         extra={
           detailIdea?.idea?.cloudinary_id &&
           dataURLZip?.url && <a href={dataURLZip?.url}>Dowload all files</a>

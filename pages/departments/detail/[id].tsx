@@ -1,12 +1,12 @@
 //Import
 import { ArrowDownOutlined } from '@ant-design/icons';
-import { Breadcrumb, Button, Card, message, Row, Space } from 'antd';
+import { Button, Card, message, Row, Space } from 'antd';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect as UseEffect, useState } from 'react';
-import { FieldCard, User } from 'components/elements/common';
+import { BreadCrumb, FieldCard, User } from 'components/elements/common';
 import { ClientLayout } from 'components/layouts';
 import { IDetailDepartment, IDetailUser, IUser } from 'models/apiType';
 import { NextPageWithLayout } from 'models/layoutType';
@@ -69,14 +69,25 @@ const DetailDepartment: NextPageWithLayout = ({
       <Head>
         <title>Detail Department Page</title>
       </Head>
+      
+      <BreadCrumb
+        data={[
+          {
+            url: '/',
+            label: 'Home',
+          },
+          {
+            url: '/departments',
+            label: 'All Departments',
+          },
+        ]}
+        main={{
+          url: `/departments/detail/${query.id}`,
+          label: 'Detail department',
+        }}
+      />
 
-      <Breadcrumb>
-        <Breadcrumb.Item>Home</Breadcrumb.Item>
-        <Breadcrumb.Item>Departments</Breadcrumb.Item>
-        <Breadcrumb.Item>View Detail Department</Breadcrumb.Item>
-      </Breadcrumb>
-
-      <Card title="View Detail Department" style={{ width: '100%', marginTop: '20px' }}>
+      <Card title="View Detail Department" className="card-b">
         <h2 className="font-3">Information:</h2>
         <Row gutter={[30, 20]}>
           <FieldCard

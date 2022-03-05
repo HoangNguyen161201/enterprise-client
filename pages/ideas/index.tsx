@@ -120,7 +120,7 @@ const index: NextPageWithLayout = ({ detailUser }) => {
         <Breadcrumb.Item>Ideas</Breadcrumb.Item>
       </Breadcrumb>
 
-      <Card title="View All Ideas" style={{ width: '100%', marginTop: '20px' }}>
+      <Card title="View All Ideas" className='card-b'>
         <Row wrap={md ? false : true} gutter={[30, 30]}>
           <Col
             span={md ? undefined : 24}
@@ -242,13 +242,17 @@ const index: NextPageWithLayout = ({ detailUser }) => {
               <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
             </Space>
           ) : (
-            <Col span={md ? undefined : 24} flex="auto">
-              <Row
-                gutter={[0, 30]}
-                style={{
-                  minHeight: 500,
-                }}
-              >
+            <Col
+              style={{
+                minHeight: 500,
+                display: 'flex',
+                 flexDirection: 'column',
+                 justifyContent: 'space-between'
+              }}
+              span={md ? undefined : 24}
+              flex="auto"
+            >
+              <Row gutter={[0, 30]}>
                 {AllIdeas?.ideas &&
                   AllIdeas.ideas.map((idea) => (
                     <Idea

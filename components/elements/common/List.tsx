@@ -1,10 +1,17 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import {Avatar, List as AntList} from 'antd'
 import Link from 'next/link'
 import { EyeOutlined } from '@ant-design/icons'
+import { GlobalContext } from 'contextApi/globalContext'
 export const List = ({data, url, center = true }: {center?: boolean, data: {avatar: string, count: number, name?: string, email?: string }[], url: string}) => {
+  const {darkMode} = useContext(GlobalContext)
   return (
-    <AntList 
+    <AntList className={darkMode ? 'shadow-l': 'shadow-d'}
+    style={{
+      background: 'white',
+      borderRadius: 10,
+      border:'3px solid #07456F50',
+    }}
     size="large"
     dataSource={data}
     renderItem={(item: any) => (
@@ -14,7 +21,7 @@ export const List = ({data, url, center = true }: {center?: boolean, data: {avat
             <a style={{
                 paddingLeft: 15
             }}>
-              <EyeOutlined />
+              <EyeOutlined className='color-3' />
             </a>
           </Link>
         }
@@ -25,9 +32,9 @@ export const List = ({data, url, center = true }: {center?: boolean, data: {avat
             display: 'flex',
             alignItems: center ? 'center': 'start',
           }}
-          avatar={<Avatar size={'large'} src={item.avatar.url} />}
-          title={<span className="font-3">{item.count}</span>}
-          description={item.email || item.name + 'ffd gdf ddf fdffd dfddf df df'}
+          avatar={<Avatar size={'large'} style={{background: 'white'}} src={item.avatar.url} />}
+          title={<span className={`font-3`}>{item.count}</span>}
+          description={<span style={{color: 'gray'}}>{item.email || item.name}</span>}
         />
       </AntList.Item>
     )}

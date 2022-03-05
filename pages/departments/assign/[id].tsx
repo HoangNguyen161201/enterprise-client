@@ -7,22 +7,10 @@ import {
   UsergroupAddOutlined,
   UserSwitchOutlined,
 } from '@ant-design/icons';
-import {
-  Breadcrumb,
-  Button,
-  Card,
-  Image,
-  Input,
-  message,
-  Popconfirm,
-  Row,
-  Space,
-  Table,
-  Tag,
-} from 'antd';
+import { Button, Card, Image, Input, message, Popconfirm, Row, Space, Table, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { AxiosError } from 'axios';
-import { ButtonAssign } from 'components/elements/common';
+import { BreadCrumb, ButtonAssign } from 'components/elements/common';
 import { ClientLayout } from 'components/layouts';
 import { ICommon, IDetailDepartment, IDetailUser, IUser } from 'models/apiType';
 import { IUsersNotDepartment } from 'models/elementType';
@@ -394,12 +382,16 @@ const AssignDepartment: NextPageWithLayout = ({
       <Head>
         <title>Assign Department Page</title>
       </Head>
-      <Breadcrumb>
-        <Breadcrumb.Item>Home</Breadcrumb.Item>
-        <Breadcrumb.Item>Departments</Breadcrumb.Item>
-        <Breadcrumb.Item>All Departments</Breadcrumb.Item>
-        <Breadcrumb.Item>Assign Department</Breadcrumb.Item>
-      </Breadcrumb>
+      <BreadCrumb
+        data={[
+          { url: '/', label: 'Home' },
+          { url: '/departments', label: 'All departments' },
+        ]}
+        main={{
+          url: `/departments/assign/${id}`,
+          label: 'Assign department'
+        }}
+      />
 
       <Card
         extra={[
@@ -432,7 +424,7 @@ const AssignDepartment: NextPageWithLayout = ({
           </Popconfirm>,
         ]}
         title="Assign Department"
-        style={{ width: '100%', marginTop: '20px' }}
+        className="card-b"
       >
         <Space direction="vertical">
           <h2 className="font-3">Information:</h2>
@@ -500,7 +492,7 @@ const AssignDepartment: NextPageWithLayout = ({
                   return setStaffsSl(selectedRowKeys);
                 },
               }}
-              style={{ overflowX: 'auto' }}
+              style={{ overflowX: 'auto', borderRadius: 5 }}
               dataSource={staffs}
               columns={columns}
             />

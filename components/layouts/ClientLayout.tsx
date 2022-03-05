@@ -1,14 +1,17 @@
-import { MenuOutlined } from '@ant-design/icons';
-import { Layout } from 'antd';
-import { useState } from 'react';
-import { NextLayout } from '../../models/layoutType';
-import {HeaderComponent} from '../elements/common';
-import {Drawer} from '../elements/drawer';
-const { Footer, Sider, Content } = Layout;
-
+import { Layout, Grid } from 'antd';
+import { NextLayout } from 'models/layoutType';
+import { BreadCrumb, HeaderComponent } from 'components/elements/common';
+import {useContext} from 'react'
+import { GlobalContext } from 'contextApi/globalContext';
+const { Content } = Layout;
 export const ClientLayout: NextLayout = ({ children }) => {
+  const { bgColor} = useContext(GlobalContext)
+  const {useBreakpoint} = Grid
+  const {md} = useBreakpoint()
   return (
-    <>
+    <div className={`${bgColor}`} style={{
+      minHeight: '100vh'
+    }}>  
       <Layout
         style={{
           maxWidth: 1600,
@@ -17,10 +20,9 @@ export const ClientLayout: NextLayout = ({ children }) => {
         className='layout'
       >
         <HeaderComponent />
-        <Content
+        <Content className={`${bgColor}`}
           style={{
-            padding: '20px 40px',
-            background: 'white',
+            padding: md? '20px 40px': '20px',
           }}
         >
           <div
@@ -32,6 +34,6 @@ export const ClientLayout: NextLayout = ({ children }) => {
           </div>
         </Content>
       </Layout>
-    </>
+    </div>
   );
 };

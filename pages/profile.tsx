@@ -56,7 +56,7 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
         <Breadcrumb.Item>Profile</Breadcrumb.Item>
       </Breadcrumb>
 
-      <Card title="View Profile" style={{ width: '100%', marginTop: '20px' }}>
+      <Card title="View Profile" className='card-b'>
         <Space direction="vertical" size={20}>
           <Row wrap={!lg} gutter={[30, 30]}>
             <Col flex={lg ? '400px' : undefined} span={lg ? undefined : 24}>
