@@ -1,6 +1,10 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { createAccessToken, createRefreshToken, createActiveToken } = require('../utils/generateToken');
+const {
+  createAccessToken,
+  createRefreshToken,
+  createActiveToken,
+} = require('../utils/generateToken');
 
 //Import middleware
 const catchAsyncError = require('../helpers/catchAsyncError');
@@ -19,6 +23,7 @@ const authController = {
     const user = await userModel.findOne({
       email,
       role,
+      deleted: false,
     });
     if (!user)
       return res.status(400).json({
@@ -63,11 +68,11 @@ const authController = {
     //Check live refresh token
     const rf_token = await req.cookies.refresh_token;
     if (!rf_token)
-    return res.status(401).json({
-      err: 'Please login now!',
-      statusCode: 401,
-    });
-    
+      return res.status(401).json({
+        err: 'Please login now!',
+        statusCode: 401,
+      });
+
     //Check refresh verify
     const result = await jwt.verify(rf_token, process.env.REFRESH_TOKEN_SECRET, {
       ignoreExpiration: true,
@@ -88,13 +93,18 @@ const authController = {
       });
 
     //Check user exist in system
-    const user = await userModel.findById(result.id).select('-password');
+    const user = await userModel
+      .findOne({
+        _id: result.id,
+        deleted: false,
+      })
+      .select('-password');
     if (!user)
-    return res.status(400).json({
-      err: 'User does not exist.',
-      statusCode: 400,
-    });
-    
+      return res.status(400).json({
+        err: 'User does not exist.',
+        statusCode: 400,
+      });
+
     //Create new access token
     const access_token = await createAccessToken({
       id: user._id,
@@ -117,72 +127,83 @@ const authController = {
   }),
 
   smtpResetPass: catchAsyncError(async (req, res) => {
-    const { email } = req.body
-    const user = await userModel.findOne({
-      email
-    }).select('-password')
-    if (!user) return res.status(401).json({
-      err: 'Email not exists',
-      statusCode: 401,
-    });
+    const { email } = req.body;
+    const user = await userModel
+      .findOne({
+        email,
+        deleted: false
+      })
+      .select('-password');
+    if (!user)
+      return res.status(401).json({
+        err: 'Email not exists',
+        statusCode: 401,
+      });
 
     const active_token = await createActiveToken({
       id: user._id,
     });
 
-    const url = `${process.env.URL_CLIENT}/reset-password/${active_token.token}`
+    const url = `${process.env.URL_CLIENT}/reset-password/${active_token.token}`;
 
-    await sendEmail({ email, url })
+    await sendEmail({ email, url });
     return res.status(200).json({
       status: 'success',
       msg: 'Check your email to reset password',
       statusCode: 200,
-    })
+    });
   }),
 
   // reset password
   resetPassword: catchAsyncError(async (req, res) => {
-    console.log('fgdfgdfgdfg')
-    const { activeToken, password, confirmPassword } = req.body
-    console.log(activeToken)
-    if (!validatePassword(password)) return res.status(400).json({
-      err: 'Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character',
-      statusCode: 400,
-    });
+    console.log('fgdfgdfgdfg');
+    const { activeToken, password, confirmPassword } = req.body;
+    console.log(activeToken);
+    if (!validatePassword(password))
+      return res.status(400).json({
+        err: 'Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character',
+        statusCode: 400,
+      });
 
-    if (password != confirmPassword) return res.status(400).json({
-      err: 'Password not match',
-      statusCode: 400,
-    });
+    if (password != confirmPassword)
+      return res.status(400).json({
+        err: 'Password not match',
+        statusCode: 400,
+      });
 
     const passwordHash = await bcrypt.hash(password, 12);
 
     const data = await jwt.verify(activeToken, process.env.ACTIVE_TOKEN_SECRET, {
       ignoreExpiration: true,
-    })
-
-    if (new Date() >= new Date(data.exp * 1000)) return res.status(400).json({
-      err: 'Some thing went wrong! Please request mail reset password again at login page',
-      statusCode: 400,
     });
+
+    if (new Date() >= new Date(data.exp * 1000))
+      return res.status(400).json({
+        err: 'Some thing went wrong! Please request mail reset password again at login page',
+        statusCode: 400,
+      });
 
     // find user by id and update
-    const user = await userModel.findById(data.id)
-    console.log(user)
-    if (!user) return res.status(400).json({
-      err: 'User not exist',
-      statusCode: 400,
+    const user = await userModel.findOne({
+      _id: data.id,
+      deleted: false
     });
+    console.log(user);
+    if (!user)
+      return res.status(400).json({
+        err: 'User not exist',
+        statusCode: 400,
+      });
 
     await userModel.findByIdAndUpdate(data.id, {
-      password: passwordHash
-    })
+      password: passwordHash,
+    });
 
     return res.status(200).json({
       msg: 'Reset password successfully',
       statusCode: 200,
-    })
-  })
+    });
+  }),
 };
 
 module.exports = authController;
