@@ -1,6 +1,6 @@
 const categoryFillIn = ({ name, description }) => {
   if (!name || !description) {
-    return 'Please return all fields!';
+    return 'Please enter all fields!';
   }
 
   if (name.length < 6) {
