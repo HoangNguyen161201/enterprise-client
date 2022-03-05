@@ -4,6 +4,7 @@ import {
   MoreOutlined,
   QuestionCircleOutlined,
   SearchOutlined,
+  TableOutlined,
   UploadOutlined,
 } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -19,10 +20,12 @@ import {
   Space,
   Table,
   Tag,
+  Tooltip,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { AxiosError } from 'axios';
 import { BreadCrumb } from 'components/elements/common';
+import ImportCSV from 'components/elements/common/ImportCSV';
 import { DrawerUpdateUser } from 'components/elements/drawer';
 import { ClientLayout } from 'components/layouts';
 import { IAllUsers, ICommon, IDepartments, IDetailUser, IUser } from 'models/apiType';
@@ -70,7 +73,7 @@ const Employees: NextPageWithLayout = ({
   const showDrawer = () => {
     setVisible(true);
   };
-  
+
   const onClose = () => {
     setVisible(false);
   };
@@ -473,6 +476,7 @@ const Employees: NextPageWithLayout = ({
 
       <Card
         extra={[
+          <ImportCSV fieldsValid={["name", "email", "role", "password"]}/>,
           <Popconfirm
             key={'delete'}
             disabled={usersSl == null}
