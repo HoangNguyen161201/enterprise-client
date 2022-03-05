@@ -1,5 +1,7 @@
-import { Col, Grid, Space } from 'antd';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Col, Space } from 'antd';
+import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js';
+import { GlobalContext } from 'contextApi/globalContext';
+import { useContext } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -14,35 +16,36 @@ interface IDoughnutChart {
 }
 
 export const DoughnutChart = ({ size, data, backgrounds, labels, title }: IDoughnutChart) => {
-  const {useBreakpoint} = Grid
-  const {lg, xs} = useBreakpoint()
+  const {desColor} = useContext(GlobalContext)
   return (
     <Col span={24} sm={12} md={12} lg={24}>
-      <span className="font-1" style={{ color: 'gray' }}>
-        {title}
-      </span>
+      <Space direction='vertical' size={10}>
+        <span className= {`font-1 ${desColor}`} style={{ color: 'gray' }}>
+          {title}
+        </span>
 
-      <Doughnut
-        data={{
-          labels,
-          datasets: [
-            {
-              data,
-              backgroundColor: backgrounds,
+        <Doughnut
+          data={{
+            labels,
+            datasets: [
+              {
+                data,
+                backgroundColor: backgrounds,
+              },
+            ],
+          }}
+          options={{
+            responsive: true,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                align: 'start',
+                fullSize: true,
+              },
             },
-          ],
-        }}
-        options={{
-          responsive: true,
-          plugins: {
-            legend: {
-              position: 'bottom',
-              align: 'start',
-              fullSize: true,
-            },
-          },
-        }}
-      />
+          }}
+        />
+      </Space>
     </Col>
   );
 };

@@ -1,7 +1,8 @@
 import { FileTextOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Breadcrumb, Button, Card, Col, message, Row, Space } from 'antd';
+import { Button, Card, Col, message, Row, Space } from 'antd';
 import { AxiosError } from 'axios';
+import { BreadCrumb } from 'components/elements/common';
 import { Input, Select } from 'components/elements/form';
 import { ClientLayout } from 'components/layouts';
 import { ICommon, IDepartments, IDetailUser } from 'models/apiType';
@@ -42,8 +43,8 @@ const AddEmployee: NextPageWithLayout = ({ allDepartments, detailUser }: IAddEmp
   //Get all data user
   const { refetch: dataAllUsersRefetch } = getallUsers(dataUser?.accessToken.token);
 
-    //Get list users not have department
-    const { refetch: dataUsersnotDPMRefetch } = getUsersNotDepartment(dataUser?.accessToken.token);
+  //Get list users not have department
+  const { refetch: dataUsersnotDPMRefetch } = getUsersNotDepartment(dataUser?.accessToken.token);
 
   //Set data select departmen
   React.useEffect(() => {
@@ -134,11 +135,22 @@ const AddEmployee: NextPageWithLayout = ({ allDepartments, detailUser }: IAddEmp
         <title>Add Employee Page</title>
       </Head>
 
-      <Breadcrumb>
-        <Breadcrumb.Item>Home</Breadcrumb.Item>
-        <Breadcrumb.Item>Employees</Breadcrumb.Item>
-        <Breadcrumb.Item>Add Employee</Breadcrumb.Item>
-      </Breadcrumb>
+      <BreadCrumb
+        data={[
+          {
+            url: '/',
+            label: 'Home',
+          },
+          {
+            url: '/employees',
+            label: 'All employees',
+          },
+        ]}
+        main={{
+          url: `/employees/add`,
+          label: 'Add new employees',
+        }}
+      />
 
       <Card
         title="Add Employee"
@@ -147,7 +159,7 @@ const AddEmployee: NextPageWithLayout = ({ allDepartments, detailUser }: IAddEmp
             Clear
           </a>
         }
-        style={{ width: '100%', marginTop: '20px' }}
+        className="card-b"
       >
         <form onSubmit={formSetting.handleSubmit(onSubmit)}>
           <Space direction="vertical" size={20}>
@@ -266,7 +278,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       cookie: context.req.headers.cookie,
       authorization: detailUser.accessToken.token,
     } as HeadersInit,
-  }).then((e) => e.json());  
+  }).then((e) => e.json());
 
   //Redirect 404 page when not have detail allDepartments
   if (allDepartments.statusCode !== 200) {

@@ -312,7 +312,7 @@ const DetailSubmission: NextPageWithLayout = ({
       <Card
         extra={<a onClick={onClearData}>Reset</a>}
         title="Update Your Idea"
-        style={{ width: '100%', marginTop: '20px' }}
+        className='card-b'
       >
         <Space
           direction="vertical"

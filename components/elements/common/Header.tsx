@@ -1,17 +1,20 @@
 import { LogoutOutlined, MenuOutlined, ProfileOutlined } from '@ant-design/icons';
-import { Avatar, Button, Divider, Dropdown, Layout, Menu, message, Space } from 'antd';
+import { Avatar, Button, Divider, Dropdown, Layout, Menu, message, Space, Switch } from 'antd';
+import { GlobalContext } from 'contextApi/globalContext';
 import { ILogout } from 'models/apiType';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { getCurrentUser } from 'queries/auth';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useMutation } from 'react-query';
 import { postData } from 'utils/fetchData';
 import { Drawer } from '../drawer';
+import { BsMoon, BsSun } from 'react-icons/bs';
 
 const { Header } = Layout;
 
 export const HeaderComponent = () => {
+  const { darkMode, toggleDarkMode, bgColor, color, color2 } = useContext(GlobalContext);
   //Setting drawer
   const [visible, setVisible] = useState(false);
 
@@ -90,9 +93,9 @@ export const HeaderComponent = () => {
   return (
     <>
       <Header
+        className={`${bgColor}`}
         style={{
           padding: '0px 40px',
-          backgroundColor: 'white',
           zIndex: '1',
           borderBottom: '1px solid #efefef',
         }}
@@ -115,41 +118,67 @@ export const HeaderComponent = () => {
             </span>
 
             <MenuOutlined
+              className={`${color}`}
               onClick={showDrawer}
               style={{
                 fontSize: '20px',
               }}
             />
           </Space>
-
-          {dataUser ? (
-            <Dropdown overlay={menu} trigger={['click', 'hover']} placement="bottomRight">
-              <Space
+          <Space size={15}>
+            <Switch
+              checked={darkMode}
+              onChange={(checked) => {
+                toggleDarkMode();
+              }}
+              checkedChildren={
+                <BsSun
+                   className={`${color2}`}
+                  style={{
+                    paddingTop: 4,
+                  }}
+                  size={17}
+                />
+              }
+              unCheckedChildren={
+                <BsMoon className={`${color2}`}
+                  style={{
+                    paddingTop: 4,
+                  }}
+                  size={17}
+                />
+              }
+              defaultChecked
+            />
+            {dataUser ? (
+              <Dropdown overlay={menu} trigger={['click', 'hover']} placement="bottomRight">
+                <Space
+                  style={{
+                    cursor: 'pointer',
+                  }}
+                >
+                  <Avatar
+                    style={{
+                      border: '1px solid #009F9D',
+                      background: 'white',
+                    }}
+                    src={dataUser.user?.avatar?.url}
+                  />
+                </Space>
+              </Dropdown>
+            ) : (
+              <Button
+                type="primary"
                 style={{
-                  cursor: 'pointer',
+                  borderRadius: '5px',
                 }}
               >
-                <Avatar
-                  style={{
-                    border: '1px solid #009F9D',
-                    background: 'white',
-                  }}
-                  src={dataUser.user?.avatar?.url}
-                />
-              </Space>
-            </Dropdown>
-          ) : (
-            <Button
-              type="primary"
-              style={{
-                borderRadius: '5px',
-              }}
-            >
-              <Link href={'/login'} passHref>
-                <a>Login</a>
-              </Link>
-            </Button>
-          )}
+                <Link href={'/login'} passHref>
+                  <a>Login</a>
+                </Link>
+              </Button>
+            )}
+          </Space>
         </Space>
 
         <Drawer

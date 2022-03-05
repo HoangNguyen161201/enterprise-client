@@ -8,7 +8,6 @@ import {
 } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
-  Breadcrumb,
   Button,
   Card,
   Dropdown,
@@ -23,6 +22,7 @@ import {
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { AxiosError } from 'axios';
+import { BreadCrumb } from 'components/elements/common';
 import { DrawerUpdateUser } from 'components/elements/drawer';
 import { ClientLayout } from 'components/layouts';
 import { IAllUsers, ICommon, IDepartments, IDetailUser, IUser } from 'models/apiType';
@@ -458,10 +458,18 @@ const Employees: NextPageWithLayout = ({
         <title>All Employees Page</title>
       </Head>
 
-      <Breadcrumb>
-        <Breadcrumb.Item>Home</Breadcrumb.Item>
-        <Breadcrumb.Item>All Employees</Breadcrumb.Item>
-      </Breadcrumb>
+      <BreadCrumb
+        data={[
+          {
+            url: '/',
+            label: 'Home',
+          },
+        ]}
+        main={{
+          url: '/employees',
+          label: 'All employees',
+        }}
+      />
 
       <Card
         extra={[
@@ -489,7 +497,7 @@ const Employees: NextPageWithLayout = ({
           </Popconfirm>,
         ]}
         title="All Employees"
-        style={{ width: '100%', marginTop: '20px' }}
+        className='card-b'
       >
         <Space direction="vertical" size={20}>
           <Table

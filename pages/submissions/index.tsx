@@ -1,6 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
-  Breadcrumb,
   Button,
   Card as AntCard,
   DatePicker,
@@ -11,9 +10,10 @@ import {
   Space,
 } from 'antd';
 import axios, { AxiosError } from 'axios';
-import { Card } from 'components/elements/common';
+import { BreadCrumb, Card } from 'components/elements/common';
 import { DrawerImg, DrawerSubm } from 'components/elements/drawer';
 import { ClientLayout } from 'components/layouts';
+import { GlobalContext } from 'contextApi/globalContext';
 import { ICommon, IDetailUser, ISubmission, ISubmissions } from 'models/apiType';
 import { ISubmissionForm } from 'models/formType';
 import { NextPageWithLayout } from 'models/layoutType';
@@ -21,8 +21,9 @@ import moment from 'moment';
 import { submMutation } from 'mutations/submission';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
+import Link from 'next/link';
 import { getallSubmissions, getCurrentUser } from 'queries';
-import { useEffect as UseEffect, useState as UseState } from 'react';
+import { useContext, useEffect as UseEffect, useState as UseState } from 'react';
 import { useForm as UseForm } from 'react-hook-form';
 import { validateSubmission } from 'utils/validate';
 
@@ -31,6 +32,7 @@ interface submisionPage {
   detailUser: IDetailUser;
 }
 const index: NextPageWithLayout = ({ result, detailUser }: submisionPage) => {
+
   const [isOpen, setIsopen] = UseState(false);
   const [isOpenSlImg, setIsOpenSlImg] = UseState(false);
   const [imgs, setImgs] = UseState<string[] | null>(null);
@@ -45,6 +47,9 @@ const index: NextPageWithLayout = ({ result, detailUser }: submisionPage) => {
     'https://res.cloudinary.com/hoang161201/image/upload/v1645274633/Group_92_grzovc.svg'
   );
   let timeOutSearch: NodeJS.Timeout, timeOutSearchTime: NodeJS.Timeout;
+
+  // darkmode
+  const { color, desColor } = useContext(GlobalContext);
 
   const [idDelete, setIdDelete] = UseState('');
   UseEffect(() => {
@@ -215,28 +220,34 @@ const index: NextPageWithLayout = ({ result, detailUser }: submisionPage) => {
       <Head>
         <title>Submissions Page</title>
       </Head>
-      <Breadcrumb>
-        <Breadcrumb.Item>Home</Breadcrumb.Item>
-        <Breadcrumb.Item>Submissions</Breadcrumb.Item>
-      </Breadcrumb>
-
+      <BreadCrumb data={[{url: '/', label: 'Home'}]} main={{label: 'Submissions', url: '/submissions'}}/>
       <AntCard
-        title="Submissions"
+        title={<span className={`${color}`}>Submissions</span>}
         extra={
-          <Space>
+          <Space size={15} key={'func_submission'}>
             <Button key={'add_sumission'} onClick={() => setIsopen(true)} type="link">
               Add new
             </Button>
-            <Input value={searchFirst} onChange={(event)=> {
-              setSearchFirst(event.target.value)
-            }}/>
-            <DatePicker format="YYYY-MM-DD HH:mm:ss" showTime showToday onChange={(value)=> {
-      
-              setSearchDate(moment(value).toISOString())
-            }} />
+            <Input
+              placeholder="Search by name"
+              style={{ borderRadius: 5 }}
+              value={searchFirst}
+              onChange={(event) => {
+                setSearchFirst(event.target.value);
+              }}
+            />
+            <DatePicker
+              style={{ borderRadius: 5 }}
+              format="YYYY-MM-DD HH:mm:ss"
+              showTime
+              showToday
+              onChange={(value) => {
+                setSearchDate(moment(value).toISOString());
+              }}
+            />
           </Space>
         }
-        style={{ width: '100%', marginTop: '20px' }}
+        className='card-b'
       >
         <DrawerSubm
           imgSubmission={imgSubmission}

@@ -53,3 +53,13 @@ export interface IStaff extends ICol{
   role: string
   image: string
 }
+
+export interface IMainBreadc {
+  url: string
+  label: string
+}
+
+export interface IBreadCrumb {
+  data: IMainBreadc[]
+  main: IMainBreadc
+}

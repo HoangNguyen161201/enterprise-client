@@ -1,6 +1,7 @@
 import {
   AppstoreAddOutlined,
   AppstoreOutlined,
+  CloseOutlined,
   CloudUploadOutlined,
   FolderViewOutlined,
   HomeOutlined,
@@ -12,6 +13,8 @@ import { Drawer as AntDrawer, Menu } from 'antd';
 import Link from 'next/link';
 import { useEffect as UseEffect, useState as UseState } from 'react';
 import { getCurrentUser } from 'queries/auth';
+import { useContext } from 'react';
+import { GlobalContext } from 'contextApi/globalContext';
 
 const { SubMenu } = Menu;
 
@@ -100,16 +103,27 @@ export const Drawer = ({ onClose, ...props }: IProps) => {
     }
   }, [dataUser]);
 
+  const {darkMode} = useContext(GlobalContext)
+
   return (
     <>
       <AntDrawer
+        closeIcon={<CloseOutlined style={{
+          color: darkMode ? 'white': '#001529'
+        }} />}
+        headerStyle={{
+          background: darkMode ? '#001529': 'white',
+        }}
         onClose={onClose}
         {...props}
+        title={<span style={{
+          color: darkMode ? 'white': '#001529'
+        }}>{props.title}</span>}
         bodyStyle={{
           padding: '0px',
         }}
       >
-        <Menu style={{ width: '100%', height: '100%' }} mode="inline">
+        <Menu theme={darkMode ? 'dark': 'light'} style={{ width: '100%', height: '100%' }} mode="inline">
           <Menu.Item key="1" icon={<HomeOutlined />} onClick={onClose}>
             <Link href={'/'}>
               <a>Home</a>

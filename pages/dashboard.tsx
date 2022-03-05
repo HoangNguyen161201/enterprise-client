@@ -12,8 +12,8 @@ import {
   PointElement,
   LineElement,
 } from 'chart.js';
-import { Bar, Line } from 'react-chartjs-2';
-import { DoughnutChart } from 'components/elements/chart';
+import { Bar } from 'react-chartjs-2';
+import { DoughnutChart, LineChart } from 'components/elements/chart';
 import { CardStatic, Clip, List } from 'components/elements/common';
 import { ClientLayout } from 'components/layouts';
 import { NextPageWithLayout } from 'models/layoutType';
@@ -31,9 +31,10 @@ import {
   submissions,
   topView,
 } from 'queries/statics';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import moment from 'moment';
 import Link from 'next/link';
+import { GlobalContext } from 'contextApi/globalContext';
 
 ChartJS.register(
   ArcElement,
@@ -161,14 +162,14 @@ const hoang: NextPageWithLayout = () => {
     data: topSubmission,
     error: errorTopSub,
     refetch: refetchTopSub,
-  } = submissions({accessToken: dataUser?.accessToken.token});
+  } = submissions({ accessToken: dataUser?.accessToken.token });
 
-  
+  const { color, desColor, bgColor, darkMode } = useContext(GlobalContext);
 
   return (
     <>
       <p
-        className="font-3"
+        className={`font-3 ${color}`}
         style={{
           fontWeight: 'bold',
         }}
@@ -204,9 +205,13 @@ const hoang: NextPageWithLayout = () => {
               />
             )}
             <Col span={24}>
-              <Space direction='vertical'>
-                <span style={{color: 'gray'}}>Top submissions (idea)</span>
-                <List center={lg ? false: true} data={topSubmission?.data as any} url='/submissions/detail/'/>
+              <Space direction="vertical">
+                <span style={{ color: 'gray' }}>Top submissions (idea)</span>
+                <List
+                  center={lg ? false : true}
+                  data={topSubmission?.data as any}
+                  url="/submissions/detail/"
+                />
               </Space>
             </Col>
           </Row>
@@ -215,21 +220,22 @@ const hoang: NextPageWithLayout = () => {
           <Row gutter={[0, 30]}>
             <Col span={24}>
               <Row
+                className={darkMode ? 'shadow-l' : 'shadow-d'}
                 style={{
-                  background: md ? '#07456F' : 'transparent',
+                  background: md ? '#07456F' : 'white',
                   borderRadius: 10,
-                  paddingBlock: md ? 40 : 0,
-                  paddingInline: md ? 20 : 0,
+                  paddingBlock: 40,
+                  paddingInline: 20,
+                  border: '3px solid #07456F50',
                   width: '100%',
                   position: 'relative',
                   display: 'flex',
-                  boxShadow: md ? '27px 28px 52px -3px rgba(0,0,0,0.1)' : '',
                 }}
               >
                 {md && (
                   <>
-                    <Clip color="white" left={40} top={-15} />
-                    <Clip color="white" right={40} top={-15} />
+                    <Clip color={bgColor} left={40} top={-15} />
+                    <Clip color={bgColor} right={40} top={-15} />
                   </>
                 )}
 
@@ -270,7 +276,7 @@ const hoang: NextPageWithLayout = () => {
             </Col>
 
             <Col span={24}>
-              <Space direction="vertical" size={'small'}>
+              <Space direction="vertical" size={'middle'}>
                 <div
                   style={{
                     display: md ? 'flex' : 'block',
@@ -278,7 +284,7 @@ const hoang: NextPageWithLayout = () => {
                     alignItems: 'center',
                   }}
                 >
-                  <span className="font-2" style={{ fontWeight: 'bold' }}>
+                  <span className={`font-2 ${color}`} style={{ fontWeight: 'bold' }}>
                     Number idea by department, date
                   </span>
                   <Space
@@ -312,7 +318,17 @@ const hoang: NextPageWithLayout = () => {
                     />
                   </Space>
                 </div>
-                <div  style={{ height: md ?300: 200 }}>
+                <div
+                  className={darkMode ? 'shadow-l' : 'shadow-d'}
+                  style={{
+                    border: '3px solid #07456F50',
+                    height: md ? 300 : 200,
+                    borderRadius: 10,
+                    padding: 20,
+                    background: '#FFFFFF',
+                  }}
+                >
+                  
                   <Bar
                     options={{
                       maintainAspectRatio: false,
@@ -356,7 +372,10 @@ const hoang: NextPageWithLayout = () => {
                     display: md ? 'flex' : 'block',
                   }}
                 >
-                  <span className="font-2" style={{ fontWeight: 'bold', display: 'block' }}>
+                  <span
+                    className={`font-2 ${color}`}
+                    style={{ fontWeight: 'bold', display: 'block' }}
+                  >
                     Infor by department
                   </span>
                   <Space
@@ -406,7 +425,7 @@ const hoang: NextPageWithLayout = () => {
                     }}
                   >
                     <Space direction="vertical" size={'middle'}>
-                      <Space direction="vertical">
+                      <Space direction="vertical" size={'middle'}>
                         <div
                           style={{
                             display: 'flex',
@@ -414,7 +433,7 @@ const hoang: NextPageWithLayout = () => {
                             alignItems: 'center',
                           }}
                         >
-                          <span style={{ color: 'gray' }}>Top user has many ideas</span>
+                          <span className={`${desColor}`}>Top user has many ideas</span>
                           <InputNumber
                             style={{
                               borderRadius: 5,
@@ -427,10 +446,10 @@ const hoang: NextPageWithLayout = () => {
                             }}
                           />
                         </div>
-                        <List data={dataManyIdeas?.data as any} url='/employees/detail/'/>
+                        <List data={dataManyIdeas?.data as any} url="/employees/detail/" />
                       </Space>
 
-                      <Space direction="vertical">
+                      <Space direction="vertical" size={'middle'}>
                         <div
                           style={{
                             display: 'flex',
@@ -438,7 +457,7 @@ const hoang: NextPageWithLayout = () => {
                             justifyContent: 'space-between',
                           }}
                         >
-                          <span style={{ color: 'gray' }}>Top user has many ideas</span>
+                          <span className={`${desColor}`}>Top user has top view ideas</span>
                           <InputNumber
                             style={{
                               borderRadius: 5,
@@ -451,7 +470,7 @@ const hoang: NextPageWithLayout = () => {
                             }}
                           />
                         </div>
-                        <List data={dataTopview?.data as any} url='/employees/detail/'/>
+                        <List data={dataTopview?.data as any} url="/employees/detail/" />
                       </Space>
                     </Space>
                   </Col>
@@ -464,7 +483,7 @@ const hoang: NextPageWithLayout = () => {
                           justifyContent: 'space-between',
                         }}
                       >
-                        <span style={{ color: 'gray' }}>Count idea by year</span>
+                        <span className={`${desColor}`}>Count idea by year</span>
                         <DatePicker
                           value={moment(new Date(`${_year}-1-1`))}
                           onChange={(value) => {
@@ -474,35 +493,20 @@ const hoang: NextPageWithLayout = () => {
                         />
                       </div>
 
-                      <div style={{ height: md ?300: 200 }}>
-                        <Line
-                          options={{
-                            maintainAspectRatio: false,
-                            scales: {
-                              x: {
-                                grid: {
-                                  display: false,
-                                },
-                              },
-                              y: {
-                                grid: {
-                                  display: false,
-                                },
-                              },
-                            },
-                          }}
-                          data={{
-                            labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-                            datasets: [
-                              {
-                                label: 'Idea',
-                                data: dataIdeaBY?.data || [],
-                                backgroundColor: '#07456F',
-                                borderColor: '#07456F50',
-                                cubicInterpolationMode: 'monotone',
-                              },
-                            ],
-                          }}
+                      <div
+                        className={darkMode ? 'shadow-l' : 'shadow-d'}
+                        style={{
+                          boxShadow: '25px 23px 42px -3px rgba(0,0,0,0.1)',
+                          border: '3px solid #07456F50',
+                          height: md ? 300 : 200,
+                          borderRadius: 10,
+                          padding: '20px ',
+                          background: '#FFFFFF',
+                        }}
+                      >
+                        <LineChart
+                          data={dataIdeaBY?.data as number[]}
+                          labels={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]}
                         />
                       </div>
                     </Space>

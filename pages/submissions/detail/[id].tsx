@@ -400,14 +400,14 @@ const DetailSubmission: NextPageWithLayout = ({
         <title>Detail Submission Page</title>
       </Head>
 
-      <Breadcrumb>
+      <Breadcrumb >
         <Breadcrumb.Item>Home</Breadcrumb.Item>
         <Breadcrumb.Item>Submission</Breadcrumb.Item>
         <Breadcrumb.Item>All Submission</Breadcrumb.Item>
         <Breadcrumb.Item>View Detail Submission</Breadcrumb.Item>
       </Breadcrumb>
 
-      <Card title="View Detail Employee" style={{ width: '100%', marginTop: '20px' }}>
+      <Card title="View Detail Employee" className='card-b'>
         <Space direction="vertical" size={20}>
           <Alert
             showIcon

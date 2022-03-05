@@ -69,7 +69,7 @@ const DetailDepartment: NextPageWithLayout = ({ detailMyDepartment }: IDetailDep
         <Breadcrumb.Item>My Department</Breadcrumb.Item>
       </Breadcrumb>
 
-      <Card title="View My Department" style={{ width: '100%', marginTop: '20px' }}>
+      <Card title="View My Department" className='card-b'>
         <h2 className="font-3">Information:</h2>
         <Row gutter={[30, 20]}>
           <FieldCard
@@ -156,7 +156,6 @@ const DetailDepartment: NextPageWithLayout = ({ detailMyDepartment }: IDetailDep
                       image={item.avatar.url}
                       name={item.name}
                       role={item.role}
-                      id={item._id}
                     />
                   );
                 if (isShow)
@@ -168,7 +167,6 @@ const DetailDepartment: NextPageWithLayout = ({ detailMyDepartment }: IDetailDep
                       sm={12}
                       lg={8}
                       xl={6}
-                      id={item._id}
                       image={item.avatar.url}
                       name={item.name}
                       role={item.role}

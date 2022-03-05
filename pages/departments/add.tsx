@@ -1,7 +1,8 @@
 import { FileTextOutlined } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Breadcrumb, Button, Card, message, Space } from 'antd';
+import { Button, Card, message, Space } from 'antd';
 import { AxiosError } from 'axios';
+import { BreadCrumb } from 'components/elements/common';
 import { Input, TextArea } from 'components/elements/form';
 import { ClientLayout } from 'components/layouts';
 import { ICommon, IDetailUser } from 'models/apiType';
@@ -15,12 +16,16 @@ import { useForm } from 'react-hook-form';
 import { validateAddDepartment } from 'utils/validate';
 
 export interface IAddDepartmentProps {
-  detailUser: IDetailUser
+  detailUser: IDetailUser;
 }
 
-const AddDepartment: NextPageWithLayout = ({detailUser}: IAddDepartmentProps) => {
+const AddDepartment: NextPageWithLayout = ({ detailUser }: IAddDepartmentProps) => {
   //Get access token
-  const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser(detailUser);
+  const {
+    data: dataUser,
+    error: errorGetUser,
+    refetch: dataUserRefetch,
+  } = getCurrentUser(detailUser);
 
   //  call api to add deartment
   const mutationAddDepartment = departmentMutation.add({
@@ -77,11 +82,22 @@ const AddDepartment: NextPageWithLayout = ({detailUser}: IAddDepartmentProps) =>
         <title>Add Department Page</title>
       </Head>
 
-      <Breadcrumb>
-        <Breadcrumb.Item>Home</Breadcrumb.Item>
-        <Breadcrumb.Item>Departments</Breadcrumb.Item>
-        <Breadcrumb.Item>Add Department</Breadcrumb.Item>
-      </Breadcrumb>
+      <BreadCrumb
+        data={[
+          {
+            url: '/',
+            label: 'Home',
+          },
+          {
+            url: '/departments',
+            label: 'All departments',
+          },
+        ]}
+        main={{
+          url: '/departments/add',
+          label: 'Add new departments'
+        }}
+      />
 
       <Card
         title="Add Department"
@@ -90,7 +106,7 @@ const AddDepartment: NextPageWithLayout = ({detailUser}: IAddDepartmentProps) =>
             Clear
           </a>
         }
-        style={{ width: '100%', marginTop: '20px' }}
+        className="card-b"
       >
         <form onSubmit={formSetting.handleSubmit(onSubmit)}>
           <Space direction="vertical" size={20}>
@@ -151,6 +167,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   return {
-    props: {detailUser},
+    props: { detailUser },
   };
 };
