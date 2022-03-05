@@ -33,11 +33,8 @@
     "react-dropzone": "^12.0.4",
     "react-fast-marquee": "^1.3.1",
     "react-hook-form": "^7.26.1",
-<<<<<<< HEAD
     "react-icons": "^4.3.1",
-=======
     "react-papaparse": "^4.0.2",
->>>>>>> 6829e89d18afd609ebc912ce5c363eb58ecac536
     "react-query": "^3.34.14",
     "react-quill": "^1.3.5",
     "react-table": "^7.7.0",
