@@ -32,7 +32,12 @@ const authHelper = (roles) => {
         });
 
       //Get user token
-      const user = await userModel.findById(id).select('-password');
+      const user = await userModel
+        .findOne({
+          _id: id,
+          deleted: false,
+        })
+        .select('-password');
 
       //Check public
       if (!roles || roles.length === 0) return next();
