@@ -7,7 +7,7 @@ import { useCSVReader, formatFileSize } from 'react-papaparse';
 
 export interface IImportCSVProps {
   fieldsValid: string[];
-  onSubmit: (users: Partial<IUser>[]) => Promise<void>;
+  onSubmit: (data: any) => Promise<void>;
 }
 
 //Style Import CSV
@@ -35,10 +35,10 @@ export default function ImportCSV({ fieldsValid, onSubmit }: IImportCSVProps) {
   const showModal = () => {
     setIsModalVisible(true);
   };
- 
+
   const handleOk = () => {
     if (Array.isArray(dataCSV)) {
-      onSubmit(dataCSV as Partial<IUser>[]);
+      onSubmit(dataCSV);
     }
     setIsModalVisible(false);
     setDataCSV(null);
