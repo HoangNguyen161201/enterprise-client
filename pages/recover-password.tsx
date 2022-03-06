@@ -3,15 +3,18 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Button, message, Result, Space } from 'antd';
 import { AxiosError } from 'axios';
 import { Input } from 'components/elements/form';
+import { GlobalContext } from 'contextApi/globalContext';
 import { ICommon } from 'models/apiType';
 import { authMutation } from 'mutations/auth';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useState as UseState } from 'react';
+import { useContext, useEffect, useState as UseState } from 'react';
 import { useForm as UseForm } from 'react-hook-form';
 import { validateRecoverPass } from 'utils/validate';
 
 export default function recover_password() {
+  const {handleLightMode} = useContext(GlobalContext)
+
   const [isSMTP, setIsSMTP] = UseState(false);
   // call api to reset password by email
   const recoverPass = authMutation.recoverPass({
@@ -30,6 +33,10 @@ export default function recover_password() {
       },
     },
   });
+
+  useEffect(()=> {
+    handleLightMode()
+  },[])
 
   // setting form
   const formSetting = UseForm<{ email: string }>({

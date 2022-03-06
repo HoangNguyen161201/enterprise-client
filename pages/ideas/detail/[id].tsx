@@ -359,8 +359,11 @@ const DetailIdea: NextPageWithLayout = ({
         className="card-b"
         extra={
           detailIdea?.idea?.cloudinary_id &&
-          dataURLZip?.url && <a href={dataURLZip?.url}>Dowload all files</a>
+          dataURLZip?.url && <a className='color-3' href={dataURLZip?.url}>Dowload all files</a>
         }
+        style={{
+          background: 'white'
+        }}
       >
         <Space direction="vertical" size={20}>
           <span

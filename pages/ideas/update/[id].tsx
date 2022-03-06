@@ -6,16 +6,10 @@ import { AxiosError } from 'axios';
 import ItemFileUpload from 'components/elements/common/ItemFileUpload';
 import { Input, Select, TextArea } from 'components/elements/form';
 import { ClientLayout } from 'components/layouts';
-import {
-  IallCategories,
-  ICommon,
-  IDetailIdea,
-  IDetailSubmission,
-  IDetailUser,
-  IFileUpload,
-} from 'models/apiType';
+import { GlobalContext } from 'contextApi/globalContext';
+import { IallCategories, ICommon, IDetailIdea, IDetailUser, IFileUpload } from 'models/apiType';
 import { IOptionSelect } from 'models/elementType';
-import { ICategoryForm, IIdeaForm } from 'models/formType';
+import { IIdeaForm } from 'models/formType';
 import { NextPageWithLayout } from 'models/layoutType';
 import { fileMutation } from 'mutations/file';
 import { IdeaMutaion } from 'mutations/idea';
@@ -23,9 +17,9 @@ import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { getCurrentUser, getDetailIdea, getDetailSubmission } from 'queries';
+import { getCurrentUser, getDetailIdea } from 'queries';
 import { getallCategories } from 'queries/category';
-import { useCallback, useEffect as UseEffect, useState } from 'react';
+import { useCallback, useContext, useEffect as UseEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useForm } from 'react-hook-form';
 import 'react-quill/dist/quill.bubble.css';
@@ -51,6 +45,8 @@ const DetailSubmission: NextPageWithLayout = ({
   UseEffect(() => {
     dataUserRefetch();
   }, []);
+
+  const { color2 } = useContext(GlobalContext);
 
   //State loading submit files
   const [isLoadUpFile, setIsLoadUpFile] = useState<boolean>(false);
@@ -259,7 +255,7 @@ const DetailSubmission: NextPageWithLayout = ({
         setIsLoadUpFile(false);
 
         //Concact new files with old files upload
-        files = files.concat(oldFilesUpload)
+        files = files.concat(oldFilesUpload);
       }
 
       //Concact new files with old files upload
@@ -312,7 +308,10 @@ const DetailSubmission: NextPageWithLayout = ({
       <Card
         extra={<a onClick={onClearData}>Reset</a>}
         title="Update Your Idea"
-        className='card-b'
+        className="card-b shadow-l"
+        style={{
+          background: 'white',
+        }}
       >
         <Space
           direction="vertical"
@@ -336,6 +335,7 @@ const DetailSubmission: NextPageWithLayout = ({
               <Row gutter={[20, 20]}>
                 <Col xs={24} sm={24} md={12}>
                   <Input
+                    dark={false}
                     name="title"
                     label="Title"
                     formSetting={formSetting}
@@ -346,6 +346,7 @@ const DetailSubmission: NextPageWithLayout = ({
                 </Col>
                 <Col xs={24} md={12}>
                   <Select
+                    dark={false}
                     formSetting={formSetting}
                     name="category_id"
                     label="Category"
@@ -356,6 +357,7 @@ const DetailSubmission: NextPageWithLayout = ({
                 </Col>
                 <Col xs={24}>
                   <TextArea
+                    dark={false}
                     name="description"
                     label="Description"
                     formSetting={formSetting}
@@ -467,10 +469,10 @@ const DetailSubmission: NextPageWithLayout = ({
                 </p>
               )}
               <Button
+                className={`${color2}`}
                 type="primary"
-                size="large"
                 style={{
-                  borderRadius: 4,
+                  borderRadius: 5,
                 }}
               >
                 Choose Files
@@ -491,6 +493,7 @@ const DetailSubmission: NextPageWithLayout = ({
           ))}
 
           <Button
+            className={`${color2}`}
             loading={isLoadUpFile || mutationUpdateIdea.isLoading}
             style={{
               borderRadius: 5,

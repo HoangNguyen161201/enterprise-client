@@ -5,13 +5,14 @@ import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect as UseEffect, useState } from 'react';
+import { useContext, useEffect as UseEffect, useState } from 'react';
 import { BreadCrumb, FieldCard, User } from 'components/elements/common';
 import { ClientLayout } from 'components/layouts';
 import { IDetailDepartment, IDetailUser, IUser } from 'models/apiType';
 import { NextPageWithLayout } from 'models/layoutType';
 import { getCurrentUser } from 'queries/auth';
 import { getDetailDepartment } from 'queries/department';
+import { GlobalContext } from 'contextApi/globalContext';
 
 export interface IDetailDepartmentProps {
   detailDepartment: IDetailDepartment;
@@ -23,6 +24,8 @@ const DetailDepartment: NextPageWithLayout = ({
   detailUser,
 }: IDetailDepartmentProps) => {
   const { query } = useRouter();
+
+  const { color, desColor, color2} = useContext(GlobalContext);
 
   const [isShow, setIsShow] = useState(false);
   //Get id from router to get old data
@@ -69,7 +72,7 @@ const DetailDepartment: NextPageWithLayout = ({
       <Head>
         <title>Detail Department Page</title>
       </Head>
-      
+
       <BreadCrumb
         data={[
           {
@@ -87,131 +90,136 @@ const DetailDepartment: NextPageWithLayout = ({
         }}
       />
 
-      <Card title="View Detail Department" className="card-b">
-        <h2 className="font-3">Information:</h2>
-        <Row gutter={[30, 20]}>
-          <FieldCard
-            lg={12}
-            label="ID Department"
-            content={dataDepartment ? dataDepartment.department?._id : ''}
-          />
-          <FieldCard
-            lg={12}
-            view={dataDepartment?.department.department_manager ? true : false}
-            user_id={
-              dataDepartment?.department.department_manager
-                ? dataDepartment?.department.department_manager._id
-                : undefined
-            }
-            label="Department Manager"
-            content={
-              dataDepartment ? (dataDepartment.department?.department_manager?.email as string) : ''
-            }
-          />
-          <FieldCard
-            lg={12}
-            view={dataDepartment?.department.qa_coordinator ? true : false}
-            user_id={
-              dataDepartment?.department.qa_coordinator
-                ? dataDepartment?.department.qa_coordinator._id
-                : undefined
-            }
-            label="QA Coordinator"
-            content={
-              dataDepartment ? (dataDepartment.department?.qa_coordinator?.email as string) : ''
-            }
-          />
-          <FieldCard
-            lg={12}
-            view={dataDepartment?.department.qa_manager ? true : false}
-            user_id={
-              dataDepartment?.department.qa_manager
-                ? dataDepartment?.department.qa_manager._id
-                : undefined
-            }
-            label="QA Manager"
-            content={dataDepartment ? (dataDepartment.department?.qa_manager?.email as string) : ''}
-          />
+      <Card title={<span className={`${color}`}>View Detail Department</span>} className="card-b">
+        <Space direction="vertical" size={30}>
+          <Space direction="vertical" size={10}>
+            <span className={`font-2 ${desColor}`}>Information</span>
+            <Row gutter={[30, 20]}>
+              <FieldCard
+                lg={12}
+                label="ID Department"
+                content={dataDepartment ? dataDepartment.department?._id : ''}
+              />
+              <FieldCard
+                lg={12}
+                view={dataDepartment?.department.department_manager ? true : false}
+                user_id={
+                  dataDepartment?.department.department_manager
+                    ? dataDepartment?.department.department_manager._id
+                    : undefined
+                }
+                label="Department Manager"
+                content={
+                  dataDepartment
+                    ? (dataDepartment.department?.department_manager?.email as string)
+                    : ''
+                }
+              />
+              <FieldCard
+                lg={12}
+                view={dataDepartment?.department.qa_coordinator ? true : false}
+                user_id={
+                  dataDepartment?.department.qa_coordinator
+                    ? dataDepartment?.department.qa_coordinator._id
+                    : undefined
+                }
+                label="QA Coordinator"
+                content={
+                  dataDepartment ? (dataDepartment.department?.qa_coordinator?.email as string) : ''
+                }
+              />
+              <FieldCard
+                lg={12}
+                view={dataDepartment?.department.qa_manager ? true : false}
+                user_id={
+                  dataDepartment?.department.qa_manager
+                    ? dataDepartment?.department.qa_manager._id
+                    : undefined
+                }
+                label="QA Manager"
+                content={
+                  dataDepartment ? (dataDepartment.department?.qa_manager?.email as string) : ''
+                }
+              />
 
-          <FieldCard
-            xs={24}
-            xl={24}
-            view={false}
-            label="Description"
-            content={dataDepartment ? dataDepartment.department?.description : ''}
-          />
-        </Row>
-        <Space
-          align="center"
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <h2
-            className="font-3"
+              <FieldCard
+                xs={24}
+                xl={24}
+                view={false}
+                label="Description"
+                content={dataDepartment ? dataDepartment.department?.description : ''}
+              />
+            </Row>
+          </Space>
+          <Space direction='vertical' size={10}>
+
+          <Space
+            align="center"
             style={{
-              margin: '30px 0px 20px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
             }}
           >
-            Staffs
-          </h2>
-          <Link href={`/departments/assign/${query.id}`}>
-            <a>Manager</a>
-          </Link>
-        </Space>
-        <Space direction="vertical" size={30}>
-          <Row gutter={[30, 30]}>
+            <span className={`font-2 ${desColor}`}>Staff</span>
+            <Link href={`/departments/assign/${query.id}`}>
+              <a>Manager</a>
+            </Link>
+          </Space>
+          <Space direction="vertical" size={30}>
+            <Row gutter={[30, 30]}>
+              {dataDepartment?.department?.staffs &&
+                dataDepartment?.department?.staffs.map((item: IUser, key: number) => {
+                  if (!isShow && key <= 7)
+                    return (
+                      <User
+                        id={item._id}
+                        key={key}
+                        xs={24}
+                        sm={12}
+                        lg={8}
+                        xl={6}
+                        image={item.avatar.url}
+                        name={item.name}
+                        role={item.role}
+                        employee_id={item.employee_id}
+                      />
+                    );
+                  if (isShow)
+                    return (
+                      <User
+                        key={key}
+                        xs={24}
+                        sm={12}
+                        lg={8}
+                        xl={6}
+                        id={item._id}
+                        image={item.avatar.url}
+                        name={item.name}
+                        role={item.role}
+                        employee_id={item.employee_id}
+                      />
+                    );
+                })}
+            </Row>
             {dataDepartment?.department?.staffs &&
-              dataDepartment?.department?.staffs.map((item: IUser, key: number) => {
-                if (!isShow && key <= 7)
-                  return (
-                    <User
-                      id={item._id}
-                      key={key}
-                      xs={24}
-                      sm={12}
-                      lg={8}
-                      xl={6}
-                      image={item.avatar.url}
-                      name={item.name}
-                      role={item.role}
-                      employee_id={item.employee_id}
-                    />
-                  );
-                if (isShow)
-                  return (
-                    <User
-                      key={key}
-                      xs={24}
-                      sm={12}
-                      lg={8}
-                      xl={6}
-                      id={item._id}
-                      image={item.avatar.url}
-                      name={item.name}
-                      role={item.role}
-                      employee_id={item.employee_id}
-                    />
-                  );
-              })}
-          </Row>
-          {dataDepartment?.department?.staffs &&
-            dataDepartment.department.staffs.length > 8 &&
-            !isShow && (
-              <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <Button
-                  icon={<ArrowDownOutlined />}
-                  type="default"
-                  size="large"
-                  style={{ borderRadius: 5 }}
-                  onClick={() => setIsShow(true)}
-                >
-                  Show more
-                </Button>
-              </div>
-            )}
+              dataDepartment.department.staffs.length > 8 &&
+              !isShow && (
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                  <Button
+                    icon={<ArrowDownOutlined />}
+                    type="default"
+                    size="large"
+                    style={{ borderRadius: 5 }}
+                    className={`${color2}`}
+                    onClick={() => setIsShow(true)}
+                  >
+                    Show more
+                  </Button>
+                </div>
+              )}
+          </Space>
+          </Space>
         </Space>
       </Card>
     </>

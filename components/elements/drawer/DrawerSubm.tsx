@@ -83,7 +83,7 @@ export const DrawerSubm = ({
               formSetting={formSetting}
             />
             <TextArea label="Description" name="description" formSetting={formSetting} />
-            <Button loading={isLoading} className={color2} htmlType="submit" type="primary">
+            <Button loading={isLoading}  htmlType="submit" type="primary" style={{borderRadius: 5}} className={`${color2}`}>
               Save
             </Button>
           </Space>

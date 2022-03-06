@@ -1,7 +1,8 @@
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import { AutoComplete, Input as AntInput, Space } from 'antd';
+import { GlobalContext } from 'contextApi/globalContext';
 import { IInput } from 'models/formType';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Controller } from 'react-hook-form';
 
 export const Input = ({  
@@ -13,7 +14,10 @@ export const Input = ({
   disable,
   icon,
   require = true,
+  dark= true
 }: IInput) => {
+  const {desColor} = useContext(GlobalContext)
+
   const [options, setOptions] = useState([{ value: '@gmail.com' }]);
 
   const handleSearch = (value: string) => {
@@ -26,7 +30,7 @@ export const Input = ({
   } = formSetting;
   return (
     <Space direction="vertical" size={'small'}>
-      <span className="font-1">
+      <span className={dark ? `font-1 ${desColor}`: 'font-1 des-1'}>
         {label} {require && <span className="color-red">*</span>}
       </span>
       <Controller

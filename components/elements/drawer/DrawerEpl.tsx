@@ -5,6 +5,8 @@ import { IUser } from 'models/apiType';
 import { IOptionSelect } from 'models/elementType';
 import { roleSelect } from 'utils/dataSelect';
 import { Select, Input } from '../form';
+import { useContext } from 'react';
+import { GlobalContext } from 'contextApi/globalContext';
 
 export interface IDrawerUpdateUserProps {
   onClose: () => void;
@@ -23,7 +25,7 @@ export const DrawerUpdateUser = ({
   departmentSl,
   onSubmit,
 }: IDrawerUpdateUserProps)=> {
-  // setting form
+  const {color2} = useContext(GlobalContext)
 
   return (
     <>
@@ -129,8 +131,9 @@ export const DrawerUpdateUser = ({
                 type="primary"
                 htmlType="submit"
                 style={{
-                  borderRadius: 4,
+                  borderRadius: 5,
                 }}
+                className={`${color2}`}
               >
                 Update
               </Button>

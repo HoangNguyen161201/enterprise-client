@@ -206,7 +206,7 @@ const hoang: NextPageWithLayout = () => {
             )}
             <Col span={24}>
               <Space direction="vertical">
-                <span style={{ color: 'gray' }}>Top submissions (idea)</span>
+                <span className={`${desColor}`}>Top submissions (idea)</span>
                 <List
                   center={lg ? false : true}
                   data={topSubmission?.data as any}
@@ -406,7 +406,7 @@ const hoang: NextPageWithLayout = () => {
                   </Space>
                 </div>
                 <Space direction={!lg ? 'vertical' : 'horizontal'} size={15}>
-                  {dataNumberOPC && <span className="color-2">{dataNumberOPC.msg}</span>}
+                  {dataNumberOPC && <span className="color-3">{dataNumberOPC.msg}</span>}
                   {dataStatus && (
                     <Space>
                       <Tag color={'blue'}>{`All ideas: ${dataStatus.all}`}</Tag>

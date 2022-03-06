@@ -33,7 +33,7 @@ export default function ItemFileUpload({
         <img alt={'file_upload'} src={src} width={50} />
         {url_file ? (
           <div>
-            <a href={url_file} download>{fileName}</a>
+            <a className='color-3' href={url_file} download>{fileName}</a>
           </div>
         ) : (
           <div>{fileName}</div>

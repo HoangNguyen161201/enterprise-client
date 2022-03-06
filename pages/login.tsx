@@ -4,6 +4,7 @@ import { Button, Divider, message, Space } from 'antd';
 import { AxiosError } from 'axios';
 import { CopyAcc } from 'components/elements/common';
 import { Input, Select } from 'components/elements/form';
+import { GlobalContext } from 'contextApi/globalContext';
 import Accounts from 'DataAccount.json';
 import { IAccessToken, IDetailUser } from 'models/apiType';
 import { IOptionSelect } from 'models/elementType';
@@ -15,15 +16,14 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter as UseRouter } from 'next/router';
 import { getCurrentUser } from 'queries/auth';
-import { useMemo as UseMemo } from 'react';
+import { useContext, useEffect, useMemo as UseMemo } from 'react';
 import { useForm as UseForm } from 'react-hook-form';
 import { validateLogin } from 'utils/validate';
 
 const login: NextPageWithLayout = () => {
+  const { handleLightMode} = useContext(GlobalContext)
   const { refetch } = getCurrentUser();
-
   const { push } = UseRouter();
-
   const options = UseMemo<IOptionSelect[]>(
     () => [
       {
@@ -49,6 +49,10 @@ const login: NextPageWithLayout = () => {
     ],
     []
   );
+
+  useEffect(()=> {
+    handleLightMode()
+  },[])
 
   //  call api to get accessToken
   const mutationLogin = authMutation.login({

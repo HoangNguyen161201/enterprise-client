@@ -1,8 +1,9 @@
 import { CloseOutlined, TableOutlined } from '@ant-design/icons';
 import { Button, message, Modal, Space, Tooltip } from 'antd';
+import { GlobalContext } from 'contextApi/globalContext';
 import { IUser } from 'models/apiType';
 import Image from 'next/image';
-import { useState, CSSProperties } from 'react';
+import { useState, CSSProperties, useContext } from 'react';
 import { useCSVReader, formatFileSize } from 'react-papaparse';
 
 export interface IImportCSVProps {
@@ -26,6 +27,8 @@ const styles = {
 };
 
 export default function ImportCSV({ fieldsValid, onSubmit }: IImportCSVProps) {
+  const {color2} = useContext(GlobalContext)
+
   //State data covert from csv
   const [dataCSV, setDataCSV] = useState<any>(null);
 
@@ -74,6 +77,7 @@ export default function ImportCSV({ fieldsValid, onSubmit }: IImportCSVProps) {
         <Button
           onClick={showModal}
           type="primary"
+          className={`${color2}`}
           icon={<TableOutlined />}
           style={{
             borderRadius: 5,

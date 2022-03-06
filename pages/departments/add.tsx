@@ -5,6 +5,7 @@ import { AxiosError } from 'axios';
 import { BreadCrumb } from 'components/elements/common';
 import { Input, TextArea } from 'components/elements/form';
 import { ClientLayout } from 'components/layouts';
+import { GlobalContext } from 'contextApi/globalContext';
 import { ICommon, IDetailUser } from 'models/apiType';
 import { NextPageWithLayout } from 'models/layoutType';
 import { departmentMutation } from 'mutations/department';
@@ -20,6 +21,9 @@ export interface IAddDepartmentProps {
 }
 
 const AddDepartment: NextPageWithLayout = ({ detailUser }: IAddDepartmentProps) => {
+  
+  const {color, color2} = React.useContext(GlobalContext)
+  
   //Get access token
   const {
     data: dataUser,
@@ -100,7 +104,7 @@ const AddDepartment: NextPageWithLayout = ({ detailUser }: IAddDepartmentProps) 
       />
 
       <Card
-        title="Add Department"
+        title={<span className={`${color}`}>Add Department</span>}
         extra={
           <a href="#" onClick={onClearData}>
             Clear
@@ -125,7 +129,7 @@ const AddDepartment: NextPageWithLayout = ({ detailUser }: IAddDepartmentProps) 
                 justifyContent: 'end',
               }}
             >
-              <Button loading={mutationAddDepartment.isLoading} htmlType="submit" type="primary">
+              <Button loading={mutationAddDepartment.isLoading} htmlType="submit" type="primary" className={`${color2}`} style={{borderRadius: 5}}>
                 Add
               </Button>
             </div>

@@ -3,13 +3,14 @@ import { IdcardOutlined, MailOutlined, TeamOutlined } from '@ant-design/icons';
 import { Alert, Avatar, Card, Col, Grid, List, message, Row, Space } from 'antd';
 import { BreadCrumb, Infor, ItemIdea } from 'components/elements/common';
 import { ClientLayout } from 'components/layouts';
+import { GlobalContext } from 'contextApi/globalContext';
 import { IDetailUser, IUser } from 'models/apiType';
 import { NextPageWithLayout } from 'models/layoutType';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { getCurrentUser, getDetailUser, getIdeasAcceptUser } from 'queries';
-import { useEffect as UseEffect } from 'react';
+import { useContext, useEffect as UseEffect } from 'react';
 
 export interface IDetailEmployeeProps {
   detailUser: { user: IUser; [index: string]: any };
@@ -20,7 +21,13 @@ const DetailEmployee: NextPageWithLayout = ({
   detailUser,
   detailCurrentUser,
 }: IDetailEmployeeProps) => {
+
+  const {color} = useContext(GlobalContext)
+
+  // get id employee
   const { query } = useRouter();
+
+  // create response
   const { useBreakpoint } = Grid;
   const { lg } = useBreakpoint();
 
@@ -90,7 +97,7 @@ const DetailEmployee: NextPageWithLayout = ({
         }}
       />
 
-      <Card title="View Detail Employee" className="card-b">
+      <Card title={<span className={`${color}`}>Detail employee</span>} className="card-b">
         <Space direction="vertical" size={20}>
           {dataUser && dataUser.user.role === 'admin' && (
             <Alert

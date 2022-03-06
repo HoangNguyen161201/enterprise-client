@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Space, Select as AntSelect } from 'antd';
 import { IInput } from 'models/formType';
 import { IOptionSelect } from 'models/elementType';
 import { Controller } from 'react-hook-form';
+import { GlobalContext } from 'contextApi/globalContext';
 
-export const Select = ({ formSetting, name, label, placeholder, require = true, data }: IInput) => {
+export const Select = ({ formSetting, dark= true, name, label, placeholder, require = true, data }: IInput) => {
+  
+  const {desColor} = useContext(GlobalContext)
+
   const { Option } = AntSelect;
   const {
     formState: { errors },
@@ -18,7 +22,7 @@ export const Select = ({ formSetting, name, label, placeholder, require = true, 
       direction="vertical"
       size={'small'}
     >
-      <span className="font-1">
+      <span className={dark ? `font-1 ${desColor}`: 'font-1 des-1'}>
         {label} {require && <span className="color-red">*</span>}
       </span>
       <Controller

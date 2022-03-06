@@ -6,25 +6,14 @@ import {
   FileTextOutlined,
 } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
-import {
-  Alert,
-  Breadcrumb,
-  Button,
-  Card,
-  Col,
-  List,
-  message,
-  Row,
-  Space,
-  Spin,
-  Switch,
-} from 'antd';
+import { Alert, Button, Card, Col, List, message, Row, Space, Spin, Switch } from 'antd';
 import { AxiosError } from 'axios';
-import { ItemIdea } from 'components/elements/common';
+import { BreadCrumb, ItemIdea } from 'components/elements/common';
 import ItemFileUpload from 'components/elements/common/ItemFileUpload';
 import RowTable from 'components/elements/common/RowTable';
 import { Input, Select, TextArea } from 'components/elements/form';
 import { ClientLayout } from 'components/layouts';
+import { GlobalContext } from 'contextApi/globalContext';
 import { IallCategories, IAllIdeas, ICommon, IDetailSubmission, IDetailUser } from 'models/apiType';
 import { IOptionSelect } from 'models/elementType';
 import { IIdeaForm } from 'models/formType';
@@ -34,11 +23,10 @@ import { IdeaMutaion } from 'mutations/idea';
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { getCurrentUser, getDetailSubmission, getIdeasCurrentUser } from 'queries';
 import { getallCategories } from 'queries/category';
-import { useCallback, useEffect as UseEffect, useState } from 'react';
+import { useCallback, useContext, useEffect as UseEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useForm } from 'react-hook-form';
 import 'react-quill/dist/quill.bubble.css';
@@ -63,7 +51,7 @@ const DetailSubmission: NextPageWithLayout = ({
   allIdeaCurrentUser,
   detailUser,
 }: IDetailSubmissionProps) => {
-  console.log(allIdeaCurrentUser);
+  const { darkMode, color2 } = useContext(GlobalContext);
 
   //Get access token
   const {
@@ -400,14 +388,30 @@ const DetailSubmission: NextPageWithLayout = ({
         <title>Detail Submission Page</title>
       </Head>
 
-      <Breadcrumb >
-        <Breadcrumb.Item>Home</Breadcrumb.Item>
-        <Breadcrumb.Item>Submission</Breadcrumb.Item>
-        <Breadcrumb.Item>All Submission</Breadcrumb.Item>
-        <Breadcrumb.Item>View Detail Submission</Breadcrumb.Item>
-      </Breadcrumb>
+      <BreadCrumb
+        data={[
+          {
+            url: '/',
+            label: 'Home',
+          },
+          {
+            url: '/submissions',
+            label: 'All Submissions',
+          },
+        ]}
+        main={{
+          url: `/submissions/detail/${id}`,
+          label: 'add new idea',
+        }}
+      />
 
-      <Card title="View Detail Employee" className='card-b'>
+      <Card
+        title="Add your idea"
+        className="card-b shadow-l"
+        style={{
+          background: 'white'
+        }}
+      >
         <Space direction="vertical" size={20}>
           <Alert
             showIcon
@@ -455,6 +459,7 @@ const DetailSubmission: NextPageWithLayout = ({
               borderRadius: 5,
               margin: '20px 0px',
             }}
+            className={darkMode ? (isShowFormIdea ? 'color-5' : 'color-3') : 'color-5'}
             onClick={onChangeShowForm}
             disabled={!timeClosure.closure_date.isMatchDate}
           >
@@ -490,10 +495,12 @@ const DetailSubmission: NextPageWithLayout = ({
                       placeholder="Enter name"
                       type="text"
                       icon={<FileTextOutlined />}
+                      dark={false}
                     />
                   </Col>
                   <Col xs={24} md={12}>
                     <Select
+                      dark={false}
                       formSetting={formSetting}
                       name="category_id"
                       label="Category"
@@ -504,6 +511,7 @@ const DetailSubmission: NextPageWithLayout = ({
                   </Col>
                   <Col xs={24}>
                     <TextArea
+                      dark={false}
                       name="description"
                       label="Description"
                       formSetting={formSetting}
@@ -594,10 +602,10 @@ const DetailSubmission: NextPageWithLayout = ({
                 )}
                 <Button
                   type="primary"
-                  size="large"
                   style={{
-                    borderRadius: 4,
+                    borderRadius: 5,
                   }}
+                  className={`${color2}`}
                 >
                   Choose Files
                 </Button>
@@ -620,6 +628,7 @@ const DetailSubmission: NextPageWithLayout = ({
               style={{
                 borderRadius: 5,
               }}
+              className={`${color2}`}
               disabled={!timeClosure.closure_date.isMatchDate}
               htmlType="submit"
               form={'submitIdea'}

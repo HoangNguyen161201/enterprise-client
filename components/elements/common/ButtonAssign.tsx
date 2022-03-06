@@ -3,6 +3,7 @@ import { Col, Modal, Select, Space } from 'antd';
 import * as React from 'react';
 import { IAssignUsers } from 'models/formType';
 import { IOptionSelect } from 'models/elementType';
+import { GlobalContext } from 'contextApi/globalContext';
 
 export interface IButtonAssignProps {
   color: string;
@@ -44,6 +45,8 @@ export const ButtonAssign = ({
     setIsModalVisible(false);
   };
 
+  const { darkMode, color: darkColor, desColor, color2 } = React.useContext(GlobalContext);
+
   return (
     <Col
       span={8}
@@ -57,7 +60,7 @@ export const ButtonAssign = ({
           width: '100%',
           display: 'flex',
           justifyContent: 'space-between',
-          background: `${color}15`,
+          background: darkMode ? `${color}40` : `${color}15`,
           padding: '10px 15px',
           borderRadius: '10px',
         }}
@@ -93,14 +96,15 @@ export const ButtonAssign = ({
                 fontSize: '24px',
                 fontWeight: 'bold',
               }}
+              className={`${darkColor}`}
             >
               {title}
             </span>
             <span
               style={{
                 fontSize: '14px',
-                color: 'gray',
               }}
+              className={`${desColor}`}
             >
               {subTitle}
             </span>
@@ -161,7 +165,8 @@ export const ButtonAssign = ({
         }}
         onCancel={handleCancel}
         okText={'Assign'}
-        okButtonProps={{ disabled: dataUsers?.length !== 0 ? false : true }}
+        okButtonProps={{ disabled: dataUsers?.length !== 0 ? false : true, className: `${color2}`, style:{borderRadius: 5} }}
+        cancelButtonProps={{ style: {borderRadius: 5}}}
       >
         <Select
           value={dataSelect}
@@ -182,4 +187,4 @@ export const ButtonAssign = ({
       </Modal>
     </Col>
   );
-}
+};

@@ -22,8 +22,14 @@ import Head from 'next/head';
 import { useRouter as UseRouter } from 'next/router';
 import { getCurrentUser } from 'queries/auth';
 import { getAllDepartments, getDetailDepartment, getUsersNotDepartment } from 'queries/department';
-import { useEffect, useEffect as UseEffect, useMemo as UseMemo, useState as UseState } from 'react';
+import {
+  useContext,
+  useEffect as UseEffect,
+  useMemo as UseMemo,
+  useState as UseState,
+} from 'react';
 import column from 'utils/configTB';
+import { GlobalContext } from 'contextApi/globalContext';
 
 export interface IAssignDepartmentProps {
   detailDepartment: IDetailDepartment;
@@ -34,6 +40,8 @@ const AssignDepartment: NextPageWithLayout = ({
   detailDepartment,
   detailUser,
 }: IAssignDepartmentProps) => {
+  const { color, desColor } = useContext(GlobalContext);
+
   //Get id from router to get old data
   const {
     query: { id },
@@ -52,10 +60,6 @@ const AssignDepartment: NextPageWithLayout = ({
 
   // departments select
   const [staffsSl, setStaffsSl] = UseState<any>(null);
-
-  UseEffect(() => {
-    console.log(staffsSl);
-  }, [staffsSl]);
 
   const [staffs, setStaffs] = UseState<Partial<IUser>[]>([]);
 
@@ -84,7 +88,7 @@ const AssignDepartment: NextPageWithLayout = ({
     data: dataDepartment,
     refetch: dataDepartmentRefetch,
   } = getDetailDepartment(id as string, dataUser?.accessToken.token, detailDepartment);
-  useEffect(() => {
+  UseEffect(() => {
     if (dataUser) {
       dataDepartmentRefetch();
     }
@@ -389,7 +393,7 @@ const AssignDepartment: NextPageWithLayout = ({
         ]}
         main={{
           url: `/departments/assign/${id}`,
-          label: 'Assign department'
+          label: 'Assign department',
         }}
       />
 
@@ -423,11 +427,11 @@ const AssignDepartment: NextPageWithLayout = ({
             </Button>
           </Popconfirm>,
         ]}
-        title="Assign Department"
+        title={<span className={`${color}`}>Assign Department</span>}
         className="card-b"
       >
         <Space direction="vertical">
-          <h2 className="font-3">Information:</h2>
+          <span className={`font-2 ${desColor}`}>Information</span>
           <Row>
             <ButtonAssign
               title="Staff"
@@ -480,8 +484,9 @@ const AssignDepartment: NextPageWithLayout = ({
               margin: '10px 0px 0px',
             }}
           >
-            <h2 className="font-3">Staffs:</h2>
+            <span className={`font-2 ${desColor}`}>Staffs</span>
             <Table
+              scroll={{ x: true }}
               rowSelection={{
                 type: 'checkbox',
                 getCheckboxProps: (record) => ({
@@ -492,7 +497,7 @@ const AssignDepartment: NextPageWithLayout = ({
                   return setStaffsSl(selectedRowKeys);
                 },
               }}
-              style={{ overflowX: 'auto', borderRadius: 5 }}
+              style={{ overflowX: 'auto'}}
               dataSource={staffs}
               columns={columns}
             />
