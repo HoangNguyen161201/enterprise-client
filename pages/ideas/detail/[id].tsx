@@ -1,16 +1,5 @@
 //Import
-import {
-  Avatar,
-  Card,
-  Col,
-  Divider, List,
-  message,
-  Row,
-  Space,
-  Spin,
-  Switch,
-  Tooltip
-} from 'antd';
+import { Avatar, Card, Col, Divider, List, message, Row, Space, Spin, Switch, Tooltip } from 'antd';
 import { AxiosError } from 'axios';
 import { BreadCrumb } from 'components/elements/common';
 import InputComment from 'components/elements/common/InputComment';
@@ -23,6 +12,7 @@ import { NextPageWithLayout } from 'models/layoutType';
 import { commentMutation } from 'mutations/comment';
 import { IReactionMutaion } from 'mutations/reaction';
 import { GetServerSideProps } from 'next';
+import Link from 'next/link';
 //Dynamic import quill
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
@@ -32,7 +22,7 @@ import {
   getDetailIdea,
   getReactionUserIdea,
   getReactType,
-  getUrlDownloadZip
+  getUrlDownloadZip,
 } from 'queries';
 import { getallComments } from 'queries/comment';
 import {
@@ -40,7 +30,7 @@ import {
   useEffect,
   useEffect as UseEffect,
   useState,
-  useState as UseState
+  useState as UseState,
 } from 'react';
 import 'react-quill/dist/quill.bubble.css';
 //CSS quill
@@ -359,10 +349,14 @@ const DetailIdea: NextPageWithLayout = ({
         className="card-b"
         extra={
           detailIdea?.idea?.cloudinary_id &&
-          dataURLZip?.url && <a className='color-3' href={dataURLZip?.url}>Dowload all files</a>
+          dataURLZip?.url && (
+            <a className="color-3" href={dataURLZip?.url}>
+              Dowload all files
+            </a>
+          )
         }
         style={{
-          background: 'white'
+          background: 'white',
         }}
       >
         <Space direction="vertical" size={20}>
@@ -377,7 +371,13 @@ const DetailIdea: NextPageWithLayout = ({
           </span>
           <Space wrap size={20}>
             <Avatar src={dataDetailIdea && dataDetailIdea.idea.user_id.avatar.url} />
-            <span>{dataDetailIdea && dataDetailIdea.idea.user_id.name.toUpperCase()}</span>
+            {dataDetailIdea?.idea?.user_id && (
+              <span>
+                <Link href={`/employees/detail/${dataDetailIdea.idea.user_id._id}`}>
+                  <a>{dataDetailIdea.idea.user_id.name.toUpperCase()}</a>
+                </Link>
+              </span>
+            )}
             <span>
               {dataDetailIdea && new Date(dataDetailIdea.idea.createdAt).toLocaleString()}
             </span>
