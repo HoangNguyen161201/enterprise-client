@@ -278,8 +278,6 @@ const DetailSubmission: NextPageWithLayout = ({
 
   //Remove file upload
   const onRemoveFile = (index: number) => {
-    console.log(index);
-
     const newFilesUpload = filesUpload.filter((file, indexFile) => {
       if (indexFile !== index) {
         return file;

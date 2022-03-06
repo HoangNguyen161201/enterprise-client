@@ -89,7 +89,6 @@ const login: NextPageWithLayout = () => {
 
   // submit login
   const onSubmit = (values: ILogin) => {
-    console.log(values);
     mutationLogin.mutate(values);
   };
 

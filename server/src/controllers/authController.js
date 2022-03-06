@@ -156,9 +156,7 @@ const authController = {
 
   // reset password
   resetPassword: catchAsyncError(async (req, res) => {
-    console.log('fgdfgdfgdfg');
     const { activeToken, password, confirmPassword } = req.body;
-    console.log(activeToken);
     if (!validatePassword(password))
       return res.status(400).json({
         err: 'Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character',
@@ -188,7 +186,7 @@ const authController = {
       _id: data.id,
       deleted: false
     });
-    console.log(user);
+    
     if (!user)
       return res.status(400).json({
         err: 'User not exist',

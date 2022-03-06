@@ -304,7 +304,6 @@ const DetailIdea: NextPageWithLayout = ({
         (itemReactionType) => {
           let count = 0;
           dataDetailIdea.countReactions?.map((itemReactionDetail) => {
-            console.log(dataAllReaction, dataDetailIdea);
             if (itemReactionType._id == itemReactionDetail._id) {
               count = itemReactionDetail.count;
             }
@@ -356,7 +355,7 @@ const DetailIdea: NextPageWithLayout = ({
 
       <Card
         title="View Detail Idea"
-        className="card-b"
+        className="card-b shadow-l"
         extra={
           detailIdea?.idea?.cloudinary_id &&
           dataURLZip?.url && <a className='color-3' href={dataURLZip?.url}>Dowload all files</a>

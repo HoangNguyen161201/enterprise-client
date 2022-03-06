@@ -91,6 +91,7 @@ export default function ImportCSV({ fieldsValid, onSubmit }: IImportCSVProps) {
         okText={'Add'}
         okButtonProps={{
           disabled: !dataCSV,
+          className: `${color2}`
         }}
         onCancel={handleCancel}
       >

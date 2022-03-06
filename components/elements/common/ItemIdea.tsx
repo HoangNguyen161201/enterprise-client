@@ -8,6 +8,7 @@ import {
   UploadOutlined,
 } from '@ant-design/icons';
 import { Button, Dropdown, Grid, List, Menu, Space } from 'antd';
+import { GlobalContext } from 'contextApi/globalContext';
 import { IIdea } from 'models/apiType';
 import Link from 'next/link';
 import * as React from 'react';
@@ -24,6 +25,7 @@ export interface IItemIdeaProps {
 export const ItemIdea = ({ item, onDeleteIdea, closure_date }: IItemIdeaProps) => {
   const { useBreakpoint } = Grid;
   const { lg } = useBreakpoint();
+  const {desColor} = React.useContext(GlobalContext)
 
   const menu = (
     <Menu>
@@ -110,18 +112,18 @@ export const ItemIdea = ({ item, onDeleteIdea, closure_date }: IItemIdeaProps) =
 
             <Space wrap size={20}>
               <Space>
-                <FileAddOutlined />
-                <span>{item.files.length} file</span>
+                <FileAddOutlined className={`${desColor}`}/>
+                <span className={`${desColor}`}>{item.files.length} file</span>
               </Space>
 
               <Space>
-                <FolderViewOutlined />
-                <span>{item.view} view</span>
+                <FolderViewOutlined className={`${desColor}`}/>
+                <span className={`${desColor}`}>{item.view} view</span>
               </Space>
 
               <Space>
-                {item.anonymously ? <EyeInvisibleOutlined /> : <EyeOutlined />}
-                <span>{item.anonymously ? 'Anonymous information' : 'Public information'}</span>
+                {item.anonymously ? <EyeInvisibleOutlined className={`${desColor}`}/> : <EyeOutlined className={`${desColor}`}/>}
+                <span className={`${desColor}`}>{item.anonymously ? 'Anonymous information' : 'Public information'}</span>
               </Space>
             </Space>
           </Space>

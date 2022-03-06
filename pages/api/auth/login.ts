@@ -21,8 +21,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     });
   }
 
-  console.log('hoang nguyen quang', process.env.API_URL)
-
   //Return promise
   return new Promise((resolve) => {
     const cookies = new Cookies(req, res);
@@ -47,7 +45,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
       proxyRes.on('end', function () {
         try {
-          console.log(body)
           const { accessToken, refreshToken, status, msg, err, statusCode } = JSON.parse(body);
 
           if (status === 'success') {

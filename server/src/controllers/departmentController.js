@@ -124,7 +124,6 @@ const departmentController = {
 
       //Get id of department to delete
       const departmentId = departments[index];
-      console.log(departmentId);
 
       //Check exist department
       const department = await departmentModel.findById(departmentId);
@@ -385,7 +384,6 @@ const departmentController = {
       })
       .select('-password');
 
-    console.log(qaCoordinator._id);
     //Check exist qa_coordinator
     if (qaCoordinator) {
       await departmentModel.findByIdAndUpdate(id, {

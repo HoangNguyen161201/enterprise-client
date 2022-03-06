@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { stringify } = require('querystring');
 
 //Define schema model
 const categorySchema = new mongoose.Schema({

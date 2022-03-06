@@ -13,7 +13,6 @@ const reactionValid = require('../utils/reactionValid');
 const reactionController = {
   create: catchAsyncError(async (req, res) => {
     const { user_id, idea_id, reactionType_id } = req.body;
-    console.log(reactionType_id);
 
     //Check valid data
     const msgError = reactionValid.createReactionValid({
@@ -37,7 +36,7 @@ const reactionController = {
 
     //Check exist reactionType
     const reactionType = await reactionTypeModel.findById(reactionType_id);
-    console.log(reactionType);
+
     if (!reactionType)
       return res.status(400).json({
         statusCode: 400,
