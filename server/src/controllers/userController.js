@@ -526,7 +526,7 @@ const userController = {
       }
 
       //Send mail
-      mailNotice({
+      await mailNotice({
         email: user.email,
         subject: `You have been assigned to the department ${department.name}`,
         text: `You have been assigned to the department ${
@@ -590,7 +590,7 @@ const userController = {
         }
 
         //Send mail
-        mailNotice({
+        await mailNotice({
           email: user.email,
           subject: `You have been assigned to the department ${department.name}`,
           text: `You have been assigned to the department ${

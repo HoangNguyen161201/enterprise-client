@@ -6,12 +6,14 @@ const {
   createActiveToken,
 } = require('../utils/generateToken');
 
+// sendMail
+const mailNotion = require('../utils/mailNotice')
+
 //Import middleware
 const catchAsyncError = require('../helpers/catchAsyncError');
 
 //Import model
 const userModel = require('../models/userModel');
-const sendEmail = require('../utils/sendEmail');
 const { validatePassword } = require('../utils/userValid');
 
 const authController = {
@@ -146,7 +148,13 @@ const authController = {
 
     const url = `${process.env.URL_CLIENT}/reset-password/${active_token.token}`;
 
-    await sendEmail({ email, url });
+    await mailNotion({
+      email,
+      html: `<div style='position: relative'></div><div style='padding: 30px; border: 3px solid #07456F; border-radius: 10px; max-width: 400px; position: absolute; top: 50%; left: 50% ; margin: auto'><h1 style='padding-bottom: 30px; color: black'>Resset password:</h1><a href='${url}' style='text-decoration: none ; cursor: pointer; text-align: center;background: #009F9D; padding: 15px; color: white; cursor: pointer; font-size: 16px; border-radius: 5px;  margin-left: 28%'>Reset your password</a><p style='margin-top: 45px; color: black'>If this button can not active, you can click link below:</p><a href='${url}'>${url}</a></div>`,
+      subject: "Reset your password",
+      text: "click active token to reset password"
+    })
+   
     return res.status(200).json({
       status: 'success',
       msg: 'Check your email to reset password',
@@ -156,18 +164,18 @@ const authController = {
 
   // reset password
   resetPassword: catchAsyncError(async (req, res) => {
-    const { activeToken, password, confirmPassword } = req.body;
+    const { activeToken, password, passwordConfirm } = req.body;
     if (!validatePassword(password))
       return res.status(400).json({
         err: 'Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character',
         statusCode: 400,
       });
 
-    if (password != confirmPassword)
-      return res.status(400).json({
-        err: 'Password not match',
-        statusCode: 400,
-      });
+    if (password != passwordConfirm) 
+        return res.status(400).json({
+          err: 'Password not match',
+          statusCode: 400,
+        });
 
     const passwordHash = await bcrypt.hash(password, 12);
 
