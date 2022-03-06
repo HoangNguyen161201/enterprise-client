@@ -2,6 +2,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Button, Card, message, Row } from 'antd';
 import { AxiosError } from 'axios';
 import { BreadCrumb, Category } from 'components/elements/common';
+import ImportCSV from 'components/elements/common/ImportCSV';
 import { DrawerCt } from 'components/elements/drawer';
 import { ClientLayout } from 'components/layouts';
 import { GlobalContext } from 'contextApi/globalContext';
@@ -21,8 +22,8 @@ export interface ICategoriesProps {
 }
 
 const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => {
-  const {color} = useContext(GlobalContext)
-  
+  const { color } = useContext(GlobalContext);
+
   const [categoryUd, setCategoryUd] = useState<IDetailCategory | null | undefined>(null);
   const [statusForm, setStatusForm] = useState<'create' | 'update'>('create');
   const [isOpen, setIsopen] = useState(false);
@@ -122,6 +123,25 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
     },
   });
 
+  //  mutation call api to add many categories
+  const mutationAddManyCategories = CtMutation.addMany({
+    dataUserRefetch: dataUserRefetch,
+    token: dataUser?.accessToken.token,
+    options: {
+      onSuccess: (data: ICommon) => {
+        message.success({
+          content: data.msg,
+        });
+        rfCategories();
+      },
+      onError: (error: AxiosError) => {
+        message.error({
+          content: error.response?.data.err || 'Create many Categories by import CSV false.',
+        });
+      },
+    },
+  });
+
   //  mutation call api to update Category
   const mutationUpdateCategory = CtMutation.update({
     dataUserRefetch: dataUserRefetch,
@@ -177,6 +197,14 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
     mutationAddCategory.mutate(data);
   };
 
+  //Function handle create new many categories
+  const addManyCategories = async (categories: Partial<IDetailCategory> ) => {
+    //Post data add category
+    mutationAddManyCategories.mutate({
+      categories
+    });
+  };
+
   //Function handle update category
   const updateCategory = async (data: IDetailCategory) => {
     mutationUpdateCategory.mutate(data);
@@ -213,6 +241,7 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
       />
       <Card
         extra={[
+          <ImportCSV fieldsValid={["name", "description"]} onSubmit={addManyCategories} />,
           <Button
             key={'Add_ct'}
             type="link"
@@ -225,7 +254,7 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
           </Button>,
         ]}
         title={<span className={`${color}`}>All Categories</span>}
-        className='card-b'
+        className="card-b"
       >
         <Row gutter={[30, 30]}>
           {dataAllCategories?.categories &&

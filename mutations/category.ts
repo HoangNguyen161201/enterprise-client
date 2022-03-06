@@ -2,7 +2,7 @@ import { AxiosError } from 'axios';
 import { useMutation } from 'react-query';
 import { ICategoryForm } from 'models/formType';
 import { deleteData, postData, putData } from '../utils/fetchData';
-import { IMutation } from 'models/apiType';
+import { IDetailCategory, IMutation } from 'models/apiType';
 
 
 export const CtMutation = {
@@ -12,6 +12,22 @@ export const CtMutation = {
         dataUserRefetch && dataUserRefetch();
         return postData({
           url: '/api/categories',
+          body: dataForm,
+          token,
+        });
+      },
+      {
+        ...options,
+      }
+    );
+  },
+
+  addMany: ({ options, dataUserRefetch, token }: IMutation) => {
+    return useMutation<any, AxiosError, {categories: Partial<IDetailCategory>}>(
+      (dataForm) => {
+        dataUserRefetch && dataUserRefetch();
+        return postData({
+          url: '/api/categories/add-many',
           body: dataForm,
           token,
         });

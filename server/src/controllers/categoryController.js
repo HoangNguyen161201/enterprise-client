@@ -1,4 +1,4 @@
-  const categoryValid = require('../utils/categoryValid');
+const categoryValid = require('../utils/categoryValid');
 
 //Import middleware
 const catchAsyncError = require('../helpers/catchAsyncError');
@@ -33,6 +33,81 @@ const categoryController = {
 
     return res.status(200).json({
       msg: 'Create category success!',
+      statusCode: 200,
+    });
+  }),
+
+  createMany: catchAsyncError(async (req, res) => {
+    //get info category to create
+    const { categories } = req.body;
+
+    let categoriesValided = [];
+    let categoriesName = [];
+
+    //Check categories is array
+    if (!categories || !Array.isArray(categories))
+      return res.status(400).json({
+        statusCode: 400,
+        err: `Pleas enter full field data from CSV!`,
+      });
+
+    for (let index = 0; index < categories.length; index++) {
+      const categoryItem = categories[index];
+      console.log(categoryItem);
+
+      //check valid info input
+      const errMsg = categoryValid.categoryFillIn({
+        name: categoryItem.name,
+        description: categoryItem.description,
+      });
+
+      if (errMsg)
+        return res.status(400).json({
+          err: `Error at index ${categoryItem.index}. ${errMsg}`,
+          statusCode: 400,
+        });
+
+      //Check exist category in system
+      const categoryExist = await categoryModel.findOne({
+        name: categoryItem.name,
+      });
+      if (categoryExist)
+        return res.status(400).json({
+          err: `Error at index ${categoryItem.index}. This category existed in system.`,
+          statusCode: 400,
+        });
+
+      const NewCategory = new categoryModel({
+        name: categoryItem.name,
+        description: categoryItem.description,
+      });
+
+      categoriesValided.push(NewCategory);
+      categoriesName.push(categoryItem.name);
+    }
+
+    //Check duplicate name categories
+    for (let index = 0; index < categoriesName.length; index++) {
+      for (let indexCompare = index + 1; indexCompare < categoriesName.length; indexCompare++) {
+        if (categoriesName[index] == categoriesName[indexCompare]) {
+          return res.status(400).json({
+            err: `Duplicate name categories, please check data CSV.`,
+            statusCode: 400,
+          });
+        }
+      }
+    }
+
+    //Add categories
+    if (categoriesValided && Array.isArray(categoriesValided) && categoriesValided.length > 0) {
+      for (let index = 0; index < categoriesValided.length; index++) {
+        //Save user
+        await categoriesValided[index].save();
+      }
+    }
+
+    return res.status(200).json({
+      msg: 'Create categories by import CSV success!',
       statusCode: 200,
     });
   }),

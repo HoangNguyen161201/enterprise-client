@@ -12,6 +12,8 @@ const authorization = require('../middlewares/authorization');
 //handle category routes
 categoryRouter.post('/', authorization(['admin', 'qa_manager']), categoryController.create);
 
+categoryRouter.post('/add-many', authorization(['admin', 'qa_manager']), categoryController.createMany);
+
 categoryRouter.put('/:id', authorization(['admin', 'qa_manager']), categoryController.update);
 
 categoryRouter.delete('/:id', authorization(['admin', 'qa_manager']), categoryController.delete);
