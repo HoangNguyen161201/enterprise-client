@@ -19,8 +19,7 @@ export interface IDetailDepartmentProps {
 }
 
 const DetailDepartment: NextPageWithLayout = ({ detailMyDepartment }: IDetailDepartmentProps) => {
-  const {color} = useContext(GlobalContext)
-
+  const { color, desColor } = useContext(GlobalContext);
 
   //Is show button load more
   const [isShow, setIsShow] = useState(false);
@@ -66,134 +65,140 @@ const DetailDepartment: NextPageWithLayout = ({ detailMyDepartment }: IDetailDep
         <title> My Department Page</title>
       </Head>
 
-      <BreadCrumb data={[
-        {
-          url: '/',
-          label: 'Home'
-        }
-      ]} main={{
-        url: '/my-department',
-        label: 'My department'
-      }}/>
+      <BreadCrumb
+        data={[
+          {
+            url: '/',
+            label: 'Home',
+          },
+        ]}
+        main={{
+          url: '/my-department',
+          label: 'My department',
+        }}
+      />
 
-      <Card title={<span className={`${color}`}>View My Department</span>} className='card-b'>
-        <h2 className="font-3">Information:</h2>
-        <Row gutter={[30, 20]}>
-          <FieldCard
-            lg={12}
-            label="ID Department"
-            content={dataDepartment ? dataDepartment.department?._id : ''}
-          />
-          <FieldCard
-            lg={12}
-            view={dataDepartment?.department.department_manager ? true : false}
-            user_id={
-              dataDepartment?.department.department_manager
-                ? dataDepartment?.department.department_manager._id
-                : undefined
-            }
-            label="Department Manager"
-            content={
-              dataDepartment ? (dataDepartment.department?.department_manager?.email as string) : ''
-            }
-          />
-          <FieldCard
-            lg={12}
-            view={dataDepartment?.department.qa_coordinator ? true : false}
-            user_id={
-              dataDepartment?.department.qa_coordinator
-                ? dataDepartment?.department.qa_coordinator._id
-                : undefined
-            }
-            label="QA Coordinator"
-            content={
-              dataDepartment ? (dataDepartment.department?.qa_coordinator?.email as string) : ''
-            }
-          />
-          <FieldCard
-            lg={12}
-            view={dataDepartment?.department.qa_manager ? true : false}
-            user_id={
-              dataDepartment?.department.qa_manager
-                ? dataDepartment?.department.qa_manager._id
-                : undefined
-            }
-            label="QA Manager"
-            content={dataDepartment ? (dataDepartment.department?.qa_manager?.email as string) : ''}
-          />
+      <Card title={<span className={`${color}`}>View My Department</span>} className="card-b shadow-l">
+        <Space direction='vertical' size={20}>
+          <Space direction="vertical" size={15}>
+            <Row gutter={[30, 20]}>
+              <FieldCard
+                lg={12}
+                label="ID Department"
+                content={dataDepartment ? dataDepartment.department?._id : ''}
+              />
+              <FieldCard
+                lg={12}
+                view={dataDepartment?.department.department_manager ? true : false}
+                user_id={
+                  dataDepartment?.department.department_manager
+                    ? dataDepartment?.department.department_manager._id
+                    : undefined
+                }
+                label="Department Manager"
+                content={
+                  dataDepartment
+                    ? (dataDepartment.department?.department_manager?.email as string)
+                    : ''
+                }
+              />
+              <FieldCard
+                lg={12}
+                view={dataDepartment?.department.qa_coordinator ? true : false}
+                user_id={
+                  dataDepartment?.department.qa_coordinator
+                    ? dataDepartment?.department.qa_coordinator._id
+                    : undefined
+                }
+                label="QA Coordinator"
+                content={
+                  dataDepartment ? (dataDepartment.department?.qa_coordinator?.email as string) : ''
+                }
+              />
+              <FieldCard
+                lg={12}
+                view={dataDepartment?.department.qa_manager ? true : false}
+                user_id={
+                  dataDepartment?.department.qa_manager
+                    ? dataDepartment?.department.qa_manager._id
+                    : undefined
+                }
+                label="QA Manager"
+                content={
+                  dataDepartment ? (dataDepartment.department?.qa_manager?.email as string) : ''
+                }
+              />
 
-          <FieldCard
-            xs={24}
-            xl={24}
-            view={false}
-            label="Description"
-            content={dataDepartment ? dataDepartment.department?.description : ''}
-          />
-        </Row>
-        <Space
-          align="center"
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <h2
-            className="font-3"
-            style={{
-              margin: '30px 0px 20px',
-            }}
-          >
-            Staffs
-          </h2>
-        </Space>
-        <Space direction="vertical" size={30}>
-          <Row gutter={[30, 30]}>
-            {dataDepartment?.department?.staffs &&
-              dataDepartment?.department?.staffs.map((item: IUser, key: number) => {
-                if (!isShow && key <= 7)
-                  return (
-                    <User
-                      id={item._id}
-                      key={key}
-                      xs={24}
-                      sm={12}
-                      lg={8}
-                      xl={6}
-                      image={item.avatar.url}
-                      name={item.name}
-                      role={item.role}
-                    />
-                  );
-                if (isShow)
-                  return (
-                    <User
-                      id={item._id}
-                      key={key}
-                      xs={24}
-                      sm={12}
-                      lg={8}
-                      xl={6}
-                      image={item.avatar.url}
-                      name={item.name}
-                      role={item.role}
-                    />
-                  );
-              })}
-          </Row>
-          {dataDepartment?.department?.staffs?.length > 8 && !isShow && (
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <Button
-                icon={<ArrowDownOutlined />}
-                type="default"
-                size="large"
-                style={{ borderRadius: 5 }}
-                onClick={() => setIsShow(true)}
-              >
-                Show more
-              </Button>
-            </div>
-          )}
+              <FieldCard
+                xs={24}
+                xl={24}
+                view={false}
+                label="Description"
+                content={dataDepartment ? dataDepartment.department?.description : ''}
+              />
+            </Row>
+          </Space>
+
+          <Space direction="vertical" size={15}>
+            <Space
+              align="center"
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <span className={`font-2 ${desColor}`}>Staff</span>
+            </Space>
+            <Space direction="vertical" size={30}>
+              <Row gutter={[30, 30]}>
+                {dataDepartment?.department?.staffs &&
+                  dataDepartment?.department?.staffs.map((item: IUser, key: number) => {
+                    if (!isShow && key <= 7)
+                      return (
+                        <User
+                          id={item._id}
+                          key={key}
+                          xs={24}
+                          sm={12}
+                          lg={8}
+                          xl={6}
+                          image={item.avatar.url}
+                          name={item.name}
+                          role={item.role}
+                        />
+                      );
+                    if (isShow)
+                      return (
+                        <User
+                          id={item._id}
+                          key={key}
+                          xs={24}
+                          sm={12}
+                          lg={8}
+                          xl={6}
+                          image={item.avatar.url}
+                          name={item.name}
+                          role={item.role}
+                        />
+                      );
+                  })}
+              </Row>
+              {dataDepartment?.department?.staffs?.length > 8 && !isShow && (
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                  <Button
+                    icon={<ArrowDownOutlined />}
+                    type="default"
+                    size="large"
+                    style={{ borderRadius: 5 }}
+                    onClick={() => setIsShow(true)}
+                  >
+                    Show more
+                  </Button>
+                </div>
+              )}
+            </Space>
+          </Space>
         </Space>
       </Card>
     </>

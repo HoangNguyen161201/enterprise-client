@@ -141,7 +141,6 @@ const managementIdea: NextPageWithLayout = ({
 
   useEffect(() => {
     if (AllIdeas?.ideas && AllIdeas?.ideas.length !== 0) {
-      console.log(AllIdeas);
       getExcel(AllIdeas?.ideas);
       const result = AllIdeas?.ideas.map((idea) => {
         return {
@@ -162,7 +161,6 @@ const managementIdea: NextPageWithLayout = ({
       });
       return setDataSource(result);
     } else {
-      console.log('dfsfd');
       setDataExcel(null);
     }
     return setDataSource([]);
@@ -411,7 +409,7 @@ const managementIdea: NextPageWithLayout = ({
           </Button>,
         ]}
         title={<span className={`${color}`}>Management idea</span>}
-        className="card-b"
+        className="card-b shadow-l"
       >
         <Table
           scroll={{ x: true }}

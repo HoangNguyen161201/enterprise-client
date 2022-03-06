@@ -312,7 +312,6 @@ const hoang: NextPageWithLayout = () => {
                       showNow
                       onChange={(value) => {
                         const time = moment(value).toISOString();
-                        console.log(time);
                         setDate(time);
                       }}
                     />

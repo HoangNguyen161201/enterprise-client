@@ -12,7 +12,7 @@ const handleCatchError = (func) => {
       //Define error
       //Handle castError
       const nameError = error.name;
-      console.log(nameError);
+  
       if (nameError === 'CastError') {
         message = `Resource not found.`;
         statusCode = 400;

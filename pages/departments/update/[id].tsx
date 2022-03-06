@@ -154,7 +154,7 @@ const UpdateDepartmetn: NextPageWithLayout = ({ detailDepartment, detailUser }: 
             Clear
           </a>
         }
-        className='card-b'
+        className='card-b shadow-l'
       >
         <form onSubmit={formSetting.handleSubmit(onSubmit)}>
           <Space direction="vertical" size={20}>

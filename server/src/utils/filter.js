@@ -20,12 +20,10 @@ class Filter {
     return this;
   }
   pagination({ page, limit }) {
-    console.log(page, limit);
     this.query = this.query.skip(page * limit).limit(limit);
     return this;
   }
   sort({ name, NorO }) {
-    console.log(name, NorO);
     this.query = this.query.sort({ [name]: NorO });
     return this;
   }

@@ -53,7 +53,6 @@ const categoryController = {
 
     for (let index = 0; index < categories.length; index++) {
       const categoryItem = categories[index];
-      console.log(categoryItem);
 
       //check valid info input
       const errMsg = categoryValid.categoryFillIn({

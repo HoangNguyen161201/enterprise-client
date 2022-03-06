@@ -282,7 +282,7 @@ const AddDepartment: NextPageWithLayout = ({detailUser}: IAddDepartmentProps) =>
           </Popconfirm>,
         ]}
         title={<span className={`${color}`}>All Departments</span>}
-        className='card-b'
+        className='card-b shadow-l'
       >
         <Space direction="vertical" size={20}></Space>
         <Table

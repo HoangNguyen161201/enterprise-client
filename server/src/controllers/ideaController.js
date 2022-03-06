@@ -431,7 +431,7 @@ const ideaController = {
         statusCode: 400,
       });
     }
-    console.log(id_idea);
+
     await ideaModel.findByIdAndUpdate(id_idea, {
       accept: true,
     });

@@ -20,7 +20,6 @@ export default function recover_password() {
   const recoverPass = authMutation.recoverPass({
     options: {
       onSuccess: (data: ICommon) => {
-        console.log(data);
         message.success({
           content: 'send mail success',
         });

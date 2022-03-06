@@ -22,7 +22,7 @@ const DetailEmployee: NextPageWithLayout = ({
   detailCurrentUser,
 }: IDetailEmployeeProps) => {
 
-  const {color} = useContext(GlobalContext)
+  const {color, desColor} = useContext(GlobalContext)
 
   // get id employee
   const { query } = useRouter();
@@ -97,7 +97,7 @@ const DetailEmployee: NextPageWithLayout = ({
         }}
       />
 
-      <Card title={<span className={`${color}`}>Detail employee</span>} className="card-b">
+      <Card title={<span className={`${color}`}>Detail employee</span>} className="card-b shadow-l">
         <Space direction="vertical" size={20}>
           {dataUser && dataUser.user.role === 'admin' && (
             <Alert
@@ -117,7 +117,7 @@ const DetailEmployee: NextPageWithLayout = ({
                       width: 100,
                       height: 100,
                       border: '2px solid #009F9D',
-                      borderRadius: 4,
+                      borderRadius: 5,
                     }}
                     src={dataDetailUser?.user?.avatar?.url}
                   />
@@ -132,6 +132,7 @@ const DetailEmployee: NextPageWithLayout = ({
                         fontWeight: 'bold',
                         display: 'block',
                       }}
+                      className={`${color}`}
                     >
                       {dataDetailUser?.user?.name}
                     </span>
@@ -146,10 +147,7 @@ const DetailEmployee: NextPageWithLayout = ({
                 </Space>
 
                 <span
-                  style={{
-                    color: 'gray',
-                    fontSize: 14,
-                  }}
+                  className={`${desColor}`}
                 >
                   Employee infor
                 </span>
@@ -178,11 +176,7 @@ const DetailEmployee: NextPageWithLayout = ({
               </Space>
             </Col>
             <Col flex="auto">
-              <span
-                style={{
-                  fontSize: 14,
-                  color: 'gray',
-                }}
+              <span className={`${desColor}`}
               >
                 {`Ideas Accept (${(dataIdeasAccept && dataIdeasAccept.ideas.length) || 0} ideas)`}
               </span>
