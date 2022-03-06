@@ -5,7 +5,6 @@ import {
   SearchOutlined,
 } from '@ant-design/icons';
 import {
-  Breadcrumb,
   Button,
   Card,
   DatePicker,
@@ -20,7 +19,9 @@ import {
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import axios, { AxiosError } from 'axios';
+import { BreadCrumb } from 'components/elements/common';
 import { ClientLayout } from 'components/layouts';
+import { GlobalContext } from 'contextApi/globalContext';
 import { IAllIdeas, ICommon, IDetailUser, IIdea, ISubmission } from 'models/apiType';
 import { NextPageWithLayout } from 'models/layoutType';
 import moment from 'moment';
@@ -31,7 +32,7 @@ import { useRouter } from 'next/router';
 import { getCurrentUser } from 'queries/auth';
 import { getAllIdeas } from 'queries/idea';
 import { getallSubmissions } from 'queries/submission';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { CSVLink } from 'react-csv';
 import column from 'utils/configTB';
 
@@ -42,6 +43,8 @@ const managementIdea: NextPageWithLayout = ({
   detailUser: IDetailUser;
   data: IAllIdeas;
 }) => {
+  const { color } = useContext(GlobalContext);
+
   const { push } = useRouter();
   const [_nameById, setNameById] = useState<string | null>(null);
   const [_valueById, setValueById] = useState<string | null>(null);
@@ -103,8 +106,7 @@ const managementIdea: NextPageWithLayout = ({
         });
       })
     );
-    setDataExcel(data)
-    
+    setDataExcel(data);
   };
 
   //Get access token
@@ -139,8 +141,8 @@ const managementIdea: NextPageWithLayout = ({
 
   useEffect(() => {
     if (AllIdeas?.ideas && AllIdeas?.ideas.length !== 0) {
-      console.log(AllIdeas)
-      getExcel(AllIdeas?.ideas)
+      console.log(AllIdeas);
+      getExcel(AllIdeas?.ideas);
       const result = AllIdeas?.ideas.map((idea) => {
         return {
           key: idea._id,
@@ -160,8 +162,8 @@ const managementIdea: NextPageWithLayout = ({
       });
       return setDataSource(result);
     } else {
-      console.log('dfsfd')
-      setDataExcel(null)
+      console.log('dfsfd');
+      setDataExcel(null);
     }
     return setDataSource([]);
   }, [AllIdeas]);
@@ -288,7 +290,7 @@ const managementIdea: NextPageWithLayout = ({
           if (value) return <Tag color="green">Accepted</Tag>;
           return (
             <Button
-            size='small'
+              size="small"
               onClick={() => {
                 setAccept.mutate({ id_idea: record.key });
               }}
@@ -365,10 +367,18 @@ const managementIdea: NextPageWithLayout = ({
       <Head>
         <title>Submissions Page</title>
       </Head>
-      <Breadcrumb>
-        <Breadcrumb.Item>Home</Breadcrumb.Item>
-        <Breadcrumb.Item>Submissions</Breadcrumb.Item>
-      </Breadcrumb>
+      <BreadCrumb
+        data={[
+          {
+            url: '/',
+            label: 'Home',
+          },
+        ]}
+        main={{
+          url: '/management-idea',
+          label: 'Management Idea ',
+        }}
+      />
 
       <Card
         extra={[
@@ -380,10 +390,9 @@ const managementIdea: NextPageWithLayout = ({
                 setNameById(null);
                 setValueById(null);
               } else {
-                setNameById('submission_id'); 
+                setNameById('submission_id');
                 setValueById(value);
               }
-             
             }}
             style={{
               width: 200,
@@ -401,10 +410,11 @@ const managementIdea: NextPageWithLayout = ({
             <CSVLink data={dataExcel || []}>Export excel</CSVLink>
           </Button>,
         ]}
-        title="Submissions"
-        className='card-b'
+        title={<span className={`${color}`}>Management idea</span>}
+        className="card-b"
       >
         <Table
+          scroll={{ x: true }}
           style={{
             overflow: 'auto',
           }}

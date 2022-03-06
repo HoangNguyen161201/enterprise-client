@@ -5,6 +5,7 @@ import { AxiosError } from 'axios';
 import { BreadCrumb } from 'components/elements/common';
 import { Input, Select } from 'components/elements/form';
 import { ClientLayout } from 'components/layouts';
+import { GlobalContext } from 'contextApi/globalContext';
 import { ICommon, IDepartments, IDetailUser } from 'models/apiType';
 import { IOptionSelect } from 'models/elementType';
 import { IUserForm } from 'models/formType';
@@ -24,6 +25,9 @@ export interface IAddEmployeeProps {
 }
 
 const AddEmployee: NextPageWithLayout = ({ allDepartments, detailUser }: IAddEmployeeProps) => {
+ 
+ const {color, color2} = React.useContext(GlobalContext)
+
   //Data select department
   const [departmentSl, setDepartmentSL] = React.useState<IOptionSelect[]>([]);
 
@@ -153,7 +157,7 @@ const AddEmployee: NextPageWithLayout = ({ allDepartments, detailUser }: IAddEmp
       />
 
       <Card
-        title="Add Employee"
+        title={<span className={`${color}`}>Add Employee</span>}
         extra={
           <a href="#" onClick={onClearData}>
             Clear
@@ -230,7 +234,7 @@ const AddEmployee: NextPageWithLayout = ({ allDepartments, detailUser }: IAddEmp
                 justifyContent: 'end',
               }}
             >
-              <Button loading={mutationAddUser.isLoading} htmlType="submit" type="primary">
+              <Button loading={mutationAddUser.isLoading} htmlType="submit" type="primary" style={{borderRadius: 5}} className={`${color2}`}>
                 Add
               </Button>
             </div>

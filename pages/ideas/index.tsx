@@ -120,7 +120,9 @@ const index: NextPageWithLayout = ({ detailUser }) => {
         <Breadcrumb.Item>Ideas</Breadcrumb.Item>
       </Breadcrumb>
 
-      <Card title="View All Ideas" className='card-b'>
+      <Card title="View All Ideas" className='card-b shadow-l' style={{
+        background: 'white',
+      }}>
         <Row wrap={md ? false : true} gutter={[30, 30]}>
           <Col
             span={md ? undefined : 24}

@@ -29,6 +29,7 @@ import { BreadCrumb } from 'components/elements/common';
 import ImportCSV from 'components/elements/common/ImportCSV';
 import { DrawerUpdateUser } from 'components/elements/drawer';
 import { ClientLayout } from 'components/layouts';
+import { GlobalContext } from 'contextApi/globalContext';
 import { IAllUsers, ICommon, IDepartments, IDetailUser, IUser } from 'models/apiType';
 import { IOptionSelect } from 'models/elementType';
 import { IUserForm } from 'models/formType';
@@ -54,6 +55,8 @@ const Employees: NextPageWithLayout = ({
   allDepartments,
   detailUser,
 }: IEmployeesProps) => {
+  const { color, color2, darkMode } = React.useContext(GlobalContext);
+
   //Visibble drawer udpate employee
   const [visible, setVisible] = React.useState(false);
 
@@ -513,13 +516,7 @@ const Employees: NextPageWithLayout = ({
             <Popconfirm
               key={'delete'}
               disabled={usersSl == null}
-              icon={
-                <QuestionCircleOutlined
-                  style={{
-                    color: '#07456F',
-                  }}
-                />
-              }
+              icon={<QuestionCircleOutlined />}
               title="Are you sure?"
               okButtonProps={{
                 onClick: async () => deleteManyUser(usersSl as string[]),
@@ -533,11 +530,12 @@ const Employees: NextPageWithLayout = ({
               </Button>
             </Popconfirm>,
           ]}
-          title="All Employees"
-          style={{ width: '100%', marginTop: '20px' }}
+          title={<span className={`${color}`}>All Employees</span>}
+          className="card-b"
         >
           <Space direction="vertical" size={20}>
             <Table
+              scroll={{ x: true }}
               rowSelection={{
                 type: 'checkbox',
                 getCheckboxProps: (record) => ({

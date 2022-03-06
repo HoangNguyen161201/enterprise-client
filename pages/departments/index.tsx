@@ -11,6 +11,7 @@ import { ColumnsType } from 'antd/lib/table';
 import { AxiosError } from 'axios';
 import { BreadCrumb } from 'components/elements/common';
 import { ClientLayout } from 'components/layouts';
+import { GlobalContext } from 'contextApi/globalContext';
 import { ICommon, IDetailUser } from 'models/apiType';
 import { NextPageWithLayout } from 'models/layoutType';
 import { departmentMutation } from 'mutations/department';
@@ -18,7 +19,7 @@ import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { getAllDepartments, getCurrentUser } from 'queries';
-import { useEffect as UseEffect, useMemo as UseMemo, useState as UseState } from 'react';
+import { useContext, useEffect as UseEffect, useMemo as UseMemo, useState as UseState } from 'react';
 import column from 'utils/configTB';
 
 export interface IAddDepartmentProps {
@@ -26,6 +27,9 @@ export interface IAddDepartmentProps {
 }
 
 const AddDepartment: NextPageWithLayout = ({detailUser}: IAddDepartmentProps) => {
+  
+  const {color} = useContext(GlobalContext)
+
   // get all departments
   const [departments, setDepartments] = UseState<any>([]);
 
@@ -277,11 +281,12 @@ const AddDepartment: NextPageWithLayout = ({detailUser}: IAddDepartmentProps) =>
             </Button>
           </Popconfirm>,
         ]}
-        title="All Departments"
+        title={<span className={`${color}`}>All Departments</span>}
         className='card-b'
       >
         <Space direction="vertical" size={20}></Space>
         <Table
+        scroll={{x: true}}
           rowSelection={{
             type: 'checkbox',
             getCheckboxProps: (record) => ({

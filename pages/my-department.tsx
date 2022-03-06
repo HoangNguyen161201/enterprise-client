@@ -1,24 +1,26 @@
 //Import
 import { ArrowDownOutlined } from '@ant-design/icons';
-import { Breadcrumb, Button, Card, message, Row, Space } from 'antd';
+import { Button, Card, message, Row, Space } from 'antd';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect, useEffect as UseEffect, useState } from 'react';
-import { FieldCard, User } from 'components/elements/common';
+import { useContext, useEffect, useEffect as UseEffect, useState } from 'react';
+import { BreadCrumb, FieldCard, User } from 'components/elements/common';
 import { ClientLayout } from 'components/layouts';
 import { NextPageWithLayout } from 'models/layoutType';
 import { IDetailDepartment } from 'models/apiType';
 import { IUser } from 'models/apiType';
 import { getCurrentUser, getDepartmentByUser } from 'queries';
+import { GlobalContext } from 'contextApi/globalContext';
 
 export interface IDetailDepartmentProps {
   detailMyDepartment: IDetailDepartment;
 }
 
 const DetailDepartment: NextPageWithLayout = ({ detailMyDepartment }: IDetailDepartmentProps) => {
-  const { query } = useRouter();
+  const {color} = useContext(GlobalContext)
+
 
   //Is show button load more
   const [isShow, setIsShow] = useState(false);
@@ -64,12 +66,17 @@ const DetailDepartment: NextPageWithLayout = ({ detailMyDepartment }: IDetailDep
         <title> My Department Page</title>
       </Head>
 
-      <Breadcrumb>
-        <Breadcrumb.Item>Home</Breadcrumb.Item>
-        <Breadcrumb.Item>My Department</Breadcrumb.Item>
-      </Breadcrumb>
+      <BreadCrumb data={[
+        {
+          url: '/',
+          label: 'Home'
+        }
+      ]} main={{
+        url: '/my-department',
+        label: 'My department'
+      }}/>
 
-      <Card title="View My Department" className='card-b'>
+      <Card title={<span className={`${color}`}>View My Department</span>} className='card-b'>
         <h2 className="font-3">Information:</h2>
         <Row gutter={[30, 20]}>
           <FieldCard

@@ -1,21 +1,24 @@
 import { Space, DatePicker } from 'antd';
-import React from 'react';
+import React, { useContext } from 'react';
 import { Controller } from 'react-hook-form';
 import moment from 'moment'
 import { IInput } from 'models/formType';
+import { GlobalContext } from 'contextApi/globalContext';
 
 export const DateInput = ({
   formSetting,
   name,
   label,
   require = true,
+  dark= true
 }: IInput) => {
+  const {desColor} = useContext(GlobalContext)
   const {
     formState: { errors },
     control,
   } = formSetting;return (
     <Space direction="vertical" size={'small'}>
-      <span className="font-1">
+      <span className={dark ? `font-1 ${desColor}`: 'font-1 des-1'}>
         {label} {require && <span className="color-red">*</span>}
       </span>
       <Controller

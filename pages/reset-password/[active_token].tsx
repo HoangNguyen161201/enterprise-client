@@ -2,14 +2,16 @@ import { UnlockOutlined } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button, Space } from 'antd';
 import { Input } from 'components/elements/form';
+import { GlobalContext } from 'contextApi/globalContext';
 import { IResetPass } from 'models/formType';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { validateResetPass } from 'utils/validate';
 
 export default function ResetPass() {
+  const {handleLightMode} = useContext(GlobalContext)
 
   // setting form
   const formSetting = useForm<IResetPass>({
@@ -24,6 +26,10 @@ export default function ResetPass() {
   const onSubmit = (values: any) => {
       console.log(values)
   };
+
+  useEffect(()=> {
+    handleLightMode()
+  }, [])
 
   const { query } = useRouter();
   return (

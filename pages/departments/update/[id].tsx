@@ -5,6 +5,7 @@ import { AxiosError } from 'axios';
 import { BreadCrumb } from 'components/elements/common';
 import { Input, TextArea } from 'components/elements/form';
 import { ClientLayout } from 'components/layouts';
+import { GlobalContext } from 'contextApi/globalContext';
 import { ICommon, IDetailDepartment, IDetailUser } from 'models/apiType';
 import { NextPageWithLayout } from 'models/layoutType';
 import { departmentMutation } from 'mutations/department';
@@ -13,7 +14,7 @@ import Head from 'next/head';
 import { useRouter as UseRouter } from 'next/router';
 import { getCurrentUser } from 'queries';
 import { getDetailDepartment } from 'queries/department';
-import { useEffect as UseEffect } from 'react';
+import { useContext, useEffect as UseEffect } from 'react';
 import { useForm as UseForm } from 'react-hook-form';
 import { validateAddDepartment } from 'utils/validate';
 
@@ -23,6 +24,9 @@ export interface IUpdateDepartmetnProps {
 }
 
 const UpdateDepartmetn: NextPageWithLayout = ({ detailDepartment, detailUser }: IUpdateDepartmetnProps) => {
+  
+  const { color,color2 } = useContext(GlobalContext);
+  
   //Get id from router to get old data
   const {
     query: { id },
@@ -144,7 +148,7 @@ const UpdateDepartmetn: NextPageWithLayout = ({ detailDepartment, detailUser }: 
       }}/>
 
       <Card
-        title="Update Department"
+        title={<span className={`${color}`}>Update Department</span>}
         extra={
           <a href="#" onClick={onClearData}>
             Clear
@@ -178,7 +182,7 @@ const UpdateDepartmetn: NextPageWithLayout = ({ detailDepartment, detailUser }: 
                 justifyContent: 'end',
               }}
             >
-              <Button loading={mutationUpdateDepartment.isLoading} htmlType="submit" type="primary">
+              <Button style={{borderRadius: 5}} className={`${color2}`} loading={mutationUpdateDepartment.isLoading} htmlType="submit" type="primary">
                 Save
               </Button>
             </div>
