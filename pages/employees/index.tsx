@@ -389,8 +389,8 @@ const Employees: NextPageWithLayout = ({
       ...column({
         title: 'active',
       }),
-      render: (value: boolean, record: Partial<IUser>) => (
-        <>
+      render: (value: boolean, record: Partial<IUser>) => {
+        return !record.root && <>
           <Dropdown
             overlay={
               <Menu>
@@ -461,7 +461,7 @@ const Employees: NextPageWithLayout = ({
             </Space>
           </Dropdown>
         </>
-      ),
+      },
     },
   ];
 
