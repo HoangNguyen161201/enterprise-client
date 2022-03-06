@@ -143,7 +143,7 @@ export const Drawer = ({ onClose, ...props }: IProps) => {
             </Link>
           </Menu.Item>
 
-          <Menu.Item
+          {/* <Menu.Item
             key="3"
             icon={<TeamOutlined />}
             onClick={onClose}
@@ -154,7 +154,7 @@ export const Drawer = ({ onClose, ...props }: IProps) => {
             <Link href={'/my-department'}>
               <a>My Department</a>
             </Link>
-          </Menu.Item>
+          </Menu.Item> */}
 
           <SubMenu
             key="sub1"

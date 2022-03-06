@@ -1,4 +1,4 @@
-import { LogoutOutlined, MenuOutlined, ProfileOutlined } from '@ant-design/icons';
+import { LogoutOutlined, MenuOutlined, ProfileOutlined, TeamOutlined } from '@ant-design/icons';
 import { Avatar, Button, Divider, Dropdown, Layout, Menu, message, Space, Switch } from 'antd';
 import { GlobalContext } from 'contextApi/globalContext';
 import { ILogout } from 'models/apiType';
@@ -85,7 +85,14 @@ export const HeaderComponent = () => {
           <a>Profile</a>
         </Link>
       </Menu.Item>
-      <Menu.Item icon={<LogoutOutlined />} key="2" onClick={onLogout}>
+      {dataUser && dataUser.user.role !== 'admin' && (
+        <Menu.Item icon={<TeamOutlined />} key="2">
+          <Link href={'/my-department'}>
+            <a>My Department</a>
+          </Link>
+        </Menu.Item>
+      )}
+      <Menu.Item icon={<LogoutOutlined />} key="3" onClick={onLogout}>
         Logout
       </Menu.Item>
     </Menu>
@@ -114,7 +121,9 @@ export const HeaderComponent = () => {
                 color: '#009F9D',
               }}
             >
-              CMS
+              <Link href={'/'}>
+                <a>CMS</a>
+              </Link>
             </span>
 
             <MenuOutlined
@@ -133,7 +142,7 @@ export const HeaderComponent = () => {
               }}
               checkedChildren={
                 <BsSun
-                   className={`${color2}`}
+                  className={`${color2}`}
                   style={{
                     paddingTop: 4,
                   }}
@@ -141,7 +150,8 @@ export const HeaderComponent = () => {
                 />
               }
               unCheckedChildren={
-                <BsMoon className={`${color2}`}
+                <BsMoon
+                  className={`${color2}`}
                   style={{
                     paddingTop: 4,
                   }}
