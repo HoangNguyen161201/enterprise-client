@@ -1,16 +1,21 @@
 //Import
 import { IdcardOutlined, MailOutlined, TeamOutlined } from '@ant-design/icons';
-import { Avatar, Card, Col, Grid, List, message, Row, Space, Tooltip } from 'antd';
+import { Avatar, Card, Col, Grid, Image, List, message, Row, Space, Tooltip } from 'antd';
+import { AxiosError } from 'axios';
 import { BreadCrumb, Infor, ItemIdea } from 'components/elements/common';
 import { ClientLayout } from 'components/layouts';
 import { GlobalContext } from 'contextApi/globalContext';
-import { IDetailUser } from 'models/apiType';
+import { IAvatar, ICommon, IDetailUser, IUser } from 'models/apiType';
 import { NextPageWithLayout } from 'models/layoutType';
+import { EmplMutation } from 'mutations/employee';
+import { fileMutation } from 'mutations/file';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { getCurrentUser, getIdeasAcceptUser } from 'queries';
 import { ChangeEventHandler, useEffect, useEffect as UseEffect, useState, useContext } from 'react';
 import { BsPen, BsPencilSquare } from 'react-icons/bs';
+import { uploadFile } from 'utils/uploadFile';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface IDetailEmployeeProps {
   detailCurrentUser: IDetailUser;
@@ -21,12 +26,13 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
   const { lg } = useBreakpoint();
 
   //State
-  const [avatar, setAvatar] = useState<{
-    public_id: string;
-    url: string;
-    [index: string]: any;
-  } | null>(null);
-  const {color, desColor} = useContext(GlobalContext) 
+  const [avatar, setAvatar] = useState<IAvatar | null>(null);
+
+  //Color dark mode
+  const { color, desColor } = useContext(GlobalContext);
+
+  //loading upload avtar
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   //Get access token
   const {
@@ -44,6 +50,7 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
       setAvatar(dataUser.user.avatar);
     }
   }, [dataUser]);
+
   //Get Idea accept user
   const { data: dataIdeasAccept, error: errDataIdeasAccept } = getIdeasAcceptUser({
     user_id: dataUser?.user._id,
@@ -59,10 +66,85 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
     }
   }, [errorGetUser]);
 
+  //  Mutation call api to add file
+  const mutationDeleteFiles = fileMutation.delete({
+    options: {},
+  });
+
+  //  mutation call api to update avatar
+  const mutationUpdateAvatarUser = EmplMutation.updateAvatar({
+    options: {
+      onSuccess: (data: ICommon) => {
+        message.success({
+          content: data.msg,
+        });
+
+        //Delete old avatar
+        if (avatar && avatar?.cloudinary_id) {
+          mutationDeleteFiles.mutate({ tag: avatar?.cloudinary_id });
+        }
+
+        //Refetch data user
+        dataUserRefetch();
+      },
+      onError: (error: AxiosError) => {
+        message.error({
+          content: error.response?.data.err || 'Update avatar false.',
+        });
+      },
+    },
+    dataUserRefetch: dataUserRefetch,
+    token: dataUser?.accessToken.token,
+  });
+
   //handle change avatar
-  const onChangeAvatar: ChangeEventHandler<HTMLInputElement> = (e) => {
+  const onChangeAvatar: ChangeEventHandler<HTMLInputElement> = async (e) => {
     if (e.target.files && e.target.files.length > 0) {
-      console.log(e.target.files[0]);
+      const files: File[] = [e.target.files[0]];
+      //set loading
+      setIsLoading(true);
+
+      //Check size
+      if (files[0].size >= 10485760) {
+        message.error({
+          content: 'File should be less than 10MB in size.',
+        });
+      }
+
+      //Set cloud dinary id files
+      const cloudinary_id = uuidv4();
+
+      //Up files
+      await uploadFile(files, [cloudinary_id], true)
+        .then((filesResult) => {
+          //Check exist result and get data avatar result
+          if (Array.isArray(filesResult) && filesResult[0]) {
+            //set avatar upload
+            const avatarUpload: IAvatar = {
+              url: filesResult[0]?.url,
+              public_id: filesResult[0]?.public_id,
+              cloudinary_id: cloudinary_id,
+            };
+
+            //Update avatar database
+            mutationUpdateAvatarUser.mutate({
+              user: dataUser?.user as IUser,
+              avatar: avatarUpload,
+            });
+          } else {
+            message.error({
+              content: 'Update Avatar wrong.',
+            });
+          }
+        })
+        .catch((err) => {
+          message.error({
+            content: 'Update Avatar wrong.',
+          });
+        });
+
+      //set loading
+      setIsLoading(false);
     }
   };
 
@@ -92,16 +174,19 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
               <Space size={20} direction="vertical">
                 <Space size={20} wrap>
                   <Space align="end">
-                    <Avatar
-                      shape="square"
-                      style={{
-                        width: 100,
-                        height: 100,
-                        border: '2px solid #009F9D',
-                        borderRadius: 4,
-                      }}
-                      src={avatar?.url}
-                    />
+                   
+                      <Image
+                        style={{
+                          width: 100,
+                          height: 100,
+                          objectFit: 'cover',
+                          padding: 0,
+                          margin: 0,
+                          boxShadow: '36px 23px 46px -9px rgba(0,0,0,0.07)'
+                        }}
+                        src={avatar?.url}
+                      />
+
                     <Tooltip title="Update Avatar">
                       <label
                         htmlFor="upload_avatar"
@@ -129,15 +214,11 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
                     >
                       {dataUser?.user?.name}
                     </span>
-                    <span className={`${desColor}`}>
-                      {dataUser?.user?.role}
-                    </span>
+                    <span className={`${desColor}`}>{dataUser?.user?.role}</span>
                   </div>
                 </Space>
 
-                <span className={`${desColor}`}>
-                  Employee infor
-                </span>
+                <span className={`${desColor}`}>Employee infor</span>
                 <Infor
                   color="#009F9D"
                   Icon={IdcardOutlined}

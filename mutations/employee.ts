@@ -1,5 +1,5 @@
 import { AxiosError } from 'axios';
-import { IMutation, IUser } from 'models/apiType';
+import { IAvatar, IMutation, IUser } from 'models/apiType';
 import { IUserForm } from 'models/formType';
 import { useMutation } from 'react-query';
 import { deleteData, postData, putData } from '../utils/fetchData';
@@ -39,13 +39,13 @@ export const EmplMutation = {
   },
 
   addMany: ({ options, dataUserRefetch, token }: IMutation) => {
-    return useMutation<any, AxiosError, {users:  Partial<IUser>[]}>(
-      ({users}) => {
+    return useMutation<any, AxiosError, { users: Partial<IUser>[] }>(
+      ({ users }) => {
         dataUserRefetch && dataUserRefetch();
         return postData({
           url: '/api/users/add-many',
           body: {
-            users
+            users,
           },
           token,
         });
@@ -73,6 +73,25 @@ export const EmplMutation = {
       }
     );
   },
+
+  updateAvatar: ({ options, dataUserRefetch, token }: IMutation) => {
+    return useMutation<any, AxiosError, { user: IUser; avatar: IAvatar }>(
+      ({ user, avatar }) => {
+        dataUserRefetch && dataUserRefetch();
+        return putData({
+          url: `/api/users/avatar/${user._id}`,
+          body: {
+            avatar,
+          },
+          token,
+        });
+      },
+      {
+        ...options,
+      }
+    );
+  },
+
   delete: ({ options, dataUserRefetch, token }: IMutation) => {
     return useMutation<any, AxiosError, Partial<IUserForm>>(
       ({ id }) => {

@@ -1,8 +1,9 @@
-export const uploadFile = async (files: File[], tags: String[], avatar: false)=> {
+export const uploadFile = async (files: File[], tags: String[], avatar: boolean)=> {
+    console.log("sdfasdf", files);
+    
     const data: any = []
     await Promise.all(
         files.map(async (file) => {
-            console.log(file)
             return new Promise(async (resolve) => {
                 const formData = new FormData()
                 formData.append('file', file)

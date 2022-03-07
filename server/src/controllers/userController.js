@@ -201,7 +201,10 @@ const userController = {
     const { name, email, role, department_id } = req.body;
 
     //check user exist in system
-    const user = await userModel.findById(id);
+    const user = await userModel.findOne({
+      _id: id,
+      deleted: false,
+    });
 
     if (!user)
       return res.status(400).json({
@@ -283,6 +286,33 @@ const userController = {
     return res.status(200).json({
       statusCode: 200,
       msg: 'Update Success',
+    });
+  }),
+
+  updateAvatar: catchAsyncError( async (req, res) => {
+    const { user_id } = req.params;
+    const { avatar } = req.body;
+    console.log(avatar);
+
+    //check user exist in system
+    const user = await userModel.findOne({
+      _id: user_id,
+      deleted: false,
+    });
+    
+    if (!user)
+      return res.status(400).json({
+        err: 'The User is does not exist',
+        statusCode: 400,
+      });
+
+    //Update avatar
+    user.avatar = avatar;
+    user.save();
+
+    return res.status(200).json({
+      statusCode: 200,
+      msg: 'Update Avatar Success.',
     });
   }),
 
