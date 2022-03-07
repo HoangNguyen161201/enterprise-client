@@ -14,7 +14,7 @@ const download = async (req: NextApiRequest, res: NextApiResponse) => {
     resource_type: 'raw',
   })
 
-  res.status(200).json({
+  return res.status(200).json({
     statusCode: 200,
     msg: 'Download file success',
     url

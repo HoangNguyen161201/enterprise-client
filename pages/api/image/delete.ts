@@ -21,7 +21,7 @@ const deleteFile = async (req: NextApiRequest, res: NextApiResponse) => {
       resource_type: 'raw',
     });
 
-  res.status(200).json({
+  return res.status(200).json({
     statusCode: 200,
     msg: 'delete file success',
   });
