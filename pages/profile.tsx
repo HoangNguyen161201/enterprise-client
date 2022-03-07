@@ -1,26 +1,15 @@
 //Import
 import { IdcardOutlined, MailOutlined, TeamOutlined } from '@ant-design/icons';
-import {
-  Avatar,
-  Breadcrumb,
-  Button,
-  Card,
-  Col,
-  Grid,
-  List,
-  message,
-  Row,
-  Space,
-  Tooltip,
-} from 'antd';
-import { Infor, ItemIdea } from 'components/elements/common';
+import { Avatar, Card, Col, Grid, List, message, Row, Space, Tooltip } from 'antd';
+import { BreadCrumb, Infor, ItemIdea } from 'components/elements/common';
 import { ClientLayout } from 'components/layouts';
+import { GlobalContext } from 'contextApi/globalContext';
 import { IDetailUser } from 'models/apiType';
 import { NextPageWithLayout } from 'models/layoutType';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { getCurrentUser, getIdeasAcceptUser } from 'queries';
-import { ChangeEventHandler, useEffect, useEffect as UseEffect, useState } from 'react';
+import { ChangeEventHandler, useEffect, useEffect as UseEffect, useState, useContext } from 'react';
 import { BsPen, BsPencilSquare } from 'react-icons/bs';
 
 export interface IDetailEmployeeProps {
@@ -37,6 +26,7 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
     url: string;
     [index: string]: any;
   } | null>(null);
+  const {color, desColor} = useContext(GlobalContext) 
 
   //Get access token
   const {
@@ -60,8 +50,6 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
     accessToken: dataUser?.accessToken.token,
   });
 
-  console.log(dataIdeasAccept);
-
   //Check exist and show error
   UseEffect(() => {
     if (errorGetUser) {
@@ -84,12 +72,20 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
         <title>Profile Page</title>
       </Head>
 
-      <Breadcrumb>
-        <Breadcrumb.Item>Home</Breadcrumb.Item>
-        <Breadcrumb.Item>Profile</Breadcrumb.Item>
-      </Breadcrumb>
+      <BreadCrumb
+        data={[
+          {
+            url: '/',
+            label: 'Home',
+          },
+        ]}
+        main={{
+          url: '/profile',
+          label: 'Profile',
+        }}
+      />
 
-      <Card title="View Profile" className="card-b">
+      <Card title={<span className={`${color}`}>View Profile</span>} className="card-b shadow-l">
         <Space direction="vertical" size={20}>
           <Row wrap={!lg} gutter={[30, 30]}>
             <Col flex={lg ? '400px' : undefined} span={lg ? undefined : 24}>
@@ -129,25 +125,17 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
                         fontWeight: 'bold',
                         display: 'block',
                       }}
+                      className={`${color}`}
                     >
                       {dataUser?.user?.name}
                     </span>
-                    <span
-                      style={{
-                        color: 'gray',
-                      }}
-                    >
+                    <span className={`${desColor}`}>
                       {dataUser?.user?.role}
                     </span>
                   </div>
                 </Space>
 
-                <span
-                  style={{
-                    color: 'gray',
-                    fontSize: 14,
-                  }}
-                >
+                <span className={`${desColor}`}>
                   Employee infor
                 </span>
                 <Infor
@@ -175,12 +163,7 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
               </Space>
             </Col>
             <Col flex="auto">
-              <span
-                style={{
-                  fontSize: 14,
-                  color: 'gray',
-                }}
-              >
+              <span className={`${desColor}`}>
                 {`Ideas Accept (${(dataIdeasAccept && dataIdeasAccept.ideas.length) || 0} ideas)`}
               </span>
               <List

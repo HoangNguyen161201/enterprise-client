@@ -121,7 +121,7 @@ const staticController = {
         $limit: Number(_limit) || 5
       }
     ])
-    console.log(options)
+  
     const data = await ideaModel.aggregate(options)
 
     const result = data.map(item => {
@@ -303,7 +303,7 @@ const staticController = {
       $count: 'count'
     }])
     const data = await ideaModel.aggregate(options)
-    console.log(data)
+
     const result = data[0].count || 0
     return res.status(200).json({
       msg: `${result} out of ${count_user} people contributed ideas`,

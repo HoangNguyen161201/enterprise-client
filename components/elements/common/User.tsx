@@ -3,8 +3,11 @@ import { Button, Col, Image, Space } from 'antd';
 import { IStaff } from 'models/elementType';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { useContext } from 'react';
+import { GlobalContext } from 'contextApi/globalContext';
 
 export const User = ({ image, name, role, employee_id, xs, sm, lg, xl, id }: IStaff) => {
+  const {color2} = useContext(GlobalContext)
   return (
     <Col xs={xs} sm={sm} lg={lg} xl={xl}>
       <motion.div
@@ -23,6 +26,7 @@ export const User = ({ image, name, role, employee_id, xs, sm, lg, xl, id }: ISt
           padding: 20,
           boxShadow: '36px 23px 46px -9px rgba(0,0,0,0.06)',
           border: '3px solid white',
+          background: 'white'
         }}
       >
         <Image
@@ -49,7 +53,7 @@ export const User = ({ image, name, role, employee_id, xs, sm, lg, xl, id }: ISt
           >
             <span style={{ color: 'gray' }}>{role}</span>
             <Link href={`/employees/detail/${id}`} passHref>
-              <Button shape="circle" type="primary" icon={<EyeOutlined />} />
+              <Button shape="circle" type="primary" icon={<EyeOutlined className={`${color2}`}/>} />
             </Link>
           </Space>
         </Space>

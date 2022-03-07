@@ -1,5 +1,6 @@
 import { LinkOutlined } from '@ant-design/icons';
 import { Space, Tooltip } from 'antd';
+import { GlobalContext } from 'contextApi/globalContext';
 import Link from 'next/link';
 import * as React from 'react';
 
@@ -12,6 +13,7 @@ export interface IAppProps {
 }
 
 export const Infor = ({ color, Icon, title, url, titleTooltip }: IAppProps) => {
+  const {darkMode, color: darkColor} = React.useContext(GlobalContext)
   return (
     <>
       <Tooltip title={titleTooltip}>
@@ -20,7 +22,7 @@ export const Infor = ({ color, Icon, title, url, titleTooltip }: IAppProps) => {
             style={{
               width: 36,
               height: 36,
-              background: `${color}15`,
+              background: darkMode ? 'white': `${color}15`,
               justifyContent: 'center',
               borderRadius: '50%',
             }}
@@ -31,7 +33,7 @@ export const Infor = ({ color, Icon, title, url, titleTooltip }: IAppProps) => {
               }}
             />
           </Space>
-          <span>{title}</span>
+          <span className={`${darkColor}`}>{title}</span>
           {url && (
             <Link href={url}>
               <a>

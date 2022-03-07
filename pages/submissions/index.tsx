@@ -62,7 +62,6 @@ const index: NextPageWithLayout = ({ result, detailUser }: submisionPage) => {
 
   UseEffect(() => {
     timeOutSearchTime = setTimeout(() => {
-      console.log(searchDate);
       setDate(searchDate);
       setPage(1);
     }, 1000);
@@ -247,7 +246,7 @@ const index: NextPageWithLayout = ({ result, detailUser }: submisionPage) => {
             />
           </Space>
         }
-        className='card-b'
+        className='card-b shadow-l'
       >
         <DrawerSubm
           imgSubmission={imgSubmission}

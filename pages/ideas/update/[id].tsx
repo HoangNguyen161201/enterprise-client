@@ -201,7 +201,6 @@ const DetailSubmission: NextPageWithLayout = ({
   const onRemoveFileOld = (index: number) => {
     //set old files upload to state will remove
     setOldFilesRemoveUpload([oldFilesUpload[index], ...oldFilesRemoveUpload]);
-    console.log(oldFilesRemoveUpload);
 
     const newOldFilesUpload = oldFilesUpload.filter((file, indexFile) => {
       if (indexFile !== index) {

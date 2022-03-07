@@ -192,12 +192,12 @@ const AddDepartment: NextPageWithLayout = ({detailUser}: IAddDepartmentProps) =>
       },
       {
         ...column({ title: 'update' }),
-        render: (_, record) => (
-          <EditOutlined
+        render: (_, record) => {
+          return !record.root && <EditOutlined
             onClick={() => push(`/departments/update/${record.key}`, undefined, { shallow: true })}
             style={{ color: '#1890ff' }}
           />
-        ),
+        },
       },
       {
         ...column({ title: 'remove' }),
@@ -282,7 +282,7 @@ const AddDepartment: NextPageWithLayout = ({detailUser}: IAddDepartmentProps) =>
           </Popconfirm>,
         ]}
         title={<span className={`${color}`}>All Departments</span>}
-        className='card-b'
+        className='card-b shadow-l'
       >
         <Space direction="vertical" size={20}></Space>
         <Table

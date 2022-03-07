@@ -412,7 +412,6 @@ const AssignDepartment: NextPageWithLayout = ({
             title="Are you sure?"
             okButtonProps={{
               onClick: async () => {
-                console.log(staffsSl);
                 await dataUserRefetch();
                 setIsLoadingDlAll(true);
                 handleDlAll.mutate(staffsSl);
@@ -428,7 +427,7 @@ const AssignDepartment: NextPageWithLayout = ({
           </Popconfirm>,
         ]}
         title={<span className={`${color}`}>Assign Department</span>}
-        className="card-b"
+        className="card-b shadow-l"
       >
         <Space direction="vertical">
           <span className={`font-2 ${desColor}`}>Information</span>

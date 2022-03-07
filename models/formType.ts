@@ -15,6 +15,7 @@ export interface ILogin {
   role: string;
 }
 
+
 export interface IDepartmentForm {
   id?: string;
   name: string;

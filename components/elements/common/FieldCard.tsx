@@ -1,17 +1,19 @@
 import { EyeOutlined } from '@ant-design/icons';
 import { Col, Space } from 'antd';
-import React from 'react';
+import React, { useContext } from 'react';
 import { IFieldCard } from 'models/elementType';
 import Link from 'next/link';
+import { GlobalContext } from 'contextApi/globalContext';
 
 export const FieldCard = ({ label, content, view, xs = 24, xl = 12, lg, user_id }: IFieldCard) => {
+  const {desColor, darkMode} = useContext(GlobalContext)
   return (
     <Col xs={xs} xl={xl} lg={lg}>
-      <p style={{ color: 'gray' }}>{label}</p>
+      <p className={`font-2 ${desColor}`}>{label}</p>
       <Space
         style={{
           borderRadius: '4px',
-          background: content ? '#07456F10' : '#ffdbdb85',
+          background: darkMode ? '#FFFFFF' : content ? '#07456F10' : '#ffdbdb85',
           width: '100%',
           padding: '10px 20px',
           display: 'flex',

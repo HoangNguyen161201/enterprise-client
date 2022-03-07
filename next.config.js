@@ -6,7 +6,8 @@ const nextConfig = {
     CLOUD_NAME: 'hoang161201',
     API_KEY: '127883878126518',
     API_SECRET: 'xZXAKvbsWtkYgsZZhG8OQrv5Kqs',
-    UPLOAD_PRESET: 'ideaSubmission'
+    UPLOAD_PRESET: 'ideaSubmission',
+    UPLOAD_PRESET_AVATAR: 'avatar',
   },
 };
 

@@ -149,7 +149,6 @@ const Employees: NextPageWithLayout = ({
     }
     setDataSourceUsers(newDataSourceUsers);
   }, [dataAllUsers]);
-  console.log(usersSl);
 
   //Check exist and show error
   React.useEffect(() => {
@@ -390,8 +389,8 @@ const Employees: NextPageWithLayout = ({
       ...column({
         title: 'active',
       }),
-      render: (value: boolean, record: Partial<IUser>) => (
-        <>
+      render: (value: boolean, record: Partial<IUser>) => {
+        return !record.root && <>
           <Dropdown
             overlay={
               <Menu>
@@ -462,7 +461,7 @@ const Employees: NextPageWithLayout = ({
             </Space>
           </Dropdown>
         </>
-      ),
+      },
     },
   ];
 
@@ -484,7 +483,6 @@ const Employees: NextPageWithLayout = ({
 
     //Post add data user
     mutationUpdateUser.mutate({ user: dataForm });
-    console.log(dataForm);
   };
 
   return (
@@ -531,7 +529,7 @@ const Employees: NextPageWithLayout = ({
             </Popconfirm>,
           ]}
           title={<span className={`${color}`}>All Employees</span>}
-          className="card-b"
+          className="card-b shadow-l" 
         >
           <Space direction="vertical" size={20}>
             <Table

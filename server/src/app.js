@@ -6,7 +6,6 @@ const db = require('./configs/connectDb');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const mainRouter = require('./routes/mainRouter');
-const sendMail = require('./utils/sendEmail');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 
@@ -27,7 +26,6 @@ const io = new Server(httpServer, {
 });
 
 io.on('connection', (socket) => {
-  console.log('connection');
   socket.emit('status', 'Hello from Socket.io');
 
   socket.on('disconnect', () => {

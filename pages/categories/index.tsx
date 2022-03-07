@@ -254,7 +254,7 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
           </Button>,
         ]}
         title={<span className={`${color}`}>All Categories</span>}
-        className="card-b"
+        className="card-b shadow-l"
       >
         <Row gutter={[30, 30]}>
           {dataAllCategories?.categories &&

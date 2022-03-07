@@ -90,7 +90,7 @@ const DetailDepartment: NextPageWithLayout = ({
         }}
       />
 
-      <Card title={<span className={`${color}`}>View Detail Department</span>} className="card-b">
+      <Card title={<span className={`${color}`}>View Detail Department</span>} className="card-b shadow-l">
         <Space direction="vertical" size={30}>
           <Space direction="vertical" size={10}>
             <span className={`font-2 ${desColor}`}>Information</span>
