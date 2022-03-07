@@ -1,6 +1,18 @@
 //Import
 import { IdcardOutlined, MailOutlined, TeamOutlined } from '@ant-design/icons';
-import { Avatar, Breadcrumb, Card, Col, Grid, List, message, Row, Space } from 'antd';
+import {
+  Avatar,
+  Breadcrumb,
+  Button,
+  Card,
+  Col,
+  Grid,
+  List,
+  message,
+  Row,
+  Space,
+  Tooltip,
+} from 'antd';
 import { Infor, ItemIdea } from 'components/elements/common';
 import { ClientLayout } from 'components/layouts';
 import { IDetailUser } from 'models/apiType';
@@ -8,7 +20,8 @@ import { NextPageWithLayout } from 'models/layoutType';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { getCurrentUser, getIdeasAcceptUser } from 'queries';
-import { useEffect as UseEffect } from 'react';
+import { ChangeEventHandler, useEffect, useEffect as UseEffect, useState } from 'react';
+import { BsPen, BsPencilSquare } from 'react-icons/bs';
 
 export interface IDetailEmployeeProps {
   detailCurrentUser: IDetailUser;
@@ -17,6 +30,13 @@ export interface IDetailEmployeeProps {
 const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmployeeProps) => {
   const { useBreakpoint } = Grid;
   const { lg } = useBreakpoint();
+
+  //State
+  const [avatar, setAvatar] = useState<{
+    public_id: string;
+    url: string;
+    [index: string]: any;
+  } | null>(null);
 
   //Get access token
   const {
@@ -28,6 +48,12 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
     dataUserRefetch();
   }, []);
 
+  //Set avatar when have current user
+  useEffect(() => {
+    if (dataUser?.user?.avatar) {
+      setAvatar(dataUser.user.avatar);
+    }
+  }, [dataUser]);
   //Get Idea accept user
   const { data: dataIdeasAccept, error: errDataIdeasAccept } = getIdeasAcceptUser({
     user_id: dataUser?.user._id,
@@ -45,6 +71,13 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
     }
   }, [errorGetUser]);
 
+  //handle change avatar
+  const onChangeAvatar: ChangeEventHandler<HTMLInputElement> = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      console.log(e.target.files[0]);
+    }
+  };
+
   return (
     <>
       <Head>
@@ -56,22 +89,35 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
         <Breadcrumb.Item>Profile</Breadcrumb.Item>
       </Breadcrumb>
 
-      <Card title="View Profile" className='card-b'>
+      <Card title="View Profile" className="card-b">
         <Space direction="vertical" size={20}>
           <Row wrap={!lg} gutter={[30, 30]}>
             <Col flex={lg ? '400px' : undefined} span={lg ? undefined : 24}>
               <Space size={20} direction="vertical">
                 <Space size={20} wrap>
-                  <Avatar
-                    shape="square"
-                    style={{
-                      width: 100,
-                      height: 100,
-                      border: '2px solid #009F9D',
-                      borderRadius: 4,
-                    }}
-                    src={dataUser?.user?.avatar?.url}
-                  />
+                  <Space align="end">
+                    <Avatar
+                      shape="square"
+                      style={{
+                        width: 100,
+                        height: 100,
+                        border: '2px solid #009F9D',
+                        borderRadius: 4,
+                      }}
+                      src={avatar?.url}
+                    />
+                    <Tooltip title="Update Avatar">
+                      <label
+                        htmlFor="upload_avatar"
+                        style={{
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <BsPen />
+                      </label>
+                    </Tooltip>
+                    <input onChange={onChangeAvatar} hidden id="upload_avatar" type={'file'} />
+                  </Space>
                   <div
                     style={{
                       height: '100%',
