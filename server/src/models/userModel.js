@@ -37,6 +37,10 @@ const userSchema = new mongoose.Schema(
       type: {
         public_id: String,
         url: String,
+        cloudinary_id: {
+          type: String,
+          default: null,
+        },
       },
     },
     department_id: {

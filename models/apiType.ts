@@ -12,18 +12,18 @@ export interface ICommon {
 }
 
 export interface IStatusIdea extends ICommon {
-  all: number,
-  accept: number,
-  not_accept: number
+  all: number;
+  accept: number;
+  not_accept: number;
 }
 
 export interface IStatusIdea extends ICommon {
   data: {
-    avatar: string
-    name: string
-    _id: string
-    count: number
-  }[]
+    avatar: string;
+    name: string;
+    _id: string;
+    count: number;
+  }[];
 }
 
 //Interface auth
@@ -63,6 +63,12 @@ export interface IDetailDepartment extends ICommon {
 }
 
 //Iterface user
+export interface IAvatar {
+  public_id: string;
+  url: string;
+  cloudinary_id?: string;
+}
+
 export interface IUser {
   id: any;
   _id: any;
@@ -71,12 +77,10 @@ export interface IUser {
   role: string;
   root: boolean;
   email: string;
-  avatar: {
-    public_id: string;
-    url: string;
-  };
+  avatar: IAvatar;
   deleted: boolean;
   department_id?: any;
+  cloudinary_id?: string;
   [index: string]: any;
 }
 
@@ -203,37 +207,37 @@ export interface Ireactions extends ICommon {
 }
 
 export interface IcountAll extends ICommon {
-  count_user: number
-  count_department: number
-  count_idea: number
+  count_user: number;
+  count_department: number;
+  count_idea: number;
 }
 
 export interface IAcceptStatic extends ICommon {
-  data: number[]
+  data: number[];
 }
 
 export interface IIdeaByDate extends ICommon {
   data: {
-    _ids: string[]
-    names: string[]
-    descriptions: string[]
-    count: number[]
-  }
+    _ids: string[];
+    names: string[];
+    descriptions: string[];
+    count: number[];
+  };
 }
 
 export interface IManyIdeas extends ICommon {
   data: {
-    email: string
+    email: string;
     avatar: {
-      public_id: string
-      url: string
-    }
-    count: number
-  }
+      public_id: string;
+      url: string;
+    };
+    count: number;
+  };
 }
 
 export interface IIdeaByYear extends ICommon {
-  data: number[]
+  data: number[];
 }
 
 //Interface comment

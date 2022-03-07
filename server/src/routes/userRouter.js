@@ -32,6 +32,8 @@ userRouter.post('/delete-many', authorization(['admin', 'qa_manager']), userCont
 
 userRouter.put('/:id', authorization(['admin', 'qa_manager']), userController.update);
 
+userRouter.put('/avatar/:user_id', authorization([]), userController.updateAvatar);
+
 userRouter.delete(
   '/remove-assign/:id',
   authorization(['admin', 'qa_manager']),
