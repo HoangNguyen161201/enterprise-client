@@ -11,6 +11,8 @@ const submissionModed = require('../models/submissionModel');
 const commentValid = require('../utils/commentValid');
 const { default: Item } = require('antd/lib/list/Item');
 
+const mailNotice = require('../utils/mailNotice');
+
 const commentController = {
   create: catchAsyncError(async (req, res) => {
     const { content, user_id, idea_id, comment_id, anonymously } = req.body;
@@ -24,7 +26,10 @@ const commentController = {
       });
 
     //Check exist user
-    const user = await userModel.findById(user_id);
+    const user = await userModel.findOne({
+      _id: user_id,
+      deleted: false,
+    });
     if (!user)
       return res.status(400).json({
         statusCode: 400,
@@ -38,6 +43,23 @@ const commentController = {
         statusCode: 400,
         err: 'Idea does not exist in system.',
       });
+
+    //Get author of id
+    const author = await userModel.findOne({
+      _id: idea.user_id,
+      delete: false,
+    });
+
+    //Send mail to author
+    if (author) {
+      //Send mail
+      await mailNotice({
+        email: author.email,
+        subject: `New comment.`,
+        text: `${user.name} just commented on your idea '${idea.title}'.`,
+        html: '',
+      });
+    }
 
     //get submission to check final closure date
     const submission = await submissionModed.findById(idea.submission_id);

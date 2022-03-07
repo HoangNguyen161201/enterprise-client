@@ -197,7 +197,7 @@ export default function ItemComment({
                 '--------------------'
               ) : (
                 <Link href={`/employees/detail/${user._id}`}>
-                  <a className='color-3'>{user.name}</a>
+                  <a className="color-3">{user.name}</a>
                 </Link>
               )}
             </span>
@@ -212,17 +212,19 @@ export default function ItemComment({
           <span>{comment.content}</span>
 
           <Space wrap size={20}>
-            <span
-              style={{
-                textDecoration: 'underline',
-                cursor: 'pointer',
-              }}
-              onClick={() => {
-                setIsShowInput(!isShowInput);
-              }}
-            >
-              {isShowInput ? 'Hide Reply' : 'Rely'}
-            </span>
+            {isMatchFinalTime && (
+              <span
+                style={{
+                  textDecoration: 'underline',
+                  cursor: 'pointer',
+                }}
+                onClick={() => {
+                  setIsShowInput(!isShowInput);
+                }}
+              >
+                {isShowInput ? 'Hide Reply' : 'Rely'}
+              </span>
+            )}
 
             <span
               style={{
