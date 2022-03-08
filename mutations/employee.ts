@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios';
 import { IAvatar, IMutation, IUser } from 'models/apiType';
-import { IUserForm } from 'models/formType';
+import { IContactForm, IUserForm } from 'models/formType';
 import { useMutation } from 'react-query';
 import { deleteData, postData, putData } from '../utils/fetchData';
 
@@ -65,6 +65,22 @@ export const EmplMutation = {
           body: {
             ...user,
           },
+          token,
+        });
+      },
+      {
+        ...options,
+      }
+    );
+  },
+
+  updateInforContact: ({ options, dataUserRefetch, token }: IMutation) => {
+    return useMutation<any, AxiosError, IContactForm>(
+      ({ user_id, ...dataForm }) => {
+        dataUserRefetch && dataUserRefetch();
+        return putData({
+          url: `/api/users/contact/${user_id}`,
+          body: dataForm,
           token,
         });
       },

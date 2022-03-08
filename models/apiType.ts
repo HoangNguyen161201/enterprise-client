@@ -81,6 +81,11 @@ export interface IUser {
   deleted: boolean;
   department_id?: any;
   cloudinary_id?: string;
+  phone?: string;
+  city?: string;
+  country?: string;
+  street?: string;
+  social_networks?: string[];
   [index: string]: any;
 }
 

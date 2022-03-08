@@ -15,7 +15,6 @@ export interface ILogin {
   role: string;
 }
 
-
 export interface IDepartmentForm {
   id?: string;
   name: string;
@@ -46,6 +45,15 @@ export interface IUserForm {
   department_id?: string;
   password?: string;
   cf_password?: string;
+}
+
+export interface IContactForm {
+  user_id: string;
+  social_networks: string[];
+  phone: string;
+  street: string;
+  country: string;
+  city: string;
 }
 
 export interface IIdeaForm {

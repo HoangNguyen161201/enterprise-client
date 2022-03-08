@@ -190,7 +190,7 @@ const ideaController = {
     });
   }),
 
-  getByReaction: catchAsyncError(async (req, res) => {}),
+  
 
   getAll: catchAsyncError(async (req, res) => {
     const {

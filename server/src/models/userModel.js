@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const mongoose_delete = require('mongoose-delete');
+const { stringify } = require('querystring');
 
 //Define schema model
 const userSchema = new mongoose.Schema(
@@ -47,6 +48,29 @@ const userSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'departments',
       default: null,
+    },
+
+    social_networks: {
+      type: [String],
+      default: [],
+    },
+
+    phone: {
+      type: String,
+      default: ""
+    },
+
+    street: {
+      type: String,
+      default: ""
+    },
+    city: {
+      type: String,
+      default: ""
+    },
+    country: {
+      type: String,
+      default: ""
     },
   },
   { timestamps: true }

@@ -1,6 +1,21 @@
 //Import
 import { IdcardOutlined, MailOutlined, TeamOutlined } from '@ant-design/icons';
-import { Avatar, Card, Col, Grid, Image, List, message, Row, Space, Tooltip } from 'antd';
+import {
+  Avatar,
+  Button,
+  Card,
+  Col,
+  Grid,
+  Image,
+  Input,
+  List,
+  message,
+  Modal,
+  Row,
+  Space,
+  Tag,
+  Tooltip,
+} from 'antd';
 import { AxiosError } from 'axios';
 import { BreadCrumb, Infor, ItemIdea } from 'components/elements/common';
 import { ClientLayout } from 'components/layouts';
@@ -16,6 +31,11 @@ import { ChangeEventHandler, useEffect, useEffect as UseEffect, useState, useCon
 import { BsPen, BsPencilSquare } from 'react-icons/bs';
 import { uploadFile } from 'utils/uploadFile';
 import { v4 as uuidv4 } from 'uuid';
+import { SocialIcon } from 'react-social-icons';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
+import TextArea from 'antd/lib/input/TextArea';
+import ItemInfor from 'components/elements/common/ItemInfor';
 
 export interface IDetailEmployeeProps {
   detailCurrentUser: IDetailUser;
@@ -24,6 +44,16 @@ export interface IDetailEmployeeProps {
 const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmployeeProps) => {
   const { useBreakpoint } = Grid;
   const { lg } = useBreakpoint();
+
+  //State infor contact
+  const [socialNetworks, setSocialNetworks] = useState<string[]>([]);
+  const [contentSocialNetwork, setContentSocialNetwork] = useState<string>('');
+  const [inforContact, setInforContact] = useState({
+    country: '',
+    city: '',
+    street: '',
+    phone: '',
+  });
 
   //State
   const [avatar, setAvatar] = useState<IAvatar | null>(null);
@@ -44,10 +74,17 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
     dataUserRefetch();
   }, []);
 
-  //Set avatar when have current user
+  //Set avatar and infor contact when have current user
   useEffect(() => {
-    if (dataUser?.user?.avatar) {
+    if (dataUser?.user) {
       setAvatar(dataUser.user.avatar);
+      setInforContact({
+        phone: dataUser.user.phone ? dataUser.user.phone : '',
+        country: dataUser.user.country ? dataUser.user.country : '',
+        city: dataUser.user.city ? dataUser.user.city : '',
+        street: dataUser.user.street ? dataUser.user.street : '',
+      });
+      setSocialNetworks(dataUser.user.social_networks ? dataUser.user.social_networks : []);
     }
   }, [dataUser]);
 
@@ -148,6 +185,72 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
     }
   };
 
+  //Handle add new social network
+  const onAddNetwork = () => {
+    //Check content input social network
+    if (!contentSocialNetwork) {
+      message.warning({
+        content: 'Please enter field social network and press enter.',
+      });
+    }
+
+    //Add new social network to list
+    setSocialNetworks([...socialNetworks, contentSocialNetwork]);
+    setContentSocialNetwork('');
+  };
+
+  //Handle remove social network
+  const onRemoveNetwork = (index: number) => {
+    const newSocialNetWorks = socialNetworks;
+    newSocialNetWorks.splice(index, 1);
+
+    setSocialNetworks([...newSocialNetWorks]);
+    console.log(socialNetworks);
+  };
+
+  //  mutation call api to update contact infor
+  const mutationUpdateContact = EmplMutation.updateInforContact({
+    options: {
+      onSuccess: (data: ICommon) => {
+        message.success({
+          content: data.msg,
+        });
+
+        dataUserRefetch();
+      },
+      onError: (error: AxiosError) => {
+        message.error({
+          content: error.response?.data.err || 'Update User contact infor false.',
+        });
+      },
+    },
+    dataUserRefetch: dataUserRefetch,
+    token: dataUser?.accessToken.token,
+  });
+
+  //Setting modal
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+    mutationUpdateContact.mutate({
+      user_id: dataUser?.user._id,
+      social_networks: socialNetworks,
+      phone: inforContact.phone,
+      country: inforContact.country,
+      city: inforContact.city,
+      street: inforContact.street,
+    });
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
   return (
     <>
       <Head>
@@ -173,31 +276,40 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
             <Col flex={lg ? '400px' : undefined} span={lg ? undefined : 24}>
               <Space size={20} direction="vertical">
                 <Space size={20} wrap>
-                  <Space align="end">
-                   
-                      <Image
-                        style={{
-                          width: 100,
-                          height: 100,
-                          objectFit: 'cover',
-                          padding: 0,
-                          margin: 0,
-                          boxShadow: '36px 23px 46px -9px rgba(0,0,0,0.07)'
-                        }}
-                        src={avatar?.url}
-                      />
+                  <Space size={20}>
+                    <Image
+                      style={{
+                        width: 100,
+                        height: 100,
+                        objectFit: 'cover',
+                        padding: 0,
+                        margin: 0,
+                        boxShadow: '36px 23px 46px -9px rgba(0,0,0,0.07)',
+                      }}
+                      src={avatar?.url}
+                    />
 
-                    <Tooltip title="Update Avatar">
-                      <label
-                        htmlFor="upload_avatar"
-                        style={{
-                          cursor: 'pointer',
-                        }}
-                      >
-                        <BsPen />
-                      </label>
-                    </Tooltip>
-                    <input onChange={onChangeAvatar} hidden id="upload_avatar" type={'file'} />
+                    <Space direction="vertical" size={20}>
+                      <Tooltip title="Update Avatar">
+                        <label
+                          htmlFor="upload_avatar"
+                          style={{
+                            cursor: 'pointer',
+                          }}
+                        >
+                          <BsPen />
+                          <span
+                            style={{
+                              marginLeft: 10,
+                            }}
+                          >
+                            Edit Avatar
+                          </span>
+                        </label>
+                        <input onChange={onChangeAvatar} hidden id="upload_avatar" type={'file'} accept="image/x-png,image/gif,image/jpeg" />
+                      </Tooltip>
+                      <Button onClick={showModal}>Edit Infor Contact</Button>
+                    </Space>
                   </Space>
                   <div
                     style={{
@@ -241,6 +353,31 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
                       : 'none'
                   }
                 />
+
+                <span className={`${desColor}`}>Basic contact infor</span>
+                <ItemInfor
+                  title="Phone"
+                  content={dataUser?.user.phone ? `+${dataUser.user.phone}` : undefined}
+                />
+                <ItemInfor
+                  title="Address"
+                  content={`${dataUser?.user?.country}, ${dataUser?.user?.city}, ${dataUser?.user?.street}`}
+                />
+
+                <span className={`${desColor}`}>Social network</span>
+                <Space size={20}>
+                  {dataUser?.user.social_networks &&
+                    dataUser?.user.social_networks.map((socialUrl) => (
+                      <SocialIcon
+                        key={socialUrl}
+                        url={socialUrl}
+                        style={{
+                          width: 30,
+                          height: 30,
+                        }}
+                      />
+                    ))}
+                </Space>
               </Space>
             </Col>
             <Col flex="auto">
@@ -256,6 +393,88 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
           </Row>
         </Space>
       </Card>
+
+      <Modal
+        title="Update infor contact"
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <Space direction="vertical" size={20}>
+          <Space direction="vertical">
+            <label>Phone Number:</label>
+            <PhoneInput
+              country={'us'}
+              value={inforContact.phone}
+              onChange={(phone) =>
+                setInforContact({
+                  ...inforContact,
+                  phone: phone,
+                })
+              }
+              inputStyle={{
+                width: '100%',
+              }}
+            />
+          </Space>
+          <Space direction="vertical">
+            <label>Country:</label>
+            <Input
+              value={inforContact.country}
+              onChange={(e) =>
+                setInforContact({
+                  ...inforContact,
+                  country: e.target.value,
+                })
+              }
+              placeholder="Enter your country"
+            />
+          </Space>
+          <Space direction="vertical">
+            <label>City:</label>
+            <Input
+              value={inforContact.city}
+              onChange={(e) =>
+                setInforContact({
+                  ...inforContact,
+                  city: e.target.value,
+                })
+              }
+              placeholder="Enter your city"
+            />
+          </Space>
+          <Space direction="vertical">
+            <label>Street:</label>
+            <TextArea
+              value={inforContact.street}
+              onChange={(e) =>
+                setInforContact({
+                  ...inforContact,
+                  street: e.target.value,
+                })
+              }
+              placeholder="Enter your street"
+            />
+          </Space>
+          <Space direction="vertical">
+            <label>Social networks:</label>
+            <Space wrap size={10}>
+              {socialNetworks &&
+                socialNetworks.map((socialNetwork, index) => (
+                  <Tag key={socialNetwork} closable onClose={() => onRemoveNetwork(index)}>
+                    <div className="tag_URL">{socialNetwork}</div>
+                  </Tag>
+                ))}
+            </Space>
+            <Input
+              placeholder="https://www.example.com/"
+              value={contentSocialNetwork}
+              onChange={(e) => setContentSocialNetwork(e.target.value)}
+              onPressEnter={onAddNetwork}
+            />
+          </Space>
+        </Space>
+      </Modal>
     </>
   );
 };
