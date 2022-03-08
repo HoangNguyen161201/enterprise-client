@@ -41,12 +41,6 @@ ideaRouter.get(
 );
 
 ideaRouter.get(
-  '/reaction',
-  authorization(['qa_manager', 'qa_coordinator', 'department_manager', 'staff']),
-  ideaController.getByReaction
-);
-
-ideaRouter.get(
   '/:id',
   // authorization(['qa_manager', 'qa_coordinator', 'department_manager', 'staff']),
   ideaController.getDetail

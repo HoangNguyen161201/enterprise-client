@@ -35,6 +35,7 @@ import { SocialIcon } from 'react-social-icons';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import TextArea from 'antd/lib/input/TextArea';
+import ItemInfor from 'components/elements/common/ItemInfor';
 
 export interface IDetailEmployeeProps {
   detailCurrentUser: IDetailUser;
@@ -47,6 +48,12 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
   //State infor contact
   const [socialNetworks, setSocialNetworks] = useState<string[]>([]);
   const [contentSocialNetwork, setContentSocialNetwork] = useState<string>('');
+  const [inforContact, setInforContact] = useState({
+    country: '',
+    city: '',
+    street: '',
+    phone: '',
+  });
 
   //State
   const [avatar, setAvatar] = useState<IAvatar | null>(null);
@@ -67,10 +74,17 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
     dataUserRefetch();
   }, []);
 
-  //Set avatar when have current user
+  //Set avatar and infor contact when have current user
   useEffect(() => {
-    if (dataUser?.user?.avatar) {
+    if (dataUser?.user) {
       setAvatar(dataUser.user.avatar);
+      setInforContact({
+        phone: dataUser.user.phone ? dataUser.user.phone : '',
+        country: dataUser.user.country ? dataUser.user.country : '',
+        city: dataUser.user.city ? dataUser.user.city : '',
+        street: dataUser.user.street ? dataUser.user.street : '',
+      });
+      setSocialNetworks(dataUser.user.social_networks ? dataUser.user.social_networks : []);
     }
   }, [dataUser]);
 
@@ -171,21 +185,6 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
     }
   };
 
-  //Setting modal
-  const [isModalVisible, setIsModalVisible] = useState(false);
-
-  const showModal = () => {
-    setIsModalVisible(true);
-  };
-
-  const handleOk = () => {
-    setIsModalVisible(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
-  };
-
   //Handle add new social network
   const onAddNetwork = () => {
     //Check content input social network
@@ -197,6 +196,7 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
 
     //Add new social network to list
     setSocialNetworks([...socialNetworks, contentSocialNetwork]);
+    setContentSocialNetwork('');
   };
 
   //Handle remove social network
@@ -205,6 +205,50 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
     newSocialNetWorks.splice(index, 1);
 
     setSocialNetworks([...newSocialNetWorks]);
+    console.log(socialNetworks);
+  };
+
+  //  mutation call api to update contact infor
+  const mutationUpdateContact = EmplMutation.updateInforContact({
+    options: {
+      onSuccess: (data: ICommon) => {
+        message.success({
+          content: data.msg,
+        });
+
+        dataUserRefetch();
+      },
+      onError: (error: AxiosError) => {
+        message.error({
+          content: error.response?.data.err || 'Update User contact infor false.',
+        });
+      },
+    },
+    dataUserRefetch: dataUserRefetch,
+    token: dataUser?.accessToken.token,
+  });
+
+  //Setting modal
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+    mutationUpdateContact.mutate({
+      user_id: dataUser?.user._id,
+      social_networks: socialNetworks,
+      phone: inforContact.phone,
+      country: inforContact.country,
+      city: inforContact.city,
+      street: inforContact.street,
+    });
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
   };
 
   return (
@@ -262,7 +306,7 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
                             Edit Avatar
                           </span>
                         </label>
-                        <input onChange={onChangeAvatar} hidden id="upload_avatar" type={'file'} />
+                        <input onChange={onChangeAvatar} hidden id="upload_avatar" type={'file'} accept="image/x-png,image/gif,image/jpeg" />
                       </Tooltip>
                       <Button onClick={showModal}>Edit Infor Contact</Button>
                     </Space>
@@ -311,87 +355,28 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
                 />
 
                 <span className={`${desColor}`}>Basic contact infor</span>
-                <Space direction="vertical">
-                  <label>Phone</label>
-                  <Space
-                    style={{
-                      border: '1px solid #009F9D',
-                      width: '100%',
-                      padding: '5px 10px',
-                      borderRadius: 5,
-                      background: 'white',
-                    }}
-                  >
-                    0833876372
-                  </Space>
-                </Space>
-                <Space direction="vertical">
-                  <label>Phone</label>
-                  <Space
-                    style={{
-                      border: '1px solid #009F9D',
-                      width: '100%',
-                      padding: '5px 10px',
-                      borderRadius: 5,
-                      color: 'tomato',
-                      background: 'white',
-                    }}
-                  >
-                    None
-                  </Space>
-                </Space>
+                <ItemInfor
+                  title="Phone"
+                  content={dataUser?.user.phone ? `+${dataUser.user.phone}` : undefined}
+                />
+                <ItemInfor
+                  title="Address"
+                  content={`${dataUser?.user?.country}, ${dataUser?.user?.city}, ${dataUser?.user?.street}`}
+                />
 
                 <span className={`${desColor}`}>Social network</span>
                 <Space size={20}>
-                  <SocialIcon
-                    url="https://www.facebook.com/profile.php?id=100014461876748"
-                    style={{
-                      width: 30,
-                      height: 30,
-                    }}
-                  />
-                  <SocialIcon
-                    url="https://www.facebook.com/profile.php?id=100014461876748"
-                    style={{
-                      width: 30,
-                      height: 30,
-                    }}
-                  />
-                  <SocialIcon
-                    url="https://www.youtube.com/"
-                    style={{
-                      width: 30,
-                      height: 30,
-                    }}
-                  />
-                  <SocialIcon
-                    url="https://www.youtube.com/"
-                    style={{
-                      width: 30,
-                      height: 30,
-                    }}
-                  />
-                  <SocialIcon
-                    url="https://www.youtube.com/"
-                    style={{
-                      width: 30,
-                      height: 30,
-                    }}
-                  />
-                  <SocialIcon
-                    url="https://www.youtube.com/"
-                    style={{
-                      width: 30,
-                      height: 30,
-                    }}
-                  />
-                  <SocialIcon
-                    url="https://www.youtube.com/"
-                    style={{
-                      width: 30,
-                      height: 30,
-                    }}
-                  />
+                  {dataUser?.user.social_networks &&
+                    dataUser?.user.social_networks.map((socialUrl) => (
+                      <SocialIcon
+                        key={socialUrl}
+                        url={socialUrl}
+                        style={{
+                          width: 30,
+                          height: 30,
+                        }}
+                      />
+                    ))}
                 </Space>
               </Space>
             </Col>
@@ -420,8 +405,13 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
             <label>Phone Number:</label>
             <PhoneInput
               country={'us'}
-              value={'+84833876372'}
-              onChange={(phone) => console.log(phone)}
+              value={inforContact.phone}
+              onChange={(phone) =>
+                setInforContact({
+                  ...inforContact,
+                  phone: phone,
+                })
+              }
               inputStyle={{
                 width: '100%',
               }}
@@ -429,15 +419,42 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
           </Space>
           <Space direction="vertical">
             <label>Country:</label>
-            <Input placeholder="Enter your country" />
+            <Input
+              value={inforContact.country}
+              onChange={(e) =>
+                setInforContact({
+                  ...inforContact,
+                  country: e.target.value,
+                })
+              }
+              placeholder="Enter your country"
+            />
           </Space>
           <Space direction="vertical">
             <label>City:</label>
-            <Input placeholder="Enter your city" />
+            <Input
+              value={inforContact.city}
+              onChange={(e) =>
+                setInforContact({
+                  ...inforContact,
+                  city: e.target.value,
+                })
+              }
+              placeholder="Enter your city"
+            />
           </Space>
           <Space direction="vertical">
             <label>Street:</label>
-            <TextArea placeholder="Enter your street" />
+            <TextArea
+              value={inforContact.street}
+              onChange={(e) =>
+                setInforContact({
+                  ...inforContact,
+                  street: e.target.value,
+                })
+              }
+              placeholder="Enter your street"
+            />
           </Space>
           <Space direction="vertical">
             <label>Social networks:</label>

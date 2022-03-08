@@ -684,14 +684,14 @@ const userController = {
   }),
 
   updateContact: catchAsyncError(async (req, res) => {
-    const { id } = req.params;
+    const { user_id } = req.params;
 
     //get info update
     const { social_networks, phone, street, country, city } = req.body;
 
     //check user exist in system
     const user = await userModel.findOne({
-      _id: id,
+      _id: user_id,
       deleted: false,
     });
 
@@ -701,9 +701,10 @@ const userController = {
         statusCode: 400,
       });
 
-    await userModel.findByIdAndUpdate(id, { social_networks, phone, street, country, city });
+    await userModel.findByIdAndUpdate(user_id, { social_networks, phone, street, country, city });
+
     return res.status(200).json({
-      msg: 'Update contact success',
+      msg: 'Update contact success.',
       statusCode: 200,
     });
   }),
