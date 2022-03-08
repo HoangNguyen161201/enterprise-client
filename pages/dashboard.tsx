@@ -1,22 +1,15 @@
-import { AlertOutlined, AuditOutlined, EyeOutlined, UserOutlined } from '@ant-design/icons';
-import { Col, Grid, DatePicker, InputNumber, Row, Space, Select, Avatar, Tag } from 'antd';
+import { AlertOutlined, AuditOutlined, UserOutlined } from '@ant-design/icons';
+import { Col, DatePicker, Grid, InputNumber, Row, Select, Space, Tag } from 'antd';
 import {
-  ArcElement,
-  Chart as ChartJS,
-  Legend,
-  Tooltip,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  PointElement,
-  LineElement,
+  ArcElement, BarElement, CategoryScale, Chart as ChartJS,
+  Legend, LinearScale, LineElement, PointElement, Title, Tooltip
 } from 'chart.js';
-import { Bar } from 'react-chartjs-2';
 import { DoughnutChart, LineChart } from 'components/elements/chart';
 import { CardStatic, Clip, List } from 'components/elements/common';
 import { ClientLayout } from 'components/layouts';
+import { GlobalContext } from 'contextApi/globalContext';
 import { NextPageWithLayout } from 'models/layoutType';
+import moment from 'moment';
 import { getCurrentUser } from 'queries/auth';
 import { getAllDepartments } from 'queries/department';
 import {
@@ -29,12 +22,10 @@ import {
   numberOPC,
   statusIdeas,
   submissions,
-  topView,
+  topView
 } from 'queries/statics';
-import { useContext, useEffect, useState } from 'react';
-import moment from 'moment';
-import Link from 'next/link';
-import { GlobalContext } from 'contextApi/globalContext';
+import { useContext as UseContext, useEffect as UseEffect, useState as UseState } from 'react';
+import { Bar } from 'react-chartjs-2';
 
 ChartJS.register(
   ArcElement,
@@ -48,19 +39,19 @@ ChartJS.register(
   LineElement
 );
 const hoang: NextPageWithLayout = () => {
-  const { useBreakpoint } = Grid;
-  const { lg, md } = useBreakpoint();
+  const { useBreakpoint:  UseBreakpoint} = Grid;
+  const { lg, md } = UseBreakpoint();
 
   //Get access token
   const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
-  const [_date, setDate] = useState<string | null>(null);
-  const [_limit, setLimit] = useState<number>(5);
-  const [limitManyIdea, setLimitManyIdea] = useState<number>(5);
-  const [limitTopView, setLimitTopview] = useState<number>(5);
-  const [_year, setYear] = useState<number>(new Date().getFullYear());
-  const [department_id, setDepartmentId] = useState<string | null>(null);
+  const [_date, setDate] = UseState<string | null>(null);
+  const [_limit, setLimit] = UseState<number>(5);
+  const [limitManyIdea, setLimitManyIdea] = UseState<number>(5);
+  const [limitTopView, setLimitTopview] = UseState<number>(5);
+  const [_year, setYear] = UseState<number>(new Date().getFullYear());
+  const [department_id, setDepartmentId] = UseState<string | null>(null);
 
-  useEffect(() => {
+  UseEffect(() => {
     dataUserRefetch();
   }, []);
 
@@ -70,7 +61,7 @@ const hoang: NextPageWithLayout = () => {
     refetch: refetchDepartment,
   } = getAllDepartments(dataUser?.accessToken.token);
 
-  useEffect(() => {
+  UseEffect(() => {
     if (dataDepartment?.departments[0]) setDepartmentId(dataDepartment.departments[0]._id);
   }, [dataDepartment]);
 
@@ -164,7 +155,7 @@ const hoang: NextPageWithLayout = () => {
     refetch: refetchTopSub,
   } = submissions({ accessToken: dataUser?.accessToken.token });
 
-  const { color, desColor, bgColor, darkMode } = useContext(GlobalContext);
+  const { color, desColor, bgColor, darkMode } = UseContext(GlobalContext);
 
   return (
     <>

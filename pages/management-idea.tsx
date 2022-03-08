@@ -3,6 +3,7 @@ import {
   ProfileOutlined,
   QuestionCircleOutlined,
   SearchOutlined,
+  VerticalAlignBottomOutlined
 } from '@ant-design/icons';
 import {
   Button,
@@ -15,7 +16,7 @@ import {
   Select,
   Space,
   Table,
-  Tag,
+  Tag
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import axios, { AxiosError } from 'axios';
@@ -28,13 +29,18 @@ import moment from 'moment';
 import { IdeaMutaion } from 'mutations/idea';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
+import { useRouter as UseRouter } from 'next/router';
 import { getCurrentUser } from 'queries/auth';
 import { getAllIdeas } from 'queries/idea';
 import { getallSubmissions } from 'queries/submission';
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useContext as UseContext, useEffect as UseEffect, useMemo as UseMemo, useState as UseState } from 'react';
 import { CSVLink } from 'react-csv';
 import column from 'utils/configTB';
+
+// reset data
+var timeOutResetDt: NodeJS.Timeout;
+// reset url download
+var timeOutResetDl: NodeJS.Timeout;
 
 const managementIdea: NextPageWithLayout = ({
   detailUser,
@@ -43,12 +49,13 @@ const managementIdea: NextPageWithLayout = ({
   detailUser: IDetailUser;
   data: IAllIdeas;
 }) => {
-  const { color } = useContext(GlobalContext);
+  const { color } = UseContext(GlobalContext);
 
-  const { push } = useRouter();
-  const [_nameById, setNameById] = useState<string | null>(null);
-  const [_valueById, setValueById] = useState<string | null>(null);
-  const [isLoadingDl, setIsLoadingDl] = useState<{
+  const { push } = UseRouter();
+  const [_nameById, setNameById] = UseState<string | null>(null);
+  const [_valueById, setValueById] = UseState<string | null>(null);
+  const [urlDownload, setUrl] = UseState<string | null>(null);
+  const [isLoadingDl, setIsLoadingDl] = UseState<{
     key: string;
     isLoading: boolean;
     cloudinary_id: null | string;
@@ -57,8 +64,8 @@ const managementIdea: NextPageWithLayout = ({
     isLoading: false,
     cloudinary_id: null,
   });
-  const [dataExcel, setDataExcel] = useState<any>(null);
-  const [dataSource, setDataSource] = useState<
+  const [dataExcel, setDataExcel] = UseState<any>(null);
+  const [dataSource, setDataSource] = UseState<
     | {
         key: string;
         email_avatar: {
@@ -139,32 +146,54 @@ const managementIdea: NextPageWithLayout = ({
     isLoading: isLoadingSbm,
   } = getallSubmissions(dataUser?.accessToken.token);
 
-  useEffect(() => {
-    if (AllIdeas?.ideas && AllIdeas?.ideas.length !== 0) {
-      getExcel(AllIdeas?.ideas);
-      const result = AllIdeas?.ideas.map((idea) => {
-        return {
-          key: idea._id,
-          email_avatar: {
-            email: idea.user_id.email,
-            avatar: idea.user_id.avatar.url,
-          },
-          title: idea.title,
-          view: idea.view,
-          time: moment(idea.createdAt).format('YYYY-MM-DD'),
-          submission: idea.submission_id,
-          accept: idea.accept,
-          detail: '',
-          remove: '',
-          cloudinary_id: idea.cloudinary_id,
-        };
-      });
-      return setDataSource(result);
-    } else {
-      setDataExcel(null);
-    }
-    return setDataSource([]);
+  UseEffect(() => {
+    timeOutResetDt = setTimeout(() => {
+      if (AllIdeas?.ideas && AllIdeas?.ideas.length !== 0) {
+        getExcel(AllIdeas?.ideas);
+        const result = AllIdeas?.ideas.map((idea) => {
+          return {
+            key: idea._id,
+            email_avatar: {
+              email: idea.user_id.email,
+              avatar: idea.user_id.avatar.url,
+            },
+            title: idea.title,
+            view: idea.view,
+            time: moment(idea.createdAt).format('YYYY-MM-DD'),
+            submission: idea.submission_id,
+            accept: idea.accept,
+            detail: '',
+            remove: '',
+            cloudinary_id: idea.cloudinary_id,
+          };
+        });
+        return setDataSource(result);
+      } else {
+        setDataExcel(null);
+      }
+      return setDataSource([]);
+    }, 500);
+    return () => clearTimeout(timeOutResetDt);
   }, [AllIdeas]);
+
+  UseEffect(() => {
+    timeOutResetDl = setTimeout(() => {
+      if (_valueById) {
+        console.log(_valueById);
+        if (AllIdeas?.ideas && AllIdeas.ideas.length > 0) {
+          console.log(AllIdeas);
+          axios
+            .post('/api/image/download', {
+              tag: _valueById,
+            })
+            .then((result) => {
+              setUrl(result.data.url);
+            });
+        }
+      }
+    }, 500);
+    return () => clearTimeout(timeOutResetDl);
+  }, [_valueById, AllIdeas]);
 
   const handleDelete = IdeaMutaion.delete({
     dataUserRefetch: dataUserRefetch,
@@ -182,6 +211,11 @@ const managementIdea: NextPageWithLayout = ({
     },
   });
 
+  // refresh to get data
+  UseEffect(()=> {
+    refetchIdeas()
+  }, [])
+
   const setAccept = IdeaMutaion.setAccept({
     dataUserRefetch: dataUserRefetch,
     token: dataUser?.accessToken.token,
@@ -197,7 +231,7 @@ const managementIdea: NextPageWithLayout = ({
     },
   });
 
-  const columns = useMemo<ColumnsType<any>>(
+  const columns = UseMemo<ColumnsType<any>>(
     () => [
       {
         ...column({
@@ -325,7 +359,7 @@ const managementIdea: NextPageWithLayout = ({
                 okButtonProps={{
                   onClick: async () => {
                     setDataExcel(null);
-                    setIsLoadingDl((state) => ({
+                    setIsLoadingDl((state: any) => ({
                       ...state,
                       isLoading: true,
                     }));
@@ -391,6 +425,7 @@ const managementIdea: NextPageWithLayout = ({
                 setNameById('submission_id');
                 setValueById(value);
               }
+              setUrl(null);
             }}
             style={{
               width: 200,
@@ -406,6 +441,15 @@ const managementIdea: NextPageWithLayout = ({
           </Select>,
           <Button key="excel" type="link" disabled={!dataExcel}>
             <CSVLink data={dataExcel || []}>Export excel</CSVLink>
+          </Button>,
+          <Button
+            href={urlDownload || ''}
+            disabled={urlDownload ? false : true}
+            type="link"
+            key={'download'}
+            icon={<VerticalAlignBottomOutlined />}
+          >
+            Download
           </Button>,
         ]}
         title={<span className={`${color}`}>Management idea</span>}

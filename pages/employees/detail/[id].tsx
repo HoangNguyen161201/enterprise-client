@@ -122,6 +122,7 @@ const DetailEmployee: NextPageWithLayout = ({
                         boxShadow: '36px 23px 46px -9px rgba(0,0,0,0.07)',
                       }}
                       src={dataDetailUser?.user?.avatar?.url}
+                      alt={'avatar_user'}
                     />
                   <div
                     style={{

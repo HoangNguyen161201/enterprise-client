@@ -16,12 +16,12 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter as UseRouter } from 'next/router';
 import { getCurrentUser } from 'queries/auth';
-import { useContext, useEffect, useMemo as UseMemo } from 'react';
+import { useContext as UseContext, useEffect as UseEffect, useMemo as UseMemo } from 'react';
 import { useForm as UseForm } from 'react-hook-form';
 import { validateLogin } from 'utils/validate';
 
 const login: NextPageWithLayout = () => {
-  const { handleLightMode} = useContext(GlobalContext)
+  const { handleLightMode} = UseContext(GlobalContext)
   const { refetch } = getCurrentUser();
   const { push } = UseRouter();
   const options = UseMemo<IOptionSelect[]>(
@@ -50,7 +50,7 @@ const login: NextPageWithLayout = () => {
     []
   );
 
-  useEffect(()=> {
+  UseEffect(()=> {
     handleLightMode()
   },[])
 

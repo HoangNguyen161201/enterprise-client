@@ -1,25 +1,24 @@
 import { ArrowLeftOutlined, UnlockOutlined } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button, message, Space } from 'antd';
+import { AxiosError } from 'axios';
 import { Input } from 'components/elements/form';
 import { GlobalContext } from 'contextApi/globalContext';
-import { resolveTxt } from 'dns/promises';
+import { ICommon } from 'models/apiType';
 import { IResetPass } from 'models/formType';
+import { authMutation } from 'mutations/auth';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
-import React, { useContext, useEffect, useState } from 'react';
+import Link from 'next/link';
+import { useRouter as UseRouter } from 'next/router';
+import React, { useContext as UseContext, useEffect as UseEffect, useState as UseState } from 'react';
 import { useForm } from 'react-hook-form';
 import { validateResetPass } from 'utils/validate';
-import { authMutation } from 'mutations/auth';
-import { AxiosError } from 'axios';
-import { ICommon } from 'models/apiType';
-import Link from 'next/link';
 
 export default function ResetPass() {
-  const { query, push } = useRouter();
+  const { query, push } = UseRouter();
 
-  const { handleLightMode } = useContext(GlobalContext);
-  const [activeToken, setActiveToken] = useState('');
+  const { handleLightMode } = UseContext(GlobalContext);
+  const [activeToken, setActiveToken] = UseState('');
 
   // setting form
   const formSetting = useForm<IResetPass>({
@@ -30,11 +29,11 @@ export default function ResetPass() {
     },
   });
 
-  useEffect(() => {
+  UseEffect(() => {
     handleLightMode();
   }, []);
 
-  useEffect(() => {
+  UseEffect(() => {
     if (query.active_token) {
       setActiveToken(query.active_token as string);
     }

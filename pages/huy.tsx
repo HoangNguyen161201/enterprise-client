@@ -62,7 +62,7 @@ export default function huy() {
               </Space>
             }
           >
-            <Image preview={false} src="/assets/trong.svg" />
+            <Image preview={false} src="/assets/trong.svg" alt='trong' />
           </Dropdown>
         </Col>
         <Col
@@ -122,7 +122,7 @@ export default function huy() {
               </Space>
             }
           >
-            <Image preview={false} src="/assets/hoang.svg" />
+            <Image preview={false} src="/assets/hoang.svg" alt='hoang' />
           </Dropdown>
         </Col>
         <Col
@@ -182,7 +182,7 @@ export default function huy() {
               </Space>
             }
           >
-            <Image preview={false} src="/assets/huy.svg" />
+            <Image preview={false} src="/assets/huy.svg" alt='huy'/>
           </Dropdown>
         </Col>
       </Row>

@@ -8,12 +8,12 @@ import { ICommon } from 'models/apiType';
 import { authMutation } from 'mutations/auth';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useContext, useEffect, useState as UseState } from 'react';
+import { useContext as UseContext, useEffect as UseEffect, useState as UseState } from 'react';
 import { useForm as UseForm } from 'react-hook-form';
 import { validateRecoverPass } from 'utils/validate';
 
 export default function recover_password() {
-  const {handleLightMode} = useContext(GlobalContext)
+  const {handleLightMode} = UseContext(GlobalContext)
 
   const [isSMTP, setIsSMTP] = UseState(false);
   // call api to reset password by email
@@ -33,7 +33,7 @@ export default function recover_password() {
     },
   });
 
-  useEffect(()=> {
+  UseEffect(()=> {
     handleLightMode()
   },[])
 

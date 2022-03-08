@@ -507,7 +507,7 @@ const Employees: NextPageWithLayout = ({
       <Spin spinning={mutationAddManyUsers.isLoading}>
         <Card
           extra={[
-            <ImportCSV
+            <ImportCSV key={'cSv_import'}
               fieldsValid={['name', 'email', 'role', 'password']}
               onSubmit={addManyUsers}
             />,

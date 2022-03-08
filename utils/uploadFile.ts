@@ -6,14 +6,16 @@ export const uploadFile = async (files: File[], tags: String[], avatar: boolean,
             return new Promise(async (resolve) => {
                 const formData = new FormData()
                 formData.append('file', file)
+                if(folder) {
+                    formData.append('folder',`hoang`)
+                } 
                 if(avatar) {
                     formData.append('upload_preset', `${process.env.UPLOAD_PRESET_AVATAR}`)
+
                 } else {
-                    formData.append('upload_preset', folder ? `${process.env.UPLOAD_PRESET}`: `${process.env.UPLOAD_PRESET}/${folder}`)
+                    formData.append('upload_preset',  `${process.env.UPLOAD_PRESET}`)
+                    formData.set('public_id',  `${folder}/${file.name}`)
                 }
-                if(folder) {
-                    formData.append('folder',`${process.env.UPLOAD_PRESET}/${folder}`)
-                } 
                 formData.append('api_key',  `${process.env.API_KEY}`)
                 formData.append('cloud_name', `${process.env.CLOUD_NAME}`)
 

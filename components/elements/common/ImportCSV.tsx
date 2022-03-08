@@ -1,10 +1,9 @@
 import { CloseOutlined, TableOutlined } from '@ant-design/icons';
 import { Button, message, Modal, Space, Tooltip } from 'antd';
 import { GlobalContext } from 'contextApi/globalContext';
-import { IUser } from 'models/apiType';
 import Image from 'next/image';
-import { useState, CSSProperties, useContext } from 'react';
-import { useCSVReader, formatFileSize } from 'react-papaparse';
+import { CSSProperties, useContext, useState } from 'react';
+import { formatFileSize, useCSVReader } from 'react-papaparse';
 
 export interface IImportCSVProps {
   fieldsValid: string[];
@@ -134,7 +133,7 @@ export default function ImportCSV({ fieldsValid, onSubmit }: IImportCSVProps) {
                     }}
                   >
                     <Space size={20}>
-                      <img width={50} src={'/assets/files/excel.svg'} alt={'File svg'} />
+                      <Image width={50} src={'/assets/files/excel.svg'} alt={'File svg'} />
                       <Space direction="vertical">
                         <span>{formatFileSize(acceptedFile.size)} </span>
                         <span>{acceptedFile.name}</span>

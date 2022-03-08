@@ -101,7 +101,6 @@ export const getAllIdeas = (options: Partial<IOptionIdea>, accessToken: string |
       select: (data)=> {
         if(data.ideas.length === 0) return data
         const ideas = data.ideas.map(idea=> {
-          console.log(idea)
           return {
             ...idea,
             count: idea.totalReaction ? idea.totalReaction : idea.view  | 0
