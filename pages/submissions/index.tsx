@@ -7,7 +7,7 @@ import {
   message,
   Pagination,
   Row,
-  Space,
+  Space
 } from 'antd';
 import axios, { AxiosError } from 'axios';
 import { BreadCrumb, Card } from 'components/elements/common';
@@ -21,9 +21,8 @@ import moment from 'moment';
 import { submMutation } from 'mutations/submission';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import Link from 'next/link';
 import { getallSubmissions, getCurrentUser } from 'queries';
-import { useContext, useEffect as UseEffect, useState as UseState } from 'react';
+import { useContext as UseContext, useEffect as UseEffect, useState as UseState } from 'react';
 import { useForm as UseForm } from 'react-hook-form';
 import { validateSubmission } from 'utils/validate';
 
@@ -49,7 +48,7 @@ const index: NextPageWithLayout = ({ result, detailUser }: submisionPage) => {
   let timeOutSearch: NodeJS.Timeout, timeOutSearchTime: NodeJS.Timeout;
 
   // darkmode
-  const { color, desColor } = useContext(GlobalContext);
+  const { color} = UseContext(GlobalContext);
 
   const [idDelete, setIdDelete] = UseState('');
   UseEffect(() => {

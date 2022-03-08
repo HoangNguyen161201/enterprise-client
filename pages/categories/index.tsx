@@ -13,7 +13,7 @@ import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { getCurrentUser } from 'queries/auth';
 import { getallCategories } from 'queries/category';
-import { useContext, useEffect, useState } from 'react';
+import { useContext as UseContext, useEffect as UseEffect, useState as UseState } from 'react';
 import { useForm } from 'react-hook-form';
 import { validCategory } from 'utils/validate';
 
@@ -22,11 +22,11 @@ export interface ICategoriesProps {
 }
 
 const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => {
-  const { color } = useContext(GlobalContext);
+  const { color } = UseContext(GlobalContext);
 
-  const [categoryUd, setCategoryUd] = useState<IDetailCategory | null | undefined>(null);
-  const [statusForm, setStatusForm] = useState<'create' | 'update'>('create');
-  const [isOpen, setIsopen] = useState(false);
+  const [categoryUd, setCategoryUd] = UseState<IDetailCategory | null | undefined>(null);
+  const [statusForm, setStatusForm] = UseState<'create' | 'update'>('create');
+  const [isOpen, setIsopen] = UseState(false);
 
   // setting form
   const formSetting = useForm<IDetailCategory>({
@@ -75,7 +75,7 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
   } = getallCategories(dataUser?.accessToken.token, allCategories);
 
   //Check exist and show error
-  useEffect(() => {
+  UseEffect(() => {
     if (errorAllCategories) {
       message.error({
         content: errorAllCategories.response?.data.err,
@@ -84,7 +84,7 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
   }, [errorAllCategories]);
 
   //Check exist and show error
-  useEffect(() => {
+  UseEffect(() => {
     if (statusForm == 'create') {
       formSetting.reset({
         name: '',
@@ -183,7 +183,7 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
   });
 
   //Check exist and show error
-  useEffect(() => {
+  UseEffect(() => {
     if (errorGetUser) {
       message.error({
         content: errorGetUser.response?.data.err,
@@ -241,7 +241,7 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
       />
       <Card
         extra={[
-          <ImportCSV fieldsValid={["name", "description"]} onSubmit={addManyCategories} />,
+          <ImportCSV key={'csv_import'} fieldsValid={["name", "description"]} onSubmit={addManyCategories} />,
           <Button
             key={'Add_ct'}
             type="link"

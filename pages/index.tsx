@@ -1,13 +1,12 @@
-import { useContext, useEffect, useState } from 'react';
-import { ClientLayout } from '../components/layouts';
-import { NextPageWithLayout } from 'models/layoutType';
-import { Col, Image, Row, Space } from 'antd';
-import { ArrowRightOutlined } from '@ant-design/icons';
-import { BsArrowDown, BsArrowRight } from 'react-icons/bs';
+import { Col, Image, Row } from 'antd';
 import { GlobalContext } from 'contextApi/globalContext';
+import { NextPageWithLayout } from 'models/layoutType';
+import { useContext as UseContext } from 'react';
+import { BsArrowDown, BsArrowRight } from 'react-icons/bs';
+import { ClientLayout } from '../components/layouts';
 
 const index: NextPageWithLayout = () => {
-  const {darkMode, color, color2} = useContext(GlobalContext)
+  const { darkMode, color, color2 } = UseContext(GlobalContext);
   return (
     <>
       <Row
@@ -26,6 +25,7 @@ const index: NextPageWithLayout = () => {
           span={16}
         >
           <Image
+            alt="greenwich"
             height={'100%'}
             width={'100%'}
             preview={false}
@@ -38,13 +38,13 @@ const index: NextPageWithLayout = () => {
         <Col
           span={8}
           style={{
-            borderLeft: darkMode ? '2px solid white': '2px solid #001529',
+            borderLeft: darkMode ? '2px solid white' : '2px solid #001529',
           }}
         >
           <div
             style={{
               width: '100%',
-              borderBottom: darkMode ? '2px solid white': '2px solid #001529',
+              borderBottom: darkMode ? '2px solid white' : '2px solid #001529',
               paddingBlock: 10,
               paddingInline: 20,
               position: 'relative',
@@ -59,7 +59,8 @@ const index: NextPageWithLayout = () => {
               CMS
             </span>
 
-            <BsArrowRight className={`${color}`}
+            <BsArrowRight
+              className={`${color}`}
               style={{
                 bottom: -15,
                 position: 'absolute',
@@ -74,7 +75,7 @@ const index: NextPageWithLayout = () => {
         gutter={[0, 0]}
         style={{
           height: '40vh',
-          borderTop: darkMode ? '2px solid white': '2px solid #001529',
+          borderTop: darkMode ? '2px solid white' : '2px solid #001529',
         }}
       >
         <Col
@@ -101,6 +102,7 @@ const index: NextPageWithLayout = () => {
               }}
             >
               <Image
+                alt="submission1"
                 height={'100%'}
                 width={'100%'}
                 preview={false}
@@ -119,6 +121,7 @@ const index: NextPageWithLayout = () => {
               }}
             >
               <Image
+                alt="submission2"
                 height={'100%'}
                 width={'100%'}
                 preview={false}
@@ -134,13 +137,13 @@ const index: NextPageWithLayout = () => {
         <Col
           span={8}
           style={{
-            borderLeft: darkMode ? '2px solid white': '2px solid #001529',
+            borderLeft: darkMode ? '2px solid white' : '2px solid #001529',
           }}
         >
           <div
             style={{
               width: '100%',
-              borderBottom: darkMode ? '2px solid white': '2px solid #001529',
+              borderBottom: darkMode ? '2px solid white' : '2px solid #001529',
               paddingBlock: 10,
               paddingInline: 20,
               position: 'relative',
@@ -155,7 +158,8 @@ const index: NextPageWithLayout = () => {
               Magazine Submission
             </span>
 
-            <BsArrowRight className={`${color}`}
+            <BsArrowRight
+              className={`${color}`}
               style={{
                 bottom: -15,
                 position: 'absolute',
@@ -164,14 +168,15 @@ const index: NextPageWithLayout = () => {
               }}
             />
           </div>
-              <BsArrowDown className={`${color}`}
-              style={{
-                left: -15,
-                position: 'absolute',
-                fontSize: 27,
-                bottom: -5,
-              }}
-            />
+          <BsArrowDown
+            className={`${color}`}
+            style={{
+              left: -15,
+              position: 'absolute',
+              fontSize: 27,
+              bottom: -5,
+            }}
+          />
         </Col>
       </Row>
     </>

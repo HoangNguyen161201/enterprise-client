@@ -1,7 +1,6 @@
 //Import
 import { IdcardOutlined, MailOutlined, TeamOutlined } from '@ant-design/icons';
 import {
-  Avatar,
   Button,
   Card,
   Col,
@@ -14,10 +13,12 @@ import {
   Row,
   Space,
   Tag,
-  Tooltip,
+  Tooltip
 } from 'antd';
+import TextArea from 'antd/lib/input/TextArea';
 import { AxiosError } from 'axios';
 import { BreadCrumb, Infor, ItemIdea } from 'components/elements/common';
+import ItemInfor from 'components/elements/common/ItemInfor';
 import { ClientLayout } from 'components/layouts';
 import { GlobalContext } from 'contextApi/globalContext';
 import { IAvatar, ICommon, IDetailUser, IUser } from 'models/apiType';
@@ -27,15 +28,13 @@ import { fileMutation } from 'mutations/file';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { getCurrentUser, getIdeasAcceptUser } from 'queries';
-import { ChangeEventHandler, useEffect, useEffect as UseEffect, useState, useContext } from 'react';
-import { BsPen, BsPencilSquare } from 'react-icons/bs';
-import { uploadFile } from 'utils/uploadFile';
-import { v4 as uuidv4 } from 'uuid';
-import { SocialIcon } from 'react-social-icons';
+import { ChangeEventHandler, useContext, useEffect, useEffect as UseEffect, useState } from 'react';
+import { BsPen } from 'react-icons/bs';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
-import TextArea from 'antd/lib/input/TextArea';
-import ItemInfor from 'components/elements/common/ItemInfor';
+import { SocialIcon } from 'react-social-icons';
+import { uploadFile } from 'utils/uploadFile';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface IDetailEmployeeProps {
   detailCurrentUser: IDetailUser;
@@ -278,6 +277,7 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
                 <Space size={20} wrap>
                   <Space size={20}>
                     <Image
+                      alt='avatar_user'
                       style={{
                         width: 100,
                         height: 100,
@@ -406,7 +406,7 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
             <PhoneInput
               country={'us'}
               value={inforContact.phone}
-              onChange={(phone) =>
+              onChange={(phone: string) =>
                 setInforContact({
                   ...inforContact,
                   phone: phone,

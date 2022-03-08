@@ -16,6 +16,7 @@ import { IdeaMutaion } from 'mutations/idea';
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { getCurrentUser, getDetailIdea } from 'queries';
 import { getallCategories } from 'queries/category';
@@ -250,7 +251,7 @@ const DetailSubmission: NextPageWithLayout = ({
         setIsLoadUpFile(true);
 
         //Up files
-        files = await uploadFile(filesUpload, [dataUser?.user._id, cloudinary_id]);
+        files = await uploadFile(filesUpload, [dataUser?.user._id, cloudinary_id], false, `${dataUser?.user.email}-${cloudinary_id}`);
         setIsLoadUpFile(false);
 
         //Concact new files with old files upload
@@ -444,7 +445,7 @@ const DetailSubmission: NextPageWithLayout = ({
               size={20}
               {...getRootProps()}
             >
-              <img alt={'upload_img'} src="/assets/uploadFiles.svg" />
+              <Image alt={'upload_img'} src="/assets/uploadFiles.svg" />
               <input {...getInputProps()} />
               {isDragActive ? (
                 <p

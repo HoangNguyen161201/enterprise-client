@@ -29,11 +29,11 @@ import moment from 'moment';
 import { IdeaMutaion } from 'mutations/idea';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
+import { useRouter as UseRouter } from 'next/router';
 import { getCurrentUser } from 'queries/auth';
 import { getAllIdeas } from 'queries/idea';
 import { getallSubmissions } from 'queries/submission';
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useContext as UseContext, useEffect as UseEffect, useMemo as UseMemo, useState as UseState } from 'react';
 import { CSVLink } from 'react-csv';
 import column from 'utils/configTB';
 
@@ -49,13 +49,13 @@ const managementIdea: NextPageWithLayout = ({
   detailUser: IDetailUser;
   data: IAllIdeas;
 }) => {
-  const { color } = useContext(GlobalContext);
+  const { color } = UseContext(GlobalContext);
 
-  const { push } = useRouter();
-  const [_nameById, setNameById] = useState<string | null>(null);
-  const [_valueById, setValueById] = useState<string | null>(null);
-  const [urlDownload, setUrl] = useState<string | null>(null);
-  const [isLoadingDl, setIsLoadingDl] = useState<{
+  const { push } = UseRouter();
+  const [_nameById, setNameById] = UseState<string | null>(null);
+  const [_valueById, setValueById] = UseState<string | null>(null);
+  const [urlDownload, setUrl] = UseState<string | null>(null);
+  const [isLoadingDl, setIsLoadingDl] = UseState<{
     key: string;
     isLoading: boolean;
     cloudinary_id: null | string;
@@ -64,8 +64,8 @@ const managementIdea: NextPageWithLayout = ({
     isLoading: false,
     cloudinary_id: null,
   });
-  const [dataExcel, setDataExcel] = useState<any>(null);
-  const [dataSource, setDataSource] = useState<
+  const [dataExcel, setDataExcel] = UseState<any>(null);
+  const [dataSource, setDataSource] = UseState<
     | {
         key: string;
         email_avatar: {
@@ -146,7 +146,7 @@ const managementIdea: NextPageWithLayout = ({
     isLoading: isLoadingSbm,
   } = getallSubmissions(dataUser?.accessToken.token);
 
-  useEffect(() => {
+  UseEffect(() => {
     timeOutResetDt = setTimeout(() => {
       if (AllIdeas?.ideas && AllIdeas?.ideas.length !== 0) {
         getExcel(AllIdeas?.ideas);
@@ -176,7 +176,7 @@ const managementIdea: NextPageWithLayout = ({
     return () => clearTimeout(timeOutResetDt);
   }, [AllIdeas]);
 
-  useEffect(() => {
+  UseEffect(() => {
     timeOutResetDl = setTimeout(() => {
       if (_valueById) {
         console.log(_valueById);
@@ -212,7 +212,7 @@ const managementIdea: NextPageWithLayout = ({
   });
 
   // refresh to get data
-  useEffect(()=> {
+  UseEffect(()=> {
     refetchIdeas()
   }, [])
 
@@ -231,7 +231,7 @@ const managementIdea: NextPageWithLayout = ({
     },
   });
 
-  const columns = useMemo<ColumnsType<any>>(
+  const columns = UseMemo<ColumnsType<any>>(
     () => [
       {
         ...column({
@@ -359,7 +359,7 @@ const managementIdea: NextPageWithLayout = ({
                 okButtonProps={{
                   onClick: async () => {
                     setDataExcel(null);
-                    setIsLoadingDl((state) => ({
+                    setIsLoadingDl((state: any) => ({
                       ...state,
                       isLoading: true,
                     }));

@@ -40,7 +40,7 @@ const DetailDepartment: NextPageWithLayout = ({ detailMyDepartment }: IDetailDep
     if (dataUser) {
       refetchDepartment();
     }
-  }, []);
+  }, [dataUser, refetchDepartment]);
 
   //Check exist and show error
   UseEffect(() => {
