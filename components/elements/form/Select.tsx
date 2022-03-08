@@ -5,7 +5,7 @@ import { IOptionSelect } from 'models/elementType';
 import { Controller } from 'react-hook-form';
 import { GlobalContext } from 'contextApi/globalContext';
 
-export const Select = ({ formSetting, dark= true, name, label, placeholder, require = true, data }: IInput) => {
+export const Select = ({ formSetting, dark= true, name, label, placeholder, require = true, data, multiple= false }: IInput) => {
   
   const {desColor} = useContext(GlobalContext)
 
@@ -30,7 +30,7 @@ export const Select = ({ formSetting, dark= true, name, label, placeholder, requ
         control={control}
         render={({ field }) => {
           return (
-            <AntSelect size='large'
+            <AntSelect mode={multiple ? 'multiple': undefined} size='large'
               style={{
                 width: '100%',
                 borderRadius: '10px !important',

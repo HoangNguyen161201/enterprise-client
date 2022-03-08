@@ -209,3 +209,37 @@ body {
     margin-top: 20px;
     background: transparent
 }
+
+.country-list {
+    height: 100px;
+}
+
+/* cusstom croll */
+
+::-webkit-scrollbar {
+    width: 6px;
+    border-radius: 10px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #009F9D80;
+    border-radius: 10px;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #009F9D;
+  }
+
+  .tag_URL{
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }

@@ -1,6 +1,21 @@
 //Import
 import { IdcardOutlined, MailOutlined, TeamOutlined } from '@ant-design/icons';
-import { Avatar, Card, Col, Grid, Image, List, message, Row, Space, Tooltip } from 'antd';
+import {
+  Avatar,
+  Button,
+  Card,
+  Col,
+  Grid,
+  Image,
+  Input,
+  List,
+  message,
+  Modal,
+  Row,
+  Space,
+  Tag,
+  Tooltip,
+} from 'antd';
 import { AxiosError } from 'axios';
 import { BreadCrumb, Infor, ItemIdea } from 'components/elements/common';
 import { ClientLayout } from 'components/layouts';
@@ -16,6 +31,10 @@ import { ChangeEventHandler, useEffect, useEffect as UseEffect, useState, useCon
 import { BsPen, BsPencilSquare } from 'react-icons/bs';
 import { uploadFile } from 'utils/uploadFile';
 import { v4 as uuidv4 } from 'uuid';
+import { SocialIcon } from 'react-social-icons';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
+import TextArea from 'antd/lib/input/TextArea';
 
 export interface IDetailEmployeeProps {
   detailCurrentUser: IDetailUser;
@@ -24,6 +43,10 @@ export interface IDetailEmployeeProps {
 const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmployeeProps) => {
   const { useBreakpoint } = Grid;
   const { lg } = useBreakpoint();
+
+  //State infor contact
+  const [socialNetworks, setSocialNetworks] = useState<string[]>([]);
+  const [contentSocialNetwork, setContentSocialNetwork] = useState<string>('');
 
   //State
   const [avatar, setAvatar] = useState<IAvatar | null>(null);
@@ -148,6 +171,42 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
     }
   };
 
+  //Setting modal
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
+  //Handle add new social network
+  const onAddNetwork = () => {
+    //Check content input social network
+    if (!contentSocialNetwork) {
+      message.warning({
+        content: 'Please enter field social network and press enter.',
+      });
+    }
+
+    //Add new social network to list
+    setSocialNetworks([...socialNetworks, contentSocialNetwork]);
+  };
+
+  //Handle remove social network
+  const onRemoveNetwork = (index: number) => {
+    const newSocialNetWorks = socialNetworks;
+    newSocialNetWorks.splice(index, 1);
+
+    setSocialNetworks([...newSocialNetWorks]);
+  };
+
   return (
     <>
       <Head>
@@ -173,31 +232,40 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
             <Col flex={lg ? '400px' : undefined} span={lg ? undefined : 24}>
               <Space size={20} direction="vertical">
                 <Space size={20} wrap>
-                  <Space align="end">
-                   
-                      <Image
-                        style={{
-                          width: 100,
-                          height: 100,
-                          objectFit: 'cover',
-                          padding: 0,
-                          margin: 0,
-                          boxShadow: '36px 23px 46px -9px rgba(0,0,0,0.07)'
-                        }}
-                        src={avatar?.url}
-                      />
+                  <Space size={20}>
+                    <Image
+                      style={{
+                        width: 100,
+                        height: 100,
+                        objectFit: 'cover',
+                        padding: 0,
+                        margin: 0,
+                        boxShadow: '36px 23px 46px -9px rgba(0,0,0,0.07)',
+                      }}
+                      src={avatar?.url}
+                    />
 
-                    <Tooltip title="Update Avatar">
-                      <label
-                        htmlFor="upload_avatar"
-                        style={{
-                          cursor: 'pointer',
-                        }}
-                      >
-                        <BsPen />
-                      </label>
-                    </Tooltip>
-                    <input onChange={onChangeAvatar} hidden id="upload_avatar" type={'file'} />
+                    <Space direction="vertical" size={20}>
+                      <Tooltip title="Update Avatar">
+                        <label
+                          htmlFor="upload_avatar"
+                          style={{
+                            cursor: 'pointer',
+                          }}
+                        >
+                          <BsPen />
+                          <span
+                            style={{
+                              marginLeft: 10,
+                            }}
+                          >
+                            Edit Avatar
+                          </span>
+                        </label>
+                        <input onChange={onChangeAvatar} hidden id="upload_avatar" type={'file'} />
+                      </Tooltip>
+                      <Button onClick={showModal}>Edit Infor Contact</Button>
+                    </Space>
                   </Space>
                   <div
                     style={{
@@ -241,6 +309,90 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
                       : 'none'
                   }
                 />
+
+                <span className={`${desColor}`}>Basic contact infor</span>
+                <Space direction="vertical">
+                  <label>Phone</label>
+                  <Space
+                    style={{
+                      border: '1px solid #009F9D',
+                      width: '100%',
+                      padding: '5px 10px',
+                      borderRadius: 5,
+                      background: 'white',
+                    }}
+                  >
+                    0833876372
+                  </Space>
+                </Space>
+                <Space direction="vertical">
+                  <label>Phone</label>
+                  <Space
+                    style={{
+                      border: '1px solid #009F9D',
+                      width: '100%',
+                      padding: '5px 10px',
+                      borderRadius: 5,
+                      color: 'tomato',
+                      background: 'white',
+                    }}
+                  >
+                    None
+                  </Space>
+                </Space>
+
+                <span className={`${desColor}`}>Social network</span>
+                <Space size={20}>
+                  <SocialIcon
+                    url="https://www.facebook.com/profile.php?id=100014461876748"
+                    style={{
+                      width: 30,
+                      height: 30,
+                    }}
+                  />
+                  <SocialIcon
+                    url="https://www.facebook.com/profile.php?id=100014461876748"
+                    style={{
+                      width: 30,
+                      height: 30,
+                    }}
+                  />
+                  <SocialIcon
+                    url="https://www.youtube.com/"
+                    style={{
+                      width: 30,
+                      height: 30,
+                    }}
+                  />
+                  <SocialIcon
+                    url="https://www.youtube.com/"
+                    style={{
+                      width: 30,
+                      height: 30,
+                    }}
+                  />
+                  <SocialIcon
+                    url="https://www.youtube.com/"
+                    style={{
+                      width: 30,
+                      height: 30,
+                    }}
+                  />
+                  <SocialIcon
+                    url="https://www.youtube.com/"
+                    style={{
+                      width: 30,
+                      height: 30,
+                    }}
+                  />
+                  <SocialIcon
+                    url="https://www.youtube.com/"
+                    style={{
+                      width: 30,
+                      height: 30,
+                    }}
+                  />
+                </Space>
               </Space>
             </Col>
             <Col flex="auto">
@@ -256,6 +408,56 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
           </Row>
         </Space>
       </Card>
+
+      <Modal
+        title="Update infor contact"
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <Space direction="vertical" size={20}>
+          <Space direction="vertical">
+            <label>Phone Number:</label>
+            <PhoneInput
+              country={'us'}
+              value={'+84833876372'}
+              onChange={(phone) => console.log(phone)}
+              inputStyle={{
+                width: '100%',
+              }}
+            />
+          </Space>
+          <Space direction="vertical">
+            <label>Country:</label>
+            <Input placeholder="Enter your country" />
+          </Space>
+          <Space direction="vertical">
+            <label>City:</label>
+            <Input placeholder="Enter your city" />
+          </Space>
+          <Space direction="vertical">
+            <label>Street:</label>
+            <TextArea placeholder="Enter your street" />
+          </Space>
+          <Space direction="vertical">
+            <label>Social networks:</label>
+            <Space wrap size={10}>
+              {socialNetworks &&
+                socialNetworks.map((socialNetwork, index) => (
+                  <Tag key={socialNetwork} closable onClose={() => onRemoveNetwork(index)}>
+                    <div className="tag_URL">{socialNetwork}</div>
+                  </Tag>
+                ))}
+            </Space>
+            <Input
+              placeholder="https://www.example.com/"
+              value={contentSocialNetwork}
+              onChange={(e) => setContentSocialNetwork(e.target.value)}
+              onPressEnter={onAddNetwork}
+            />
+          </Space>
+        </Space>
+      </Modal>
     </>
   );
 };
