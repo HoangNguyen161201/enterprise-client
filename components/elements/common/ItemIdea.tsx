@@ -38,7 +38,7 @@ export const ItemIdea = ({ item, onDeleteIdea, closure_date }: IItemIdeaProps) =
           <DeleteOutlined
             style={{
               fontSize: 16,
-              color: '#009F9D',
+              color: 'red',
             }}
           />
           <span>Delete Idea</span>

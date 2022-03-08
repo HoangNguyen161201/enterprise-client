@@ -3,6 +3,7 @@ import {
   ProfileOutlined,
   QuestionCircleOutlined,
   SearchOutlined,
+  VerticalAlignBottomOutlined
 } from '@ant-design/icons';
 import {
   Button,
@@ -15,7 +16,7 @@ import {
   Select,
   Space,
   Table,
-  Tag,
+  Tag
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import axios, { AxiosError } from 'axios';
@@ -36,6 +37,11 @@ import { useContext, useEffect, useMemo, useState } from 'react';
 import { CSVLink } from 'react-csv';
 import column from 'utils/configTB';
 
+// reset data
+var timeOutResetDt: NodeJS.Timeout;
+// reset url download
+var timeOutResetDl: NodeJS.Timeout;
+
 const managementIdea: NextPageWithLayout = ({
   detailUser,
   data,
@@ -48,6 +54,7 @@ const managementIdea: NextPageWithLayout = ({
   const { push } = useRouter();
   const [_nameById, setNameById] = useState<string | null>(null);
   const [_valueById, setValueById] = useState<string | null>(null);
+  const [urlDownload, setUrl] = useState<string | null>(null);
   const [isLoadingDl, setIsLoadingDl] = useState<{
     key: string;
     isLoading: boolean;
@@ -140,31 +147,53 @@ const managementIdea: NextPageWithLayout = ({
   } = getallSubmissions(dataUser?.accessToken.token);
 
   useEffect(() => {
-    if (AllIdeas?.ideas && AllIdeas?.ideas.length !== 0) {
-      getExcel(AllIdeas?.ideas);
-      const result = AllIdeas?.ideas.map((idea) => {
-        return {
-          key: idea._id,
-          email_avatar: {
-            email: idea.user_id.email,
-            avatar: idea.user_id.avatar.url,
-          },
-          title: idea.title,
-          view: idea.view,
-          time: moment(idea.createdAt).format('YYYY-MM-DD'),
-          submission: idea.submission_id,
-          accept: idea.accept,
-          detail: '',
-          remove: '',
-          cloudinary_id: idea.cloudinary_id,
-        };
-      });
-      return setDataSource(result);
-    } else {
-      setDataExcel(null);
-    }
-    return setDataSource([]);
+    timeOutResetDt = setTimeout(() => {
+      if (AllIdeas?.ideas && AllIdeas?.ideas.length !== 0) {
+        getExcel(AllIdeas?.ideas);
+        const result = AllIdeas?.ideas.map((idea) => {
+          return {
+            key: idea._id,
+            email_avatar: {
+              email: idea.user_id.email,
+              avatar: idea.user_id.avatar.url,
+            },
+            title: idea.title,
+            view: idea.view,
+            time: moment(idea.createdAt).format('YYYY-MM-DD'),
+            submission: idea.submission_id,
+            accept: idea.accept,
+            detail: '',
+            remove: '',
+            cloudinary_id: idea.cloudinary_id,
+          };
+        });
+        return setDataSource(result);
+      } else {
+        setDataExcel(null);
+      }
+      return setDataSource([]);
+    }, 500);
+    return () => clearTimeout(timeOutResetDt);
   }, [AllIdeas]);
+
+  useEffect(() => {
+    timeOutResetDl = setTimeout(() => {
+      if (_valueById) {
+        console.log(_valueById);
+        if (AllIdeas?.ideas && AllIdeas.ideas.length > 0) {
+          console.log(AllIdeas);
+          axios
+            .post('/api/image/download', {
+              tag: _valueById,
+            })
+            .then((result) => {
+              setUrl(result.data.url);
+            });
+        }
+      }
+    }, 500);
+    return () => clearTimeout(timeOutResetDl);
+  }, [_valueById, AllIdeas]);
 
   const handleDelete = IdeaMutaion.delete({
     dataUserRefetch: dataUserRefetch,
@@ -181,6 +210,11 @@ const managementIdea: NextPageWithLayout = ({
       },
     },
   });
+
+  // refresh to get data
+  useEffect(()=> {
+    refetchIdeas()
+  }, [])
 
   const setAccept = IdeaMutaion.setAccept({
     dataUserRefetch: dataUserRefetch,
@@ -391,6 +425,7 @@ const managementIdea: NextPageWithLayout = ({
                 setNameById('submission_id');
                 setValueById(value);
               }
+              setUrl(null);
             }}
             style={{
               width: 200,
@@ -406,6 +441,15 @@ const managementIdea: NextPageWithLayout = ({
           </Select>,
           <Button key="excel" type="link" disabled={!dataExcel}>
             <CSVLink data={dataExcel || []}>Export excel</CSVLink>
+          </Button>,
+          <Button
+            href={urlDownload || ''}
+            disabled={urlDownload ? false : true}
+            type="link"
+            key={'download'}
+            icon={<VerticalAlignBottomOutlined />}
+          >
+            Download
           </Button>,
         ]}
         title={<span className={`${color}`}>Management idea</span>}
