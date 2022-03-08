@@ -34,6 +34,8 @@ userRouter.put('/:id', authorization(['admin', 'qa_manager']), userController.up
 
 userRouter.put('/avatar/:user_id', authorization([]), userController.updateAvatar);
 
+userRouter.put('/contact/:user_id', userController.updateContact)
+
 userRouter.delete(
   '/remove-assign/:id',
   authorization(['admin', 'qa_manager']),

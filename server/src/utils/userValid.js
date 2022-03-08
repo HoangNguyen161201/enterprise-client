@@ -99,6 +99,9 @@ const validAssignManyUsers = ({ users, departmentId }) => {
   }
 };
 
+
+
+
 module.exports = {
   validSignUp,
   validUpdate,

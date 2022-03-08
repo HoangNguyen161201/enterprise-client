@@ -289,7 +289,7 @@ const userController = {
     });
   }),
 
-  updateAvatar: catchAsyncError( async (req, res) => {
+  updateAvatar: catchAsyncError(async (req, res) => {
     const { user_id } = req.params;
     const { avatar } = req.body;
     console.log(avatar);
@@ -299,7 +299,7 @@ const userController = {
       _id: user_id,
       deleted: false,
     });
-    
+
     if (!user)
       return res.status(400).json({
         err: 'The User is does not exist',
@@ -307,9 +307,8 @@ const userController = {
       });
 
     //Update avatar
-    user.avatar = avatar;
-    user.save();
-
+    await userModel.findByIdAndUpdate(user_id, {avatar});
+    
     return res.status(200).json({
       statusCode: 200,
       msg: 'Update Avatar Success.',
@@ -683,5 +682,31 @@ const userController = {
       msg: 'Remove user out of department success.',
     });
   }),
+
+  updateContact: catchAsyncError(async (req, res) => {
+    const { id } = req.params;
+
+    //get info update
+    const { social_networks, phone, street, country, city } = req.body;
+
+    //check user exist in system
+    const user = await userModel.findOne({
+      _id: id,
+      deleted: false,
+    });
+
+    if (!user)
+      return res.status(400).json({
+        err: 'The User is does not exist',
+        statusCode: 400,
+      });
+
+    await userModel.findByIdAndUpdate(id, { social_networks, phone, street, country, city });
+    return res.status(200).json({
+      msg: 'Update contact success',
+      statusCode: 200,
+    });
+  }),
 };
+
 module.exports = userController;
