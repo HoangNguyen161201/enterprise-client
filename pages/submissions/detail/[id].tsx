@@ -331,7 +331,7 @@ const DetailSubmission: NextPageWithLayout = ({
             detailSubmission.submission._id,
             dataUser?.user._id,
             cloudinary_id,
-          ], false);
+          ], false, `${dataUser?.user.email}-${detailSubmission.submission._id}-${cloudinary_id}`);
 
           setIsLoadUpFile(false);
         }
