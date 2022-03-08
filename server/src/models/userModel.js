@@ -57,19 +57,20 @@ const userSchema = new mongoose.Schema(
 
     phone: {
       type: String,
+      default: ""
     },
 
     street: {
       type: String,
-      required: true,
+      default: ""
     },
     city: {
       type: String,
-      required: true,
+      default: ""
     },
     country: {
       type: String,
-      required: true,
+      default: ""
     },
   },
   { timestamps: true }

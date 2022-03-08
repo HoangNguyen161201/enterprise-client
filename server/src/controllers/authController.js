@@ -115,15 +115,7 @@ const authController = {
     return res.status(200).json({
       status: 'success',
       accessToken: access_token,
-      user: {
-        _id: user._id,
-        employee_id: user.employee_id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        root: user.root,
-        avatar: user.avatar,
-      },
+      user,
       statusCode: 200,
     });
   }),

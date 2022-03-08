@@ -1,7 +1,8 @@
 //Import
 import { IdcardOutlined, MailOutlined, TeamOutlined } from '@ant-design/icons';
-import { Alert, Avatar, Card, Col, Grid, List, message, Row, Space } from 'antd';
+import { Alert, Avatar, Card, Col, Grid, Image, List, message, Row, Space } from 'antd';
 import { BreadCrumb, Infor, ItemIdea } from 'components/elements/common';
+import ItemInfor from 'components/elements/common/ItemInfor';
 import { ClientLayout } from 'components/layouts';
 import { GlobalContext } from 'contextApi/globalContext';
 import { IDetailUser, IUser } from 'models/apiType';
@@ -11,6 +12,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { getCurrentUser, getDetailUser, getIdeasAcceptUser } from 'queries';
 import { useContext, useEffect as UseEffect } from 'react';
+import { SocialIcon } from 'react-social-icons';
 
 export interface IDetailEmployeeProps {
   detailUser: { user: IUser; [index: string]: any };
@@ -21,8 +23,7 @@ const DetailEmployee: NextPageWithLayout = ({
   detailUser,
   detailCurrentUser,
 }: IDetailEmployeeProps) => {
-
-  const {color, desColor} = useContext(GlobalContext)
+  const { color, desColor } = useContext(GlobalContext);
 
   // get id employee
   const { query } = useRouter();
@@ -111,16 +112,17 @@ const DetailEmployee: NextPageWithLayout = ({
             <Col flex={lg ? '400px' : undefined} span={lg ? undefined : 24}>
               <Space size={20} direction="vertical">
                 <Space size={20} wrap>
-                  <Avatar
-                    shape="square"
-                    style={{
-                      width: 100,
-                      height: 100,
-                      border: '2px solid #009F9D',
-                      borderRadius: 5,
-                    }}
-                    src={dataDetailUser?.user?.avatar?.url}
-                  />
+                <Image
+                      style={{
+                        width: 100,
+                        height: 100,
+                        objectFit: 'cover',
+                        padding: 0,
+                        margin: 0,
+                        boxShadow: '36px 23px 46px -9px rgba(0,0,0,0.07)',
+                      }}
+                      src={dataDetailUser?.user?.avatar?.url}
+                    />
                   <div
                     style={{
                       height: '100%',
@@ -146,11 +148,7 @@ const DetailEmployee: NextPageWithLayout = ({
                   </div>
                 </Space>
 
-                <span
-                  className={`${desColor}`}
-                >
-                  Employee infor
-                </span>
+                <span className={`${desColor}`}>Employee infor</span>
                 <Infor
                   color="#009F9D"
                   Icon={IdcardOutlined}
@@ -173,11 +171,35 @@ const DetailEmployee: NextPageWithLayout = ({
                       : 'none'
                   }
                 />
+
+                <span className={`${desColor}`}>Basic contact infor</span>
+                <ItemInfor
+                  title="Phone"
+                  content={dataUser?.user.phone ? `+${dataUser.user.phone}` : undefined}
+                />
+                <ItemInfor
+                  title="Address"
+                  content={`${dataUser?.user?.country}, ${dataUser?.user?.city}, ${dataUser?.user?.street}`}
+                />
+
+                <span className={`${desColor}`}>Social network</span>
+                <Space size={20}>
+                  {dataUser?.user.social_networks &&
+                    dataUser?.user.social_networks.map((socialUrl) => (
+                      <SocialIcon
+                        key={socialUrl}
+                        url={socialUrl}
+                        style={{
+                          width: 30,
+                          height: 30,
+                        }}
+                      />
+                    ))}
+                </Space>
               </Space>
             </Col>
             <Col flex="auto">
-              <span className={`${desColor}`}
-              >
+              <span className={`${desColor}`}>
                 {`Ideas Accept (${(dataIdeasAccept && dataIdeasAccept.ideas.length) || 0} ideas)`}
               </span>
               <List
