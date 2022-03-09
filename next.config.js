@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   env: {
-    API_URL: 'https://cms-server-fxwc.onrender.com',
+    API_URL: 'https://cmsserverhht.herokuapp.com',
     CLIENT_URL: 'https://entershipweb.vercel.app',
     CLOUD_NAME: 'hoang161201',
     API_KEY: '127883878126518',
