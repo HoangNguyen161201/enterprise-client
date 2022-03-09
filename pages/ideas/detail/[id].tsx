@@ -540,7 +540,7 @@ export default DetailIdea;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   //Check login
-  const detailUser: IDetailUser = await fetch(`http://localhost:3000/api/auth/accesstoken`, {
+  const detailUser: IDetailUser = await fetch(`${process.env.CLIENT_URL}/api/auth/accesstoken`, {
     method: 'GET',
     headers: {
       cookie: context.req.headers.cookie,
@@ -565,7 +565,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   const detailIdea: IDetailIdea = await fetch(
-    `http://localhost:3000/api/ideas/${context.query.id}`,
+    `${process.env.CLIENT_URL}/api/ideas/${context.query.id}`,
     {
       method: 'GET',
       headers: {
@@ -590,7 +590,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   let allComments: IallComments = await fetch(
-    `http://localhost:3000/api/comments/idea/${context.query.id}`,
+    `${process.env.CLIENT_URL}/api/comments/idea/${context.query.id}`,
     {
       method: 'GET',
       headers: {

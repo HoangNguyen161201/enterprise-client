@@ -9,7 +9,6 @@ const submissionModed = require('../models/submissionModel');
 
 //Import valid
 const commentValid = require('../utils/commentValid');
-const { default: Item } = require('antd/lib/list/Item');
 
 const mailNotice = require('../utils/mailNotice');
 

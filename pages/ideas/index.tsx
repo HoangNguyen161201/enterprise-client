@@ -314,7 +314,7 @@ export default index;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   //Check login
-  const detailUser: IDetailUser = await fetch(`http://localhost:3000/api/auth/accesstoken`, {
+  const detailUser: IDetailUser = await fetch(`${process.env.CLIENT_URL}/api/auth/accesstoken`, {
     method: 'GET',
     headers: {
       cookie: context.req.headers.cookie,
