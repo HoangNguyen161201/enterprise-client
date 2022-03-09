@@ -65,12 +65,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
           } else {
             ;(res as NextApiResponse).status(400).json(body)
           }
-        } catch (error) {
+        } catch (error: any) {
           ;(res as NextApiResponse).status(500).json({
             err: 'Something went wrong, hahaha',
-            error: Object.values([error]),
+            error: Object.values(error),
             error1: JSON.stringify(error)
           });
+          throw new Error(error)
         }
         resolve(true);
       });
