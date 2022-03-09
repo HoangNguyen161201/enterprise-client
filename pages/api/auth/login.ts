@@ -40,7 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     const handleLoginResponse: ProxyResCallback = async (proxyRes, req, res) => {
       let body = '';
       proxyRes.on('data', function (chunk) {
-        body += JSON.parse(chunk);
+        body = JSON.parse(chunk);
       });
 
       proxyRes.on('end',async function () {
