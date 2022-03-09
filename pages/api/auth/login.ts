@@ -46,11 +46,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       proxyRes.on('end', function () {
         console.log(body)
         try {
-          
-
-  
+    
             ;(res as NextApiResponse).status(400).json({
-              err:' faslse nha ncon'
+              err: 'dddd',
+              body
             })
           
         } catch (error: any) {
