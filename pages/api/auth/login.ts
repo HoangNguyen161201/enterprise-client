@@ -48,23 +48,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         try {
           const { accessToken, refreshToken, status, msg, err, statusCode } = JSON.parse(body);
 
-          if (status === 'success') {
-            //Save refresh token to cookie
-            cookies.set('refresh_token', refreshToken.token, {
-              httpOnly: true,
-              sameSite: 'lax',
-              expires: new Date(refreshToken.exp * 1000),
-            });
-
-            ;(res as NextApiResponse).status(statusCode).json({
-              status,
-              accessToken,
-              msg,
-              err,
-            });
-          } else {
-            ;(res as NextApiResponse).status(400).json(body)
-          }
+  
+            ;(res as NextApiResponse).status(400).json({
+              err:' faslse nha ncon'
+            })
+          
         } catch (error: any) {
           console.log(error)
           ;(res as NextApiResponse).status(500).json({
