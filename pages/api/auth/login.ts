@@ -49,7 +49,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     
             ;(res as NextApiResponse).status(400).json({
               err: 'dddd',
-              body
+              body: JSON.parse(body)
             })
           
         } catch (error: any) {
