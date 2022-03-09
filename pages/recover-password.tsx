@@ -37,7 +37,7 @@ export default function recover_password() {
     handleLightMode()
   },[])
 
-  // setting form
+  // setting form --
   const formSetting = UseForm<{ email: string }>({
     resolver: yupResolver(validateRecoverPass),
     defaultValues: {
