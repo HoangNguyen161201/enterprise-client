@@ -34,7 +34,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       target: process.env.API_URL,
       changeOrigin: true,
       selfHandleResponse: true,
-      secure: true 
     });
 
     //Because selfHandleResponse is true so need to response
@@ -65,14 +64,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             });
           } else {
             ;(res as NextApiResponse).status(400).json(body)
-            resolve(true);
           }
         } catch (error) {
           ;(res as NextApiResponse).status(500).json({
             err: 'Something went wrong.',
           });
         }
-
         resolve(true);
       });
     };

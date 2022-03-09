@@ -34,7 +34,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<any>) 
             target: process.env.API_URL,
             changeOrigin: true,
             selfHandleResponse: true,
-            secure: true
         });
 
         const handleLogoutResponse: ProxyResCallback = (proxyRes, req, res) => {

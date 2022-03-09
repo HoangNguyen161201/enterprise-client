@@ -24,7 +24,6 @@ export default function handle(req: NextApiRequest, res: NextApiResponse<any>) {
       target: process.env.API_URL,
       changeOrigin: true,
       selfHandleResponse: false,
-      secure: true
     });
 
     //Because self handle response is false, don't need response
