@@ -34,19 +34,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       target: process.env.API_URL,
       changeOrigin: true,
       selfHandleResponse: true,
-      secure: false
     });
 
     //Because selfHandleResponse is true so need to response
     const handleLoginResponse: ProxyResCallback = (proxyRes, req, res) => {
-      let body = '';
+      let body: any = '';
       proxyRes.on('data', function (chunk) {
         body += chunk;
       });
 
       proxyRes.on('end', function () {
         try {
+          body = Buffer.concat(body).toString()
           const { accessToken, refreshToken, status, msg, err, statusCode } = JSON.parse(body);
+
           if (status === 'success') {
             //Save refresh token to cookie
             cookies.set('refresh_token', refreshToken.token, {
