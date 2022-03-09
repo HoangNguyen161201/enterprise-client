@@ -37,25 +37,40 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     });
 
     //Because selfHandleResponse is true so need to response
-    const handleLoginResponse: ProxyResCallback = async (proxyRes, req, res) => {
+    const handleLoginResponse: ProxyResCallback = (proxyRes, req, res) => {
       let body = '';
       proxyRes.on('data', function (chunk) {
-        body = JSON.parse(chunk);
+        body += chunk;
       });
 
-      proxyRes.on('end',async function () {
+      proxyRes.on('end', function () {
         try {
-            ;(res as NextApiResponse).status(400).json({
-              err: 'dddd',
-              body
-            })
-          
-        } catch (error: any) {
-          console.log(error)
+          const { accessToken, refreshToken, status, msg, err, statusCode } = JSON.parse(body);
+
+          if (status === 'success') {
+            //Save refresh token to cookie
+            cookies.set('refresh_token', refreshToken.token, {
+              httpOnly: true,
+              sameSite: 'lax',
+              expires: new Date(refreshToken.exp * 1000),
+            });
+
+            ;(res as NextApiResponse).status(statusCode).json({
+              status,
+              accessToken,
+              msg,
+              err,
+            });
+          } else {
+            ;(res as NextApiResponse).status(400).json(body)
+            resolve(true);
+          }
+        } catch (error) {
           ;(res as NextApiResponse).status(500).json({
-            err: 'Something went wrong, hahaha',
+            err: 'Something went wrong.',
           });
         }
+
         resolve(true);
       });
     };
