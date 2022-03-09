@@ -242,21 +242,22 @@ const userController = {
             });
 
           if (user.department_id) {
-            //Update old department user count
-            const old_department = await departmentModel.findById(user.department_id);
-            if (old_department) {
-              old_department.count_users = --old_department.count_users;
-              await old_department.save();
+            //Check user exist new department
+            if (String(user.department_id) == String(department._id)) {
+              department.count_users = --department.count_users;
+            } else {
+              //Update old department user count
+              const old_department = await departmentModel.findById(user.department_id);
+              if (old_department) {
+                old_department.count_users = --old_department.count_users;
+                await old_department.save();
+              }
             }
           }
 
-          //Check exist old department
-          if (user.department_id !== department._id) {
-            //Update new department user count
-            department.count_users = ++department.count_users;
-            await department.save();
-          }
-          ``;
+          //Update new department user count
+          department.count_users = ++department.count_users;
+          await department.save();
 
           //update data by id
           await userModel.findByIdAndUpdate(id, { name, email, role, department_id });
@@ -307,8 +308,8 @@ const userController = {
       });
 
     //Update avatar
-    await userModel.findByIdAndUpdate(user_id, {avatar});
-    
+    await userModel.findByIdAndUpdate(user_id, { avatar });
+
     return res.status(200).json({
       statusCode: 200,
       msg: 'Update Avatar Success.',
