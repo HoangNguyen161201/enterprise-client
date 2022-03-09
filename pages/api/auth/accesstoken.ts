@@ -31,6 +31,7 @@ export default function handle(req: NextApiRequest, res: NextApiResponse<any>) {
             target: process.env.API_URL,
             changeOrigin: true,
             selfHandleResponse: true,
+            secure: true
         });
 
         const handleAccessTokenResponse: ProxyResCallback = (proxyRes, req, res) => {

@@ -34,6 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       target: process.env.API_URL,
       changeOrigin: true,
       selfHandleResponse: true,
+      secure: true 
     });
 
     //Because selfHandleResponse is true so need to response
