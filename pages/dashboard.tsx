@@ -38,7 +38,7 @@ ChartJS.register(
   PointElement,
   LineElement
 );
-const hoang: NextPageWithLayout = () => {
+const dashBoard: NextPageWithLayout = () => {
   const { useBreakpoint:  UseBreakpoint} = Grid;
   const { lg, md } = UseBreakpoint();
 
@@ -511,6 +511,6 @@ const hoang: NextPageWithLayout = () => {
   );
 };
 
-hoang.getLayout = ClientLayout;
+dashBoard.getLayout = ClientLayout;
 
-export default hoang;
+export default dashBoard;

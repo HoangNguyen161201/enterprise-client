@@ -442,7 +442,7 @@ const Employees: NextPageWithLayout = ({
                     />
                   }
                 >
-                  <Link href={`http://localhost:3000/employees/detail/${record.key}`}>
+                  <Link href={`${process.env.CLIENT_URL}/employees/detail/${record.key}`}>
                     <a>Detail</a>
                   </Link>
                 </Menu.Item>
@@ -573,7 +573,7 @@ Employees.getLayout = ClientLayout;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   //Check login
-  const detailUser: IDetailUser = await fetch(`http://localhost:3000/api/auth/accesstoken`, {
+  const detailUser: IDetailUser = await fetch(`${process.env.CLIENT_URL}/api/auth/accesstoken`, {
     method: 'GET',
     headers: {
       cookie: context.req.headers.cookie,
@@ -598,7 +598,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   //Get all data users
-  const allUsers: IAllUsers = await fetch(`http://localhost:3000/api/users`, {
+  const allUsers: IAllUsers = await fetch(`${process.env.CLIENT_URL}/api/users`, {
     method: 'GET',
     headers: {
       cookie: context.req.headers.cookie,
@@ -614,7 +614,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   //Get all department
-  const allDepartments: IDepartments = await fetch(`http://localhost:3000/api/departments`, {
+  const allDepartments: IDepartments = await fetch(`${process.env.CLIENT_URL}/api/departments`, {
     method: 'GET',
     headers: {
       cookie: context.req.headers.cookie,

@@ -513,7 +513,7 @@ export default AssignDepartment;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   //Check login
-  const detailUser: IDetailUser = await fetch(`http://localhost:3000/api/auth/accesstoken`, {
+  const detailUser: IDetailUser = await fetch(`${process.env.CLIENT_URL}/api/auth/accesstoken`, {
     method: 'GET',
     headers: {
       cookie: context.req.headers.cookie,
@@ -538,7 +538,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   const detailDepartment: IDetailDepartment = await fetch(
-    `http://localhost:3000/api/departments/${context.query.id}`,
+    `${process.env.CLIENT_URL}/api/departments/${context.query.id}`,
     {
       method: 'GET',
       headers: {

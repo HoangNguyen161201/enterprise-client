@@ -222,7 +222,7 @@ export default DetailEmployee;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   //Check login
-  const detailCurrentUser: IDetailUser = await fetch(`http://localhost:3000/api/auth/accesstoken`, {
+  const detailCurrentUser: IDetailUser = await fetch(`${process.env.CLIENT_URL}/api/auth/accesstoken`, {
     method: 'GET',
     headers: {
       cookie: context.req.headers.cookie,
@@ -240,7 +240,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   const detailUser: { user: IUser; [index: string]: any } = await fetch(
-    `http://localhost:3000/api/users/${context.query.id}`,
+    `${process.env.CLIENT_URL}/api/users/${context.query.id}`,
     {
       method: 'GET',
       headers: {
