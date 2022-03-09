@@ -19,16 +19,21 @@ import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { getAllDepartments, getCurrentUser } from 'queries';
-import { useContext, useEffect as UseEffect, useMemo as UseMemo, useState as UseState } from 'react';
+import {
+  useContext,
+  useEffect,
+  useEffect as UseEffect,
+  useMemo as UseMemo,
+  useState as UseState,
+} from 'react';
 import column from 'utils/configTB';
 
 export interface IAddDepartmentProps {
-  detailUser: IDetailUser
+  detailUser: IDetailUser;
 }
 
-const AddDepartment: NextPageWithLayout = ({detailUser}: IAddDepartmentProps) => {
-  
-  const {color} = useContext(GlobalContext)
+const AddDepartment: NextPageWithLayout = ({ detailUser }: IAddDepartmentProps) => {
+  const { color } = useContext(GlobalContext);
 
   // get all departments
   const [departments, setDepartments] = UseState<any>([]);
@@ -43,10 +48,23 @@ const AddDepartment: NextPageWithLayout = ({detailUser}: IAddDepartmentProps) =>
   });
   const [isLoadingDlAll, setIsLoadingDlAll] = UseState(false);
   //Get access token
-  const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser(detailUser);
+  const {
+    data: dataUser,
+    error: errorGetUser,
+    refetch: dataUserRefetch,
+  } = getCurrentUser(detailUser);
 
   //Get data all departments
-  const { error: errorDepartments, data, refetch } = getAllDepartments(dataUser?.accessToken.token);
+  const {
+    error: errorDepartments,
+    data,
+    refetch: dataDepartmentRefetch,
+  } = getAllDepartments(dataUser?.accessToken.token);
+  useEffect(() => {
+    if (dataUser) {
+      dataDepartmentRefetch();
+    }
+  }, []);
 
   // delete department
   const handleDl = departmentMutation.delete({
@@ -55,11 +73,11 @@ const AddDepartment: NextPageWithLayout = ({detailUser}: IAddDepartmentProps) =>
       onSuccess: (data: ICommon) => {
         message.success(data.msg);
         setIsLoadingDl({ key: '', isLoading: false });
-        refetch();
+        dataDepartmentRefetch();
       },
       onError: (error: AxiosError) => {
         message.error({
-          content: error.response?.data?.err
+          content: error.response?.data?.err,
         });
         setIsLoadingDl({ key: '', isLoading: false });
       },
@@ -76,7 +94,7 @@ const AddDepartment: NextPageWithLayout = ({detailUser}: IAddDepartmentProps) =>
         message.success(data.msg);
         setIsLoadingDlAll(false);
         setDepartmentsSl(null);
-        refetch();
+        dataDepartmentRefetch();
       },
       onError: (error: AxiosError) => {
         const data = error.response?.data;
@@ -193,10 +211,16 @@ const AddDepartment: NextPageWithLayout = ({detailUser}: IAddDepartmentProps) =>
       {
         ...column({ title: 'update' }),
         render: (_, record) => {
-          return !record.root && <EditOutlined
-            onClick={() => push(`/departments/update/${record.key}`, undefined, { shallow: true })}
-            style={{ color: '#1890ff' }}
-          />
+          return (
+            !record.root && (
+              <EditOutlined
+                onClick={() =>
+                  push(`/departments/update/${record.key}`, undefined, { shallow: true })
+                }
+                style={{ color: '#1890ff' }}
+              />
+            )
+          );
         },
       },
       {
@@ -245,13 +269,18 @@ const AddDepartment: NextPageWithLayout = ({detailUser}: IAddDepartmentProps) =>
         <title>All Departments Page</title>
       </Head>
 
-      <BreadCrumb data={[{
-        url: '/',
-        label: 'Home'
-      }]} main={{
-        url: '/departments',
-        label: 'All departments'
-      }}/>
+      <BreadCrumb
+        data={[
+          {
+            url: '/',
+            label: 'Home',
+          },
+        ]}
+        main={{
+          url: '/departments',
+          label: 'All departments',
+        }}
+      />
 
       <Card
         extra={[
@@ -282,11 +311,11 @@ const AddDepartment: NextPageWithLayout = ({detailUser}: IAddDepartmentProps) =>
           </Popconfirm>,
         ]}
         title={<span className={`${color}`}>All Departments</span>}
-        className='card-b shadow-l'
+        className="card-b shadow-l"
       >
         <Space direction="vertical" size={20}></Space>
         <Table
-        scroll={{x: true}}
+          scroll={{ x: true }}
           rowSelection={{
             type: 'checkbox',
             getCheckboxProps: (record) => ({
@@ -337,7 +366,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
   return {
     props: {
-      detailUser
+      detailUser,
     },
   };
 };

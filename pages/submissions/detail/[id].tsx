@@ -6,7 +6,7 @@ import {
   FileTextOutlined,
 } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Alert, Button, Card, Col, List, message, Row, Space, Spin, Switch } from 'antd';
+import { Alert, Button, Card, Col, Image, List, message, Row, Space, Spin, Switch } from 'antd';
 import { AxiosError } from 'axios';
 import { BreadCrumb, ItemIdea } from 'components/elements/common';
 import ItemFileUpload from 'components/elements/common/ItemFileUpload';
@@ -23,7 +23,6 @@ import { IdeaMutaion } from 'mutations/idea';
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { getCurrentUser, getDetailSubmission, getIdeasCurrentUser } from 'queries';
 import { getallCategories } from 'queries/category';
@@ -576,7 +575,7 @@ const DetailSubmission: NextPageWithLayout = ({
                 size={20}
                 {...getRootProps()}
               >
-                <Image alt="upload_file" src="/assets/uploadFiles.svg" />
+                <Image preview={false} width={150} height={100} alt="upload_file" src="/assets/uploadFiles.svg" />
                 <input {...getInputProps()} />
                 {isDragActive ? (
                   <p
