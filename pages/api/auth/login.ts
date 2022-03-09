@@ -34,6 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       target: process.env.API_URL,
       changeOrigin: true,
       selfHandleResponse: true,
+      secure: false
     });
 
     //Because selfHandleResponse is true so need to response
@@ -44,9 +45,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       });
 
       proxyRes.on('end', function () {
-        const { accessToken, refreshToken, status, msg, err, statusCode } = JSON.parse(body);
         try {
-
+          const { accessToken, refreshToken, status, msg, err, statusCode } = JSON.parse(body);
           if (status === 'success') {
             //Save refresh token to cookie
             cookies.set('refresh_token', refreshToken.token, {
