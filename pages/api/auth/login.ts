@@ -43,13 +43,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         body += chunk;
       });
 
-      proxyRes.on('end', function () {
-        console.log(body)
+      proxyRes.on('end',async function () {
+        body = await JSON.parse(body)
         try {
     
             ;(res as NextApiResponse).status(400).json({
               err: 'dddd',
-              body: JSON.parse(body)
+              body
             })
           
         } catch (error: any) {
