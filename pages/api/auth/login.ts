@@ -37,7 +37,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     });
 
     //Because selfHandleResponse is true so need to response
-    const handleLoginResponse: ProxyResCallback = (proxyRes, req, res) => {
+    const handleLoginResponse: ProxyResCallback = async (proxyRes, req, res) => {
       let body = '';
       proxyRes.on('data', function (chunk) {
         body += chunk;
