@@ -46,7 +46,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       proxyRes.on('end', function () {
         console.log(body)
         try {
-          const { accessToken, refreshToken, status, msg, err, statusCode } = JSON.parse(body);
+          
 
   
             ;(res as NextApiResponse).status(400).json({
