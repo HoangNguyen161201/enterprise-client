@@ -67,8 +67,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
           }
         } catch (error) {
           ;(res as NextApiResponse).status(500).json({
-            err: 'Something went wrong.',
-            error: error
+            err: 'Something went wrong, hahaha',
+            error: JSON.stringify(error)
           });
         }
         resolve(true);
