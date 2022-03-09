@@ -44,9 +44,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       });
 
       proxyRes.on('end',async function () {
-        body = await JSON.parse(body)
         try {
-    
             ;(res as NextApiResponse).status(400).json({
               err: 'dddd',
               body
