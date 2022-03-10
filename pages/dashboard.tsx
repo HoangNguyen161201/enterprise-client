@@ -8,8 +8,10 @@ import { DoughnutChart, LineChart } from 'components/elements/chart';
 import { CardStatic, Clip, List } from 'components/elements/common';
 import { ClientLayout } from 'components/layouts';
 import { GlobalContext } from 'contextApi/globalContext';
+import { IDetailUser } from 'models/apiType';
 import { NextPageWithLayout } from 'models/layoutType';
 import moment from 'moment';
+import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { getCurrentUser } from 'queries/auth';
 import { getAllDepartments } from 'queries/department';
@@ -518,3 +520,37 @@ const dashBoard: NextPageWithLayout = () => {
 dashBoard.getLayout = ClientLayout;
 
 export default dashBoard;
+
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  //Check login
+  const detailUser: IDetailUser = await fetch(`${process.env.CLIENT_URL}/api/auth/accesstoken`, {
+    method: 'GET',
+    headers: {
+      cookie: context.req.headers.cookie,
+    } as HeadersInit,
+  }).then((e) => e.json());
+
+  //Redirect login page when error
+  if (detailUser.statusCode !== 200) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+  }
+
+  //Check role
+  if (detailUser.user.role !== 'qa_manager') {
+    return {
+      notFound: true,
+    };
+  }
+
+  return {
+    props: {
+      
+    },
+  };
+};
