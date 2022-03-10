@@ -220,7 +220,7 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
   return (
     <>
       <Head>
-        <title>All Categories Page</title>
+        <title>All Categories</title>
       </Head>
 
       <DrawerCt

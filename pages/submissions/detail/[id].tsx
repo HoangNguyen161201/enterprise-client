@@ -384,7 +384,7 @@ const DetailSubmission: NextPageWithLayout = ({
   return (
     <>
       <Head>
-        <title>Detail Submission Page</title>
+        <title>Detail Submission</title>
       </Head>
 
       <BreadCrumb

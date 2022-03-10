@@ -1,5 +1,5 @@
 import { EditOutlined } from '@ant-design/icons';
-import { Button, Drawer, Image, Space } from 'antd';
+import { Button, Drawer, Grid, Image, Space } from 'antd';
 import { GlobalContext } from 'contextApi/globalContext';
 import React, { useContext } from 'react';
 import { UseFormReturn } from 'react-hook-form';
@@ -30,9 +30,14 @@ export const DrawerSubm = ({
   deleteSubm,
   close,
 }: IDrawerSubm) => {
-  const {color2} = useContext(GlobalContext)
+  const { color2 } = useContext(GlobalContext);
+
+  const { useBreakpoint: UseBreakpoint } = Grid;
+  const { sm } = UseBreakpoint();
+
   return (
     <Drawer
+      width={sm ? undefined : '100%'}
       title={statusForm == 'create' ? 'Add new Submission' : 'Update submission'}
       closable
       onClose={close}
@@ -83,7 +88,13 @@ export const DrawerSubm = ({
               formSetting={formSetting}
             />
             <TextArea label="Description" name="description" formSetting={formSetting} />
-            <Button loading={isLoading}  htmlType="submit" type="primary" style={{borderRadius: 5}} className={`${color2}`}>
+            <Button
+              loading={isLoading}
+              htmlType="submit"
+              type="primary"
+              style={{ borderRadius: 5 }}
+              className={`${color2}`}
+            >
               Save
             </Button>
           </Space>

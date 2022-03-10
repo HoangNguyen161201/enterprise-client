@@ -78,7 +78,7 @@ const DetailEmployee: NextPageWithLayout = ({
   return (
     <>
       <Head>
-        <title>Detail User Page</title>
+        <title>Detail User</title>
       </Head>
 
       <BreadCrumb

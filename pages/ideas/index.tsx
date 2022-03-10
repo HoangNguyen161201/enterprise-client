@@ -112,7 +112,7 @@ const index: NextPageWithLayout = ({ detailUser }) => {
   return (
     <>
       <Head>
-        <title>All Ideas Page</title>
+        <title>All Ideas</title>
       </Head>
 
       <Breadcrumb>

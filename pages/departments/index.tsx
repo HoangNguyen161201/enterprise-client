@@ -242,7 +242,7 @@ const AddDepartment: NextPageWithLayout = ({detailUser}: IAddDepartmentProps) =>
   return (
     <>
       <Head>
-        <title>All Departments Page</title>
+        <title>All Departments</title>
       </Head>
 
       <BreadCrumb data={[{

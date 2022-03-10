@@ -1,5 +1,5 @@
 import { FileTextOutlined } from '@ant-design/icons';
-import { Button, Drawer, Space } from 'antd';
+import { Button, Drawer, Grid, Space } from 'antd';
 import { GlobalContext } from 'contextApi/globalContext';
 import React, { useContext } from 'react';
 import { UseFormReturn } from 'react-hook-form';
@@ -24,6 +24,10 @@ export const DrawerCt = ({
   isLoading,
   onSubmit,
 }: IDrawerCt) => {
+
+  const {useBreakpoint: UseBreakpoint} = Grid
+  const {sm} = UseBreakpoint()
+
   const {color2} = useContext(GlobalContext)
   return (
     <Drawer
@@ -33,6 +37,7 @@ export const DrawerCt = ({
       }}
       visible={isOpen}
       closable={true}
+      width={sm ? undefined: '100%'}
     >
       <form onSubmit={formSetting.handleSubmit(onSubmit)}>
         <Space direction="vertical" size={20}>

@@ -130,7 +130,7 @@ const UpdateDepartmetn: NextPageWithLayout = ({ detailDepartment, detailUser }: 
   return (
     <>
       <Head>
-        <title>Update Department Page</title>
+        <title>Update Department</title>
       </Head>
 
       <BreadCrumb data={[

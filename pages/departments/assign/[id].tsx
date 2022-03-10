@@ -384,7 +384,7 @@ const AssignDepartment: NextPageWithLayout = ({
   return (
     <>
       <Head>
-        <title>Assign Department Page</title>
+        <title>Assign Department</title>
       </Head>
       <BreadCrumb
         data={[
