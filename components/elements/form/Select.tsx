@@ -16,9 +16,6 @@ export const Select = ({ formSetting, dark= true, name, label, placeholder, requ
   } = formSetting;
   return (
     <Space
-      style={{
-        minWidth: 300,
-      }}
       direction="vertical"
       size={'small'}
     >

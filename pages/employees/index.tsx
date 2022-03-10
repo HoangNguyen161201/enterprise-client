@@ -488,7 +488,7 @@ const Employees: NextPageWithLayout = ({
   return (
     <>
       <Head>
-        <title>All Employees Page</title>
+        <title>All Employees</title>
       </Head>
 
       <BreadCrumb

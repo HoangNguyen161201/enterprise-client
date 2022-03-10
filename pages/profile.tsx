@@ -1,5 +1,5 @@
 //Import
-import { IdcardOutlined, MailOutlined, TeamOutlined } from '@ant-design/icons';
+import { CameraOutlined, IdcardOutlined, MailOutlined, TeamOutlined } from '@ant-design/icons';
 import {
   Button,
   Card,
@@ -13,7 +13,7 @@ import {
   Row,
   Space,
   Tag,
-  Tooltip
+  Tooltip,
 } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import { AxiosError } from 'axios';
@@ -28,8 +28,7 @@ import { fileMutation } from 'mutations/file';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { getCurrentUser, getIdeasAcceptUser } from 'queries';
-import { ChangeEventHandler, useContext, useEffect, useEffect as UseEffect, useState } from 'react';
-import { BsPen } from 'react-icons/bs';
+import { ChangeEventHandler, useEffect, useEffect as UseEffect, useState } from 'react';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { SocialIcon } from 'react-social-icons';
@@ -56,9 +55,6 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
 
   //State
   const [avatar, setAvatar] = useState<IAvatar | null>(null);
-
-  //Color dark mode
-  const { color, desColor } = useContext(GlobalContext);
 
   //loading upload avtar
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -253,7 +249,7 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
   return (
     <>
       <Head>
-        <title>Profile Page</title>
+        <title>Profile</title>
       </Head>
 
       <BreadCrumb
@@ -269,15 +265,22 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
         }}
       />
 
-      <Card title={<span className={`${color}`}>View Profile</span>} className="card-b shadow-l">
+      <Card
+        title={<span>View Profile</span>}
+        className="card-b shadow-l"
+        style={{
+          background: 'white',
+        }}
+        extra={<Button className='color-3' type='link' onClick={showModal}>Edit Infor Contact</Button>}
+      >
         <Space direction="vertical" size={20}>
           <Row wrap={!lg} gutter={[30, 30]}>
             <Col flex={lg ? '400px' : undefined} span={lg ? undefined : 24}>
               <Space size={20} direction="vertical">
                 <Space size={20} wrap>
-                  <Space size={20}>
+                  <Space align='end' size={20}>
                     <Image
-                      alt='avatar_user'
+                      alt="avatar_user"
                       style={{
                         width: 100,
                         height: 100,
@@ -297,7 +300,7 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
                             cursor: 'pointer',
                           }}
                         >
-                          <BsPen />
+                          <CameraOutlined />
                           <span
                             style={{
                               marginLeft: 10,
@@ -306,31 +309,36 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
                             Edit Avatar
                           </span>
                         </label>
-                        <input onChange={onChangeAvatar} hidden id="upload_avatar" type={'file'} accept="image/x-png,image/gif,image/jpeg" />
+                        <input
+                          onChange={onChangeAvatar}
+                          hidden
+                          id="upload_avatar"
+                          type={'file'}
+                          accept="image/x-png,image/gif,image/jpeg"
+                        />
                       </Tooltip>
-                      <Button onClick={showModal}>Edit Infor Contact</Button>
+
                     </Space>
                   </Space>
-                  <div
+                </Space>
+                <div
+                  style={{
+                    height: '100%',
+                  }}
+                >
+                  <span
                     style={{
-                      height: '100%',
+                      fontSize: 20,
+                      fontWeight: 'bold',
+                      display: 'block',
                     }}
                   >
-                    <span
-                      style={{
-                        fontSize: 20,
-                        fontWeight: 'bold',
-                        display: 'block',
-                      }}
-                      className={`${color}`}
-                    >
-                      {dataUser?.user?.name}
-                    </span>
-                    <span className={`${desColor}`}>{dataUser?.user?.role}</span>
-                  </div>
-                </Space>
+                    {dataUser?.user?.name}
+                  </span>
+                  <span>{dataUser?.user?.role}</span>
+                </div>
 
-                <span className={`${desColor}`}>Employee infor</span>
+                <span>Employee infor</span>
                 <Infor
                   color="#009F9D"
                   Icon={IdcardOutlined}
@@ -354,7 +362,7 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
                   }
                 />
 
-                <span className={`${desColor}`}>Basic contact infor</span>
+                <span>Basic contact infor</span>
                 <ItemInfor
                   title="Phone"
                   content={dataUser?.user.phone ? `+${dataUser.user.phone}` : undefined}
@@ -364,7 +372,7 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
                   content={`${dataUser?.user?.country}, ${dataUser?.user?.city}, ${dataUser?.user?.street}`}
                 />
 
-                <span className={`${desColor}`}>Social network</span>
+                <span>Social network</span>
                 <Space size={20}>
                   {dataUser?.user.social_networks &&
                     dataUser?.user.social_networks.map((socialUrl) => (
@@ -381,8 +389,8 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
               </Space>
             </Col>
             <Col flex="auto">
-              <span className={`${desColor}`}>
-                {`Ideas Accept (${(dataIdeasAccept && dataIdeasAccept.ideas.length) || 0} ideas)`}
+              <span>
+                Ideas Accept: <Tag color={'green'} style={{marginLeft: 10}}>{(dataIdeasAccept && dataIdeasAccept.ideas.length) || 0} ideas</Tag>
               </span>
               <List
                 itemLayout="horizontal"
@@ -485,12 +493,15 @@ export default DetailEmployee;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   //Check login
-  const detailCurrentUser: IDetailUser = await fetch(`${process.env.CLIENT_URL}/api/auth/accesstoken`, {
-    method: 'GET',
-    headers: {
-      cookie: context.req.headers.cookie,
-    } as HeadersInit,
-  }).then((e) => e.json());
+  const detailCurrentUser: IDetailUser = await fetch(
+    `${process.env.CLIENT_URL}/api/auth/accesstoken`,
+    {
+      method: 'GET',
+      headers: {
+        cookie: context.req.headers.cookie,
+      } as HeadersInit,
+    }
+  ).then((e) => e.json());
 
   //Redirect login page when error
   if (detailCurrentUser.statusCode !== 200) {

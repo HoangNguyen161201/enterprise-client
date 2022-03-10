@@ -5,7 +5,7 @@ import { IInput } from 'models/formType';
 import React, { useContext, useState } from 'react';
 import { Controller } from 'react-hook-form';
 
-export const Input = ({  
+export const Input = ({
   type = 'text',
   formSetting,
   name,
@@ -14,9 +14,9 @@ export const Input = ({
   disable,
   icon,
   require = true,
-  dark= true
+  dark = true,
 }: IInput) => {
-  const {desColor} = useContext(GlobalContext)
+  const { desColor } = useContext(GlobalContext);
 
   const [options, setOptions] = useState([{ value: '@gmail.com' }]);
 
@@ -30,7 +30,7 @@ export const Input = ({
   } = formSetting;
   return (
     <Space direction="vertical" size={'small'}>
-      <span className={dark ? `font-1 ${desColor}`: 'font-1 des-1'}>
+      <span className={dark ? `font-1 ${desColor}` : 'font-1 des-1'}>
         {label} {require && <span className="color-red">*</span>}
       </span>
       <Controller
@@ -46,7 +46,16 @@ export const Input = ({
                   }}
                   {...field}
                   disabled={disable}
-                  prefix={icon}
+                  prefix={
+                    <span
+                      style={{
+                        marginRight: 5,
+                        color: 'gray'
+                      }}
+                    >
+                      {icon}
+                    </span>
+                  }
                   size="large"
                   placeholder={placeholder || ''}
                   iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
@@ -63,7 +72,16 @@ export const Input = ({
                 >
                   <AntInput
                     size="large"
-                    prefix={icon}
+                    prefix={
+                      <span
+                        style={{
+                          marginRight: 5,
+                          color: 'gray'
+                        }}
+                      >
+                        {icon}
+                      </span>
+                    }
                     type={type}
                     placeholder={placeholder || ''}
                   />
@@ -77,14 +95,21 @@ export const Input = ({
                   style={{ width: '100%' }}
                   size="large"
                   disabled={disable}
-                  prefix={icon}
+                  prefix={
+                    <span
+                      style={{
+                        marginRight: 5,
+                        color: 'gray'
+                      }}
+                    >
+                      {icon}
+                    </span>
+                  }
                   type={type}
                   placeholder={placeholder || ''}
                 />
               );
           }
-
-          
         }}
       />
       {errors[name] && <span className="color-red">{errors[name].message}</span>}

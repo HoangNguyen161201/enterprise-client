@@ -296,7 +296,7 @@ const DetailSubmission: NextPageWithLayout = ({
   return (
     <>
       <Head>
-        <title>Update Idea Page</title>
+        <title>Update Idea</title>
       </Head>
 
       <Breadcrumb>

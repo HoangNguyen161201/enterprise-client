@@ -1,6 +1,6 @@
 import { ArrowLeftOutlined, UnlockOutlined } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Button, message, Space } from 'antd';
+import { Button, Grid, message, Space } from 'antd';
 import { AxiosError } from 'axios';
 import { Input } from 'components/elements/form';
 import { GlobalContext } from 'contextApi/globalContext';
@@ -10,11 +10,24 @@ import { authMutation } from 'mutations/auth';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter as UseRouter } from 'next/router';
-import React, { useContext as UseContext, useEffect as UseEffect, useState as UseState } from 'react';
+import React, {
+  useContext as UseContext,
+  useEffect as UseEffect,
+  useState as UseState,
+} from 'react';
+import ReactConfetti from 'react-confetti';
 import { useForm } from 'react-hook-form';
 import { validateResetPass } from 'utils/validate';
 
 export default function ResetPass() {
+
+  const {useBreakpoint: UseBreakpoint} = Grid
+  const {sm} = UseBreakpoint()
+
+  const [width, setWidth] = UseState(300);
+  const [height, setHeight] = UseState(500);
+  const [run, setRun] = UseState(false);
+
   const { query, push } = UseRouter();
 
   const { handleLightMode } = UseContext(GlobalContext);
@@ -38,12 +51,19 @@ export default function ResetPass() {
       setActiveToken(query.active_token as string);
     }
   }, [query]);
+  UseEffect(() => {
+    setWidth(window.innerWidth);
+    setHeight(window.innerHeight);
+  }, [run]);
 
   const resetPassM = authMutation.resetPass({
     options: {
       onSuccess: (data: ICommon) => {
+        setRun(true)
         message.success(data.msg);
-        push('/login', undefined, { shallow: true });
+        setTimeout(()=> {
+          push('/login', undefined, { shallow: true });
+        }, 1000)
       },
       onError: (error: AxiosError) => {
         message.error(error.response?.data.err);
@@ -61,29 +81,52 @@ export default function ResetPass() {
   };
 
   return (
-    <>
+    <div
+      style={{
+        overflow: 'hidden',
+        padding: '25px 40px'
+      }}
+    >
+      {
+        run && (
+          <ReactConfetti width={width} numberOfPieces={200}  height={height} />
+        )
+      }
       <Head>
-        <title>Reset Password Page</title>
+        <title>Reset Password</title>
       </Head>
 
-      <Space
-        size={30}
-        direction="vertical"
-        align="center"
+      <div
         style={{
           width: '100%',
-          height: '100vh',
+          height: '95vh',
           display: 'flex',
           justifyContent: 'center',
+          alignItems: 'center',
+          flexDirection: 'column',
         }}
       >
+        <span
+          style={{
+            fontSize: !sm ? 20: 30,
+            fontWeight: 'bold',
+            maxWidth: 400,
+            width: '100%',
+            marginBottom: 15
+          }}
+        >
+          Reset password
+        </span>
         <form
           onSubmit={formSetting.handleSubmit(onSubmit)}
           style={{
-            width: 400,
+            maxWidth: 400,
+            width: '100%',
           }}
         >
-          <Space direction="vertical" size={30}>
+          <Space direction="vertical" size={30} style={{
+            marginBottom: 15
+          }}>
             <Space direction="vertical" size={15}>
               <Input
                 type="password"
@@ -126,8 +169,7 @@ export default function ResetPass() {
             <a>Back to login</a>
           </Link>
         </Space>
-        ,
-      </Space>
-    </>
+      </div>
+    </div>
   );
 }

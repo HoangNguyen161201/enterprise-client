@@ -62,7 +62,7 @@ const DetailDepartment: NextPageWithLayout = ({ detailMyDepartment }: IDetailDep
   return (
     <>
       <Head>
-        <title> My Department Page</title>
+        <title> My Department</title>
       </Head>
 
       <BreadCrumb

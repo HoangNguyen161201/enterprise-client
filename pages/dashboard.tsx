@@ -10,6 +10,7 @@ import { ClientLayout } from 'components/layouts';
 import { GlobalContext } from 'contextApi/globalContext';
 import { NextPageWithLayout } from 'models/layoutType';
 import moment from 'moment';
+import Head from 'next/head';
 import { getCurrentUser } from 'queries/auth';
 import { getAllDepartments } from 'queries/department';
 import {
@@ -159,6 +160,9 @@ const dashBoard: NextPageWithLayout = () => {
 
   return (
     <>
+    <Head>
+      <title>Dashboard</title>
+    </Head>
       <p
         className={`font-3 ${color}`}
         style={{

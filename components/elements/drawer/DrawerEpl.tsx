@@ -1,5 +1,5 @@
 import { FileTextOutlined } from '@ant-design/icons';
-import { Avatar, Button, Col, Drawer, Row, Space, Alert } from 'antd';
+import { Avatar, Button, Col, Drawer, Row, Space, Alert, Grid } from 'antd';
 import { UseFormReturn } from 'react-hook-form';
 import { IUser } from 'models/apiType';
 import { IOptionSelect } from 'models/elementType';
@@ -25,11 +25,15 @@ export const DrawerUpdateUser = ({
   departmentSl,
   onSubmit,
 }: IDrawerUpdateUserProps)=> {
+
+  const {useBreakpoint: UseBreakpoint} = Grid
+  const {sm} = UseBreakpoint()
+
   const {color2} = useContext(GlobalContext)
 
   return (
     <>
-      <Drawer placement="right" onClose={onClose} visible={visible}>
+      <Drawer width={sm ? undefined: '100%'} placement="right" onClose={onClose} visible={visible}>
         <Space
           direction="vertical"
           size={20}

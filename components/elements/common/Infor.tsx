@@ -13,7 +13,6 @@ export interface IAppProps {
 }
 
 export const Infor = ({ color, Icon, title, url, titleTooltip }: IAppProps) => {
-  const {darkMode, color: darkColor} = React.useContext(GlobalContext)
   return (
     <>
       <Tooltip title={titleTooltip}>
@@ -22,7 +21,7 @@ export const Infor = ({ color, Icon, title, url, titleTooltip }: IAppProps) => {
             style={{
               width: 36,
               height: 36,
-              background: darkMode ? 'white': `${color}15`,
+              background:  `${color}15`,
               justifyContent: 'center',
               borderRadius: '50%',
             }}
@@ -33,7 +32,7 @@ export const Infor = ({ color, Icon, title, url, titleTooltip }: IAppProps) => {
               }}
             />
           </Space>
-          <span className={`${darkColor}`}>{title}</span>
+          <span>{title}</span>
           {url && (
             <Link href={url}>
               <a>

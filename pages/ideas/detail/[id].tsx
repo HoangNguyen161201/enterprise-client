@@ -324,7 +324,7 @@ const DetailIdea: NextPageWithLayout = ({
   return (
     <>
       <Head>
-        <title>Detail Idea Page</title>
+        <title>Detail Idea</title>
       </Head>
 
       <BreadCrumb

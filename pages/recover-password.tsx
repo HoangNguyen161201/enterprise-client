@@ -1,6 +1,6 @@
 import { ArrowLeftOutlined, KeyOutlined, UserOutlined } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Button, message, Result, Space } from 'antd';
+import { Button, Grid, message, Result, Space } from 'antd';
 import { AxiosError } from 'axios';
 import { Input } from 'components/elements/form';
 import { GlobalContext } from 'contextApi/globalContext';
@@ -13,6 +13,9 @@ import { useForm as UseForm } from 'react-hook-form';
 import { validateRecoverPass } from 'utils/validate';
 
 export default function recover_password() {
+  const {useBreakpoint: UseBreakpoint } =  Grid
+  const {sm} = UseBreakpoint()
+
   const {handleLightMode} = UseContext(GlobalContext)
 
   const [isSMTP, setIsSMTP] = UseState(false);
@@ -37,7 +40,7 @@ export default function recover_password() {
     handleLightMode()
   },[])
 
-  // setting form
+  // setting form --
   const formSetting = UseForm<{ email: string }>({
     resolver: yupResolver(validateRecoverPass),
     defaultValues: {
@@ -50,20 +53,22 @@ export default function recover_password() {
   };
 
   return (
-    <>
+    <div style={{
+      overflow: 'hidden',
+      padding: '25px 40px'
+    }}>
       <Head>
-        <title>Recover Password Page</title>
+        <title>Recover Password</title>
       </Head>
 
-      <Space
-        size={30}
-        direction="vertical"
-        align="center"
+      <div
         style={{
           width: '100%',
-          height: '100vh',
+          height: '95vh',
           display: 'flex',
           justifyContent: 'center',
+          alignItems: 'center',
+          flexDirection: 'column'
         }}
       >
         {isSMTP ? (
@@ -96,6 +101,7 @@ export default function recover_password() {
                 borderRadius: '50%',
                 background: '#B0DEDD',
                 boxShadow: '8px 10px 19px -2px rgba(0,0,0,0.15)',
+                marginBottom: 15
               }}
             >
               <KeyOutlined
@@ -105,10 +111,13 @@ export default function recover_password() {
                 }}
               />
             </div>
-            <Space align="center" direction="vertical">
+            <Space align="center" direction="vertical"
+            style={{
+              marginBottom: 20
+            }}>
               <span
                 style={{
-                  fontSize: 30,
+                  fontSize: !sm ? 20: 30,
                   fontWeight: 'bold',
                 }}
               >
@@ -125,7 +134,9 @@ export default function recover_password() {
             <form
               onSubmit={formSetting.handleSubmit(onSubmit)}
               style={{
-                width: 350,
+                width: '100%',
+                maxWidth: 350,
+                marginBottom: 15
               }}
             >
               <Space direction="vertical" size={20}>
@@ -166,7 +177,7 @@ export default function recover_password() {
             </Space>
           </>
         )}
-      </Space>
-    </>
+      </div>
+    </div>
   );
 }

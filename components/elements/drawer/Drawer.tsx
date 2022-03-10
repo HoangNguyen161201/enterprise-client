@@ -9,7 +9,7 @@ import {
   UploadOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { Drawer as AntDrawer, Menu } from 'antd';
+import { Drawer as AntDrawer, Grid, Menu } from 'antd';
 import Link from 'next/link';
 import { useEffect as UseEffect, useState as UseState } from 'react';
 import { getCurrentUser } from 'queries/auth';
@@ -32,6 +32,10 @@ interface IProps {
 }
 
 export const Drawer = ({ onClose, ...props }: IProps) => {
+
+  const {useBreakpoint: UseBreakpoint} = Grid
+  const {sm} = UseBreakpoint()
+
   //State Show Menu Item
   const [isShowByRole, setIsShowByRole] = UseState<IsShowMenuItem>({
     staff: false,
@@ -107,7 +111,7 @@ export const Drawer = ({ onClose, ...props }: IProps) => {
 
   return (
     <>
-      <AntDrawer
+      <AntDrawer width={sm ? undefined: '100%'}
         closeIcon={<CloseOutlined style={{
           color: darkMode ? 'white': '#001529'
         }} />}
@@ -233,7 +237,7 @@ export const Drawer = ({ onClose, ...props }: IProps) => {
             icon={<CloudUploadOutlined />}
             onClick={onClose}
             style={{
-              display: isShowByRole.qa_manager ? 'block' : 'none',
+              display: !isShowByRole.admin ? 'block' : 'none',
             }}
           >
             <Link href={'/ideas'}>

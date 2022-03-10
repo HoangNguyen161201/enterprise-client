@@ -216,7 +216,7 @@ const index: NextPageWithLayout = ({ result, detailUser }: submisionPage) => {
   return (
     <>
       <Head>
-        <title>Submissions Page</title>
+        <title>All Submissions</title>
       </Head>
       <BreadCrumb data={[{url: '/', label: 'Home'}]} main={{label: 'Submissions', url: '/submissions'}}/>
       <AntCard
@@ -285,6 +285,7 @@ const index: NextPageWithLayout = ({ result, detailUser }: submisionPage) => {
           <Space direction="vertical" align="end">
             {dataSubmissions?.page_Index && (
               <Pagination
+              
                 onChange={(pageSl) => {
                   setPage(pageSl);
                 }}

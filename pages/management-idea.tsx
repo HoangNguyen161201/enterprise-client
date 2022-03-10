@@ -397,7 +397,7 @@ const managementIdea: NextPageWithLayout = ({
   return (
     <>
       <Head>
-        <title>Submissions Page</title>
+        <title>Management Submission</title>
       </Head>
       <BreadCrumb
         data={[

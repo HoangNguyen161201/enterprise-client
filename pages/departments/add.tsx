@@ -83,7 +83,7 @@ const AddDepartment: NextPageWithLayout = ({ detailUser }: IAddDepartmentProps) 
   return (
     <>
       <Head>
-        <title>Add Department Page</title>
+        <title>Add new Department</title>
       </Head>
 
       <BreadCrumb

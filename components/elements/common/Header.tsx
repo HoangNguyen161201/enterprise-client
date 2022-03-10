@@ -1,5 +1,5 @@
 import { LogoutOutlined, MenuOutlined, ProfileOutlined, TeamOutlined } from '@ant-design/icons';
-import { Avatar, Button, Divider, Dropdown, Layout, Menu, message, Space, Switch } from 'antd';
+import { Avatar, Button, Divider, Dropdown, Grid, Layout, Menu, message, Space, Switch } from 'antd';
 import { GlobalContext } from 'contextApi/globalContext';
 import { ILogout } from 'models/apiType';
 import Link from 'next/link';
@@ -15,6 +15,10 @@ const { Header } = Layout;
 
 export const HeaderComponent = () => {
   const { darkMode, toggleDarkMode, bgColor, color, color2 } = useContext(GlobalContext);
+
+  const {useBreakpoint: UseBreakpoint} = Grid
+  const {md} = UseBreakpoint()
+
   //Setting drawer
   const [visible, setVisible] = useState(false);
 
@@ -102,7 +106,7 @@ export const HeaderComponent = () => {
       <Header
         className={`${bgColor}`}
         style={{
-          padding: '0px 40px',
+          padding: md? '0px 40px': '0px 20px',
           zIndex: '1',
           borderBottom: '1px solid #efefef',
         }}
@@ -122,7 +126,7 @@ export const HeaderComponent = () => {
               }}
             >
               <Link href={'/'}>
-                <a>CMS</a>
+                <a className='cms'>CMS</a>
               </Link>
             </span>
 

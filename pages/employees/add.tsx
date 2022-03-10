@@ -136,7 +136,7 @@ const AddEmployee: NextPageWithLayout = ({ allDepartments, detailUser }: IAddEmp
   return (
     <>
       <Head>
-        <title>Add Employee Page</title>
+        <title>Add Employee</title>
       </Head>
 
       <BreadCrumb

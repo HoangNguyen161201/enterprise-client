@@ -1,6 +1,6 @@
 import { UnlockOutlined, UserOutlined } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Button, Divider, message, Space } from 'antd';
+import { Button, Divider, message, Space, Grid} from 'antd';
 import { AxiosError } from 'axios';
 import { CopyAcc } from 'components/elements/common';
 import { Input, Select } from 'components/elements/form';
@@ -21,6 +21,8 @@ import { useForm as UseForm } from 'react-hook-form';
 import { validateLogin } from 'utils/validate';
 
 const login: NextPageWithLayout = () => {
+  const {useBreakpoint: UseBreakpoint} = Grid
+  const {sm} = UseBreakpoint()
   const { handleLightMode} = UseContext(GlobalContext)
   const { refetch } = getCurrentUser();
   const { push } = UseRouter();
@@ -102,20 +104,29 @@ const login: NextPageWithLayout = () => {
       content: 'Copy account success',
     });
   };
+
+  
+
   return (
     <>
       <Head>
-        <title> Login Page</title>
+        <title> Login</title>
       </Head>
 
-      <Space className="screen-full justify-center" align="center">
+      <div style={{
+        alignItems: 'center',
+        display: 'flex',
+        justifyContent: 'center',
+        padding: '40px 25px'
+      }} className="screen-full bg-awesome" >
         <form
           onSubmit={formSetting.handleSubmit(onSubmit)}
           style={{
-            width: 400,
+            width: !sm ? '100%' : 400,
             padding: 20,
             border: '2px solid #009F9D',
             borderRadius: 10,
+            background: 'white'
           }}
         >
           <p
@@ -193,7 +204,7 @@ const login: NextPageWithLayout = () => {
             ))}
           </Space>
         </form>
-      </Space>
+      </div>
     </>
   );
 };

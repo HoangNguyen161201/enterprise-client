@@ -1,4 +1,4 @@
-import { Drawer, Image, Space } from 'antd';
+import { Drawer, Grid, Image, Space } from 'antd';
 import React from 'react';
 import {Skeletons} from '../common';
 
@@ -9,8 +9,12 @@ interface IDawerImg {
   setImg: (img: string) => void;
 }
 export const DrawerImg = ({ imgs, isOpen, close, setImg }: IDawerImg) => {
+
+  const {useBreakpoint: UseBreakpoint} = Grid
+  const {sm} = UseBreakpoint()
+
   return (
-    <Drawer title="Images" closable onClose={() => close()} visible={isOpen}>
+    <Drawer width={sm? undefined: '100%'} title="Images" closable onClose={() => close()} visible={isOpen}>
       <Space direction="vertical">
         {imgs ? (
           imgs.map((item, key) => (
