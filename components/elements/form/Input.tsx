@@ -30,9 +30,9 @@ export const Input = ({
   } = formSetting;
   return (
     <Space direction="vertical" size={'small'}>
-      <span className={dark ? `font-1 ${desColor}` : 'font-1 des-1'}>
+      <label htmlFor={name} className={dark ? `font-1 ${desColor}` : 'font-1 des-1'}>
         {label} {require && <span className="color-red">*</span>}
-      </span>
+      </label>
       <Controller
         name={name}
         control={control}
@@ -41,6 +41,7 @@ export const Input = ({
             case 'password':
               return (
                 <AntInput.Password
+                  id={name}
                   style={{
                     width: '100%',
                   }}
@@ -50,7 +51,7 @@ export const Input = ({
                     <span
                       style={{
                         marginRight: 5,
-                        color: 'gray'
+                        color: 'gray',
                       }}
                     >
                       {icon}
@@ -64,6 +65,7 @@ export const Input = ({
             case 'email':
               return (
                 <AutoComplete
+                  id={name}
                   {...field}
                   style={{ width: '100%' }}
                   onSearch={handleSearch}
@@ -76,7 +78,7 @@ export const Input = ({
                       <span
                         style={{
                           marginRight: 5,
-                          color: 'gray'
+                          color: 'gray',
                         }}
                       >
                         {icon}
@@ -91,6 +93,7 @@ export const Input = ({
             default:
               return (
                 <AntInput
+                  id={name}
                   {...field}
                   style={{ width: '100%' }}
                   size="large"
@@ -99,7 +102,7 @@ export const Input = ({
                     <span
                       style={{
                         marginRight: 5,
-                        color: 'gray'
+                        color: 'gray',
                       }}
                     >
                       {icon}

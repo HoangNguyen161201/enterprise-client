@@ -89,10 +89,10 @@ const DetailDepartment: NextPageWithLayout = ({ detailMyDepartment }: IDetailDep
               />
               <FieldCard
                 lg={12}
-                view={dataDepartment?.department.department_manager ? true : false}
+                view={dataDepartment?.department?.department_manager ? true : false}
                 user_id={
-                  dataDepartment?.department.department_manager
-                    ? dataDepartment?.department.department_manager._id
+                  dataDepartment?.department?.department_manager
+                    ? dataDepartment?.department?.department_manager._id
                     : undefined
                 }
                 label="Department Manager"
@@ -104,10 +104,10 @@ const DetailDepartment: NextPageWithLayout = ({ detailMyDepartment }: IDetailDep
               />
               <FieldCard
                 lg={12}
-                view={dataDepartment?.department.qa_coordinator ? true : false}
+                view={dataDepartment?.department?.qa_coordinator ? true : false}
                 user_id={
-                  dataDepartment?.department.qa_coordinator
-                    ? dataDepartment?.department.qa_coordinator._id
+                  dataDepartment?.department?.qa_coordinator
+                    ? dataDepartment?.department?.qa_coordinator._id
                     : undefined
                 }
                 label="QA Coordinator"
@@ -117,10 +117,10 @@ const DetailDepartment: NextPageWithLayout = ({ detailMyDepartment }: IDetailDep
               />
               <FieldCard
                 lg={12}
-                view={dataDepartment?.department.qa_manager ? true : false}
+                view={dataDepartment?.department?.qa_manager ? true : false}
                 user_id={
-                  dataDepartment?.department.qa_manager
-                    ? dataDepartment?.department.qa_manager._id
+                  dataDepartment?.department?.qa_manager
+                    ? dataDepartment?.department?.qa_manager._id
                     : undefined
                 }
                 label="QA Manager"

@@ -18,13 +18,13 @@ export const DateInput = ({
     control,
   } = formSetting;return (
     <Space direction="vertical" size={'small'}>
-      <span className={dark ? `font-1 ${desColor}`: 'font-1 des-1'}>
+      <label htmlFor={name} className={dark ? `font-1 ${desColor}`: 'font-1 des-1'}>
         {label} {require && <span className="color-red">*</span>}
-      </span>
+      </label>
       <Controller
         name={name}
         control={control}
-        render={({ field }) => <DatePicker disabledDate={(currentDate)=> currentDate && currentDate < moment()} format="YYYY-MM-DD HH:mm:ss" showTime showToday {...field} style={{ width: '100%' }} size="large" />}
+        render={({ field }) => <DatePicker id={name} disabledDate={(currentDate)=> currentDate && currentDate < moment()} format="YYYY-MM-DD HH:mm:ss" showTime showToday {...field} style={{ width: '100%' }} size="large" />}
       />
       {errors[name] && <span className="color-red">{errors[name].message}</span>}
     </Space>

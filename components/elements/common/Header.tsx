@@ -140,6 +140,7 @@ export const HeaderComponent = () => {
           </Space>
           <Space size={15}>
             <Switch
+              aria-label='darkMode'
               checked={darkMode}
               onChange={(checked) => {
                 toggleDarkMode();
@@ -172,6 +173,7 @@ export const HeaderComponent = () => {
                   }}
                 >
                   <Avatar
+                    alt='avatar'
                     style={{
                       border: '1px solid #009F9D',
                       background: 'white',

@@ -16,7 +16,6 @@ import { IdeaMutaion } from 'mutations/idea';
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { getCurrentUser, getDetailIdea } from 'queries';
 import { getallCategories } from 'queries/category';
@@ -306,7 +305,7 @@ const DetailSubmission: NextPageWithLayout = ({
       </Breadcrumb>
 
       <Card
-        extra={<a onClick={onClearData}>Reset</a>}
+        extra={<Button type={'link'} onClick={onClearData}>Reset</Button>}
         title="Update Your Idea"
         className="card-b shadow-l"
         style={{
@@ -445,7 +444,7 @@ const DetailSubmission: NextPageWithLayout = ({
               size={20}
               {...getRootProps()}
             >
-              <Image alt={'upload_img'} src="/assets/uploadFiles.svg" />
+              <img width={150} height={100} alt={'upload_img'} src="/assets/uploadFiles.svg" />
               <input {...getInputProps()} />
               {isDragActive ? (
                 <p

@@ -4,28 +4,29 @@ import { IInput } from 'models/formType';
 import React, { useContext } from 'react';
 import { Controller } from 'react-hook-form';
 
-export const TextArea = ({ formSetting, dark= true, name, label, require = true }: IInput) => {
-  const {desColor} = useContext(GlobalContext)
+export const TextArea = ({ formSetting, dark = true, name, label, require = true }: IInput) => {
+  const { desColor } = useContext(GlobalContext);
   const {
     formState: { errors },
     control,
   } = formSetting;
   return (
     <Space direction="vertical" size={'small'}>
-      <span className={dark ? `font-1 ${desColor}`: 'font-1 des-1'}>
+      <label htmlFor={name} className={dark ? `font-1 ${desColor}` : 'font-1 des-1'}>
         {label} {require && <span className="color-red">*</span>}
-      </span>
+      </label>
       <Controller
         name={name}
         control={control}
         render={({ field }) => (
           <AntInput.TextArea
+            id={name}
             {...field}
             size="large"
             style={{
-                width: '100%',
-                minHeight: '100px',
-                borderRadius: 5
+              width: '100%',
+              minHeight: '100px',
+              borderRadius: 5,
             }}
           />
         )}

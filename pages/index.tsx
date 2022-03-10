@@ -155,7 +155,7 @@ const index: NextPageWithLayout = ({ result, detailUser }: IHome) => {
               Submissions
             </span>
             <Link href="/submissions">
-              <a>See more</a>
+              <a>More submissions</a>
             </Link>
           </div>
           <Row

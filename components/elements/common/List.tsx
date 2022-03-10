@@ -32,7 +32,7 @@ export const List = ({data, url, center = true }: {center?: boolean, data: {avat
             display: 'flex',
             alignItems: center ? 'center': 'start',
           }}
-          avatar={<Avatar size={'large'} style={{background: 'white'}} src={item.avatar.url} />}
+          avatar={<Avatar size={'large'} alt={item.email || item.name} style={{background: 'white'}} src={item.avatar.url} />}
           title={<span className={`font-3`}>{item.count}</span>}
           description={<span style={{color: 'gray'}}>{item.email || item.name}</span>}
         />

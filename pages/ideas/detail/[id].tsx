@@ -372,12 +372,12 @@ const DetailIdea: NextPageWithLayout = ({
           <Space wrap size={20}>
             {dataDetailIdea && dataDetailIdea.idea.anonymously ? (
               <>
-                <Avatar icon={<UserOutlined />} />
+                <Avatar alt={'avatar'} icon={<UserOutlined />} />
                 <span>--------------------</span>
               </>
             ) : (
               <>
-                <Avatar src={dataDetailIdea && dataDetailIdea.idea.user_id.avatar.url} />
+                <Avatar alt={'avatar'} src={dataDetailIdea && dataDetailIdea.idea.user_id.avatar.url} />
                 {dataDetailIdea?.idea?.user_id && (
                   <span>
                     <Link href={`/employees/detail/${dataDetailIdea.idea.user_id._id}`}>
@@ -499,7 +499,7 @@ const DetailIdea: NextPageWithLayout = ({
                 >
                   Anonymously infor
                 </span>
-                <Switch checked={anonymously} onChange={(value) => setAnonymously(value)} />
+                <Switch aria-label={'anonymously'} checked={anonymously} onChange={(value) => setAnonymously(value)} />
               </Space>
             )}
           </Space>

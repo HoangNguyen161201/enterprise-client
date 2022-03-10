@@ -79,25 +79,25 @@ const userSchema = new mongoose.Schema(
 userSchema.plugin(mongoose_delete);
 
 //Increment employee ID users
-userSchema.pre('save', async function (next) {
-  let maxQuery;
-  try {
-    maxQuery = await mongoose
-      .model('users', userSchema)
-      .find({})
-      .sort({ employee_id: -1 })
-      .limit(1)
-      .then((users) => users[0].employee_id);
-  } catch (error) {
-    //Check exist model users
-    if (error.name !== 'TypeError') {
-      next(error);
-    }
-  }
-  if (maxQuery) {
-    this.employee_id = ++maxQuery;
-  }
-  next();
-});
+// userSchema.pre('save', async function (next) {
+//   let maxQuery;
+//   try {
+//     maxQuery = await mongoose
+//       .model('users', userSchema)
+//       .find({})
+//       .sort({ employee_id: -1 })
+//       .limit(1)
+//       .then((users) => users[0].employee_id);
+//   } catch (error) {
+//     //Check exist model users
+//     if (error.name !== 'TypeError') {
+//       next(error);
+//     }
+//   }
+//   if (maxQuery) {
+//     this.employee_id = ++maxQuery;
+//   }
+//   next();
+// });
 
 module.exports = mongoose.model('users', userSchema);

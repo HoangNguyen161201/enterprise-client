@@ -19,15 +19,15 @@ export const Select = ({ formSetting, dark= true, name, label, placeholder, requ
       direction="vertical"
       size={'small'}
     >
-      <span className={dark ? `font-1 ${desColor}`: 'font-1 des-1'}>
+      <label htmlFor={name} className={dark ? `font-1 ${desColor}`: 'font-1 des-1'}>
         {label} {require && <span className="color-red">*</span>}
-      </span>
+      </label>
       <Controller
         name={name}
         control={control}
         render={({ field }) => {
           return (
-            <AntSelect mode={multiple ? 'multiple': undefined} size='large'
+            <AntSelect id={name} mode={multiple ? 'multiple': undefined} size='large'
               style={{
                 width: '100%',
                 borderRadius: '10px !important',

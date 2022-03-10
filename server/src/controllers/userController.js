@@ -48,6 +48,15 @@ const userController = {
       url: `https://avatars.dicebear.com/api/big-smile/${name}.svg`,
     };
 
+    //Increment user
+    const maxQuery = await userModel
+      .find({})
+      .sort({ employee_id: -1 })
+      .limit(1)
+      .then((users) => users);
+    
+    const employee_id = maxQuery[0] ? (maxQuery[0].employee_id + 1) : 1;
+
     //Check exist department id
     if (department_id) {
       //check exist department
@@ -75,6 +84,7 @@ const userController = {
 
       //Create and save new user
       const NewUser = new userModel({
+        employee_id,
         name,
         email,
         role,
@@ -91,6 +101,7 @@ const userController = {
     } else {
       //Create and save new user without department_id
       const NewUser = new userModel({
+        employee_id,
         name,
         email,
         role,
@@ -559,9 +570,8 @@ const userController = {
       await mailNotice({
         email: user.email,
         subject: `You have been assigned to the department ${department.name}`,
-        text: `You have been assigned to the department ${
-          department.name
-        } at ${new Date().toString()}`,
+        text: `You have been assigned to the department ${department.name
+          } at ${new Date().toString()}`,
         html: '',
       });
 
@@ -623,9 +633,8 @@ const userController = {
         await mailNotice({
           email: user.email,
           subject: `You have been assigned to the department ${department.name}`,
-          text: `You have been assigned to the department ${
-            department.name
-          } at ${new Date().toString()}`,
+          text: `You have been assigned to the department ${department.name
+            } at ${new Date().toString()}`,
           html: '',
         });
       }

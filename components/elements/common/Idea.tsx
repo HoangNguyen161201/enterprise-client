@@ -36,10 +36,11 @@ export default function Idea({
       >
         <Space size={20} align="start">
           {anonymously ? (
-            <Avatar size="large" icon={<UserOutlined />} />
+            <Avatar alt={'avatar'} size="large" icon={<UserOutlined />} />
           ) : (
             <Avatar
               size={'large'}
+              alt={'avatar'}
               style={{
                 border: '2px solid #07456F30',
               }}

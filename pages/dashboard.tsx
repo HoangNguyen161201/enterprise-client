@@ -382,6 +382,8 @@ const dashBoard: NextPageWithLayout = () => {
                   >
                     {department_id && (
                       <Select
+                        aria-selected='false'
+                        aria-pressed='false'
                         value={department_id}
                         onChange={(value) => {
                           setDepartmentId(value);
@@ -393,7 +395,6 @@ const dashBoard: NextPageWithLayout = () => {
                         {dataDepartment?.departments &&
                           dataDepartment?.departments.map((department) => (
                             <Select.Option key={department._id} value={department._id}>
-                              {' '}
                               {department.name}
                             </Select.Option>
                           ))}
