@@ -1,9 +1,11 @@
+// Import
 import { CloseOutlined, TableOutlined } from '@ant-design/icons';
 import { Button, message, Modal, Space, Tooltip } from 'antd';
 import { GlobalContext } from 'contextApi/globalContext';
 import Image from 'next/image';
 import { CSSProperties, useContext, useState } from 'react';
 import { formatFileSize, useCSVReader } from 'react-papaparse';
+
 
 export interface IImportCSVProps {
   fieldsValid: string[];

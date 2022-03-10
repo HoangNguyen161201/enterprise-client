@@ -4,6 +4,8 @@ const nextConfig = {
   env: {
     API_URL:   'https://cmsserverhht.herokuapp.com',
     CLIENT_URL: 'https://entershipweb.vercel.app',
+    // API_URL: 'http://localhost:4000',
+    // CLIENT_URL: 'http://localhost:3000',
     CLOUD_NAME: 'hoang161201',
     API_KEY: '127883878126518',
     API_SECRET: 'xZXAKvbsWtkYgsZZhG8OQrv5Kqs',
