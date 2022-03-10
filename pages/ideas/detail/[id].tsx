@@ -37,6 +37,7 @@ import 'react-quill/dist/quill.bubble.css';
 import 'react-quill/dist/quill.snow.css';
 import { dataTypeFile } from 'utils/dataTypeFile';
 import { postData } from 'utils/fetchData';
+import { UserOutlined } from '@ant-design/icons';
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
@@ -369,13 +370,22 @@ const DetailIdea: NextPageWithLayout = ({
             {dataDetailIdea && dataDetailIdea.idea.title}
           </span>
           <Space wrap size={20}>
-            <Avatar src={dataDetailIdea && dataDetailIdea.idea.user_id.avatar.url} />
-            {dataDetailIdea?.idea?.user_id && (
-              <span>
-                <Link href={`/employees/detail/${dataDetailIdea.idea.user_id._id}`}>
-                  <a>{dataDetailIdea.idea.user_id.name.toUpperCase()}</a>
-                </Link>
-              </span>
+            {dataDetailIdea && dataDetailIdea.idea.anonymously ? (
+              <>
+                <Avatar icon={<UserOutlined />} />
+                <span>--------------------</span>
+              </>
+            ) : (
+              <>
+                <Avatar src={dataDetailIdea && dataDetailIdea.idea.user_id.avatar.url} />
+                {dataDetailIdea?.idea?.user_id && (
+                  <span>
+                    <Link href={`/employees/detail/${dataDetailIdea.idea.user_id._id}`}>
+                      <a>{dataDetailIdea.idea.user_id.name.toUpperCase()}</a>
+                    </Link>
+                  </span>
+                )}
+              </>
             )}
             <span>
               {dataDetailIdea && new Date(dataDetailIdea.idea.createdAt).toLocaleString()}

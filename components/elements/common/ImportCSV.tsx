@@ -133,7 +133,7 @@ export default function ImportCSV({ fieldsValid, onSubmit }: IImportCSVProps) {
                     }}
                   >
                     <Space size={20}>
-                      <Image width={50} src={'/assets/files/excel.svg'} alt={'File svg'} />
+                      <Image width={50} height={50} src={'/assets/files/excel.svg'} alt={'File svg'} />
                       <Space direction="vertical">
                         <span>{formatFileSize(acceptedFile.size)} </span>
                         <span>{acceptedFile.name}</span>

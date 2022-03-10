@@ -20,6 +20,7 @@ const authController = {
   login: catchAsyncError(async (req, res) => {
     //Get email and password login
     const { email, password, role } = req.body;
+    console.log(email, password, role);
 
     //Check exist user
     const user = await userModel.findOne({

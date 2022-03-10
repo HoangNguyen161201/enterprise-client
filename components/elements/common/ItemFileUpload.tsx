@@ -30,7 +30,7 @@ export default function ItemFileUpload({
       }}
     >
       <Space size={20}>
-        <Image alt={'file_upload'} src={src} width={50} />
+        <Image alt={'file_upload'} src={src} width={50} height={50} />
         {url_file ? (
           <div>
             <a className='color-3' href={url_file} download>{fileName}</a>
