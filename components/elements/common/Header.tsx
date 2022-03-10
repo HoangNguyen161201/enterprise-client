@@ -126,7 +126,7 @@ export const HeaderComponent = () => {
               }}
             >
               <Link href={'/'}>
-                <a className='cms'>CMS</a>
+                <a className={`cms ${color}`}>CMS</a>
               </Link>
             </span>
 

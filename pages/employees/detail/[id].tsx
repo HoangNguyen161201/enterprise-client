@@ -1,17 +1,16 @@
 //Import
 import { IdcardOutlined, MailOutlined, TeamOutlined } from '@ant-design/icons';
-import { Alert, Avatar, Card, Col, Grid, Image, List, message, Row, Space } from 'antd';
+import { Alert, Card, Col, Grid, Image, List, message, Row, Space, Tag } from 'antd';
 import { BreadCrumb, Infor, ItemIdea } from 'components/elements/common';
 import ItemInfor from 'components/elements/common/ItemInfor';
 import { ClientLayout } from 'components/layouts';
-import { GlobalContext } from 'contextApi/globalContext';
 import { IDetailUser, IUser } from 'models/apiType';
 import { NextPageWithLayout } from 'models/layoutType';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { getCurrentUser, getDetailUser, getIdeasAcceptUser } from 'queries';
-import { useContext, useEffect as UseEffect } from 'react';
+import { useEffect as UseEffect } from 'react';
 import { SocialIcon } from 'react-social-icons';
 
 export interface IDetailEmployeeProps {
@@ -23,8 +22,6 @@ const DetailEmployee: NextPageWithLayout = ({
   detailUser,
   detailCurrentUser,
 }: IDetailEmployeeProps) => {
-  const { color, desColor } = useContext(GlobalContext);
-
   // get id employee
   const { query } = useRouter();
 
@@ -98,7 +95,13 @@ const DetailEmployee: NextPageWithLayout = ({
         }}
       />
 
-      <Card title={<span className={`${color}`}>Detail employee</span>} className="card-b shadow-l">
+      <Card
+        title={<span>Detail employee</span>}
+        className="card-b shadow-l"
+        style={{
+          background: 'white',
+        }}
+      >
         <Space direction="vertical" size={20}>
           {dataUser && dataUser.user.role === 'admin' && (
             <Alert
@@ -112,18 +115,18 @@ const DetailEmployee: NextPageWithLayout = ({
             <Col flex={lg ? '400px' : undefined} span={lg ? undefined : 24}>
               <Space size={20} direction="vertical">
                 <Space size={20} wrap>
-                <Image
-                      style={{
-                        width: 100,
-                        height: 100,
-                        objectFit: 'cover',
-                        padding: 0,
-                        margin: 0,
-                        boxShadow: '36px 23px 46px -9px rgba(0,0,0,0.07)',
-                      }}
-                      src={dataDetailUser?.user?.avatar?.url}
-                      alt={'avatar_user'}
-                    />
+                  <Image
+                    style={{
+                      width: 100,
+                      height: 100,
+                      objectFit: 'cover',
+                      padding: 0,
+                      margin: 0,
+                      boxShadow: '36px 23px 46px -9px rgba(0,0,0,0.07)',
+                    }}
+                    src={dataDetailUser?.user?.avatar?.url}
+                    alt={'avatar_user'}
+                  />
                   <div
                     style={{
                       height: '100%',
@@ -135,7 +138,6 @@ const DetailEmployee: NextPageWithLayout = ({
                         fontWeight: 'bold',
                         display: 'block',
                       }}
-                      className={`${color}`}
                     >
                       {dataDetailUser?.user?.name}
                     </span>
@@ -149,7 +151,7 @@ const DetailEmployee: NextPageWithLayout = ({
                   </div>
                 </Space>
 
-                <span className={`${desColor}`}>Employee infor</span>
+                <span>Employee infor</span>
                 <Infor
                   color="#009F9D"
                   Icon={IdcardOutlined}
@@ -173,7 +175,7 @@ const DetailEmployee: NextPageWithLayout = ({
                   }
                 />
 
-                <span className={`${desColor}`}>Basic contact infor</span>
+                <span>Basic contact infor</span>
                 <ItemInfor
                   title="Phone"
                   content={dataUser?.user.phone ? `+${dataUser.user.phone}` : undefined}
@@ -183,7 +185,7 @@ const DetailEmployee: NextPageWithLayout = ({
                   content={`${dataUser?.user?.country}, ${dataUser?.user?.city}, ${dataUser?.user?.street}`}
                 />
 
-                <span className={`${desColor}`}>Social network</span>
+                <span>Social network</span>
                 <Space size={20}>
                   {dataUser?.user.social_networks &&
                     dataUser?.user.social_networks.map((socialUrl) => (
@@ -200,8 +202,11 @@ const DetailEmployee: NextPageWithLayout = ({
               </Space>
             </Col>
             <Col flex="auto">
-              <span className={`${desColor}`}>
-                {`Ideas Accept (${(dataIdeasAccept && dataIdeasAccept.ideas.length) || 0} ideas)`}
+              <span>
+                Ideas Accept:{' '}
+                <Tag color={'green'} style={{ marginLeft: 10 }}>
+                  {(dataIdeasAccept && dataIdeasAccept.ideas.length) || 0} ideas
+                </Tag>
               </span>
               <List
                 itemLayout="horizontal"
@@ -222,12 +227,15 @@ export default DetailEmployee;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   //Check login
-  const detailCurrentUser: IDetailUser = await fetch(`${process.env.CLIENT_URL}/api/auth/accesstoken`, {
-    method: 'GET',
-    headers: {
-      cookie: context.req.headers.cookie,
-    } as HeadersInit,
-  }).then((e) => e.json());
+  const detailCurrentUser: IDetailUser = await fetch(
+    `${process.env.CLIENT_URL}/api/auth/accesstoken`,
+    {
+      method: 'GET',
+      headers: {
+        cookie: context.req.headers.cookie,
+      } as HeadersInit,
+    }
+  ).then((e) => e.json());
 
   //Redirect login page when error
   if (detailCurrentUser.statusCode !== 200) {

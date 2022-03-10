@@ -8,14 +8,14 @@ import { GlobalContext } from 'contextApi/globalContext';
 
 interface ICard {
   item: ISubmissionForm;
-  more: (item: ISubmissionForm) => void;
+  more?: (item: ISubmissionForm) => void;
   current_user: IDetailUser;
   [index: string]: any;
 }
-export const Card = ({ item, more, current_user }: ICard) => {
-  const {desColor} = useContext(GlobalContext)
+export const Card = ({ item, more, current_user, xl= 8, lg= 12, md=24 }: ICard) => {
+  const {desColor, color} = useContext(GlobalContext)
   return (
-    <Col xl={8} lg={12} md={24}>
+    <Col xl={xl} lg={lg} md={md}>
       <Space direction="vertical" size={15}>
         <Image
           alt={`submission_${item._id}`}
@@ -41,14 +41,14 @@ export const Card = ({ item, more, current_user }: ICard) => {
                 <a>{item.name}</a>
               </Link>
             ) : (
-              item.name
+              <span className={`${color}`}>{item.name}</span>
             )}
           </span>
           <span className={`${desColor}`}>{item.description}</span>
         </div>
 
-        {(current_user && current_user.user?.role === 'admin') ||
-          (current_user && current_user.user?.role === 'qa_manager' && (
+        {(more && current_user && current_user.user?.role === 'admin') ||
+          ( more && current_user && current_user.user?.role === 'qa_manager' && (
             <Button
               onClick={() => more(item)}
               size="large"
