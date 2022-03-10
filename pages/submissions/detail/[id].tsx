@@ -576,7 +576,7 @@ const DetailSubmission: NextPageWithLayout = ({
                 size={20}
                 {...getRootProps()}
               >
-                <Image width={150} height={100} alt="upload_file" src="/assets/uploadFiles.svg" />
+                <img width={150} height={100} alt="upload_file" src="/assets/uploadFiles.svg" />
                 <input {...getInputProps()} />
                 {isDragActive ? (
                   <p
