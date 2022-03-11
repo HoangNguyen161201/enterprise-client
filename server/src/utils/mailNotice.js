@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer')
 const {google} = require('googleapis')
 
 const client_id = process.env.CLIENT_ID
-const client_secret = process.env.client_secret
+const client_secret = process.env.CLIENT_SECRET
 const redirect_url = 'https://developers.google.com/oauthplayground'
 const refreshToken = process.env.REFRESH_TOKEN_EMAIL
 
