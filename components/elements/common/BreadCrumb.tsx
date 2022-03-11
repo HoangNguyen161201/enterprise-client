@@ -3,6 +3,7 @@ import { GlobalContext } from 'contextApi/globalContext';
 import { IBreadCrumb } from 'models/elementType';
 import Link from 'next/link';
 import React, { useContext } from 'react';
+import { LinkSpin } from './LinkSpin';
 
 export const BreadCrumb = ({ data, main }: IBreadCrumb) => {
   const { desColor, color } = useContext(GlobalContext);
@@ -12,16 +13,12 @@ export const BreadCrumb = ({ data, main }: IBreadCrumb) => {
         <Breadcrumb>
           {data.map((item) => (
             <Breadcrumb.Item key={item.label}>
-              <Link href={item.url}>
-                <a className={`${desColor}`}>{item.label}</a>
-              </Link>
+              <LinkSpin url={item.url} className={`${desColor}`} name={item.label} />
             </Breadcrumb.Item>
           ))}
 
           <Breadcrumb.Item>
-            <Link href={main.url}>
-              <a className={`${color}`}>{main.label}</a>
-            </Link>
+            <LinkSpin url={main.url} className={`${color}`} name={main.label} />
           </Breadcrumb.Item>
         </Breadcrumb>
       )}
