@@ -26,10 +26,8 @@ import {
 } from 'queries';
 import { getallComments } from 'queries/comment';
 import {
-  useContext,
-  useEffect,
+  useContext as UseContext,
   useEffect as UseEffect,
-  useState,
   useState as UseState,
 } from 'react';
 import 'react-quill/dist/quill.bubble.css';
@@ -74,9 +72,9 @@ const DetailIdea: NextPageWithLayout = ({
   detailUser,
 }: IDetailEmployeeProps) => {
   //Get socket
-  const { socket, handleLoadPage } = useContext(GlobalContext);
+  const { socket, handleLoadPage } = UseContext(GlobalContext);
 
-  useEffect(() => {
+  UseEffect(() => {
     handleLoadPage(false);
   }, []);
 
@@ -84,7 +82,7 @@ const DetailIdea: NextPageWithLayout = ({
   const [anonymously, setAnonymously] = UseState<boolean>(false);
 
   //State detail and number reaction
-  const [reactionCountDetail, setReactionCountDetail] = useState<Ireaction[]>([]);
+  const [reactionCountDetail, setReactionCountDetail] = UseState<Ireaction[]>([]);
 
   //Get id from router to get detail data
   const {
@@ -293,7 +291,7 @@ const DetailIdea: NextPageWithLayout = ({
   };
 
   //Set count number reaction detail of current idea
-  useEffect(() => {
+  UseEffect(() => {
     if (dataAllReaction && dataDetailIdea) {
       const dataReactionCountDetail: Ireaction[] = dataAllReaction.reactionTypes.map(
         (itemReactionType) => {

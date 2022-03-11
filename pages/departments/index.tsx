@@ -20,8 +20,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { getAllDepartments, getCurrentUser } from 'queries';
 import {
-  useContext,
-  useEffect,
+  useContext as UseContext,
   useEffect as UseEffect,
   useMemo as UseMemo,
   useState as UseState,
@@ -33,9 +32,9 @@ export interface IAddDepartmentProps {
 }
 
 const AddDepartment: NextPageWithLayout = ({ detailUser }: IAddDepartmentProps) => {
-  const { color, handleLoadPage } = useContext(GlobalContext);
+  const { color, handleLoadPage } = UseContext(GlobalContext);
 
-  useEffect(()=> {
+  UseEffect(()=> {
     handleLoadPage(false)
   }, [])
 
@@ -64,7 +63,7 @@ const AddDepartment: NextPageWithLayout = ({ detailUser }: IAddDepartmentProps) 
     data,
     refetch: dataDepartmentRefetch,
   } = getAllDepartments(dataUser?.accessToken.token);
-  useEffect(() => {
+  UseEffect(() => {
     if (dataUser) {
       dataDepartmentRefetch();
     }

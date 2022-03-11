@@ -8,7 +8,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { getCurrentUser } from 'queries/auth';
 import { getallSubmissions } from 'queries/submission';
-import { useContext as UseContext, useEffect } from 'react';
+import { useContext as UseContext, useEffect as UseEffect } from 'react';
 import { BsArrowDown, BsArrowRight } from 'react-icons/bs';
 import { ClientLayout } from '../components/layouts';
 
@@ -20,7 +20,7 @@ interface IHome {
 const index: NextPageWithLayout = ({ result, detailUser }: IHome) => {
   const { darkMode, color, desColor, handleLoadPage } = UseContext(GlobalContext);
 
-  useEffect(() => {
+  UseEffect(() => {
     handleLoadPage(false);
   }, []);
 

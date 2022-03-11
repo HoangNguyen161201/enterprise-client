@@ -1,32 +1,29 @@
 //Import
 import { ArrowDownOutlined } from '@ant-design/icons';
 import { Button, Card, message, Row, Space } from 'antd';
-import { GetServerSideProps } from 'next';
-import Head from 'next/head';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { useContext, useEffect, useEffect as UseEffect, useState } from 'react';
 import { BreadCrumb, FieldCard, User } from 'components/elements/common';
 import { ClientLayout } from 'components/layouts';
-import { NextPageWithLayout } from 'models/layoutType';
-import { IDetailDepartment } from 'models/apiType';
-import { IUser } from 'models/apiType';
-import { getCurrentUser, getDepartmentByUser } from 'queries';
 import { GlobalContext } from 'contextApi/globalContext';
+import { IDetailDepartment, IUser } from 'models/apiType';
+import { NextPageWithLayout } from 'models/layoutType';
+import { GetServerSideProps } from 'next';
+import Head from 'next/head';
+import { getCurrentUser, getDepartmentByUser } from 'queries';
+import { useContext as UseContext, useEffect as UseEffect, useState as UseState } from 'react';
 
 export interface IDetailDepartmentProps {
   detailMyDepartment: IDetailDepartment;
 }
 
 const DetailDepartment: NextPageWithLayout = ({ detailMyDepartment }: IDetailDepartmentProps) => {
-  const { color, desColor, handleLoadPage } = useContext(GlobalContext);
+  const { color, desColor, handleLoadPage } = UseContext(GlobalContext);
 
-  useEffect(()=> {
+  UseEffect(()=> {
     handleLoadPage(false)
   }, [])
 
   //Is show button load more
-  const [isShow, setIsShow] = useState(false);
+  const [isShow, setIsShow] = UseState(false);
 
   //Get access token
   const { data: dataUser, error: errorGetUser, refetch: dataUserRefetch } = getCurrentUser();
@@ -40,7 +37,7 @@ const DetailDepartment: NextPageWithLayout = ({ detailMyDepartment }: IDetailDep
     data: dataDepartment,
     refetch: refetchDepartment,
   } = getDepartmentByUser(dataUser?.user._id, dataUser?.accessToken.token, detailMyDepartment);
-  useEffect(() => {
+  UseEffect(() => {
     if (dataUser) {
       refetchDepartment();
     }

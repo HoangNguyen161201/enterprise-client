@@ -26,7 +26,7 @@ import Head from 'next/head';
 import { getallCategories, getCurrentUser } from 'queries';
 import { getAllIdeas } from 'queries/idea';
 import { getReactType } from 'queries/reaction';
-import { useContext, useEffect, useState as UseState } from 'react';
+import { useContext as UseContext, useEffect as UseEffect, useState as UseState } from 'react';
 
 var timeOutLimit: NodeJS.Timeout;
 
@@ -43,9 +43,9 @@ const index: NextPageWithLayout = ({ detailUser }) => {
   const [_search, setSearch] = UseState('');
   const [icon, setIcon] = UseState('👁');
 
-  const {handleLoadPage} = useContext(GlobalContext)
+  const {handleLoadPage} = UseContext(GlobalContext)
 
-  useEffect(()=> {
+  UseEffect(()=> {
     handleLoadPage(false)
   }, [])
 

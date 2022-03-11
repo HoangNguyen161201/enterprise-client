@@ -39,7 +39,7 @@ import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { getAllDepartments, getallUsers, getCurrentUser, getUsersNotDepartment } from 'queries';
-import * as React from 'react';
+import { useContext as UseContext, useEffect as UseEffect, useState as UseState } from 'react';
 import { useForm } from 'react-hook-form';
 import column from '../../utils/configTB';
 import { validateUpdateUser } from '../../utils/validate';
@@ -55,17 +55,17 @@ const Employees: NextPageWithLayout = ({
   allDepartments,
   detailUser,
 }: IEmployeesProps) => {
-  const { color, handleLoadPage } = React.useContext(GlobalContext);
+  const { color, handleLoadPage } = UseContext(GlobalContext);
 
-  React.useEffect(() => {
+  UseEffect(() => {
     handleLoadPage(false);
   }, []);
 
   //Visibble drawer udpate employee
-  const [visible, setVisible] = React.useState(false);
+  const [visible, setVisible] = UseState(false);
 
   //Old data of employee update
-  const [oldUpdateUser, setoldUpdateUser] = React.useState<Partial<IUser>>({
+  const [oldUpdateUser, setoldUpdateUser] = UseState<Partial<IUser>>({
     _id: '',
     employee_id: undefined,
     name: '',
@@ -87,13 +87,13 @@ const Employees: NextPageWithLayout = ({
   };
 
   //Data select department
-  const [departmentSl, setDepartmentSL] = React.useState<IOptionSelect[]>([]);
+  const [departmentSl, setDepartmentSL] = UseState<IOptionSelect[]>([]);
 
   //Data source table users
-  const [dataSourceUsers, setDataSourceUsers] = React.useState<Partial<IUser>[]>([]);
+  const [dataSourceUsers, setDataSourceUsers] = UseState<Partial<IUser>[]>([]);
 
   //Data user select
-  const [usersSl, setUsersSl] = React.useState<null | string[]>(null);
+  const [usersSl, setUsersSl] = UseState<null | string[]>(null);
 
   //Get access token
   const {
@@ -119,7 +119,7 @@ const Employees: NextPageWithLayout = ({
   const { refetch: dataUsersnotDPMRefetch } = getUsersNotDepartment(dataUser?.accessToken.token);
 
   //Set data select departmen
-  React.useEffect(() => {
+  UseEffect(() => {
     if (dataAllDepartments && dataAllDepartments.departments) {
       const valueSetDepartmentSl: IOptionSelect[] = dataAllDepartments.departments.map(
         (department) => {
@@ -135,7 +135,7 @@ const Employees: NextPageWithLayout = ({
   }, [dataAllDepartments]);
 
   //Set data source for table users
-  React.useEffect(() => {
+  UseEffect(() => {
     let newDataSourceUsers: Partial<IUser>[] = [];
     if (dataAllUsers) {
       newDataSourceUsers = dataAllUsers?.users?.map((user: IUser) => {
@@ -155,7 +155,7 @@ const Employees: NextPageWithLayout = ({
   }, [dataAllUsers]);
 
   //Check exist and show error
-  React.useEffect(() => {
+  UseEffect(() => {
     if (errorAllUsers) {
       message.error({
         content: errorAllUsers.response?.data.err,
@@ -246,7 +246,7 @@ const Employees: NextPageWithLayout = ({
   });
 
   //Check exist and show error
-  React.useEffect(() => {
+  UseEffect(() => {
     if (errorGetUser) {
       message.error({
         content: errorGetUser.response?.data.err,

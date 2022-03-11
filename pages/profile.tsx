@@ -28,7 +28,7 @@ import { fileMutation } from 'mutations/file';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { getCurrentUser, getIdeasAcceptUser } from 'queries';
-import { ChangeEventHandler, useContext, useEffect, useEffect as UseEffect, useState } from 'react';
+import { ChangeEventHandler, useContext as UseContext, useEffect as UseEffect, useState as UseState } from 'react';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { SocialIcon } from 'react-social-icons';
@@ -43,16 +43,16 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
   const { useBreakpoint } = Grid;
   const { lg } = useBreakpoint();
 
-  const {handleLoadPage} = useContext(GlobalContext)
+  const {handleLoadPage} = UseContext(GlobalContext)
 
-  useEffect(()=> {
+  UseEffect(()=> {
     handleLoadPage(false)
   }, [])
 
   //State infor contact
-  const [socialNetworks, setSocialNetworks] = useState<string[]>([]);
-  const [contentSocialNetwork, setContentSocialNetwork] = useState<string>('');
-  const [inforContact, setInforContact] = useState({
+  const [socialNetworks, setSocialNetworks] = UseState<string[]>([]);
+  const [contentSocialNetwork, setContentSocialNetwork] = UseState<string>('');
+  const [inforContact, setInforContact] = UseState({
     country: '',
     city: '',
     street: '',
@@ -60,10 +60,10 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
   });
 
   //State
-  const [avatar, setAvatar] = useState<IAvatar | null>(null);
+  const [avatar, setAvatar] = UseState<IAvatar | null>(null);
 
   //loading upload avtar
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = UseState<boolean>(false);
 
   //Get access token
   const {
@@ -76,7 +76,7 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
   }, []);
 
   //Set avatar and infor contact when have current user
-  useEffect(() => {
+  UseEffect(() => {
     if (dataUser?.user) {
       setAvatar(dataUser.user.avatar);
       setInforContact({
@@ -230,7 +230,7 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
   });
 
   //Setting modal
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalVisible, setIsModalVisible] = UseState(false);
 
   const showModal = () => {
     setIsModalVisible(true);

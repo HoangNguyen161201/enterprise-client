@@ -12,7 +12,7 @@ import { departmentMutation } from 'mutations/department';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { getCurrentUser } from 'queries/auth';
-import * as React from 'react';
+import { useContext as UseContext, useEffect as UseEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { validateAddDepartment } from 'utils/validate';
 
@@ -22,9 +22,9 @@ export interface IAddDepartmentProps {
 
 const AddDepartment: NextPageWithLayout = ({ detailUser }: IAddDepartmentProps) => {
   
-  const {color, color2, handleLoadPage} = React.useContext(GlobalContext)
+  const {color, color2, handleLoadPage} = UseContext(GlobalContext)
 
-  React.useEffect(()=> {
+    UseEffect(()=> {
     handleLoadPage(false)
   }, [])
   
@@ -54,7 +54,7 @@ const AddDepartment: NextPageWithLayout = ({ detailUser }: IAddDepartmentProps) 
   });
 
   //Check exist and show error
-  React.useEffect(() => {
+  UseEffect(() => {
     if (errorGetUser) {
       message.error({
         content: errorGetUser.response?.data.err,

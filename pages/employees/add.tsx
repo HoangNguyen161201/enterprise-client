@@ -14,7 +14,7 @@ import { EmplMutation } from 'mutations/employee';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { getAllDepartments, getallUsers, getCurrentUser, getUsersNotDepartment } from 'queries';
-import * as React from 'react';
+import { useContext as UseContext, useEffect as UseEffect,  useState as   UseState } from 'react';
 import { useForm } from 'react-hook-form';
 import { roleSelect } from 'utils/dataSelect';
 import { validateAddUser } from 'utils/validate';
@@ -25,14 +25,14 @@ export interface IAddEmployeeProps {
 }
 
 const AddEmployee: NextPageWithLayout = ({ allDepartments, detailUser }: IAddEmployeeProps) => {
-  const { color, color2, handleLoadPage } = React.useContext(GlobalContext);
+  const { color, color2, handleLoadPage } = UseContext(GlobalContext);
 
-  React.useEffect(() => {
+  UseEffect(() => {
     handleLoadPage(false);
   }, []);
 
   //Data select department
-  const [departmentSl, setDepartmentSL] = React.useState<IOptionSelect[]>([]);
+  const [departmentSl, setDepartmentSL] = UseState<IOptionSelect[]>([]);
 
   //Get access token
   const {
@@ -54,7 +54,7 @@ const AddEmployee: NextPageWithLayout = ({ allDepartments, detailUser }: IAddEmp
   const { refetch: dataUsersnotDPMRefetch } = getUsersNotDepartment(dataUser?.accessToken.token);
 
   //Set data select departmen
-  React.useEffect(() => {
+  UseEffect(() => {
     if (dataAllDepartments && dataAllDepartments.departments) {
       const valueSetDepartmentSl: IOptionSelect[] = dataAllDepartments.departments.map(
         (department) => {
@@ -70,7 +70,7 @@ const AddEmployee: NextPageWithLayout = ({ allDepartments, detailUser }: IAddEmp
   }, [dataAllDepartments]);
 
   //Check exist and show error
-  React.useEffect(() => {
+  UseEffect(() => {
     if (errorGetUser) {
       message.error({
         content: errorGetUser.response?.data.err,
@@ -78,7 +78,7 @@ const AddEmployee: NextPageWithLayout = ({ allDepartments, detailUser }: IAddEmp
     }
   }, [errorGetUser]);
 
-  React.useEffect(() => {
+  UseEffect(() => {
     if (errorAllDepartments) {
       message.error({
         content: errorAllDepartments.response?.data.err,
