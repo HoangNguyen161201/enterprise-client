@@ -7,15 +7,12 @@ import {
   HomeOutlined,
   TeamOutlined,
   UploadOutlined,
-  UserOutlined,
+  UserOutlined
 } from '@ant-design/icons';
 import { Drawer as AntDrawer, Grid, Menu } from 'antd';
-import Link from 'next/link';
-import { useEffect as UseEffect, useState as UseState } from 'react';
-import { getCurrentUser } from 'queries/auth';
-import { useContext } from 'react';
 import { GlobalContext } from 'contextApi/globalContext';
-import { useRouter } from 'next/router';
+import { getCurrentUser } from 'queries/auth';
+import { useContext, useEffect as UseEffect, useState as UseState } from 'react';
 import { LinkSpin } from '../common';
 
 const { SubMenu } = Menu;

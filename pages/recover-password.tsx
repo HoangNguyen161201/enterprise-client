@@ -144,7 +144,7 @@ export default function recover_password() {
                 <Space direction="vertical" size={15}>
                   <Input
                     label="Email"
-                    placeholder="Enter your password"
+                    placeholder="Enter your email"
                     formSetting={formSetting}
                     name={'email'}
                     type="email"
