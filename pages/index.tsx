@@ -40,7 +40,10 @@ const index: NextPageWithLayout = ({ result, detailUser }: IHome) => {
   });
 
   return (
-    <div>
+    <div style={{
+      overflow: 'hidden',
+      paddingBottom: 20
+    }}>
       <Head>
         <title>Home</title>
       </Head>
