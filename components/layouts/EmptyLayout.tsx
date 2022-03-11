@@ -1,5 +1,13 @@
-import { NextLayout } from "../../models/layoutType";
+import { Spin } from 'antd';
+import { GlobalContext } from 'contextApi/globalContext';
+import { useContext } from 'react';
+import { NextLayout } from '../../models/layoutType';
 
 export const EmptyLayout: NextLayout = ({ children }) => {
-    return <div>{children}</div>;
+  const { loadPage } = useContext(GlobalContext);
+  return (
+    <Spin spinning={loadPage}>
+      <div>{children}</div>
+    </Spin>
+  );
 };

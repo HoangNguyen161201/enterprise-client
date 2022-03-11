@@ -33,7 +33,11 @@ export interface IAddDepartmentProps {
 }
 
 const AddDepartment: NextPageWithLayout = ({ detailUser }: IAddDepartmentProps) => {
-  const { color } = useContext(GlobalContext);
+  const { color, handleLoadPage } = useContext(GlobalContext);
+
+  useEffect(()=> {
+    handleLoadPage(false)
+  }, [])
 
   // get all departments
   const [departments, setDepartments] = UseState<any>([]);

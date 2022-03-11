@@ -15,6 +15,8 @@ import { useEffect as UseEffect, useState as UseState } from 'react';
 import { getCurrentUser } from 'queries/auth';
 import { useContext } from 'react';
 import { GlobalContext } from 'contextApi/globalContext';
+import { useRouter } from 'next/router';
+import { LinkSpin } from '../common';
 
 const { SubMenu } = Menu;
 
@@ -32,9 +34,8 @@ interface IProps {
 }
 
 export const Drawer = ({ onClose, ...props }: IProps) => {
-
-  const {useBreakpoint: UseBreakpoint} = Grid
-  const {sm} = UseBreakpoint()
+  const { useBreakpoint: UseBreakpoint } = Grid;
+  const { sm } = UseBreakpoint();
 
   //State Show Menu Item
   const [isShowByRole, setIsShowByRole] = UseState<IsShowMenuItem>({
@@ -107,31 +108,44 @@ export const Drawer = ({ onClose, ...props }: IProps) => {
     }
   }, [dataUser]);
 
-  const {darkMode} = useContext(GlobalContext)
+  const { darkMode } = useContext(GlobalContext);
 
   return (
     <>
-      <AntDrawer width={sm ? undefined: '100%'}
-        closeIcon={<CloseOutlined style={{
-          color: darkMode ? 'white': '#001529'
-        }} />}
+      <AntDrawer
+        width={sm ? undefined : '100%'}
+        closeIcon={
+          <CloseOutlined
+            style={{
+              color: darkMode ? 'white' : '#001529',
+            }}
+          />
+        }
         headerStyle={{
-          background: darkMode ? '#001529': 'white',
+          background: darkMode ? '#001529' : 'white',
         }}
         onClose={onClose}
         {...props}
-        title={<span style={{
-          color: darkMode ? 'white': '#001529'
-        }}>{props.title}</span>}
+        title={
+          <span
+            style={{
+              color: darkMode ? 'white' : '#001529',
+            }}
+          >
+            {props.title}
+          </span>
+        }
         bodyStyle={{
           padding: '0px',
         }}
       >
-        <Menu theme={darkMode ? 'dark': 'light'} style={{ width: '100%', height: '100%' }} mode="inline">
+        <Menu
+          theme={darkMode ? 'dark' : 'light'}
+          style={{ width: '100%', height: '100%' }}
+          mode="inline"
+        >
           <Menu.Item key="1" icon={<HomeOutlined />} onClick={onClose}>
-            <Link href={'/'}>
-              <a>Home</a>
-            </Link>
+            <LinkSpin url={'/'} name="Home" />
           </Menu.Item>
 
           <Menu.Item
@@ -142,23 +156,8 @@ export const Drawer = ({ onClose, ...props }: IProps) => {
               display: isShowByRole.qa_manager ? 'block' : 'none',
             }}
           >
-            <Link href={'/dashboard'}>
-              <a>Dashboard</a>
-            </Link>
+            <LinkSpin url={'/dashboard'} name="Dashboard" />
           </Menu.Item>
-
-          {/* <Menu.Item
-            key="3"
-            icon={<TeamOutlined />}
-            onClick={onClose}
-            style={{
-              display: isShowByRole.admin ? 'none' : 'block',
-            }}
-          >
-            <Link href={'/my-department'}>
-              <a>My Department</a>
-            </Link>
-          </Menu.Item> */}
 
           <SubMenu
             key="sub1"
@@ -169,14 +168,10 @@ export const Drawer = ({ onClose, ...props }: IProps) => {
             }}
           >
             <Menu.Item key="sub1-1" icon={<FolderViewOutlined />} onClick={onClose}>
-              <Link href={'/departments'}>
-                <a>All Departments</a>
-              </Link>
+              <LinkSpin url={'/departments'} name="All Departments" />
             </Menu.Item>
             <Menu.Item key="sub1-2" icon={<AppstoreAddOutlined />} onClick={onClose}>
-              <Link href={'/departments/add'}>
-                <a>Add Department</a>
-              </Link>
+              <LinkSpin url={'/departments/add'} name="Add Department" />
             </Menu.Item>
           </SubMenu>
 
@@ -189,21 +184,15 @@ export const Drawer = ({ onClose, ...props }: IProps) => {
             }}
           >
             <Menu.Item key="sub2-1" icon={<FolderViewOutlined />} onClick={onClose}>
-              <Link href={'/employees'}>
-                <a>All Employees</a>
-              </Link>
+              <LinkSpin url={'/employees'} name="All Employees" />
             </Menu.Item>
             <Menu.Item key="sub2-2" icon={<AppstoreAddOutlined />} onClick={onClose}>
-              <Link href={'/employees/add'}>
-                <a>Add Employees</a>
-              </Link>
+              <LinkSpin url={'/employees/add'} name="Add Employees" />
             </Menu.Item>
           </SubMenu>
 
           <Menu.Item key="4" icon={<UploadOutlined />} onClick={onClose}>
-            <Link href={'/submissions'}>
-              <a>Submissions</a>
-            </Link>
+            <LinkSpin url={'/submissions'} name="Submissions" />
           </Menu.Item>
 
           <Menu.Item
@@ -214,9 +203,7 @@ export const Drawer = ({ onClose, ...props }: IProps) => {
               display: isShowByRole.admin || isShowByRole.qa_manager ? 'block' : 'none',
             }}
           >
-            <Link href={'/categories'}>
-              <a>Categories</a>
-            </Link>
+            <LinkSpin url={'/categories'} name="Categories" />
           </Menu.Item>
 
           <Menu.Item
@@ -227,9 +214,7 @@ export const Drawer = ({ onClose, ...props }: IProps) => {
               display: isShowByRole.qa_manager ? 'block' : 'none',
             }}
           >
-            <Link href={'/management-idea'}>
-              <a>Manage Ideas</a>
-            </Link>
+            <LinkSpin url={'/management-idea'} name="Manage Ideas" />
           </Menu.Item>
 
           <Menu.Item
@@ -240,9 +225,7 @@ export const Drawer = ({ onClose, ...props }: IProps) => {
               display: !isShowByRole.admin ? 'block' : 'none',
             }}
           >
-            <Link href={'/ideas'}>
-              <a>Ideas</a>
-            </Link>
+            <LinkSpin url={'/ideas'} name="Ideas" />
           </Menu.Item>
         </Menu>
       </AntDrawer>

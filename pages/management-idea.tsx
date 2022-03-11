@@ -49,7 +49,10 @@ const managementIdea: NextPageWithLayout = ({
   detailUser: IDetailUser;
   data: IAllIdeas;
 }) => {
-  const { color } = UseContext(GlobalContext);
+  const { color, handleLoadPage } = UseContext(GlobalContext);
+  UseEffect(()=> {
+    handleLoadPage(false)
+  }, [])
 
   const { push } = UseRouter();
   const [_nameById, setNameById] = UseState<string | null>(null);

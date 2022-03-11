@@ -22,7 +22,11 @@ export interface ICategoriesProps {
 }
 
 const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => {
-  const { color } = UseContext(GlobalContext);
+  const { color, handleLoadPage } = UseContext(GlobalContext);
+
+  UseEffect(()=> {
+    handleLoadPage(false)
+  }, [])
 
   const [categoryUd, setCategoryUd] = UseState<IDetailCategory | null | undefined>(null);
   const [statusForm, setStatusForm] = UseState<'create' | 'update'>('create');

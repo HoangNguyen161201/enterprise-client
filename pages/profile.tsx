@@ -28,7 +28,7 @@ import { fileMutation } from 'mutations/file';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { getCurrentUser, getIdeasAcceptUser } from 'queries';
-import { ChangeEventHandler, useEffect, useEffect as UseEffect, useState } from 'react';
+import { ChangeEventHandler, useContext, useEffect, useEffect as UseEffect, useState } from 'react';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { SocialIcon } from 'react-social-icons';
@@ -42,6 +42,12 @@ export interface IDetailEmployeeProps {
 const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmployeeProps) => {
   const { useBreakpoint } = Grid;
   const { lg } = useBreakpoint();
+
+  const {handleLoadPage} = useContext(GlobalContext)
+
+  useEffect(()=> {
+    handleLoadPage(false)
+  }, [])
 
   //State infor contact
   const [socialNetworks, setSocialNetworks] = useState<string[]>([]);

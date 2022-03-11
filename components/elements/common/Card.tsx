@@ -5,6 +5,7 @@ import { ISubmissionForm } from 'models/formType';
 import { IDetailUser } from 'models/apiType';
 import Link from 'next/link';
 import { GlobalContext } from 'contextApi/globalContext';
+import { LinkSpin } from './LinkSpin';
 
 interface ICard {
   item: ISubmissionForm;
@@ -12,8 +13,8 @@ interface ICard {
   current_user: IDetailUser;
   [index: string]: any;
 }
-export const Card = ({ item, more, current_user, xl= 8, lg= 12, md=24 }: ICard) => {
-  const {desColor, color} = useContext(GlobalContext)
+export const Card = ({ item, more, current_user, xl = 8, lg = 12, md = 24 }: ICard) => {
+  const { desColor, color } = useContext(GlobalContext);
   return (
     <Col xl={xl} lg={lg} md={md}>
       <Space direction="vertical" size={15}>
@@ -37,9 +38,7 @@ export const Card = ({ item, more, current_user, xl= 8, lg= 12, md=24 }: ICard) 
             }}
           >
             {current_user && current_user.user?.role !== 'admin' ? (
-              <Link href={`/submissions/detail/${item._id}`}>
-                <a>{item.name}</a>
-              </Link>
+              <LinkSpin url={`/submissions/detail/${item._id}`} name={item.name} />
             ) : (
               <span className={`${color}`}>{item.name}</span>
             )}
@@ -48,7 +47,7 @@ export const Card = ({ item, more, current_user, xl= 8, lg= 12, md=24 }: ICard) 
         </div>
 
         {(more && current_user && current_user.user?.role === 'admin') ||
-          ( more && current_user && current_user.user?.role === 'qa_manager' && (
+          (more && current_user && current_user.user?.role === 'qa_manager' && (
             <Button
               onClick={() => more(item)}
               size="large"

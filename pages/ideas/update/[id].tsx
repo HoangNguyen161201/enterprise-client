@@ -46,7 +46,11 @@ const DetailSubmission: NextPageWithLayout = ({
     dataUserRefetch();
   }, []);
 
-  const { color2 } = useContext(GlobalContext);
+  const { color2, handleLoadPage } = useContext(GlobalContext);
+
+  UseEffect(()=> {
+    handleLoadPage(false)
+  }, [])
 
   //State loading submit files
   const [isLoadUpFile, setIsLoadUpFile] = useState<boolean>(false);

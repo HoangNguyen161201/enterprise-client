@@ -11,6 +11,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter as UseRouter } from 'next/router';
 import React, {
+  useContext,
   useContext as UseContext,
   useEffect as UseEffect,
   useState as UseState,
@@ -20,6 +21,12 @@ import { useForm } from 'react-hook-form';
 import { validateResetPass } from 'utils/validate';
 
 export default function ResetPass() {
+
+  const {handleLoadPage} = useContext(GlobalContext)
+
+  UseEffect(()=> {
+    handleLoadPage(false)
+  }, [])
 
   const {useBreakpoint: UseBreakpoint} = Grid
   const {sm} = UseBreakpoint()
@@ -62,6 +69,7 @@ export default function ResetPass() {
         setRun(true)
         message.success(data.msg);
         setTimeout(()=> {
+          handleLoadPage(true)
           push('/login', undefined, { shallow: true });
         }, 1000)
       },
@@ -166,7 +174,7 @@ export default function ResetPass() {
             }}
           />
           <Link href={'/login'}>
-            <a>Back to login</a>
+            <a onClick={()=> handleLoadPage(true)}>Back to login</a>
           </Link>
         </Space>
       </div>

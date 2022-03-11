@@ -40,7 +40,11 @@ const AssignDepartment: NextPageWithLayout = ({
   detailDepartment,
   detailUser,
 }: IAssignDepartmentProps) => {
-  const { color, desColor } = useContext(GlobalContext);
+  const { color, desColor, handleLoadPage } = useContext(GlobalContext);
+
+  UseEffect(()=> {
+    handleLoadPage(false)
+  }, [])
 
   //Get id from router to get old data
   const {

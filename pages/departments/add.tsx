@@ -22,7 +22,11 @@ export interface IAddDepartmentProps {
 
 const AddDepartment: NextPageWithLayout = ({ detailUser }: IAddDepartmentProps) => {
   
-  const {color, color2} = React.useContext(GlobalContext)
+  const {color, color2, handleLoadPage} = React.useContext(GlobalContext)
+
+  React.useEffect(()=> {
+    handleLoadPage(false)
+  }, [])
   
   //Get access token
   const {

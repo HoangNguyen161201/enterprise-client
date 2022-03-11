@@ -25,7 +25,11 @@ const DetailDepartment: NextPageWithLayout = ({
 }: IDetailDepartmentProps) => {
   const { query } = useRouter();
 
-  const { color, desColor, color2} = useContext(GlobalContext);
+  const { color, desColor, color2, handleLoadPage} = useContext(GlobalContext);
+
+  UseEffect(()=> {
+    handleLoadPage(false)
+  }, [])
 
   const [isShow, setIsShow] = useState(false);
   //Get id from router to get old data

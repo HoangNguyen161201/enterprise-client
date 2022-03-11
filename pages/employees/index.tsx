@@ -55,7 +55,11 @@ const Employees: NextPageWithLayout = ({
   allDepartments,
   detailUser,
 }: IEmployeesProps) => {
-  const { color, color2, darkMode } = React.useContext(GlobalContext);
+  const { color, handleLoadPage } = React.useContext(GlobalContext);
+
+  React.useEffect(() => {
+    handleLoadPage(false);
+  }, []);
 
   //Visibble drawer udpate employee
   const [visible, setVisible] = React.useState(false);
@@ -390,77 +394,81 @@ const Employees: NextPageWithLayout = ({
         title: 'active',
       }),
       render: (value: boolean, record: Partial<IUser>) => {
-        return !record.root && <>
-          <Dropdown
-            overlay={
-              <Menu>
-                <Menu.Item
-                  disabled={record.root}
-                  onClick={() => {
-                    //Reset data form update user
-                    formSetting.reset({
-                      id: record.key,
-                      name: record.name_avatar?.name,
-                      email: record.email,
-                      role: record.role,
-                      department_id: record.department_id,
-                    });
+        return (
+          !record.root && (
+            <>
+              <Dropdown
+                overlay={
+                  <Menu>
+                    <Menu.Item
+                      disabled={record.root}
+                      onClick={() => {
+                        //Reset data form update user
+                        formSetting.reset({
+                          id: record.key,
+                          name: record.name_avatar?.name,
+                          email: record.email,
+                          role: record.role,
+                          department_id: record.department_id,
+                        });
 
-                    //Set state and show drawer
-                    setoldUpdateUser(record);
-                    showDrawer();
+                        //Set state and show drawer
+                        setoldUpdateUser(record);
+                        showDrawer();
+                      }}
+                      icon={
+                        <UploadOutlined
+                          style={{
+                            color: '#009F9D',
+                          }}
+                        />
+                      }
+                    >
+                      Update
+                    </Menu.Item>
+                    <Menu.Item
+                      disabled={record.root}
+                      onClick={() => deleteUser(record.key)}
+                      icon={
+                        <DeleteOutlined
+                          style={{
+                            color: '#009F9D',
+                          }}
+                        />
+                      }
+                    >
+                      Remove
+                    </Menu.Item>
+                    <Menu.Item
+                      icon={
+                        <EyeOutlined
+                          style={{
+                            color: '#009F9D',
+                          }}
+                        />
+                      }
+                    >
+                      <Link href={`${process.env.CLIENT_URL}/employees/detail/${record.key}`}>
+                        <a>Detail</a>
+                      </Link>
+                    </Menu.Item>
+                  </Menu>
+                }
+                arrow
+                trigger={['click', 'hover']}
+                placement="bottomRight"
+              >
+                <Space
+                  style={{
+                    cursor: 'pointer',
                   }}
-                  icon={
-                    <UploadOutlined
-                      style={{
-                        color: '#009F9D',
-                      }}
-                    />
-                  }
                 >
-                  Update
-                </Menu.Item>
-                <Menu.Item
-                  disabled={record.root}
-                  onClick={() => deleteUser(record.key)}
-                  icon={
-                    <DeleteOutlined
-                      style={{
-                        color: '#009F9D',
-                      }}
-                    />
-                  }
-                >
-                  Remove
-                </Menu.Item>
-                <Menu.Item
-                  icon={
-                    <EyeOutlined
-                      style={{
-                        color: '#009F9D',
-                      }}
-                    />
-                  }
-                >
-                  <Link href={`${process.env.CLIENT_URL}/employees/detail/${record.key}`}>
-                    <a>Detail</a>
-                  </Link>
-                </Menu.Item>
-              </Menu>
-            }
-            arrow
-            trigger={['click', 'hover']}
-            placement="bottomRight"
-          >
-            <Space
-              style={{
-                cursor: 'pointer',
-              }}
-            >
-              <MoreOutlined />
-            </Space>
-          </Dropdown>
-        </>
+                  <MoreOutlined />
+                </Space>
+              </Dropdown>
+            </>
+          )
+        );
       },
     },
   ];
@@ -507,7 +515,8 @@ const Employees: NextPageWithLayout = ({
       <Spin spinning={mutationAddManyUsers.isLoading}>
         <Card
           extra={[
-            <ImportCSV key={'cSv_import'}
+            <ImportCSV
+              key={'cSv_import'}
               fieldsValid={['name', 'email', 'role', 'password']}
               onSubmit={addManyUsers}
             />,
@@ -529,7 +538,7 @@ const Employees: NextPageWithLayout = ({
             </Popconfirm>,
           ]}
           title={<span className={`${color}`}>All Employees</span>}
-          className="card-b shadow-l" 
+          className="card-b shadow-l"
         >
           <Space direction="vertical" size={20}>
             <Table

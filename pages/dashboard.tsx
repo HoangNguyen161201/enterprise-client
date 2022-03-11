@@ -158,7 +158,11 @@ const dashBoard: NextPageWithLayout = () => {
     refetch: refetchTopSub,
   } = submissions({ accessToken: dataUser?.accessToken.token });
 
-  const { color, desColor, bgColor, darkMode } = UseContext(GlobalContext);
+  const { color, desColor, bgColor, darkMode, handleLoadPage } = UseContext(GlobalContext);
+
+  UseEffect(()=> {
+    handleLoadPage(false)
+  }, [])
 
   return (
     <>

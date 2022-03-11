@@ -25,7 +25,7 @@ export interface IItemIdeaProps {
 export const ItemIdea = ({ item, onDeleteIdea, closure_date }: IItemIdeaProps) => {
   const { useBreakpoint } = Grid;
   const { lg } = useBreakpoint();
-  const {desColor} = React.useContext(GlobalContext)
+  const {desColor, handleLoadPage} = React.useContext(GlobalContext)
 
   const menu = (
     <Menu>
@@ -46,7 +46,7 @@ export const ItemIdea = ({ item, onDeleteIdea, closure_date }: IItemIdeaProps) =
       </Menu.Item>
       <Menu.Item>
         <Link href={`/ideas/update/${item._id}`} passHref>
-          <Space>
+          <Space onClick={()=> handleLoadPage(true)}>
             <UploadOutlined
               style={{
                 fontSize: 16,

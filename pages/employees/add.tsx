@@ -25,8 +25,11 @@ export interface IAddEmployeeProps {
 }
 
 const AddEmployee: NextPageWithLayout = ({ allDepartments, detailUser }: IAddEmployeeProps) => {
- 
- const {color, color2} = React.useContext(GlobalContext)
+  const { color, color2, handleLoadPage } = React.useContext(GlobalContext);
+
+  React.useEffect(() => {
+    handleLoadPage(false);
+  }, []);
 
   //Data select department
   const [departmentSl, setDepartmentSL] = React.useState<IOptionSelect[]>([]);
@@ -234,7 +237,13 @@ const AddEmployee: NextPageWithLayout = ({ allDepartments, detailUser }: IAddEmp
                 justifyContent: 'end',
               }}
             >
-              <Button loading={mutationAddUser.isLoading} htmlType="submit" type="primary" style={{borderRadius: 5}} className={`${color2}`}>
+              <Button
+                loading={mutationAddUser.isLoading}
+                htmlType="submit"
+                type="primary"
+                style={{ borderRadius: 5 }}
+                className={`${color2}`}
+              >
                 Add
               </Button>
             </div>

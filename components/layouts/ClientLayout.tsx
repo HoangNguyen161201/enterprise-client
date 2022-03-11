@@ -1,39 +1,47 @@
-import { Layout, Grid } from 'antd';
+import { Layout, Grid, Spin } from 'antd';
 import { NextLayout } from 'models/layoutType';
 import { BreadCrumb, HeaderComponent } from 'components/elements/common';
-import {useContext} from 'react'
+import { useContext } from 'react';
 import { GlobalContext } from 'contextApi/globalContext';
 const { Content } = Layout;
 export const ClientLayout: NextLayout = ({ children }) => {
-  const { bgColor} = useContext(GlobalContext)
-  const {useBreakpoint} = Grid
-  const {md} = useBreakpoint()
+  const { bgColor } = useContext(GlobalContext);
+  const { useBreakpoint } = Grid;
+  const { md } = useBreakpoint();
+  const {loadPage} = useContext(GlobalContext)
+
   return (
-    <div className={`${bgColor}`} style={{
-      minHeight: '100vh'
-    }}>  
-      <Layout
+    <Spin spinning={loadPage}>
+      <div
+        className={`${bgColor}`}
         style={{
-          maxWidth: 1600,
-          marginInline: 'auto',
+          minHeight: '100vh',
         }}
-        className='layout'
       >
-        <HeaderComponent />
-        <Content className={`${bgColor}`}
+        <Layout
           style={{
-            padding: md? '20px 40px': '20px',
+            maxWidth: 1600,
+            marginInline: 'auto',
           }}
+          className="layout"
         >
-          <div
+          <HeaderComponent />
+          <Content
+            className={`${bgColor}`}
             style={{
-              paddingTop: '20px',
+              padding: md ? '20px 40px' : '20px',
             }}
           >
-            {children}
-          </div>
-        </Content>
-      </Layout>
-    </div>
+            <div
+              style={{
+                paddingTop: '20px',
+              }}
+            >
+              {children}
+            </div>
+          </Content>
+        </Layout>
+      </div>
+    </Spin>
   );
 };

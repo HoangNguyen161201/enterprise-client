@@ -5,9 +5,11 @@ import Link from 'next/link';
 import { useContext as UseContext, useEffect as UseEffect } from 'react';
 
 export default function notFound() {
-  const { handleLightMode } = UseContext(GlobalContext);
+  const { handleLightMode, handleLoadPage } = UseContext(GlobalContext);
+
   UseEffect(() => {
     handleLightMode();
+    handleLoadPage(false)
   }, []);
   return (
     <div

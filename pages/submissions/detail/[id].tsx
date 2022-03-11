@@ -52,7 +52,11 @@ const DetailSubmission: NextPageWithLayout = ({
   allIdeaCurrentUser,
   detailUser,
 }: IDetailSubmissionProps) => {
-  const { darkMode, color2 } = useContext(GlobalContext);
+  const { darkMode, color2, handleLoadPage } = useContext(GlobalContext);
+
+  UseEffect(() => {
+    handleLoadPage(false);
+  }, []);
 
   //Get access token
   const {
@@ -328,11 +332,12 @@ const DetailSubmission: NextPageWithLayout = ({
           setIsLoadUpFile(true);
 
           //Up files
-          files = await uploadFile(filesUpload, [
-            detailSubmission.submission._id,
-            dataUser?.user._id,
-            cloudinary_id,
-          ], false, `${dataUser?.user.email}-${cloudinary_id}`);
+          files = await uploadFile(
+            filesUpload,
+            [detailSubmission.submission._id, dataUser?.user._id, cloudinary_id],
+            false,
+            `${dataUser?.user.email}-${cloudinary_id}`
+          );
 
           setIsLoadUpFile(false);
         }
@@ -408,7 +413,7 @@ const DetailSubmission: NextPageWithLayout = ({
         title="Add your idea"
         className="card-b shadow-l"
         style={{
-          background: 'white'
+          background: 'white',
         }}
       >
         <Space direction="vertical" size={20}>

@@ -19,7 +19,11 @@ export interface IDetailDepartmentProps {
 }
 
 const DetailDepartment: NextPageWithLayout = ({ detailMyDepartment }: IDetailDepartmentProps) => {
-  const { color, desColor } = useContext(GlobalContext);
+  const { color, desColor, handleLoadPage } = useContext(GlobalContext);
+
+  useEffect(()=> {
+    handleLoadPage(false)
+  }, [])
 
   //Is show button load more
   const [isShow, setIsShow] = useState(false);

@@ -74,7 +74,11 @@ const DetailIdea: NextPageWithLayout = ({
   detailUser,
 }: IDetailEmployeeProps) => {
   //Get socket
-  const { socket } = useContext(GlobalContext);
+  const { socket, handleLoadPage } = useContext(GlobalContext);
+
+  useEffect(() => {
+    handleLoadPage(false);
+  }, []);
 
   //State anonymously and content comment
   const [anonymously, setAnonymously] = UseState<boolean>(false);
@@ -377,7 +381,10 @@ const DetailIdea: NextPageWithLayout = ({
               </>
             ) : (
               <>
-                <Avatar alt={'avatar'} src={dataDetailIdea && dataDetailIdea.idea.user_id.avatar.url} />
+                <Avatar
+                  alt={'avatar'}
+                  src={dataDetailIdea && dataDetailIdea.idea.user_id.avatar.url}
+                />
                 {dataDetailIdea?.idea?.user_id && (
                   <span>
                     <Link href={`/employees/detail/${dataDetailIdea.idea.user_id._id}`}>
@@ -499,7 +506,11 @@ const DetailIdea: NextPageWithLayout = ({
                 >
                   Anonymously infor
                 </span>
-                <Switch aria-label={'anonymously'} checked={anonymously} onChange={(value) => setAnonymously(value)} />
+                <Switch
+                  aria-label={'anonymously'}
+                  checked={anonymously}
+                  onChange={(value) => setAnonymously(value)}
+                />
               </Space>
             )}
           </Space>

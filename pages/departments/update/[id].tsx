@@ -25,8 +25,12 @@ export interface IUpdateDepartmetnProps {
 
 const UpdateDepartmetn: NextPageWithLayout = ({ detailDepartment, detailUser }: IUpdateDepartmetnProps) => {
   
-  const { color,color2 } = useContext(GlobalContext);
+  const { color,color2, handleLoadPage } = useContext(GlobalContext);
   
+  UseEffect(()=> {
+    handleLoadPage(false)
+  }, [])
+
   //Get id from router to get old data
   const {
     query: { id },

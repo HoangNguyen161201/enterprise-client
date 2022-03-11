@@ -4,13 +4,14 @@ import { Alert, Card, Col, Grid, Image, List, message, Row, Space, Tag } from 'a
 import { BreadCrumb, Infor, ItemIdea } from 'components/elements/common';
 import ItemInfor from 'components/elements/common/ItemInfor';
 import { ClientLayout } from 'components/layouts';
+import { GlobalContext } from 'contextApi/globalContext';
 import { IDetailUser, IUser } from 'models/apiType';
 import { NextPageWithLayout } from 'models/layoutType';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { getCurrentUser, getDetailUser, getIdeasAcceptUser } from 'queries';
-import { useEffect as UseEffect } from 'react';
+import { useContext, useEffect as UseEffect } from 'react';
 import { SocialIcon } from 'react-social-icons';
 
 export interface IDetailEmployeeProps {
@@ -22,8 +23,12 @@ const DetailEmployee: NextPageWithLayout = ({
   detailUser,
   detailCurrentUser,
 }: IDetailEmployeeProps) => {
-  // get id employee
-  const { query } = useRouter();
+
+  const {handleLoadPage} = useContext(GlobalContext)
+
+  UseEffect(()=> {
+    handleLoadPage(false)
+  }, [])
 
   // create response
   const { useBreakpoint } = Grid;

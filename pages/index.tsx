@@ -1,5 +1,5 @@
 import { Col, Grid, Image, Menu, Row, Space, Timeline } from 'antd';
-import { Card } from 'components/elements/common';
+import { Card, LinkSpin } from 'components/elements/common';
 import { GlobalContext } from 'contextApi/globalContext';
 import { IDetailUser, ISubmission, ISubmissions } from 'models/apiType';
 import { NextPageWithLayout } from 'models/layoutType';
@@ -8,7 +8,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { getCurrentUser } from 'queries/auth';
 import { getallSubmissions } from 'queries/submission';
-import { useContext as UseContext } from 'react';
+import { useContext as UseContext, useEffect } from 'react';
 import { BsArrowDown, BsArrowRight } from 'react-icons/bs';
 import { ClientLayout } from '../components/layouts';
 
@@ -18,7 +18,11 @@ interface IHome {
 }
 
 const index: NextPageWithLayout = ({ result, detailUser }: IHome) => {
-  const { darkMode, color, desColor } = UseContext(GlobalContext);
+  const { darkMode, color, desColor, handleLoadPage } = UseContext(GlobalContext);
+
+  useEffect(() => {
+    handleLoadPage(false);
+  }, []);
 
   const { useBreakpoint: UseBreakpoint } = Grid;
   const { md } = UseBreakpoint();
@@ -40,10 +44,12 @@ const index: NextPageWithLayout = ({ result, detailUser }: IHome) => {
   });
 
   return (
-    <div style={{
-      overflow: 'hidden',
-      paddingBottom: 20
-    }}>
+    <div
+      style={{
+        overflow: 'hidden',
+        paddingBottom: 20,
+      }}
+    >
       <Head>
         <title>Home</title>
       </Head>
@@ -157,9 +163,7 @@ const index: NextPageWithLayout = ({ result, detailUser }: IHome) => {
             >
               Submissions
             </span>
-            <Link href="/submissions">
-              <a>More submissions</a>
-            </Link>
+            <LinkSpin url={'/submissions'} name="More submissions" />
           </div>
           <Row
             gutter={md ? [30, 30] : [0, 15]}
@@ -233,16 +237,12 @@ const index: NextPageWithLayout = ({ result, detailUser }: IHome) => {
             <span className={`font-2 ${desColor}`}>Main features of the website system:</span>
             <Timeline>
               <Timeline.Item>
-                <Link href={'/'}>
-                  <a>Home</a>
-                </Link>
+                <LinkSpin url={'/'} name="Home" />
               </Timeline.Item>
 
               <Timeline.Item color={dataUser?.user.role == 'qa_manager' ? undefined : 'red'}>
                 {dataUser?.user.role == 'qa_manager' ? (
-                  <Link href={'/dashboard'}>
-                    <a>DashBoard</a>
-                  </Link>
+                  <LinkSpin url={'/dashboard'} name="DashBoard" />
                 ) : (
                   <span className={`${color}`}>Dashboard</span>
                 )}
@@ -256,9 +256,7 @@ const index: NextPageWithLayout = ({ result, detailUser }: IHome) => {
                 }
               >
                 {dataUser?.user.role == 'admin' || dataUser?.user.role == 'qa_manager' ? (
-                  <Link href={'/departments'}>
-                    <a>Departments</a>
-                  </Link>
+                  <LinkSpin url={'/departments'} name="Departments" />
                 ) : (
                   <span className={`${color}`}>Departments</span>
                 )}
@@ -272,18 +270,14 @@ const index: NextPageWithLayout = ({ result, detailUser }: IHome) => {
                 }
               >
                 {dataUser?.user.role == 'admin' || dataUser?.user.role == 'qa_manager' ? (
-                  <Link href={'/categories'}>
-                    <a>Categories</a>
-                  </Link>
+                  <LinkSpin url={'/categories'} name="Categories" />
                 ) : (
                   <span className={`${color}`}>Categories</span>
                 )}
               </Timeline.Item>
 
               <Timeline.Item>
-                <Link href={'/submissions'}>
-                  <a>Submissions</a>
-                </Link>
+                <LinkSpin url={'/submissions'} name="Submissions" />
               </Timeline.Item>
               <Timeline.Item
                 color={
@@ -293,9 +287,7 @@ const index: NextPageWithLayout = ({ result, detailUser }: IHome) => {
                 }
               >
                 {dataUser?.user.role == 'admin' || dataUser?.user.role == 'qa_manager' ? (
-                  <Link href={'/employees'}>
-                    <a>Employees</a>
-                  </Link>
+                  <LinkSpin url={'/employees'} name="Employees" />
                 ) : (
                   <span className={`${color}`}>Employees</span>
                 )}
@@ -304,9 +296,7 @@ const index: NextPageWithLayout = ({ result, detailUser }: IHome) => {
                 {dataUser?.user.role == 'admin' ? (
                   <span className={`${color}`}>Ideas</span>
                 ) : (
-                  <Link href={'/ideas'}>
-                    <a>Ideas</a>
-                  </Link>
+                  <LinkSpin url={'/ideas'} name="Ideas" />
                 )}
               </Timeline.Item>
             </Timeline>

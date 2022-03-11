@@ -48,7 +48,11 @@ const index: NextPageWithLayout = ({ result, detailUser }: submisionPage) => {
   let timeOutSearch: NodeJS.Timeout, timeOutSearchTime: NodeJS.Timeout;
 
   // darkmode
-  const { color} = UseContext(GlobalContext);
+  const { color, handleLoadPage} = UseContext(GlobalContext);
+
+  UseEffect(()=> {
+    handleLoadPage(false)
+  }, [])
 
   const [idDelete, setIdDelete] = UseState('');
   UseEffect(() => {

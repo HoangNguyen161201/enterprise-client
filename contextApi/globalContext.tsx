@@ -25,6 +25,8 @@ interface IGlobalContext {
   desColor: string;
   handleDarkMode?: any;
   handleLightMode?: any
+  loadPage: boolean
+  handleLoadPage?: any
 }
 
 //Create context
@@ -35,6 +37,7 @@ const GlobalContext = createContext<IGlobalContext>({
   bgColor: 'bg-2',
   color2: 'color-5',
   desColor: 'des-1',
+  loadPage: false,
 });
 
 //Context provider function
@@ -48,6 +51,12 @@ function GlobalContextProvider({ children }: IGlobalConttextProps) {
   const [color2, setColor2] = useState('color-5');
   const [bgColor, setBgColor] = useState('bg-2');
   const [desColor, setDesColor] = useState('des-1');
+
+  // set loading
+  const [loadPage, setLoadPage] = useState(false)
+  const handleLoadPage = (isLoad: boolean)=> {
+    setLoadPage(isLoad)
+  }
 
   // toggleDarkMode
   const toggleDarkMode = () => {
@@ -121,7 +130,9 @@ function GlobalContextProvider({ children }: IGlobalConttextProps) {
     bgColor,
     desColor,
     handleDarkMode,
-    handleLightMode
+    handleLightMode,
+    loadPage,
+    handleLoadPage
   };
 
   return (

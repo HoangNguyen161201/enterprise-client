@@ -14,7 +14,7 @@ import { BsMoon, BsSun } from 'react-icons/bs';
 const { Header } = Layout;
 
 export const HeaderComponent = () => {
-  const { darkMode, toggleDarkMode, bgColor, color, color2 } = useContext(GlobalContext);
+  const { darkMode, toggleDarkMode, bgColor, color, color2, handleLoadPage } = useContext(GlobalContext);
 
   const {useBreakpoint: UseBreakpoint} = Grid
   const {md} = UseBreakpoint()
@@ -47,6 +47,7 @@ export const HeaderComponent = () => {
         message.success({
           content: data.msg,
         });
+        handleLoadPage(true)
         localStorage.removeItem('first-login');
         push('/login', undefined, { shallow: true });
       },

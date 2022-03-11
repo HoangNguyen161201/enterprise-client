@@ -15,6 +15,7 @@ import {
 import { CtSlideItem, Reaction } from 'components/elements/common';
 import Idea from 'components/elements/common/Idea';
 import { ClientLayout } from 'components/layouts';
+import { GlobalContext } from 'contextApi/globalContext';
 import { motion } from 'framer-motion';
 import { IDetailUser } from 'models/apiType';
 import { IFilter } from 'models/elementType';
@@ -25,7 +26,7 @@ import Head from 'next/head';
 import { getallCategories, getCurrentUser } from 'queries';
 import { getAllIdeas } from 'queries/idea';
 import { getReactType } from 'queries/reaction';
-import { useState as UseState } from 'react';
+import { useContext, useEffect, useState as UseState } from 'react';
 
 var timeOutLimit: NodeJS.Timeout;
 
@@ -41,6 +42,12 @@ const index: NextPageWithLayout = ({ detailUser }) => {
   const [searchFirst, setSearchFirst] = UseState('');
   const [_search, setSearch] = UseState('');
   const [icon, setIcon] = UseState('👁');
+
+  const {handleLoadPage} = useContext(GlobalContext)
+
+  useEffect(()=> {
+    handleLoadPage(false)
+  }, [])
 
   const {
     data: dataUser,

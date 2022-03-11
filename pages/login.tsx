@@ -23,7 +23,8 @@ import { validateLogin } from 'utils/validate';
 const login: NextPageWithLayout = () => {
   const {useBreakpoint: UseBreakpoint} = Grid
   const {sm} = UseBreakpoint()
-  const { handleLightMode} = UseContext(GlobalContext)
+  const { handleLightMode, handleLoadPage} = UseContext(GlobalContext)
+
   const { refetch } = getCurrentUser();
   const { push } = UseRouter();
   const options = UseMemo<IOptionSelect[]>(
@@ -54,6 +55,7 @@ const login: NextPageWithLayout = () => {
 
   UseEffect(()=> {
     handleLightMode()
+    handleLoadPage(false)
   },[])
 
   //  call api to get accessToken
@@ -68,6 +70,7 @@ const login: NextPageWithLayout = () => {
           // get accessToken and user information
           refetch();
           localStorage.setItem('first-login', 'true');
+          handleLoadPage(true)
           push('/', undefined, { shallow: true });
         }
       },
@@ -187,7 +190,7 @@ const login: NextPageWithLayout = () => {
                 Login
               </Button>
               <Link href={'/recover-password'}>
-                <a className="font-1 color-3">Forget password?</a>
+                <a onClick={()=> handleLoadPage(true)} className="font-1 color-3">Forget password?</a>
               </Link>
             </Space>
           </Space>

@@ -16,7 +16,7 @@ export default function recover_password() {
   const {useBreakpoint: UseBreakpoint } =  Grid
   const {sm} = UseBreakpoint()
 
-  const {handleLightMode} = UseContext(GlobalContext)
+  const {handleLightMode, handleLoadPage} = UseContext(GlobalContext)
 
   const [isSMTP, setIsSMTP] = UseState(false);
   // call api to reset password by email
@@ -38,6 +38,7 @@ export default function recover_password() {
 
   UseEffect(()=> {
     handleLightMode()
+    handleLoadPage(false)
   },[])
 
   // setting form --
@@ -84,7 +85,7 @@ export default function recover_password() {
                   }}
                 />
                 <Link href={'/login'}>
-                  <a>Back to login</a>
+                  <a onClick={()=> handleLoadPage(true)}>Back to login</a>
                 </Link>
               </Space>,
             ]}
