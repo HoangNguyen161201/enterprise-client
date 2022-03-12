@@ -86,7 +86,7 @@ export default function ImportCSV({ fieldsValid, onSubmit }: IImportCSVProps) {
         />
       </Tooltip>
       <Modal
-        title="Add employees by csv"
+        title="Import csv to add new data"
         visible={isModalVisible}
         onOk={handleOk}
         okText={'Add'}
