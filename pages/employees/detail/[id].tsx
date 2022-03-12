@@ -183,17 +183,17 @@ const DetailEmployee: NextPageWithLayout = ({
                 <span>Basic contact infor</span>
                 <ItemInfor
                   title="Phone"
-                  content={dataUser?.user.phone ? `+${dataUser.user.phone}` : undefined}
+                  content={dataDetailUser?.user.phone ? `+${dataDetailUser.user.phone}` : undefined}
                 />
                 <ItemInfor
                   title="Address"
-                  content={`${dataUser?.user?.country}, ${dataUser?.user?.city}, ${dataUser?.user?.street}`}
+                  content={`${dataDetailUser?.user?.country}, ${dataDetailUser?.user?.city}, ${dataDetailUser?.user?.street}`}
                 />
 
                 <span>Social network</span>
                 <Space size={20}>
-                  {dataUser?.user.social_networks &&
-                    dataUser?.user.social_networks.map((socialUrl) => (
+                  {dataDetailUser?.user.social_networks &&
+                    dataDetailUser?.user.social_networks.map((socialUrl) => (
                       <SocialIcon
                         key={socialUrl}
                         url={socialUrl}
