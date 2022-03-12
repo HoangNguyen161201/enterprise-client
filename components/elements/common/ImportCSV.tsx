@@ -74,7 +74,7 @@ export default function ImportCSV({ fieldsValid, onSubmit }: IImportCSVProps) {
 
   return (
     <>
-      <Tooltip title={'Import csv to add employees'}>
+      <Tooltip title={'Import csv to add new data'}>
         <Button
           onClick={showModal}
           type="primary"
