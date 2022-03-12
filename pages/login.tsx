@@ -76,7 +76,7 @@ const login: NextPageWithLayout = () => {
       },
       onError: (error: AxiosError) => {
         message.error({
-          content: error.response?.data.err || 'Login false',
+          content: error.response?.data.err || 'Login failed',
         });
       },
     }
