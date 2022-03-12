@@ -98,13 +98,14 @@ const managementIdea: NextPageWithLayout = ({
 
             file = result.data.url;
           }
+
           const result = {
             id_idea: item._id,
             user_name: item.user_id.name,
             email: item.user_id.email,
             title: item.title,
             description: item.description,
-            time: item.time,
+            time: moment(item.createdAt).format('YYYY-MM-DD'),
             view: item.view,
             submission: item.submission_id,
             category: item.category_id,
@@ -175,7 +176,7 @@ const managementIdea: NextPageWithLayout = ({
         setDataExcel(null);
       }
       return setDataSource([]);
-    }, 500);
+    }, 1000);
     return () => clearTimeout(timeOutResetDt);
   }, [AllIdeas]);
 
@@ -194,7 +195,7 @@ const managementIdea: NextPageWithLayout = ({
             });
         }
       }
-    }, 500);
+    }, 1000);
     return () => clearTimeout(timeOutResetDl);
   }, [_valueById, AllIdeas]);
 

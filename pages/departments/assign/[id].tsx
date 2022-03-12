@@ -42,9 +42,9 @@ const AssignDepartment: NextPageWithLayout = ({
 }: IAssignDepartmentProps) => {
   const { color, desColor, handleLoadPage } = useContext(GlobalContext);
 
-  UseEffect(()=> {
-    handleLoadPage(false)
-  }, [])
+  UseEffect(() => {
+    handleLoadPage(false);
+  }, []);
 
   //Get id from router to get old data
   const {
@@ -236,7 +236,8 @@ const AssignDepartment: NextPageWithLayout = ({
             }}
           />
         ),
-        onFilter: (value, record) => String(record.name_avatar.name).toLowerCase().includes(String(value).toLowerCase()),
+        onFilter: (value, record) =>
+          String(record.name_avatar.name).toLowerCase().includes(String(value).toLowerCase()),
         filterIcon: <SearchOutlined />,
         render: (value) => (
           <Space size={20}>
@@ -287,40 +288,36 @@ const AssignDepartment: NextPageWithLayout = ({
       },
       {
         ...column({ title: 'remove' }),
-        render: (_, record) => {
-          if (!record.root)
-            return (
-              <Popconfirm
-                icon={
-                  <QuestionCircleOutlined
-                    style={{
-                      color: '#07456F',
-                    }}
-                  />
-                }
-                title="Are you sure?"
-                okButtonProps={{
-                  onClick: async () => {
-                    await dataUserRefetch;
-                    setIsLoadingDl((state) => ({
-                      ...state,
-                      isLoading: true,
-                    }));
-                    handleDl.mutate(record.key);
-                  },
-                  loading: isLoadingDl.isLoading,
+        render: (_, record) => (
+          <Popconfirm
+            icon={
+              <QuestionCircleOutlined
+                style={{
+                  color: '#07456F',
                 }}
-                okText="Yes"
-                cancelText="No"
-              >
-                <DeleteOutlined
-                  onClick={() => setIsLoadingDl({ key: record.key, isLoading: false })}
-                  style={{ color: 'red' }}
-                />
-              </Popconfirm>
-            );
-          return '';
-        },
+              />
+            }
+            title="Are you sure?"
+            okButtonProps={{
+              onClick: async () => {
+                await dataUserRefetch;
+                setIsLoadingDl((state) => ({
+                  ...state,
+                  isLoading: true,
+                }));
+                handleDl.mutate(record.key);
+              },
+              loading: isLoadingDl.isLoading,
+            }}
+            okText="Yes"
+            cancelText="No"
+          >
+            <DeleteOutlined
+              onClick={() => setIsLoadingDl({ key: record.key, isLoading: false })}
+              style={{ color: 'red' }}
+            />
+          </Popconfirm>
+        ),
       },
     ],
     []
@@ -500,7 +497,7 @@ const AssignDepartment: NextPageWithLayout = ({
                   return setStaffsSl(selectedRowKeys);
                 },
               }}
-              style={{ overflowX: 'auto'}}
+              style={{ overflowX: 'auto' }}
               dataSource={staffs}
               columns={columns}
             />
