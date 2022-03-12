@@ -46,6 +46,7 @@ const ideaController = {
 
     //Check exist user
     const user = await userModel.findById(user_id);
+
     if (!user)
       return res.status(400).json({
         err: 'User does not exist in system.',
@@ -77,6 +78,17 @@ const ideaController = {
         err: 'The closure timeout date has expired.',
         statusCode: 400,
       });
+
+    // send mail
+    const QACoordinator = await userModel.findOne({ role: 'qa_coordinator', department_id: user.department_id })
+    if (QACoordinator) {
+      await mailNotice({
+        email: QACoordinator.email,
+        subject: `1 staff posted an idea`,
+        text: `${user.email} posted 1 new idea.`,
+        html: '',
+      });
+    }
 
     const NewIdea = new ideaModel({
       title,
@@ -190,7 +202,7 @@ const ideaController = {
     });
   }),
 
-  
+
 
   getAll: catchAsyncError(async (req, res) => {
     const {
