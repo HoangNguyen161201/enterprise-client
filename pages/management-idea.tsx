@@ -264,7 +264,7 @@ const managementIdea: NextPageWithLayout = ({
             }}
           />
         ),
-        onFilter: (value, record) => record.email_avatar.email.includes(value),
+        onFilter: (value, record) => String( record.email_avatar.email).toLowerCase().includes(String(value).toLowerCase()),
         filterIcon: <SearchOutlined />,
       },
 
@@ -280,7 +280,7 @@ const managementIdea: NextPageWithLayout = ({
             }}
           />
         ),
-        onFilter: (value, record) => record.name.includes(value),
+        onFilter: (value, record) => String( record.name).toLowerCase().includes(String(value).toLowerCase()),
         filterIcon: <SearchOutlined />,
       },
 

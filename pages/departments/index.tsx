@@ -165,7 +165,7 @@ const AddDepartment: NextPageWithLayout = ({ detailUser }: IAddDepartmentProps) 
             }}
           />
         ),
-        onFilter: (value, record) => record.name.includes(value),
+        onFilter: (value, record) => String(record.name).toLowerCase().includes(String(value).toLowerCase()),
         filterIcon: <SearchOutlined />,
       },
       {

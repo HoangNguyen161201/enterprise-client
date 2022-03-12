@@ -236,7 +236,7 @@ const AssignDepartment: NextPageWithLayout = ({
             }}
           />
         ),
-        onFilter: (value, record) => record.name_avatar.name.includes(value),
+        onFilter: (value, record) => String(record.name_avatar.name).toLowerCase().includes(String(value).toLowerCase()),
         filterIcon: <SearchOutlined />,
         render: (value) => (
           <Space size={20}>

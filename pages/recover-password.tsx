@@ -13,10 +13,10 @@ import { useForm as UseForm } from 'react-hook-form';
 import { validateRecoverPass } from 'utils/validate';
 
 export default function recover_password() {
-  const {useBreakpoint: UseBreakpoint } =  Grid
-  const {sm} = UseBreakpoint()
+  const { useBreakpoint: UseBreakpoint } = Grid;
+  const { sm } = UseBreakpoint();
 
-  const {handleLightMode, handleLoadPage} = UseContext(GlobalContext)
+  const { handleLightMode, handleLoadPage } = UseContext(GlobalContext);
 
   const [isSMTP, setIsSMTP] = UseState(false);
   // call api to reset password by email
@@ -36,10 +36,10 @@ export default function recover_password() {
     },
   });
 
-  UseEffect(()=> {
-    handleLightMode()
-    handleLoadPage(false)
-  },[])
+  UseEffect(() => {
+    handleLightMode();
+    handleLoadPage(false);
+  }, []);
 
   // setting form --
   const formSetting = UseForm<{ email: string }>({
@@ -54,10 +54,12 @@ export default function recover_password() {
   };
 
   return (
-    <div style={{
-      overflow: 'hidden',
-      padding: '25px 40px'
-    }}>
+    <div
+      style={{
+        overflow: 'hidden',
+        padding: '25px 40px',
+      }}
+    >
       <Head>
         <title>Recover Password</title>
       </Head>
@@ -69,7 +71,7 @@ export default function recover_password() {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          flexDirection: 'column'
+          flexDirection: 'column',
         }}
       >
         {isSMTP ? (
@@ -85,7 +87,7 @@ export default function recover_password() {
                   }}
                 />
                 <Link href={'/login'}>
-                  <a onClick={()=> handleLoadPage(true)}>Back to login</a>
+                  <a onClick={() => handleLoadPage(true)}>Back to login</a>
                 </Link>
               </Space>,
             ]}
@@ -102,7 +104,7 @@ export default function recover_password() {
                 borderRadius: '50%',
                 background: '#B0DEDD',
                 boxShadow: '8px 10px 19px -2px rgba(0,0,0,0.15)',
-                marginBottom: 15
+                marginBottom: 15,
               }}
             >
               <KeyOutlined
@@ -112,13 +114,16 @@ export default function recover_password() {
                 }}
               />
             </div>
-            <Space align="center" direction="vertical"
-            style={{
-              marginBottom: 20
-            }}>
+            <Space
+              align="center"
+              direction="vertical"
+              style={{
+                marginBottom: 20,
+              }}
+            >
               <span
                 style={{
-                  fontSize: !sm ? 20: 30,
+                  fontSize: !sm ? 20 : 30,
                   fontWeight: 'bold',
                 }}
               >
@@ -137,7 +142,7 @@ export default function recover_password() {
               style={{
                 width: '100%',
                 maxWidth: 350,
-                marginBottom: 15
+                marginBottom: 15,
               }}
             >
               <Space direction="vertical" size={20}>
