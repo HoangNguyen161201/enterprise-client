@@ -4,7 +4,7 @@ import React from 'react'
 
 export const StaticUser = ({count, icon, label}: IStaticUser) => {
   return (
-    <Col span={8}>
+    <Col span={24} xl={8} md={12}>
     <Space direction='vertical' align='start' style={{
       background: '#07456F',
       height: 150,
