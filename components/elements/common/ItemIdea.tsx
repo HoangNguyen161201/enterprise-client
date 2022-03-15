@@ -25,7 +25,7 @@ export interface IItemIdeaProps {
 export const ItemIdea = ({ item, onDeleteIdea, closure_date }: IItemIdeaProps) => {
   const { useBreakpoint } = Grid;
   const { lg } = useBreakpoint();
-  const {desColor, handleLoadPage} = React.useContext(GlobalContext)
+  const { desColor, handleLoadPage } = React.useContext(GlobalContext);
 
   const menu = (
     <Menu>
@@ -46,7 +46,7 @@ export const ItemIdea = ({ item, onDeleteIdea, closure_date }: IItemIdeaProps) =
       </Menu.Item>
       <Menu.Item>
         <Link href={`/ideas/update/${item._id}`} passHref>
-          <Space onClick={()=> handleLoadPage(true)}>
+          <Space onClick={() => handleLoadPage(true)}>
             <UploadOutlined
               style={{
                 fontSize: 16,
@@ -79,13 +79,9 @@ export const ItemIdea = ({ item, onDeleteIdea, closure_date }: IItemIdeaProps) =
                 fontWeight: 'bold',
               }}
             >
-              {item.accept ? (
-                <Link href={`/ideas/detail/${item._id}`}>
-                  <a>{item.title}</a>
-                </Link>
-              ) : (
-                item.title
-              )}
+              <Link href={`/ideas/detail/${item._id}`}>
+                <a>{item.title}</a>
+              </Link>
             </span>
             <Space size={20}>
               <Space
@@ -112,18 +108,24 @@ export const ItemIdea = ({ item, onDeleteIdea, closure_date }: IItemIdeaProps) =
 
             <Space wrap size={20}>
               <Space>
-                <FileAddOutlined className={`${desColor}`}/>
+                <FileAddOutlined className={`${desColor}`} />
                 <span className={`${desColor}`}>{item.files.length} file</span>
               </Space>
 
               <Space>
-                <FolderViewOutlined className={`${desColor}`}/>
+                <FolderViewOutlined className={`${desColor}`} />
                 <span className={`${desColor}`}>{item.view} view</span>
               </Space>
 
               <Space>
-                {item.anonymously ? <EyeInvisibleOutlined className={`${desColor}`}/> : <EyeOutlined className={`${desColor}`}/>}
-                <span className={`${desColor}`}>{item.anonymously ? 'Anonymous information' : 'Public information'}</span>
+                {item.anonymously ? (
+                  <EyeInvisibleOutlined className={`${desColor}`} />
+                ) : (
+                  <EyeOutlined className={`${desColor}`} />
+                )}
+                <span className={`${desColor}`}>
+                  {item.anonymously ? 'Anonymous information' : 'Public information'}
+                </span>
               </Space>
             </Space>
           </Space>
