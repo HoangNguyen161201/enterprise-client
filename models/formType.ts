@@ -47,6 +47,10 @@ export interface IUserForm {
   cf_password?: string;
 }
 
+export interface IdraftForm {
+
+}
+
 export interface IContactForm {
   user_id: string;
   social_networks: string[];

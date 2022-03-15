@@ -13,7 +13,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Alert, Avatar, Button, Card, Col, List, message, Row, Space, Spin, Switch } from 'antd';
 import Meta from 'antd/lib/card/Meta';
 import { AxiosError } from 'axios';
-import { BreadCrumb, ItemDraft, ItemIdea } from 'components/elements/common';
+import { BreadCrumb, ItemIdea } from 'components/elements/common';
 import ItemFileUpload from 'components/elements/common/ItemFileUpload';
 import RowTable from 'components/elements/common/RowTable';
 import { Input, Select, TextArea } from 'components/elements/form';
@@ -139,20 +139,6 @@ const DetailSubmission: NextPageWithLayout = ({
   const [categoriesSelect, setCategoriesSelect] = useState<IOptionSelect[]>([]);
   const [filesUpload, setFilesUpload] = useState<File[]>([]);
   const [anonymously, setAnonymously] = useState<boolean>(false);
-
-  //Old drafs
-  const [oldDrafts, setOldDrafts] = useState<any[]>([]);
-
-  //Set old drafs
-  useEffect(() => {
-    if (id) {
-      const oldDraftsString = localStorage.getItem(
-        `draft_ideas_${id}_${dataUser?.user._id}`
-      ) as string;
-      const oldDraftsParse = JSON.parse(oldDraftsString) ? JSON.parse(oldDraftsString) : [];
-      setOldDrafts(Array.isArray(oldDraftsParse) ? [...oldDraftsParse] : []);
-    }
-  }, [id]);
 
   //Handle change content editor
   const handleChange = (value: any) => {
@@ -380,79 +366,6 @@ const DetailSubmission: NextPageWithLayout = ({
     }
   };
 
-  const onSaveDraft = async () => {
-    //Initial data
-    const title = formSetting.getValues('title');
-    const description = formSetting.getValues('description');
-
-    //Check exist title
-    if (!title) {
-      message.warn({
-        content: 'The title field cannot be left blank',
-      });
-    } else {
-      const newDraft = {
-        title,
-        description,
-        anonymously,
-        editorVl,
-      };
-
-      localStorage.setItem(
-        `draft_ideas_${id}_${dataUser?.user._id}`,
-        JSON.stringify([...oldDrafts, newDraft])
-      );
-
-      setOldDrafts([...oldDrafts, newDraft]);
-
-      //Clear Idea
-      onClearData();
-
-      //Close form idea
-      setIsShowFormIdea(false);
-
-      //Message
-      message.success({
-        content: 'Save new draft success.',
-      });
-    }
-  };
-
-  //Delete draft
-  const onDeleteDraft = (index: number) => {
-    if (id && dataUser?.user) {
-      const newListDrafts = oldDrafts;
-      newListDrafts.splice(index, 1);
-
-      //Set value local storage
-      if (newListDrafts.length > 0) {
-        localStorage.setItem(
-          `draft_ideas_${id}_${dataUser?.user._id}`,
-          JSON.stringify([...newListDrafts])
-        );
-      } else {
-        //Remove item local storage
-        localStorage.removeItem(`draft_ideas_${id}_${dataUser?.user._id}`);
-      }
-
-      setOldDrafts([...newListDrafts]);
-    }
-  };
-
-  //On use draft
-  const onUseDraft = (draft: any, index: number) => {
-    //Set data idea form draft
-    formSetting.reset({
-      title: draft.title,
-      description: draft.description,
-    });
-    setAnonymously(draft.anonymously);
-    setEditorVl(draft.editorVl);
-
-    //Delete draft
-    onDeleteDraft(index);
-  };
-
   //Clear data update
   const onClearData = () => {
     formSetting.reset({
@@ -571,31 +484,6 @@ const DetailSubmission: NextPageWithLayout = ({
               display: isShowFormIdea ? undefined : 'none',
             }}
           >
-            {oldDrafts && oldDrafts.length > 0 && (
-              <>
-                <span
-                  style={{
-                    fontSize: 14,
-                    color: 'gray',
-                  }}
-                >
-                  Old drafts
-                </span>
-                <Row gutter={[20, 20]}>
-                  {oldDrafts.map((draft, index) => (
-                    <Col key={index} style={{}} xs={24} sm={12} lg={6}>
-                      <ItemDraft
-                        draft={draft}
-                        index={index}
-                        onDeleteDraft={onDeleteDraft}
-                        onUseDraft={onUseDraft}
-                      />
-                    </Col>
-                  ))}
-                </Row>
-              </>
-            )}
-
             <span
               style={{
                 fontSize: 14,
@@ -745,19 +633,6 @@ const DetailSubmission: NextPageWithLayout = ({
             ))}
 
             <Space size={20}>
-              <Button
-                onClick={onSaveDraft}
-                style={{
-                  borderRadius: 5,
-                }}
-                className={`${color2}`}
-                disabled={!timeClosure.closure_date.isMatchDate}
-                type="primary"
-                icon={<CloudUploadOutlined />}
-              >
-                Save Draft
-              </Button>
-
               <Button
                 loading={isLoadUpFile || mutationAddIdea.isLoading}
                 style={{
