@@ -401,19 +401,6 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
                 </Space>
               </Space>
             </Col>
-<<<<<<< HEAD
-=======
-            <Col flex="auto">
-              <span>
-                Ideas Accept And Public: <Tag color={'green'} style={{marginLeft: 10}}>{(dataIdeasAccept && dataIdeasAccept.ideas.length) || 0} ideas</Tag>
-              </span>
-              <List
-                itemLayout="horizontal"
-                dataSource={dataIdeasAccept?.ideas}
-                renderItem={(item) => <ItemIdea item={item} onDeleteIdea={() => {}} />}
-              />
-            </Col>
->>>>>>> 9ae586acbf016f1a27459ef806d71b849ad0c1c6
           </Row>
         </Space>
       </Card>
