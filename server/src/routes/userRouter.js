@@ -1,4 +1,5 @@
 const express = require('express');
+const { staticUser } = require('../controllers/userController');
 
 //Import controllers
 const userController = require('../controllers/userController');
@@ -15,6 +16,8 @@ userRouter.post('/', authorization(['admin', 'qa_manager']), userController.crea
 userRouter.post('/add-many', authorization(['admin', 'qa_manager']), userController.CreateMany);
 
 userRouter.post('/assign', authorization(['admin', 'qa_manager']), userController.assignDepartment);
+
+userRouter.post('/static', staticUser)
 
 userRouter.post(
   '/assign-many',
