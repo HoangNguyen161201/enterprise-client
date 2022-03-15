@@ -11,6 +11,7 @@ import {
   Modal,
   Row,
   Space,
+  Spin,
   Tag,
   Tooltip,
 } from 'antd';
@@ -99,7 +100,6 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
     accessToken: dataUser?.accessToken.token,
   });
 
-  
   // get static user
   const {
     data: staticUser,
@@ -410,12 +410,22 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
               </Space>
             </Col>
             <Col flex={'auto'}>
-              <Row gutter={[20, 20]}>
-                {staticUser?.data &&
-                  staticUser?.data.map((item, key: number) => (
+              {!staticUser?.data ? (
+                <Spin>
+                  <Space
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                    }}
+                  ></Space>
+                </Spin>
+              ) : (
+                <Row gutter={[20, 20]}>
+                  {staticUser?.data.map((item, key: number) => (
                     <StaticUser label={item.label} count={item.count} icon={item.icon} key={key} />
                   ))}
-              </Row>
+                </Row>
+              )}
             </Col>
           </Row>
         </Space>
