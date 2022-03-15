@@ -18,6 +18,8 @@ submissionRouter.delete('/:id',authorization(['admin', 'qa_manager']), submissio
 
 submissionRouter.get('/', authorization([]), submissionController.getAll);
 
+submissionRouter.get('/all-id', submissionController.getAllId);
+
 submissionRouter.get('/:id', authorization([]), submissionController.getDetail);
 
 module.exports = submissionRouter;
