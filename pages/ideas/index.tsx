@@ -1,5 +1,4 @@
 import {
-  Breadcrumb,
   Card,
   Col,
   Collapse,
@@ -12,7 +11,7 @@ import {
   Space,
   Spin,
 } from 'antd';
-import { CtSlideItem, Reaction } from 'components/elements/common';
+import { BreadCrumb, CtSlideItem, Reaction } from 'components/elements/common';
 import Idea from 'components/elements/common/Idea';
 import { ClientLayout } from 'components/layouts';
 import { GlobalContext } from 'contextApi/globalContext';
@@ -23,7 +22,7 @@ import { NextPageWithLayout } from 'models/layoutType';
 import moment from 'moment';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import { getallCategories, getCurrentUser } from 'queries';
+import { getallCategories, getAllSubId, getCurrentUser } from 'queries';
 import { getAllIdeas } from 'queries/idea';
 import { getReactType } from 'queries/reaction';
 import { useContext as UseContext, useEffect as UseEffect, useState as UseState } from 'react';
@@ -56,6 +55,8 @@ const index: NextPageWithLayout = ({ detailUser }) => {
   } = getCurrentUser(detailUser);
 
   const { data: DataCt, error: errorCt, refetch: refetchCt } = getallCategories(detailUser);
+
+  const {data: DataSubId, error: errorSubId, refetch} = getAllSubId()
 
   const {
     data: AllIdeas,
@@ -110,7 +111,7 @@ const index: NextPageWithLayout = ({ detailUser }) => {
       setInteractive(null);
     }
 
-    if (icon) return setIcon(icon);
+    if (icon) setIcon(icon);
     setPage(1);
     setLimit(6);
   };
@@ -122,10 +123,13 @@ const index: NextPageWithLayout = ({ detailUser }) => {
         <title>All Ideas</title>
       </Head>
 
-      <Breadcrumb>
-        <Breadcrumb.Item>Home</Breadcrumb.Item>
-        <Breadcrumb.Item>Ideas</Breadcrumb.Item>
-      </Breadcrumb>
+      <BreadCrumb data={[{
+          url: '/',
+          label: 'Home'
+        }]} main={{
+          url: '/ideas',
+          label: '/All ideas'
+        }} />
 
       <Card title="View All Ideas" className='card-b shadow-l' style={{
         background: 'white',
@@ -147,11 +151,13 @@ const index: NextPageWithLayout = ({ detailUser }) => {
                         setSearchFirst(event.target.value);
                       }}
                       onSearch={(value) => {
+                        handleCReaction({
+                         isView: true,
+                         icon: '👁',
+                         id: null,
+                       });
                         setSearch(value);
-                        setReaction(null);
-                        setValueById(null);
-                        setNameById(null);
-                        setInteractive(null);
+                       
                       }}
                       allowClear
                       placeholder="Enter title"
@@ -219,15 +225,15 @@ const index: NextPageWithLayout = ({ detailUser }) => {
                   <Space direction="vertical" size={'small'}>
                     {DataCt?.categories &&
                       DataCt.categories.map((ct) => (
-                        <CtSlideItem handleCReaction={handleCReaction} ct={ct} key={ct._id} />
+                        <CtSlideItem nameById='category_id' handleCReaction={handleCReaction} ct={ct} key={ct._id} />
                       ))}
                   </Space>
                 </Collapse.Panel>
                 <Collapse.Panel header="Submission" key="4">
                   <Space direction="vertical" size={'small'}>
-                    {DataCt?.categories &&
-                      DataCt.categories.map((ct) => (
-                        <CtSlideItem handleCReaction={handleCReaction} ct={ct} key={ct._id} />
+                    {DataSubId?.submissions &&
+                      DataSubId.submissions.map((subm) => (
+                        <CtSlideItem nameById='submission_id' handleCReaction={handleCReaction} ct={subm} key={subm._id} />
                       ))}
                   </Space>
                 </Collapse.Panel>

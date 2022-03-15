@@ -1,5 +1,16 @@
-import { LogoutOutlined, MenuOutlined, ProfileOutlined, TeamOutlined } from '@ant-design/icons';
-import { Avatar, Button, Divider, Dropdown, Grid, Layout, Menu, message, Space, Switch } from 'antd';
+import { AlertOutlined, LogoutOutlined, MenuOutlined, ProfileOutlined, TeamOutlined } from '@ant-design/icons';
+import {
+  Avatar,
+  Button,
+  Divider,
+  Dropdown,
+  Grid,
+  Layout,
+  Menu,
+  message,
+  Space,
+  Switch,
+} from 'antd';
 import { GlobalContext } from 'contextApi/globalContext';
 import { ILogout } from 'models/apiType';
 import Link from 'next/link';
@@ -14,10 +25,11 @@ import { BsMoon, BsSun } from 'react-icons/bs';
 const { Header } = Layout;
 
 export const HeaderComponent = () => {
-  const { darkMode, toggleDarkMode, bgColor, color, color2, handleLoadPage } = useContext(GlobalContext);
+  const { darkMode, toggleDarkMode, bgColor, color, color2, handleLoadPage } =
+    useContext(GlobalContext);
 
-  const {useBreakpoint: UseBreakpoint} = Grid
-  const {md} = UseBreakpoint()
+  const { useBreakpoint: UseBreakpoint } = Grid;
+  const { md } = UseBreakpoint();
 
   //Setting drawer
   const [visible, setVisible] = useState(false);
@@ -47,7 +59,7 @@ export const HeaderComponent = () => {
         message.success({
           content: data.msg,
         });
-        handleLoadPage(true)
+        handleLoadPage(true);
         localStorage.removeItem('first-login');
         push('/login', undefined, { shallow: true });
       },
@@ -91,11 +103,18 @@ export const HeaderComponent = () => {
         </Link>
       </Menu.Item>
       {dataUser && dataUser.user.role !== 'admin' && (
-        <Menu.Item icon={<TeamOutlined />} key="2">
-          <Link href={'/my-department'}>
-            <a>My Department</a>
-          </Link>
-        </Menu.Item>
+        <>
+          <Menu.Item icon={<AlertOutlined />} key="2">
+            <Link href={'/my-ideas'}>
+              <a>My ideas</a>
+            </Link>
+          </Menu.Item>
+          <Menu.Item icon={<TeamOutlined />} key="2">
+            <Link href={'/my-department'}>
+              <a>My Department</a>
+            </Link>
+          </Menu.Item>
+        </>
       )}
       <Menu.Item icon={<LogoutOutlined />} key="3" onClick={onLogout}>
         Logout
@@ -107,7 +126,7 @@ export const HeaderComponent = () => {
       <Header
         className={`${bgColor}`}
         style={{
-          padding: md? '0px 40px': '0px 20px',
+          padding: md ? '0px 40px' : '0px 20px',
           zIndex: '1',
           borderBottom: '1px solid #efefef',
         }}
@@ -141,7 +160,7 @@ export const HeaderComponent = () => {
           </Space>
           <Space size={15}>
             <Switch
-              aria-label='darkMode'
+              aria-label="darkMode"
               checked={darkMode}
               onChange={(checked) => {
                 toggleDarkMode();
@@ -174,7 +193,7 @@ export const HeaderComponent = () => {
                   }}
                 >
                   <Avatar
-                    alt='avatar'
+                    alt="avatar"
                     style={{
                       border: '1px solid #009F9D',
                       background: 'white',

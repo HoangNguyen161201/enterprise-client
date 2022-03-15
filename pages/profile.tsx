@@ -7,7 +7,6 @@ import {
   Grid,
   Image,
   Input,
-  List,
   message,
   Modal,
   Row,
@@ -17,7 +16,7 @@ import {
 } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import { AxiosError } from 'axios';
-import { BreadCrumb, Infor, ItemIdea } from 'components/elements/common';
+import { BreadCrumb, Infor } from 'components/elements/common';
 import ItemInfor from 'components/elements/common/ItemInfor';
 import { ClientLayout } from 'components/layouts';
 import { GlobalContext } from 'contextApi/globalContext';
@@ -28,7 +27,12 @@ import { fileMutation } from 'mutations/file';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { getCurrentUser, getIdeasAcceptUser } from 'queries';
-import { ChangeEventHandler, useContext as UseContext, useEffect as UseEffect, useState as UseState } from 'react';
+import {
+  ChangeEventHandler,
+  useContext as UseContext,
+  useEffect as UseEffect,
+  useState as UseState,
+} from 'react';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { SocialIcon } from 'react-social-icons';
@@ -43,11 +47,11 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
   const { useBreakpoint } = Grid;
   const { lg } = useBreakpoint();
 
-  const {handleLoadPage} = UseContext(GlobalContext)
+  const { handleLoadPage } = UseContext(GlobalContext);
 
-  UseEffect(()=> {
-    handleLoadPage(false)
-  }, [])
+  UseEffect(() => {
+    handleLoadPage(false);
+  }, []);
 
   //State infor contact
   const [socialNetworks, setSocialNetworks] = UseState<string[]>([]);
@@ -277,14 +281,18 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
         style={{
           background: 'white',
         }}
-        extra={<Button className='color-3' type='link' onClick={showModal}>Edit Infor Contact</Button>}
+        extra={
+          <Button className="color-3" type="link" onClick={showModal}>
+            Edit Infor Contact
+          </Button>
+        }
       >
         <Space direction="vertical" size={20}>
           <Row wrap={!lg} gutter={[30, 30]}>
             <Col flex={lg ? '400px' : undefined} span={lg ? undefined : 24}>
               <Space size={20} direction="vertical">
                 <Space size={20} wrap>
-                  <Space align='end' size={20}>
+                  <Space align="end" size={20}>
                     <Image
                       alt="avatar_user"
                       style={{
@@ -323,7 +331,6 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
                           accept="image/x-png,image/gif,image/jpeg"
                         />
                       </Tooltip>
-
                     </Space>
                   </Space>
                 </Space>
@@ -393,16 +400,6 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
                     ))}
                 </Space>
               </Space>
-            </Col>
-            <Col flex="auto">
-              <span>
-                Ideas Accept: <Tag color={'green'} style={{marginLeft: 10}}>{(dataIdeasAccept && dataIdeasAccept.ideas.length) || 0} ideas</Tag>
-              </span>
-              <List
-                itemLayout="horizontal"
-                dataSource={dataIdeasAccept?.ideas}
-                renderItem={(item) => <ItemIdea item={item} onDeleteIdea={() => {}} />}
-              />
             </Col>
           </Row>
         </Space>

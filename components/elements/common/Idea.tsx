@@ -1,4 +1,4 @@
-import { UserOutlined } from '@ant-design/icons';
+import { EditOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Col, Space, Tag } from 'antd';
 import Link from 'next/link';
 import React from 'react';
@@ -13,6 +13,7 @@ interface IIideaItem {
   count: Number;
   id: String;
   anonymously: boolean;
+  [index: string]: any;
 }
 
 export default function Idea({
@@ -25,6 +26,9 @@ export default function Idea({
   count,
   anonymously,
   id,
+  accept,
+  showAccept,
+  showUpdate,
 }: IIideaItem) {
   return (
     <Link href={`/ideas/detail/${id}`} passHref={true}>
@@ -53,7 +57,7 @@ export default function Idea({
           <Space direction="vertical" size={'middle'}>
             <Space direction="vertical">
               <Space size={'middle'}>
-                <span>{anonymously? '--------------------' : userName}</span>
+                <span>{anonymously ? '--------------------' : userName}</span>
                 <span
                   style={{
                     color: 'gray',
@@ -61,7 +65,13 @@ export default function Idea({
                 >
                   {time}
                 </span>
+                {showUpdate && (
+                  <Link passHref href={`/ideas/update/${id}`}>
+                    <EditOutlined className="color-3" />
+                  </Link>
+                )}
               </Space>
+
               <span
                 className="font-3"
                 style={{
@@ -79,21 +89,27 @@ export default function Idea({
                 {description}
               </span>
             </Space>
-
-            <Tag
-              color="processing"
-              icon={
-                <span
-                  style={{
-                    marginRight: 8,
-                  }}
-                >
-                  {iconReaction}
-                </span>
-              }
-            >
-              {count}
-            </Tag>
+            <Space>
+              <Tag
+                color="processing"
+                icon={
+                  <span
+                    style={{
+                      marginRight: 8,
+                    }}
+                  >
+                    {iconReaction}
+                  </span>
+                }
+              >
+                {count}
+              </Tag>
+              {showAccept && (
+                <Tag color={accept ? 'green' : 'red'}>
+                  {accept ? 'Accepted' : 'Not yet accepted'}
+                </Tag>
+              )}
+            </Space>
           </Space>
         </Space>
       </Col>

@@ -37,7 +37,7 @@ export const getIdeasCurrentUser = ({
 export const getIdeasAcceptUser = ({
   user_id,
   accessToken,
-  initial
+  initial,
 }: IQueryGetIdeasCurrentUser) => {
   return useQuery<IAllIdeas, AxiosError>(
     ['ideas', user_id],
@@ -80,17 +80,33 @@ interface IOptionIdea {
   _sortBy: string;
   _nameById: string | null;
   _valueById: string | null;
-  _interactive: number | null
-  _reaction: string | null,
-  _search: string
-  _accept: number
+  _interactive: number | null;
+  _reaction: string | null;
+  _search: string;
+  _accept: number;
+  _getBy: string;
+  _getValue: string;
 }
 
-export const getAllIdeas = (options: Partial<IOptionIdea>, accessToken: string | undefined,  initial?: IAllIdeas) => {
+export const getAllIdeas = (
+  options: Partial<IOptionIdea>,
+  accessToken: string | undefined,
+  initial?: IAllIdeas
+) => {
   return useQuery<IAllIdeas, AxiosError>(
-    ['ideas',  options._search, options._page, options._limit,  options._valueById, options._interactive, options._reaction],
+    [
+      'ideas',
+      options._search,
+      options._page,
+      options._limit,
+      options._valueById,
+      options._interactive,
+      options._reaction,
+      options._getBy,
+      options._getValue,
+    ],
     async () => {
-      return await getData({ url: `/api/ideas`, token: accessToken, params: options});
+      return await getData({ url: `/api/ideas`, token: accessToken, params: options });
     },
     {
       initialData: initial,
@@ -98,21 +114,21 @@ export const getAllIdeas = (options: Partial<IOptionIdea>, accessToken: string |
       retry: 1,
       refetchOnWindowFocus: false,
       refetchOnMount: false,
-      select: (data)=> {
-        if(data.ideas.length === 0) return data
-        const ideas = data.ideas.map(idea=> {
+      select: (data) => {
+        if (data.ideas.length === 0) return data;
+        const ideas = data.ideas.map((idea) => {
           return {
             ...idea,
-            count: idea.totalReaction ? idea.totalReaction : idea.view  | 0
-          }
-        })
+            count: idea.totalReaction ? idea.totalReaction : idea.view | 0,
+          };
+        });
         return {
           statusCode: data.statusCode,
           msg: data.msg,
           ideas,
-          page_Index: data.page_Index
-        }
-      }
+          page_Index: data.page_Index,
+        };
+      },
     }
   );
 };

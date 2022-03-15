@@ -137,6 +137,13 @@ export interface ISubmissions extends ICommon {
   [index: string]: any;
 }
 
+export interface ISubId extends ICommon {
+  submissions: {
+    _id: string
+    name: string 
+  }[]
+}
+
 export interface IResUsersRole {
   msg?: string;
   users?: any[];

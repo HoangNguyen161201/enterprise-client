@@ -3,7 +3,7 @@ import { IFilter } from 'models/elementType';
 import { ICategoryForm } from 'models/formType';
 import React from 'react';
 
-export const CtSlideItem = ({ct, handleCReaction}: {ct: ICategoryForm, handleCReaction: (data:Partial<IFilter>)=> void})=> {
+export const CtSlideItem = ({ct, handleCReaction, nameById}: {ct: ICategoryForm, handleCReaction: (data:Partial<IFilter>)=> void, nameById: string | undefined})=> {
   return (
     <motion.div whileTap={{
         backgroundColor: '#009F9D',
@@ -15,7 +15,7 @@ export const CtSlideItem = ({ct, handleCReaction}: {ct: ICategoryForm, handleCRe
     }}
     onClick={()=> {
         handleCReaction({
-            _nameById: 'category_id',
+            _nameById: nameById,
             _valueById: ct._id,
             icon: '👁'
         })
