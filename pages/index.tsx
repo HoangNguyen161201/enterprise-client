@@ -177,7 +177,7 @@ const index: NextPageWithLayout = ({ result, detailUser }: IHome) => {
             {dataSubmissions?.submissions &&
               dataSubmissions?.submissions.map((item: ISubmission) => (
                 <Card
-                  xl={12}
+                  xl={8}
                   lg={12}
                   md={24}
                   item={item}

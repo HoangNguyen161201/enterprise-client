@@ -13,10 +13,10 @@ interface ICard {
   current_user: IDetailUser;
   [index: string]: any;
 }
-export const Card = ({ item, more, current_user, xl = 8, lg = 12, md = 24 }: ICard) => {
+export const Card = ({ item, more, current_user, xl = 6, lg = 8, md = 12 }: ICard) => {
   const { desColor, color } = useContext(GlobalContext);
   return (
-    <Col xl={xl} lg={lg} md={md}>
+    <Col span={24} xl={xl} lg={lg} md={md}>
       <Space direction="vertical" size={15}>
         <Image
           alt={`submission_${item._id}`}

@@ -12,6 +12,7 @@ const reactionModel = require('../models/reactionModel');
 const categoryModel = require('../models/categoryModel');
 const pageIndex = require('../utils/PageIndex');
 const { default: mongoose, mongo } = require('mongoose');
+const mailNotice = require('../utils/mailNotice')
 
 const ideaController = {
   create: catchAsyncError(async (req, res) => {

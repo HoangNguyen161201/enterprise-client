@@ -223,6 +223,14 @@ const index: NextPageWithLayout = ({ detailUser }) => {
                       ))}
                   </Space>
                 </Collapse.Panel>
+                <Collapse.Panel header="Submission" key="4">
+                  <Space direction="vertical" size={'small'}>
+                    {DataCt?.categories &&
+                      DataCt.categories.map((ct) => (
+                        <CtSlideItem handleCReaction={handleCReaction} ct={ct} key={ct._id} />
+                      ))}
+                  </Space>
+                </Collapse.Panel>
               </Collapse>
             </div>
           </Col>
