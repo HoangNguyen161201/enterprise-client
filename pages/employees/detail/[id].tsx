@@ -187,7 +187,7 @@ const DetailEmployee: NextPageWithLayout = ({
                 />
                 <ItemInfor
                   title="Address"
-                  content={`${dataDetailUser?.user?.country}, ${dataDetailUser?.user?.city}, ${dataDetailUser?.user?.street}`}
+                  content={`${dataDetailUser?.user?.country} - ${dataDetailUser?.user?.city} - ${dataDetailUser?.user?.street}`}
                 />
 
                 <span>Social network</span>
@@ -208,7 +208,7 @@ const DetailEmployee: NextPageWithLayout = ({
             </Col>
             <Col flex="auto">
               <span>
-                Ideas Accept:{' '}
+                Ideas Accept And Public:{' '}
                 <Tag color={'green'} style={{ marginLeft: 10 }}>
                   {(dataIdeasAccept && dataIdeasAccept.ideas.length) || 0} ideas
                 </Tag>

@@ -375,7 +375,7 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
                 />
                 <ItemInfor
                   title="Address"
-                  content={`${dataUser?.user?.country}, ${dataUser?.user?.city}, ${dataUser?.user?.street}`}
+                  content={`${dataUser?.user?.country} - ${dataUser?.user?.city} - ${dataUser?.user?.street}`}
                 />
 
                 <span>Social network</span>
@@ -396,7 +396,7 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
             </Col>
             <Col flex="auto">
               <span>
-                Ideas Accept: <Tag color={'green'} style={{marginLeft: 10}}>{(dataIdeasAccept && dataIdeasAccept.ideas.length) || 0} ideas</Tag>
+                Ideas Accept And Public: <Tag color={'green'} style={{marginLeft: 10}}>{(dataIdeasAccept && dataIdeasAccept.ideas.length) || 0} ideas</Tag>
               </span>
               <List
                 itemLayout="horizontal"
