@@ -137,6 +137,14 @@ export interface ISubmissions extends ICommon {
   [index: string]: any;
 }
 
+export interface IStaticUserApi extends ICommon {
+  data: {
+    label: string
+    count: number
+    icon: string
+  }[]
+}
+
 export interface ISubId extends ICommon {
   submissions: {
     _id: string

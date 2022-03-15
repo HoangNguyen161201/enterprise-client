@@ -5,6 +5,12 @@ export interface ICopyAcc {
   handleSetAcc: (acc: ILogin) => void;
 }
 
+export interface IStaticUser {
+  label: string
+  count: number
+  icon: string
+}
+
 export interface IFilter {
   id: string | null
   icon: string

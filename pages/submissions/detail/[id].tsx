@@ -30,7 +30,7 @@ import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { getCurrentUser, getDetailSubmission, getIdeasCurrentUser } from 'queries';
+import { getCurrentUser, getDetailSubmission, getIdeasCurrentUser, getStaticUser } from 'queries';
 import { getallCategories } from 'queries/category';
 import { useCallback, useContext, useEffect, useEffect as UseEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
@@ -86,6 +86,7 @@ const DetailSubmission: NextPageWithLayout = ({
           content: data.msg,
         });
         refetchIdeasCurrentUser();
+        refetchStaticUser()
       },
       onError: (error: AxiosError) => {
         message.error({
@@ -113,6 +114,13 @@ const DetailSubmission: NextPageWithLayout = ({
     },
   });
 
+  // get static user
+  const {
+    data: staticUser,
+    error: errStaticUser,
+    refetch: refetchStaticUser,
+  } = getStaticUser(dataUser?.user._id);
+
   //  Mutation call api to add idea
   const mutationAddIdea = IdeaMutaion.add({
     options: {
@@ -123,6 +131,7 @@ const DetailSubmission: NextPageWithLayout = ({
 
         //refetch data all idea current user and submission
         refetchIdeasCurrentUser();
+        refetchStaticUser()
       },
       onError: (error: AxiosError) => {
         message.error({
