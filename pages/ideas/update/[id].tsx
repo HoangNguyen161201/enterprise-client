@@ -540,7 +540,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   //Check role
   if (detailUser.user.role === 'admin') {
     return {
-      notFound: true,
+      redirect: {
+        destination: '/403',
+        permanent: false,
+      },
     };
   }
 

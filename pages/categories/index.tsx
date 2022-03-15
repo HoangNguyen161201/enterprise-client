@@ -10,6 +10,7 @@ import { IallCategories, ICommon, IDetailCategory, IDetailUser } from 'models/ap
 import { NextPageWithLayout } from 'models/layoutType';
 import { CtMutation } from 'mutations/category';
 import { GetServerSideProps } from 'next';
+import Error from 'next/error';
 import Head from 'next/head';
 import { getCurrentUser } from 'queries/auth';
 import { getallCategories } from 'queries/category';
@@ -24,9 +25,9 @@ export interface ICategoriesProps {
 const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => {
   const { color, handleLoadPage } = UseContext(GlobalContext);
 
-  UseEffect(()=> {
-    handleLoadPage(false)
-  }, [])
+  UseEffect(() => {
+    handleLoadPage(false);
+  }, []);
 
   const [categoryUd, setCategoryUd] = UseState<IDetailCategory | null | undefined>(null);
   const [statusForm, setStatusForm] = UseState<'create' | 'update'>('create');
@@ -202,10 +203,10 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
   };
 
   //Function handle create new many categories
-  const addManyCategories = async (categories: Partial<IDetailCategory> ) => {
+  const addManyCategories = async (categories: Partial<IDetailCategory>) => {
     //Post data add category
     mutationAddManyCategories.mutate({
-      categories
+      categories,
     });
   };
 
@@ -245,7 +246,11 @@ const Categories: NextPageWithLayout = ({ allCategories }: ICategoriesProps) => 
       />
       <Card
         extra={[
-          <ImportCSV key={'csv_import'} fieldsValid={["name", "description"]} onSubmit={addManyCategories} />,
+          <ImportCSV
+            key={'csv_import'}
+            fieldsValid={['name', 'description']}
+            onSubmit={addManyCategories}
+          />,
           <Button
             key={'Add_ct'}
             type="link"
@@ -302,7 +307,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   //Check role
   if (detailUser.user.role !== 'admin' && detailUser.user.role !== 'qa_manager') {
     return {
-      notFound: true,
+      redirect: {
+        destination: '/403',
+        permanent: false,
+      },
     };
   }
 

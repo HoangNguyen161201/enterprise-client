@@ -130,19 +130,32 @@ const submissionController = {
     if (_time) {
       filter = filter.searchGte({ name: 'closure_date', query: _time });
     }
-    
+
     if (_page) {
       filter = filter.pagination({ limit: 6, page: Number(_page) - 1 });
     }
 
     const page_Index = await pageIndex({ query: submissionModel, limit: 6 });
     const submissions = await filter.query;
-    
+
     return res.status(200).json({
       statusCode: 200,
       submissions,
       page_Index,
       msg: 'Get all topic success',
+    });
+  }),
+
+  getAllId: catchAsyncError(async (req, res) => {
+    console.log('sdf');
+    const submissions = await submissionModel
+      .find({})
+      .select('-description -closure_date -final_closure_date -background');
+
+    return res.status(200).json({
+      statusCode: 200,
+      msg: 'Get all submission success',
+      submissions,
     });
   }),
 
