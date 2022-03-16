@@ -105,7 +105,7 @@ const AssignDepartment: NextPageWithLayout = ({
     refetch: dataUsersnotDPMRefetch,
   } = getUsersNotDepartment(dataUser?.accessToken.token);
 
-  // remove all staff in department
+  // remove all employees in department
   const handleDlAll = departmentMutation.removeAllStaffs({
     dataUserRefetch: dataUserRefetch,
     options: {
@@ -114,6 +114,7 @@ const AssignDepartment: NextPageWithLayout = ({
         setIsLoadingDlAll(false);
         setStaffsSl(null);
         dataDepartmentRefetch();
+        dataUsersnotDPMRefetch()
       },
       onError: (error: AxiosError) => {
         const data = error.response?.data;
@@ -125,7 +126,7 @@ const AssignDepartment: NextPageWithLayout = ({
     token: dataUser?.accessToken.token,
   });
 
-  // remove staff in department
+  // remove employee in department
   const handleDl = departmentMutation.removeStaff({
     dataUserRefetch: dataUserRefetch,
     options: {
@@ -133,6 +134,7 @@ const AssignDepartment: NextPageWithLayout = ({
         message.success(data.msg);
         setIsLoadingDl({ key: '', isLoading: false });
         dataDepartmentRefetch();
+        dataUsersnotDPMRefetch()
       },
       onError: (error: AxiosError) => {
         const data = error.response?.data;
@@ -204,16 +206,22 @@ const AssignDepartment: NextPageWithLayout = ({
   // set data source to table
   UseEffect(() => {
     if (dataDepartment?.department?.employees) {
-      const getStaffs: Partial<IUser>[] = dataDepartment.department.employees.map((employee: IUser) => ({
-        key: employee._id,
-        employee_id: employee.employee_id,
-        name_avatar: { name: employee.name, avatar: employee.avatar.url },
-        root: employee.root,
-        role: employee.role,
-        email: employee.email,
-        view: '',
-        remove: '',
-      }));
+      console.log(dataDepartment?.department)
+      const avoidNull = dataDepartment.department.employees.filter(item => {
+        return item != null && item != undefined
+      })
+      const getStaffs: Partial<IUser>[] | [] = avoidNull.map((employee: IUser)=> {
+        return {
+          key: employee._id,
+          employee_id: employee.employee_id,
+          name_avatar: { name: employee.name, avatar: employee.avatar.url },
+          root: employee.root,
+          role: employee.role,
+          email: employee.email,
+          view: '',
+          remove: '',
+        }
+      })
       setStaffs(getStaffs);
     }
   }, [dataDepartment]);
@@ -489,9 +497,6 @@ const AssignDepartment: NextPageWithLayout = ({
               scroll={{ x: true }}
               rowSelection={{
                 type: 'checkbox',
-                getCheckboxProps: (record) => ({
-                  disabled: record.root,
-                }),
                 onChange: (selectedRowKeys) => {
                   if (selectedRowKeys.length == 0) return setStaffsSl(null);
                   return setStaffsSl(selectedRowKeys);

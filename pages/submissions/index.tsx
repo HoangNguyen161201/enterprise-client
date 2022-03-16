@@ -59,7 +59,7 @@ const index: NextPageWithLayout = ({ result, detailUser }: submisionPage) => {
     timeOutSearch = setTimeout(() => {
       setSearch(searchFirst);
       setPage(1);
-    }, 1000);
+    }, 500);
     return () => clearTimeout(timeOutSearch);
   }, [searchFirst]);
 
@@ -67,7 +67,7 @@ const index: NextPageWithLayout = ({ result, detailUser }: submisionPage) => {
     timeOutSearchTime = setTimeout(() => {
       setDate(searchDate);
       setPage(1);
-    }, 1000);
+    }, 500);
     return () => clearTimeout(timeOutSearchTime);
   }, [searchDate]);
 
