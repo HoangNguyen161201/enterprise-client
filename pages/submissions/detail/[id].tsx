@@ -111,7 +111,7 @@ const DetailSubmission: NextPageWithLayout = ({
         message.success({
           content: data.msg,
         });
-        setIsRefetch(true)
+        setIsRefetch(true);
         refetchIdeasCurrentUser();
         refetchStaticUser();
       },
@@ -160,6 +160,8 @@ const DetailSubmission: NextPageWithLayout = ({
         //refetch data all idea current user and submission
         refetchIdeasCurrentUser();
         refetchStaticUser();
+        //Clear Idea
+        onClearData();
       },
       onError: (error: AxiosError) => {
         message.error({
@@ -416,9 +418,6 @@ const DetailSubmission: NextPageWithLayout = ({
         };
 
         mutationAddIdea.mutate(newDataForm);
-
-        //Clear Idea
-        onClearData();
       }
     }
   };
