@@ -1,7 +1,8 @@
 import { EditOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Col, Space, Tag } from 'antd';
+import { GlobalContext } from 'contextApi/globalContext';
 import Link from 'next/link';
-import React from 'react';
+import React, { useContext as UseContext } from 'react';
 
 interface IIideaItem {
   avatar?: String;
@@ -30,6 +31,8 @@ export default function Idea({
   showAccept,
   showUpdate,
 }: IIideaItem) {
+  const {handleLoadPage} = UseContext(GlobalContext)
+
   return (
     <Link href={`/ideas/detail/${id}`} passHref={true}>
       <Col
@@ -37,6 +40,7 @@ export default function Idea({
           cursor: 'pointer',
         }}
         span={24}
+        onClick={()=> handleLoadPage(true)}
       >
         <Space size={20} align="start">
           {anonymously ? (
@@ -67,7 +71,7 @@ export default function Idea({
                 </span>
                 {showUpdate && (
                   <Link passHref href={`/ideas/update/${id}`}>
-                    <EditOutlined className="color-3" />
+                    <EditOutlined onClick={()=> handleLoadPage(true)} className="color-3" />
                   </Link>
                 )}
               </Space>
