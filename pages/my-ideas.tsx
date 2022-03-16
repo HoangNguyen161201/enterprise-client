@@ -1,13 +1,21 @@
 import { Card } from 'antd';
 import { BreadCrumb, FilterIdeas } from 'components/elements/common';
 import { ClientLayout } from 'components/layouts';
+import { GlobalContext } from 'contextApi/globalContext';
 import { IDetailUser } from 'models/apiType';
 import { NextPageWithLayout } from 'models/layoutType';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { getCurrentUser } from 'queries';
+import { useEffect as UseEffect, useContext as UseContext } from 'react';
 
 const myIdeas: NextPageWithLayout = ({ detailUser }) => {
+  const { handleLoadPage } = UseContext(GlobalContext);
+
+  UseEffect(() => {
+    handleLoadPage(false);
+  }, []);
+
   const {
     data: dataUser,
     error: errorGetUser,

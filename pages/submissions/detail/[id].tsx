@@ -101,6 +101,7 @@ const DetailSubmission: NextPageWithLayout = ({
   UseEffect(() => {
     if (dataUser?.user._id) {
       dataDraftIdeaRefetch();
+      refetchIdeasCurrentUser()
     }
   }, []);
 

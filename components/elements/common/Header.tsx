@@ -68,6 +68,7 @@ export const HeaderComponent = () => {
 
   //Handle logout
   const onLogout = () => {
+    handleLoadPage(true)
     logoutMutation.mutate();
   };
 
@@ -99,19 +100,19 @@ export const HeaderComponent = () => {
       <Divider />
       <Menu.Item icon={<ProfileOutlined />} key="1">
         <Link href={'/profile'}>
-          <a>Profile</a>
+          <a onClick={()=> handleLoadPage(true)}>Profile</a>
         </Link>
       </Menu.Item>
       {dataUser && dataUser.user.role !== 'admin' && (
         <>
           <Menu.Item icon={<AlertOutlined />} key="2">
             <Link href={'/my-ideas'}>
-              <a>My ideas</a>
+              <a onClick={()=> handleLoadPage(true)}>My ideas</a>
             </Link>
           </Menu.Item>
           <Menu.Item icon={<TeamOutlined />} key="2">
-            <Link href={'/my-department'}>
-              <a>My Department</a>
+            <Link href={'/my-department'} >
+              <a onClick={()=> handleLoadPage(true)}>My Department</a>
             </Link>
           </Menu.Item>
         </>

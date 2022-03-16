@@ -131,6 +131,13 @@ export const FilterIdeas = ({
   };
 
   const { data: allReaction, error: errorReaction, refetch: refetchReaction } = getReactType();
+
+  UseEffect(() => {
+    if (dataUser?.user._id) {
+      refetchIdeas()
+    }
+  }, []);
+
   return (
     <>
       <Row wrap={md ? false : true} gutter={[30, 30]}>
