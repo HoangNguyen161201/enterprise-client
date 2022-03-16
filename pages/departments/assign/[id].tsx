@@ -203,14 +203,14 @@ const AssignDepartment: NextPageWithLayout = ({
 
   // set data source to table
   UseEffect(() => {
-    if (dataDepartment?.department?.staffs) {
-      const getStaffs: Partial<IUser>[] = dataDepartment.department.staffs.map((staff: IUser) => ({
-        key: staff._id,
-        employee_id: staff.employee_id,
-        name_avatar: { name: staff.name, avatar: staff.avatar.url },
-        root: staff.root,
-        role: staff.role,
-        email: staff.email,
+    if (dataDepartment?.department?.employees) {
+      const getStaffs: Partial<IUser>[] = dataDepartment.department.employees.map((employee: IUser) => ({
+        key: employee._id,
+        employee_id: employee.employee_id,
+        name_avatar: { name: employee.name, avatar: employee.avatar.url },
+        root: employee.root,
+        role: employee.role,
+        email: employee.email,
         view: '',
         remove: '',
       }));
@@ -484,7 +484,7 @@ const AssignDepartment: NextPageWithLayout = ({
               margin: '10px 0px 0px',
             }}
           >
-            <span className={`font-2 ${desColor}`}>Staffs</span>
+            <span className={`font-2 ${desColor}`}>Member</span>
             <Table
               scroll={{ x: true }}
               rowSelection={{
