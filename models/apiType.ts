@@ -272,7 +272,7 @@ export interface IComment {
   [index: string]: any;
 }
 
-export interface ICommentResponse extends ICommon {
+export interface ICommentResponse extends IComment {
   replies: IComment[];
 }
 
