@@ -8,6 +8,8 @@ const catchAsyncError = require('../helpers/catchAsyncError');
 const userModel = require('../models/userModel');
 const departmentModel = require('../models/departmentModel');
 const mailNotice = require('../utils/mailNotice');
+const ideaModel = require('../models/ideaModel');
+const reactionModel = require('../models/reactionModel');
 
 const userController = {
   create: catchAsyncError(async (req, res) => {
@@ -54,7 +56,7 @@ const userController = {
       .sort({ employee_id: -1 })
       .limit(1)
       .then((users) => users);
-    
+
     const employee_id = maxQuery[0] ? (maxQuery[0].employee_id + 1) : 1;
 
     //Check exist department id
@@ -304,7 +306,6 @@ const userController = {
   updateAvatar: catchAsyncError(async (req, res) => {
     const { user_id } = req.params;
     const { avatar } = req.body;
-    console.log(avatar);
 
     //check user exist in system
     const user = await userModel.findOne({
@@ -718,6 +719,101 @@ const userController = {
       statusCode: 200,
     });
   }),
+
+  // static user
+  staticUser: catchAsyncError(async (req, res) => {
+    const { id } = req.body
+    const user = await userModel.findById(id)
+    if (!user) return res.status(400).json({
+      err: 'The User is does not exist',
+      statusCode: 400,
+    });
+    const countAccepted = await ideaModel.find({ user_id: id, accept: true }).count()
+    const countUnaccepted = await ideaModel.find({ user_id: id, accept: false }).count()
+    const countAnonymously = await ideaModel.find({ user_id: id, anonymously: true }).count()
+    const countNoAnonymously = await ideaModel.find({ user_id: id, anonymously: false }).count()
+
+    let totalView = 0
+    const data = await ideaModel.find({ user_id: id })
+    data.map(item => {
+      totalView += item.view
+    })
+
+    const dataInteraction = await reactionModel.aggregate([
+      {
+        $addFields: { idea_id2: { $toObjectId: '$idea_id' } },
+      },
+      {
+        $lookup: {
+          from: 'ideas',
+          localField: 'idea_id2',
+          foreignField: '_id',
+          as: 'idea',
+        },
+      },
+      {
+        $unwind: {
+          path: '$idea',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $addFields: {user_id: {$toString: '$idea.user_id'}}
+      },
+      {
+        $match: {
+          'user_id': id
+        }
+      },
+      {
+        $group: {
+          _id: '$user_id',
+          count: { $sum: 1 },
+        }
+      }
+
+    ])
+    
+    const countInteraction = dataInteraction[0].count
+
+    return res.status(200).json({
+      msg: 'get data success.',
+      statusCode: 200,
+      data: [
+        {
+          label: 'Total ideas (Accepted)',
+          count: countAccepted,
+          icon: '🌒'
+        },
+        {
+          label: 'Total ideas (Unaccepted)',
+          count: countUnaccepted,
+          icon: '🌓'
+        },
+        {
+          label: 'Total ideas (Anonymously)',
+          count: countAnonymously,
+          icon: '🌔'
+        },
+        {
+          label: 'Total ideas (no Anonymously)',
+          count: countNoAnonymously,
+          icon: '🌕'
+        },
+        {
+          label: 'Total view',
+          count: totalView,
+          icon: '🌖'
+        },
+        {
+          label: 'total interaction',
+          count: countInteraction,
+          icon: '🌗'
+        },
+      ]
+    })
+
+  })
 };
 
 module.exports = userController;

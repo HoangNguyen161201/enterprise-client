@@ -48,7 +48,12 @@ export interface IUserForm {
 }
 
 export interface IdraftForm {
-
+  user_id: string;
+  submission_id: string;
+  title: string;
+  description: string;
+  content: string;
+  anonymously: boolean;
 }
 
 export interface IContactForm {

@@ -1,7 +1,7 @@
 import { AxiosError } from 'axios';
-import { IAllUsers, IResUsersRole, IUser } from 'models/apiType';
+import { IAllUsers, IResUsersRole, IStaticUserApi, IUser } from 'models/apiType';
 import { useQuery } from 'react-query';
-import { getData } from '../utils/fetchData';
+import { getData, postData } from '../utils/fetchData';
 
 export const getUsersRoleDepartment = (
   role: string,
@@ -60,3 +60,21 @@ export const getDetailUser = (
     }
   );
 };
+
+export const getStaticUser = (id: string) => {
+  return useQuery< IStaticUserApi , AxiosError>(
+    ['static-user', id],
+    async () => {
+      return await postData({ url: `/api/users/static`, body: {
+        id
+      }});
+    },
+    {
+      enabled: !!id,
+      retry: 1,
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+    }
+  );
+};
+

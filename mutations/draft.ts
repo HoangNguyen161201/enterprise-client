@@ -1,34 +1,16 @@
 import { AxiosError } from 'axios';
-import { IAvatar, IMutation, IUser } from 'models/apiType';
-import { IContactForm, IUserForm } from 'models/formType';
+import { IMutation } from 'models/apiType';
+import { IdraftForm } from 'models/formType';
 import { useMutation } from 'react-query';
-import { deleteData, postData, putData } from '../utils/fetchData';
+import { postData } from '../utils/fetchData';
 
-export const EmplMutation = {
-  deleteMany: ({ options, dataUserRefetch, token }: IMutation) => {
-    return useMutation<any, AxiosError, { users: string[] }>(
-      ({ users }) => {
-        dataUserRefetch && dataUserRefetch();
-        return postData({
-          url: `/api/users/delete-many`,
-          body: {
-            users,
-          },
-          token,
-        });
-      },
-      {
-        ...options,
-      }
-    );
-  },
-  
+export const DraftMutation = {
   add: ({ options, dataUserRefetch, token }: IMutation) => {
-    return useMutation<any, AxiosError, IUserForm>(
+    return useMutation<any, AxiosError, IdraftForm>(
       (dataForm) => {
         dataUserRefetch && dataUserRefetch();
         return postData({
-          url: '/api/users',
+          url: '/api/drafts',
           body: dataForm,
           token,
         });

@@ -64,12 +64,6 @@ const draftController = {
       submission_id,
     });
 
-    if (!draft)
-      return res.status(400).json({
-        err: 'Draft not exist in the system.',
-        statusCode: 400,
-      });
-
     return res.status(200).json({
       statusCode: 200,
       msg: 'Get draft success.',

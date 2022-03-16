@@ -137,11 +137,19 @@ export interface ISubmissions extends ICommon {
   [index: string]: any;
 }
 
+export interface IStaticUserApi extends ICommon {
+  data: {
+    label: string;
+    count: number;
+    icon: string;
+  }[];
+}
+
 export interface ISubId extends ICommon {
   submissions: {
-    _id: string
-    name: string 
-  }[]
+    _id: string;
+    name: string;
+  }[];
 }
 
 export interface IResUsersRole {
@@ -264,7 +272,7 @@ export interface IComment {
   [index: string]: any;
 }
 
-export interface ICommentResponse extends IComment {
+export interface ICommentResponse extends ICommon {
   replies: IComment[];
 }
 
@@ -281,4 +289,20 @@ export interface IReaction {
 }
 export interface IReactionUserIdea extends ICommon {
   reaction: IReaction;
+}
+
+//Interface draft idea
+export interface IDraft {
+  _id: string;
+  title: string;
+  description: string;
+  content: string;
+  anonymously: boolean;
+  user_id: string;
+  submission_id: string;
+  [index: string]: any;
+}
+
+export interface IDraftResponse extends ICommon {
+  draft: IDraft;
 }

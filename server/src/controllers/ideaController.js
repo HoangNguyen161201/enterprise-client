@@ -356,7 +356,7 @@ const ideaController = {
         page_Index: page.length == 0 ? 0 : Math.ceil(page[0].totalPage / Number(_limit)),
       });
     }
-
+   
     let filter = new Filter(ideaModel);
     let countPage = new Filter(ideaModel);
     if (_accept) {

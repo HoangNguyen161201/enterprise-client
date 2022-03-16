@@ -11,12 +11,13 @@ import {
   Modal,
   Row,
   Space,
+  Spin,
   Tag,
   Tooltip,
 } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import { AxiosError } from 'axios';
-import { BreadCrumb, Infor } from 'components/elements/common';
+import { BreadCrumb, Infor, StaticUser } from 'components/elements/common';
 import ItemInfor from 'components/elements/common/ItemInfor';
 import { ClientLayout } from 'components/layouts';
 import { GlobalContext } from 'contextApi/globalContext';
@@ -26,7 +27,7 @@ import { EmplMutation } from 'mutations/employee';
 import { fileMutation } from 'mutations/file';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import { getCurrentUser, getIdeasAcceptUser } from 'queries';
+import { getCurrentUser, getIdeasAcceptUser, getStaticUser } from 'queries';
 import {
   ChangeEventHandler,
   useContext as UseContext,
@@ -98,6 +99,13 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
     user_id: dataUser?.user._id,
     accessToken: dataUser?.accessToken.token,
   });
+
+  // get static user
+  const {
+    data: staticUser,
+    error: errStaticUser,
+    refetch: refetchStaticUser,
+  } = getStaticUser(dataUser?.user._id);
 
   //Check exist and show error
   UseEffect(() => {
@@ -400,6 +408,24 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
                     ))}
                 </Space>
               </Space>
+            </Col>
+            <Col flex={'auto'}>
+              {!staticUser?.data ? (
+                <Spin>
+                  <Space
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                    }}
+                  ></Space>
+                </Spin>
+              ) : (
+                <Row gutter={[20, 20]}>
+                  {staticUser?.data.map((item, key: number) => (
+                    <StaticUser label={item.label} count={item.count} icon={item.icon} key={key} />
+                  ))}
+                </Row>
+              )}
             </Col>
           </Row>
         </Space>
