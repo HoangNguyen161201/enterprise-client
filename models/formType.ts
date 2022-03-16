@@ -47,6 +47,15 @@ export interface IUserForm {
   cf_password?: string;
 }
 
+export interface IdraftForm {
+  user_id: string;
+  submission_id: string;
+  title: string;
+  description: string;
+  content: string;
+  anonymously: boolean;
+}
+
 export interface IContactForm {
   user_id: string;
   social_networks: string[];

@@ -13,16 +13,24 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Alert, Avatar, Button, Card, Col, List, message, Row, Space, Spin, Switch } from 'antd';
 import Meta from 'antd/lib/card/Meta';
 import { AxiosError } from 'axios';
-import { BreadCrumb, ItemDraft, ItemIdea } from 'components/elements/common';
+import { BreadCrumb, ItemIdea } from 'components/elements/common';
 import ItemFileUpload from 'components/elements/common/ItemFileUpload';
 import RowTable from 'components/elements/common/RowTable';
 import { Input, Select, TextArea } from 'components/elements/form';
 import { ClientLayout } from 'components/layouts';
 import { GlobalContext } from 'contextApi/globalContext';
-import { IallCategories, IAllIdeas, ICommon, IDetailSubmission, IDetailUser } from 'models/apiType';
+import {
+  IallCategories,
+  IAllIdeas,
+  ICommon,
+  IDetailSubmission,
+  IDetailUser,
+  IDraftResponse,
+} from 'models/apiType';
 import { IOptionSelect } from 'models/elementType';
-import { IIdeaForm } from 'models/formType';
+import { IdraftForm, IIdeaForm } from 'models/formType';
 import { NextPageWithLayout } from 'models/layoutType';
+import { DraftMutation } from 'mutations/draft';
 import { fileMutation } from 'mutations/file';
 import { IdeaMutaion } from 'mutations/idea';
 import { GetServerSideProps } from 'next';
@@ -30,7 +38,13 @@ import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { getCurrentUser, getDetailSubmission, getIdeasCurrentUser, getStaticUser } from 'queries';
+import {
+  getCurrentUser,
+  getDetailSubmission,
+  getDraftIdea,
+  getIdeasCurrentUser,
+  getStaticUser,
+} from 'queries';
 import { getallCategories } from 'queries/category';
 import { useCallback, useContext, useEffect, useEffect as UseEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
@@ -49,13 +63,17 @@ export interface IDetailSubmissionProps {
   allCategories: IallCategories;
   allIdeaCurrentUser: IAllIdeas;
   detailUser: IDetailUser;
+  draftIdea: IDraftResponse;
 }
+
+let draftTimeOut: NodeJS.Timeout;
 
 const DetailSubmission: NextPageWithLayout = ({
   detailSubmission,
   allCategories,
   allIdeaCurrentUser,
   detailUser,
+  draftIdea,
 }: IDetailSubmissionProps) => {
   //Get id from router to get old data
   const {
@@ -78,6 +96,18 @@ const DetailSubmission: NextPageWithLayout = ({
     dataUserRefetch();
   }, []);
 
+  //Get draft idea
+  const { data: dataDraftIdea, refetch: dataDraftIdeaRefetch } = getDraftIdea(
+    dataUser?.user._id,
+    id as string,
+    draftIdea
+  );
+  UseEffect(() => {
+    if (dataUser?.user._id) {
+      dataDraftIdeaRefetch();
+    }
+  }, []);
+
   //Mutation call api detele
   const mutationDeleteIdea = IdeaMutaion.delete({
     options: {
@@ -86,7 +116,7 @@ const DetailSubmission: NextPageWithLayout = ({
           content: data.msg,
         });
         refetchIdeasCurrentUser();
-        refetchStaticUser()
+        refetchStaticUser();
       },
       onError: (error: AxiosError) => {
         message.error({
@@ -131,7 +161,7 @@ const DetailSubmission: NextPageWithLayout = ({
 
         //refetch data all idea current user and submission
         refetchIdeasCurrentUser();
-        refetchStaticUser()
+        refetchStaticUser();
       },
       onError: (error: AxiosError) => {
         message.error({
@@ -143,25 +173,18 @@ const DetailSubmission: NextPageWithLayout = ({
     token: dataUser?.accessToken.token,
   });
 
+  //  Mutation call api to add draft
+  const mutationAddDraft = DraftMutation.add({
+    options: {},
+    dataUserRefetch: dataUserRefetch,
+    token: dataUser?.accessToken.token,
+  });
+
   ///Initial data upload ideal
   const [editorVl, setEditorVl] = useState('');
   const [categoriesSelect, setCategoriesSelect] = useState<IOptionSelect[]>([]);
   const [filesUpload, setFilesUpload] = useState<File[]>([]);
   const [anonymously, setAnonymously] = useState<boolean>(false);
-
-  //Old drafs
-  const [oldDrafts, setOldDrafts] = useState<any[]>([]);
-
-  //Set old drafs
-  useEffect(() => {
-    if (id) {
-      const oldDraftsString = localStorage.getItem(
-        `draft_ideas_${id}_${dataUser?.user._id}`
-      ) as string;
-      const oldDraftsParse = JSON.parse(oldDraftsString) ? JSON.parse(oldDraftsString) : [];
-      setOldDrafts(Array.isArray(oldDraftsParse) ? [...oldDraftsParse] : []);
-    }
-  }, [id]);
 
   //Handle change content editor
   const handleChange = (value: any) => {
@@ -339,6 +362,19 @@ const DetailSubmission: NextPageWithLayout = ({
     },
   });
 
+  //Set data idea from draft idea
+  useEffect(() => {
+    if (dataDraftIdea?.draft) {
+      formSetting.reset({
+        title: dataDraftIdea?.draft.title,
+        description: dataDraftIdea?.draft.description,
+      });
+      setAnonymously(dataDraftIdea?.draft.anonymously ? dataDraftIdea.draft.anonymously : false);
+      setEditorVl(dataDraftIdea?.draft.content ? dataDraftIdea?.draft.content : '');
+    }
+  }, [dataDraftIdea]);
+
+  //Hanlde add form Idea
   const onSubmitFormAddIdea = async (dataForm: IIdeaForm) => {
     if (!timeClosure.closure_date.isMatchDate) {
       message.error({
@@ -389,79 +425,6 @@ const DetailSubmission: NextPageWithLayout = ({
     }
   };
 
-  const onSaveDraft = async () => {
-    //Initial data
-    const title = formSetting.getValues('title');
-    const description = formSetting.getValues('description');
-
-    //Check exist title
-    if (!title) {
-      message.warn({
-        content: 'The title field cannot be left blank',
-      });
-    } else {
-      const newDraft = {
-        title,
-        description,
-        anonymously,
-        editorVl,
-      };
-
-      localStorage.setItem(
-        `draft_ideas_${id}_${dataUser?.user._id}`,
-        JSON.stringify([...oldDrafts, newDraft])
-      );
-
-      setOldDrafts([...oldDrafts, newDraft]);
-
-      //Clear Idea
-      onClearData();
-
-      //Close form idea
-      setIsShowFormIdea(false);
-
-      //Message
-      message.success({
-        content: 'Save new draft success.',
-      });
-    }
-  };
-
-  //Delete draft
-  const onDeleteDraft = (index: number) => {
-    if (id && dataUser?.user) {
-      const newListDrafts = oldDrafts;
-      newListDrafts.splice(index, 1);
-
-      //Set value local storage
-      if (newListDrafts.length > 0) {
-        localStorage.setItem(
-          `draft_ideas_${id}_${dataUser?.user._id}`,
-          JSON.stringify([...newListDrafts])
-        );
-      } else {
-        //Remove item local storage
-        localStorage.removeItem(`draft_ideas_${id}_${dataUser?.user._id}`);
-      }
-
-      setOldDrafts([...newListDrafts]);
-    }
-  };
-
-  //On use draft
-  const onUseDraft = (draft: any, index: number) => {
-    //Set data idea form draft
-    formSetting.reset({
-      title: draft.title,
-      description: draft.description,
-    });
-    setAnonymously(draft.anonymously);
-    setEditorVl(draft.editorVl);
-
-    //Delete draft
-    onDeleteDraft(index);
-  };
-
   //Clear data update
   const onClearData = () => {
     formSetting.reset({
@@ -474,18 +437,50 @@ const DetailSubmission: NextPageWithLayout = ({
     setAnonymously(false);
   };
 
-  //Clear data when user cancel up idea
-  UseEffect(() => {
-    if (!isShowFormIdea) {
-      onClearData();
-    }
-  }, [isShowFormIdea]);
-
   //Handle delete idea
   const onDeleteIdea = (idea_id: string, cloudinary_id: string) => {
     mutationDeleteIdea.mutate({ idea_id });
     mutationDeleteFiles.mutate({ tag: cloudinary_id });
   };
+
+  //Handle save draft
+  useEffect(() => {
+    if (isShowFormIdea) {
+      //Initial value draft
+      let dataDraft: IdraftForm = {
+        title: formSetting.getValues('title'),
+        description: formSetting.getValues('description'),
+        content: editorVl,
+        anonymously,
+        user_id: dataUser?.user._id as string,
+        submission_id: id as string,
+      };
+
+      //Use time out to avoid many fetch
+      clearTimeout(draftTimeOut);
+
+      draftTimeOut = setTimeout(() => {
+        if (dataUser && dataDraftIdea?.draft) {
+          mutationAddDraft.mutate(dataDraft);
+        }
+      }, 1000);
+
+      const subscription = formSetting.watch((value) => {
+        dataDraft.title = value.title as string;
+        dataDraft.description = value.description as string;
+
+        //Use time out to avoid many fetch
+        clearTimeout(draftTimeOut);
+
+        draftTimeOut = setTimeout(() => {
+          if (dataUser) {
+            mutationAddDraft.mutate(dataDraft);
+          }
+        }, 1000);
+      });
+      return () => subscription.unsubscribe();
+    }
+  }, [editorVl, anonymously, formSetting.watch, isShowFormIdea]);
 
   return (
     <>
@@ -577,34 +572,10 @@ const DetailSubmission: NextPageWithLayout = ({
             size={20}
             style={{
               width: '100%',
-              display: isShowFormIdea ? undefined : 'none',
+              display: isShowFormIdea ? 'flex' : 'none',
+              overflow: 'hidden',
             }}
           >
-            {oldDrafts && oldDrafts.length > 0 && (
-              <>
-                <span
-                  style={{
-                    fontSize: 14,
-                    color: 'gray',
-                  }}
-                >
-                  Old drafts
-                </span>
-                <Row gutter={[20, 20]}>
-                  {oldDrafts.map((draft, index) => (
-                    <Col key={index} style={{}} xs={24} sm={12} lg={6}>
-                      <ItemDraft
-                        draft={draft}
-                        index={index}
-                        onDeleteDraft={onDeleteDraft}
-                        onUseDraft={onUseDraft}
-                      />
-                    </Col>
-                  ))}
-                </Row>
-              </>
-            )}
-
             <span
               style={{
                 fontSize: 14,
@@ -755,19 +726,6 @@ const DetailSubmission: NextPageWithLayout = ({
 
             <Space size={20}>
               <Button
-                onClick={onSaveDraft}
-                style={{
-                  borderRadius: 5,
-                }}
-                className={`${color2}`}
-                disabled={!timeClosure.closure_date.isMatchDate}
-                type="primary"
-                icon={<CloudUploadOutlined />}
-              >
-                Save Draft
-              </Button>
-
-              <Button
                 loading={isLoadUpFile || mutationAddIdea.isLoading}
                 style={{
                   borderRadius: 5,
@@ -885,12 +843,25 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
+  // Get draft idea
+  const draftIdea: IDraftResponse = await fetch(
+    `${process.env.CLIENT_URL}/api/drafts/user/${detailUser.user._id}/submission/${context.query.id}`,
+    {
+      method: 'GET',
+      headers: {
+        cookie: context.req.headers.cookie,
+        authorization: detailUser.accessToken.token,
+      } as HeadersInit,
+    }
+  ).then((e) => e.json());
+
   return {
     props: {
       detailSubmission,
       allCategories,
       allIdeaCurrentUser,
       detailUser,
+      draftIdea,
     },
   };
 };

@@ -11,6 +11,7 @@ const reactionTypeRouter = require('./reactionTypeRouter');
 const commentRouter = require('./commentRouter');
 const staticRouter = require('./staticRouter');
 const mailRouter = require('./mailRouter');
+const draftRouter = require('./draftRouter');
 
 //Config main router
 mainRouter = (app) => {
@@ -27,16 +28,18 @@ mainRouter = (app) => {
   app.use('/api/views', viewRouter);
 
   app.use('/api/ideas', ideaRouter);
-  
+
   app.use('/api/reactions', reactionRouter);
 
-  app.use('/api/reaction-types', reactionTypeRouter); 
+  app.use('/api/reaction-types', reactionTypeRouter);
 
-  app.use('/api/comments', commentRouter); 
+  app.use('/api/comments', commentRouter);
 
-  app.use('/api/statics', staticRouter); 
-  
+  app.use('/api/statics', staticRouter);
+
   app.use('/api/mails', mailRouter);
+
+  app.use('/api/drafts', draftRouter);
 };
 
 module.exports = mainRouter;
