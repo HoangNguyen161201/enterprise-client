@@ -7,7 +7,7 @@ import {
   MoreOutlined,
   UploadOutlined,
 } from '@ant-design/icons';
-import { Button, Dropdown, Grid, List, Menu, Space } from 'antd';
+import { Dropdown, Grid, List, Menu, Space } from 'antd';
 import { GlobalContext } from 'contextApi/globalContext';
 import { IIdea } from 'models/apiType';
 import Link from 'next/link';
@@ -80,14 +80,14 @@ export const ItemIdea = ({ item, onDeleteIdea, closure_date }: IItemIdeaProps) =
               }}
             >
               <Link href={`/ideas/detail/${item._id}`}>
-                <a>{item.title}</a>
+                <a className='color-1'>{item.title}</a>
               </Link>
             </span>
             <Space size={20}>
               <Space
                 style={{
-                  borderRadius: 10,
-                  padding: 4,
+                  borderRadius: 5,
+                  padding: '2px 10px',
                   fontSize: 12,
                   background: item.accept ? '#CDFFEB' : '#FF000020',
                 }}
@@ -96,8 +96,8 @@ export const ItemIdea = ({ item, onDeleteIdea, closure_date }: IItemIdeaProps) =
               </Space>
               <Space
                 style={{
-                  borderRadius: 10,
-                  padding: 4,
+                  borderRadius: 5,
+                  padding: '2px 10px',
                   fontSize: 12,
                   background: '#CDFFEB',
                 }}

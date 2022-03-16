@@ -1,19 +1,14 @@
 //Import
 import {
   CloudUploadOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  EllipsisOutlined,
   FieldTimeOutlined,
   FileSearchOutlined,
   FileTextOutlined,
-  SettingOutlined,
 } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Alert, Avatar, Button, Card, Col, List, message, Row, Space, Spin, Switch } from 'antd';
-import Meta from 'antd/lib/card/Meta';
+import { Alert, Button, Card, Col, Divider, List, message, Row, Space, Spin, Switch } from 'antd';
 import { AxiosError } from 'axios';
-import { BreadCrumb, ItemIdea } from 'components/elements/common';
+import { BreadCrumb, FilterIdeas, ItemIdea } from 'components/elements/common';
 import ItemFileUpload from 'components/elements/common/ItemFileUpload';
 import RowTable from 'components/elements/common/RowTable';
 import { Input, Select, TextArea } from 'components/elements/form';
@@ -36,7 +31,6 @@ import { IdeaMutaion } from 'mutations/idea';
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import {
   getCurrentUser,
@@ -75,6 +69,8 @@ const DetailSubmission: NextPageWithLayout = ({
   detailUser,
   draftIdea,
 }: IDetailSubmissionProps) => {
+  const [isRefetch, setIsRefetch] = useState(false);
+
   //Get id from router to get old data
   const {
     query: { id },
@@ -158,6 +154,7 @@ const DetailSubmission: NextPageWithLayout = ({
         message.success({
           content: data.msg,
         });
+        setIsRefetch(true);
 
         //refetch data all idea current user and submission
         refetchIdeasCurrentUser();
@@ -512,44 +509,45 @@ const DetailSubmission: NextPageWithLayout = ({
           background: 'white',
         }}
       >
-        <Space direction="vertical" size={20}>
-          <Alert
-            showIcon
-            closable
-            message="All ideas submitted will go through a review process. Unable to post ideas after the closure date."
-            type="warning"
-          />
-          <span
-            style={{
-              fontSize: 14,
-              color: 'gray',
-            }}
-          >
-            Information
-          </span>
-          <RowTable
-            Icon={FileSearchOutlined}
-            title="Name"
-            value={dataDetailSubmission?.submission.name}
-          />
-          <RowTable
-            Icon={FileTextOutlined}
-            title="Description"
-            value={dataDetailSubmission?.submission.description}
-          />
-          <RowTable
-            Icon={FieldTimeOutlined}
-            title="Closure Date"
-            value={timeClosure.closure_date.value}
-            isValid={timeClosure.closure_date.isMatchDate}
-          />
-          <RowTable
-            Icon={FieldTimeOutlined}
-            title="Final Closure Date"
-            value={timeClosure.final_closure_date.value}
-            isValid={timeClosure.final_closure_date.isMatchDate}
-          />
-
+        <Space direction="vertical" size={'middle'}>
+          <Space direction="vertical" size={'middle'}>
+            <Alert
+              showIcon
+              closable
+              message="All ideas submitted will go through a review process. Unable to post ideas after the closure date."
+              type="warning"
+            />
+            <span
+              style={{
+                fontSize: 14,
+                color: 'gray',
+              }}
+            >
+              Information
+            </span>
+            <RowTable
+              Icon={FileSearchOutlined}
+              title="Name"
+              value={dataDetailSubmission?.submission.name}
+            />
+            <RowTable
+              Icon={FileTextOutlined}
+              title="Description"
+              value={dataDetailSubmission?.submission.description}
+            />
+            <RowTable
+              Icon={FieldTimeOutlined}
+              title="Closure Date"
+              value={timeClosure.closure_date.value}
+              isValid={timeClosure.closure_date.isMatchDate}
+            />
+            <RowTable
+              Icon={FieldTimeOutlined}
+              title="Final Closure Date"
+              value={timeClosure.final_closure_date.value}
+              isValid={timeClosure.final_closure_date.isMatchDate}
+            />
+          </Space>
           <Button
             icon={<CloudUploadOutlined />}
             type="primary"
@@ -557,7 +555,7 @@ const DetailSubmission: NextPageWithLayout = ({
             size="large"
             style={{
               borderRadius: 5,
-              margin: '20px 0px',
+              marginTop: 10,
             }}
             className={darkMode ? (isShowFormIdea ? 'color-5' : 'color-3') : 'color-5'}
             onClick={onChangeShowForm}
@@ -566,201 +564,250 @@ const DetailSubmission: NextPageWithLayout = ({
             {isShowFormIdea ? 'Cancel up idea' : 'Add your idea'}
           </Button>
 
-          {/* Form upload file */}
+          {/* main */}
           <Space
             direction="vertical"
-            size={20}
-            style={{
-              width: '100%',
-              display: isShowFormIdea ? 'flex' : 'none',
-              overflow: 'hidden',
-            }}
-          >
-            <span
-              style={{
-                fontSize: 14,
-                color: 'gray',
-              }}
-            >
-              Detail your idea
-            </span>
-
-            <form id="submitIdea" onSubmit={formSetting.handleSubmit(onSubmitFormAddIdea)}>
-              <Space direction="vertical" size={20}>
-                <Row gutter={[20, 20]}>
-                  <Col xs={24} sm={24} md={12}>
-                    <Input
-                      name="title"
-                      label="Title"
-                      formSetting={formSetting}
-                      placeholder="Enter name"
-                      type="text"
-                      icon={<FileTextOutlined />}
-                      dark={false}
-                    />
-                  </Col>
-                  <Col xs={24} md={12}>
-                    <Select
-                      dark={false}
-                      formSetting={formSetting}
-                      name="category_id"
-                      label="Category"
-                      placeholder="Please select category"
-                      data={categoriesSelect}
-                      require={false}
-                    />
-                  </Col>
-                  <Col xs={24}>
-                    <TextArea
-                      dark={false}
-                      name="description"
-                      label="Description"
-                      formSetting={formSetting}
-                      placeholder="Enter description"
-                      type="email"
-                      icon={<FileTextOutlined />}
-                    />
-                  </Col>
-                </Row>
-                <Space direction="vertical">
-                  <span>Anonymously author information</span>
-                  <Switch checked={anonymously} onChange={(e) => setAnonymously(e)} />
-                </Space>
-              </Space>
-            </form>
-
-            <ReactQuill
-              placeholder="Enter you text"
-              modules={{
-                toolbar: [
-                  ['bold', 'italic', 'underline', 'strike'], // toggled buttons
-                  ['blockquote', 'code-block'],
-
-                  [{ header: 1 }, { header: 2 }], // custom button values
-                  [{ list: 'ordered' }, { list: 'bullet' }],
-                  [{ script: 'sub' }, { script: 'super' }], // superscript/subscript
-                  [{ indent: '-1' }, { indent: '+1' }], // outdent/indent
-                  [{ direction: 'rtl' }], // text direction
-
-                  [{ size: ['small', false, 'large', 'huge'] }], // custom dropdown
-                  [{ header: [1, 2, 3, 4, 5, 6, false] }],
-
-                  [{ color: [] }, { background: [] }], // dropdown with defaults from theme
-                  [{ font: [] }],
-                  [{ align: [] }],
-
-                  ['clean'], // remove formatting button
-                ],
-              }}
-              value={editorVl}
-              onChange={handleChange}
-            />
-
-            <span
-              style={{
-                fontSize: 14,
-                color: 'gray',
-              }}
-            >
-              Upload file
-            </span>
-            <Spin spinning={isLoadUpFile}>
-              <Space
+            split={
+              <Divider
                 style={{
-                  width: '100%',
-                  border: '5px dotted #009F9D30',
-                  padding: '40px 40px',
-                  borderRadius: '20px',
-                  justifyContent: 'center',
+                  borderColor: '#07456F60',
+                  padding: 0,
+                  marginBlock: 10,
                 }}
-                direction="vertical"
-                align="center"
-                size={20}
-                {...getRootProps()}
+              />
+            }
+          >
+            {/* Form upload file */}
+            <Space
+              direction="vertical"
+              size={'middle'}
+              style={{
+                width: '100%',
+                display: isShowFormIdea ? 'flex' : 'none',
+                overflow: 'hidden',
+                marginTop: 5,
+              }}
+            >
+              <span
+                style={{
+                  fontSize: 14,
+                  color: 'gray',
+                }}
               >
-                <img width={150} height={100} alt="upload_file" src="/assets/uploadFiles.svg" />
-                <input {...getInputProps()} />
-                {isDragActive ? (
-                  <p
+                Detail your idea
+              </span>
+
+              <form id="submitIdea" onSubmit={formSetting.handleSubmit(onSubmitFormAddIdea)}>
+                <Space direction="vertical" size={20}>
+                  <Row gutter={[20, 20]}>
+                    <Col xs={24} sm={24} md={12}>
+                      <Input
+                        name="title"
+                        label="Title"
+                        formSetting={formSetting}
+                        placeholder="Enter name"
+                        type="text"
+                        icon={<FileTextOutlined />}
+                        dark={false}
+                      />
+                    </Col>
+                    <Col xs={24} md={12}>
+                      <Select
+                        dark={false}
+                        formSetting={formSetting}
+                        name="category_id"
+                        label="Category"
+                        placeholder="Please select category"
+                        data={categoriesSelect}
+                        require={false}
+                      />
+                    </Col>
+                    <Col xs={24}>
+                      <TextArea
+                        dark={false}
+                        name="description"
+                        label="Description"
+                        formSetting={formSetting}
+                        placeholder="Enter description"
+                        type="email"
+                        icon={<FileTextOutlined />}
+                      />
+                    </Col>
+                  </Row>
+                  <Space direction="vertical">
+                    <span>Anonymously author information</span>
+                    <Switch checked={anonymously} onChange={(e) => setAnonymously(e)} />
+                  </Space>
+                </Space>
+              </form>
+
+              <ReactQuill
+                placeholder="Enter you text"
+                modules={{
+                  toolbar: [
+                    ['bold', 'italic', 'underline', 'strike'], // toggled buttons
+                    ['blockquote', 'code-block'],
+
+                    [{ header: 1 }, { header: 2 }], // custom button values
+                    [{ list: 'ordered' }, { list: 'bullet' }],
+                    [{ script: 'sub' }, { script: 'super' }], // superscript/subscript
+                    [{ indent: '-1' }, { indent: '+1' }], // outdent/indent
+                    [{ direction: 'rtl' }], // text direction
+
+                    [{ size: ['small', false, 'large', 'huge'] }], // custom dropdown
+                    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+
+                    [{ color: [] }, { background: [] }], // dropdown with defaults from theme
+                    [{ font: [] }],
+                    [{ align: [] }],
+
+                    ['clean'], // remove formatting button
+                  ],
+                }}
+                value={editorVl}
+                onChange={handleChange}
+              />
+
+              <span
+                style={{
+                  fontSize: 14,
+                  color: 'gray',
+                }}
+              >
+                Upload file
+              </span>
+              <Spin spinning={isLoadUpFile}>
+                <Space
+                  style={{
+                    width: '100%',
+                    border: '5px dotted #009F9D30',
+                    padding: '40px 40px',
+                    borderRadius: '20px',
+                    justifyContent: 'center',
+                  }}
+                  direction="vertical"
+                  align="center"
+                  size={20}
+                  {...getRootProps()}
+                >
+                  <img width={150} height={100} alt="upload_file" src="/assets/uploadFiles.svg" />
+                  <input {...getInputProps()} />
+                  {isDragActive ? (
+                    <p
+                      style={{
+                        fontSize: 16,
+                        fontWeight: 'bold',
+                        color: 'gray',
+                      }}
+                    >
+                      Drop the files here ...
+                    </p>
+                  ) : (
+                    <p
+                      style={{
+                        fontSize: 16,
+                        fontWeight: 'bold',
+                        color: 'gray',
+                      }}
+                    >
+                      Drag your documents, photos, or videos here to start uploading
+                    </p>
+                  )}
+                  <Button
+                    type="primary"
                     style={{
-                      fontSize: 16,
-                      fontWeight: 'bold',
-                      color: 'gray',
+                      borderRadius: 5,
                     }}
+                    className={`${color2}`}
                   >
-                    Drop the files here ...
-                  </p>
-                ) : (
-                  <p
-                    style={{
-                      fontSize: 16,
-                      fontWeight: 'bold',
-                      color: 'gray',
-                    }}
-                  >
-                    Drag your documents, photos, or videos here to start uploading
-                  </p>
-                )}
+                    Choose Files
+                  </Button>
+                </Space>
+              </Spin>
+
+              {filesUpload.map((file, index) => (
+                <Spin spinning={isLoadUpFile} key={index}>
+                  <ItemFileUpload
+                    src={generateImgFile(file.name)}
+                    fileName={file.name}
+                    index={index}
+                    onRemoveFile={onRemoveFile}
+                  />
+                </Spin>
+              ))}
+
+              <Space size={20}>
                 <Button
-                  type="primary"
+                  loading={isLoadUpFile || mutationAddIdea.isLoading}
                   style={{
                     borderRadius: 5,
                   }}
                   className={`${color2}`}
+                  disabled={!timeClosure.closure_date.isMatchDate}
+                  htmlType="submit"
+                  form={'submitIdea'}
+                  type="primary"
+                  icon={<CloudUploadOutlined />}
                 >
-                  Choose Files
+                  Submit
                 </Button>
               </Space>
-            </Spin>
+            </Space>
 
-            {filesUpload.map((file, index) => (
-              <Spin spinning={isLoadUpFile} key={index}>
-                <ItemFileUpload
-                  src={generateImgFile(file.name)}
-                  fileName={file.name}
-                  index={index}
-                  onRemoveFile={onRemoveFile}
-                />
-              </Spin>
-            ))}
-
-            <Space size={20}>
-              <Button
-                loading={isLoadUpFile || mutationAddIdea.isLoading}
+            <Space size={'middle'} direction="vertical">
+              <span
                 style={{
-                  borderRadius: 5,
+                  fontSize: 14,
+                  color: 'gray',
                 }}
-                className={`${color2}`}
-                disabled={!timeClosure.closure_date.isMatchDate}
-                htmlType="submit"
-                form={'submitIdea'}
-                type="primary"
-                icon={<CloudUploadOutlined />}
               >
-                Submit
-              </Button>
+                Your ideas
+              </span>
+              <List
+                itemLayout="horizontal"
+                dataSource={dataIdeasCurrentUser?.ideas}
+                renderItem={(item) => (
+                  <ItemIdea
+                    closure_date={timeClosure.closure_date}
+                    item={item}
+                    onDeleteIdea={onDeleteIdea}
+                  />
+                )}
+              />
+            </Space>
+
+            <Space size={'middle'} direction="vertical">
+              <span
+                style={{
+                  fontSize: 14,
+                  color: 'gray',
+                }}
+              >
+                All ideas
+              </span>
+              {dataUser && (
+                <FilterIdeas
+                  accept
+                  detailUser={dataUser}
+                  page={1}
+                  limit={6}
+                  nameById={null}
+                  valueById={null}
+                  reaction={null}
+                  interactive={null}
+                  searchFirst=""
+                  search=""
+                  icon="👁"
+                  _getBy="submission_id"
+                  _getValue={id as string}
+                  isRefetch={isRefetch}
+                  setIsRefetch={() => {
+                    setIsRefetch(false);
+                  }}
+                />
+              )}
             </Space>
           </Space>
-
-          <span
-            style={{
-              fontSize: 14,
-              color: 'gray',
-            }}
-          >
-            Your idea
-          </span>
-          <List
-            itemLayout="horizontal"
-            dataSource={dataIdeasCurrentUser?.ideas}
-            renderItem={(item) => (
-              <ItemIdea
-                closure_date={timeClosure.closure_date}
-                item={item}
-                onDeleteIdea={onDeleteIdea}
-              />
-            )}
-          />
         </Space>
       </Card>
     </>

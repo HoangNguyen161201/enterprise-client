@@ -1,3 +1,4 @@
+import { IDetailUser } from "./apiType";
 import { ILogin } from "./formType";
 
 export interface ICopyAcc {
@@ -9,6 +10,27 @@ export interface IStaticUser {
   label: string
   count: number
   icon: string
+}
+
+export interface IFilterIdeas {
+  page: number;
+  limit: number;
+  nameById: string | null;
+  valueById: string | null;
+  reaction: string | null;
+  interactive: number | null;
+  searchFirst: string;
+  search: string;
+  icon: string;
+  detailUser: IDetailUser;
+  isShowAccept?: boolean;
+  isShowUpdate?: boolean;
+  isFilterBySub?: boolean;
+  accept?: boolean
+  _getBy?: string;
+  _getValue?: string;
+  isRefetch?: boolean
+  setIsRefetch?: any
 }
 
 export interface IFilter {
