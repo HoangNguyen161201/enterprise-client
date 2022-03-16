@@ -656,12 +656,29 @@ const userController = {
       const { id: userId } = req.params;
 
       //Check exist user
-      const user = await userModel.findById(userId);
+      const user = await userModel.findOne({
+        _id: userId,
+        deleted: false
+      });
       if (!user)
         return res.status(400).json({
           err: `User ${userId} not exist in system.`,
           statusCode: 400,
         });
+
+      //Check exist department
+      if (user.department_id) {
+        const department = await departmentModel.findById(user.department_id)
+        if (!department)
+          return res.status(400).json({
+            err: `Department not exist in system.`,
+            statusCode: 400,
+          });
+
+        //Update count users
+        department.count_users = --department.count_users;
+        await department.save();
+      }
 
       //Remove user out of department
       user.department_id = null;
@@ -680,8 +697,25 @@ const userController = {
     for (let index = 0; index < users.length; index++) {
       const userId = users[index];
       // check exist users
-      const user = await userModel.findById(userId);
+      const user = await userModel.findOne({
+        _id: userId,
+        deleted: false
+      });
       if (user) {
+        //Check exist department
+        if (user.department_id) {
+          const department = await departmentModel.findById(user.department_id)
+          if (!department)
+            return res.status(400).json({
+              err: `Department not exist in system.`,
+              statusCode: 400,
+            });
+
+          //Update count users
+          department.count_users = --department.count_users;
+          await department.save();
+        }
+
         //Remove user out of department
         user.department_id = null;
         await user.save();
@@ -758,7 +792,7 @@ const userController = {
         },
       },
       {
-        $addFields: {user_id: {$toString: '$idea.user_id'}}
+        $addFields: { user_id: { $toString: '$idea.user_id' } }
       },
       {
         $match: {
@@ -773,7 +807,7 @@ const userController = {
       }
 
     ])
-    
+
     const countInteraction = dataInteraction[0].count
 
     return res.status(200).json({
