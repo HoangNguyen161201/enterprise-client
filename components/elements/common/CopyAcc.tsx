@@ -17,7 +17,6 @@ export const CopyAcc = ({ acc, handleSetAcc }: ICopyAcc)=> {
           handleSetAcc({
             email: acc.email,
             password: acc.password,
-            role: acc.role,
           })
         }
         style={{ cursor: 'pointer', color: '#07456F' }}

@@ -88,7 +88,7 @@ const login: NextPageWithLayout = () => {
     defaultValues: {
       email: '',
       password: '',
-      role: 'staff',
+
     },
   });
 
@@ -97,11 +97,10 @@ const login: NextPageWithLayout = () => {
     mutationLogin.mutate(values);
   };
 
-  const handleSetAcc = ({ email, role, password }: ILogin) => {
+  const handleSetAcc = ({ email, password }: ILogin) => {
     formSetting.reset({
       email,
       password,
-      role,
     });
     message.success({
       content: 'Copy account success',
@@ -125,7 +124,7 @@ const login: NextPageWithLayout = () => {
         <form
           onSubmit={formSetting.handleSubmit(onSubmit)}
           style={{
-            width: !sm ? '100%' : 400,
+            width: !sm ? '100%' : 350,
             padding: 20,
             border: '2px solid #009F9D',
             borderRadius: 10,
@@ -159,13 +158,6 @@ const login: NextPageWithLayout = () => {
                 name={'password'}
                 type="password"
                 icon={<UnlockOutlined style={{ color: 'gray' }} />}
-              />
-              <Select
-                label="Role"
-                placeholder="Enter your role"
-                formSetting={formSetting}
-                name="role"
-                data={options}
               />
             </Space>
             <Space
@@ -203,7 +195,7 @@ const login: NextPageWithLayout = () => {
             }}
           >
             {Accounts.map((acc) => (
-              <CopyAcc key={acc.role} acc={acc} handleSetAcc={handleSetAcc} />
+              <CopyAcc key={acc.email} acc={acc} handleSetAcc={handleSetAcc} />
             ))}
           </Space>
         </form>

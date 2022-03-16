@@ -94,12 +94,6 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
     }
   }, [dataUser]);
 
-  //Get Idea accept user
-  const { data: dataIdeasAccept, error: errDataIdeasAccept } = getIdeasAcceptUser({
-    user_id: dataUser?.user._id,
-    accessToken: dataUser?.accessToken.token,
-  });
-
   // get static user
   const {
     data: staticUser,
@@ -410,7 +404,7 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
               </Space>
             </Col>
             <Col flex={'auto'}>
-              {!staticUser?.data ? (
+              {dataUser?.user.role != 'admin' && !staticUser?.data ? (
                 <Spin>
                   <Space
                     style={{

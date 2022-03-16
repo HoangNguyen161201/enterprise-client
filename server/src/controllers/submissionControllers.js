@@ -132,7 +132,7 @@ const submissionController = {
     }
 
     if (_page) {
-      filter = filter.pagination({ limit: 6, page: Number(_page) - 1 });
+      filter = filter.pagination({ limit: 8, page: Number(_page) - 1 });
     }
 
     const page_Index = await pageIndex({ query: submissionModel, limit: 6 });

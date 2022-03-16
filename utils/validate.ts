@@ -5,8 +5,7 @@ import * as yup from 'yup';
 //Auth valid
 export const validateLogin = yup.object({
   email: yup.string().required('Please enter your email').email('Email format wrong'),
-  password: yup.string().required('Please enter your password'),
-  role: yup.string().required('Please enter your role'),
+  password: yup.string().required('Please enter your password')
 });
 
 export const validateRecoverPass = yup.object({

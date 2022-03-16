@@ -12,7 +12,7 @@ export interface IInput {
 export interface ILogin {
   email: string;
   password: string;
-  role: string;
+  role?: string
 }
 
 export interface IDepartmentForm {
