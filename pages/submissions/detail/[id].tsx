@@ -111,6 +111,7 @@ const DetailSubmission: NextPageWithLayout = ({
         message.success({
           content: data.msg,
         });
+        setIsRefetch(true)
         refetchIdeasCurrentUser();
         refetchStaticUser();
       },
