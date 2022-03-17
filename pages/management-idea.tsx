@@ -281,7 +281,7 @@ const managementIdea: NextPageWithLayout = ({
             }}
           />
         ),
-        onFilter: (value, record) => String( record.name).toLowerCase().includes(String(value).toLowerCase()),
+        onFilter: (value, record) => String( record.title).toLowerCase().includes(String(value).toLowerCase()),
         filterIcon: <SearchOutlined />,
       },
 
