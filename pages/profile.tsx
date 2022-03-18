@@ -54,10 +54,10 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
     handleLoadPage(false);
   }, []);
 
-  //State infor contact
+  //State info contact
   const [socialNetworks, setSocialNetworks] = UseState<string[]>([]);
   const [contentSocialNetwork, setContentSocialNetwork] = UseState<string>('');
-  const [inforContact, setInforContact] = UseState({
+  const [infoContact, setInfoContact] = UseState({
     country: '',
     city: '',
     street: '',
@@ -84,7 +84,7 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
   UseEffect(() => {
     if (dataUser?.user) {
       setAvatar(dataUser.user.avatar);
-      setInforContact({
+      setInfoContact({
         phone: dataUser.user.phone ? dataUser.user.phone : '',
         country: dataUser.user.country ? dataUser.user.country : '',
         city: dataUser.user.city ? dataUser.user.city : '',
@@ -215,7 +215,7 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
     console.log(socialNetworks);
   };
 
-  //  mutation call api to update contact infor
+  //  mutation call api to update contact info
   const mutationUpdateContact = EmplMutation.updateInforContact({
     options: {
       onSuccess: (data: ICommon) => {
@@ -227,7 +227,7 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
       },
       onError: (error: AxiosError) => {
         message.error({
-          content: error.response?.data.err || 'Update User contact infor false.',
+          content: error.response?.data.err || 'Update User contact info failed.',
         });
       },
     },
@@ -247,10 +247,10 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
     mutationUpdateContact.mutate({
       user_id: dataUser?.user._id,
       social_networks: socialNetworks,
-      phone: inforContact.phone,
-      country: inforContact.country,
-      city: inforContact.city,
-      street: inforContact.street,
+      phone: infoContact.phone,
+      country: infoContact.country,
+      city: infoContact.city,
+      street: infoContact.street,
     });
   };
 
@@ -285,7 +285,7 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
         }}
         extra={
           <Button className="color-3" type="link" onClick={showModal}>
-            Edit Infor Contact
+            Edit Info Contact
           </Button>
         }
       >
@@ -353,7 +353,7 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
                   <span>{dataUser?.user?.role}</span>
                 </div>
 
-                <span>Employee infor</span>
+                <span>Employee info</span>
                 <Infor
                   color="#009F9D"
                   Icon={IdcardOutlined}
@@ -377,7 +377,7 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
                   }
                 />
 
-                <span>Basic contact infor</span>
+                <span>Basic contact info</span>
                 <ItemInfor
                   title="Phone"
                   content={dataUser?.user.phone ? `+${dataUser.user.phone}` : undefined}
@@ -426,7 +426,7 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
       </Card>
 
       <Modal
-        title="Update infor contact"
+        title="Update info contact"
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
@@ -436,10 +436,10 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
             <label>Phone Number:</label>
             <PhoneInput
               country={'us'}
-              value={inforContact.phone}
+              value={infoContact.phone}
               onChange={(phone: string) =>
-                setInforContact({
-                  ...inforContact,
+                setInfoContact({
+                  ...infoContact,
                   phone: phone,
                 })
               }
@@ -451,10 +451,10 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
           <Space direction="vertical">
             <label>Country:</label>
             <Input
-              value={inforContact.country}
+              value={infoContact.country}
               onChange={(e) =>
-                setInforContact({
-                  ...inforContact,
+                setInfoContact({
+                  ...infoContact,
                   country: e.target.value,
                 })
               }
@@ -464,10 +464,10 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
           <Space direction="vertical">
             <label>City:</label>
             <Input
-              value={inforContact.city}
+              value={infoContact.city}
               onChange={(e) =>
-                setInforContact({
-                  ...inforContact,
+                setInfoContact({
+                  ...infoContact,
                   city: e.target.value,
                 })
               }
@@ -477,10 +477,10 @@ const DetailEmployee: NextPageWithLayout = ({ detailCurrentUser }: IDetailEmploy
           <Space direction="vertical">
             <label>Street:</label>
             <TextArea
-              value={inforContact.street}
+              value={infoContact.street}
               onChange={(e) =>
-                setInforContact({
-                  ...inforContact,
+                setInfoContact({
+                  ...infoContact,
                   street: e.target.value,
                 })
               }

@@ -156,7 +156,7 @@ const DetailEmployee: NextPageWithLayout = ({
                   </div>
                 </Space>
 
-                <span>Employee infor</span>
+                <span>Employee info</span>
                 <Infor
                   color="#009F9D"
                   Icon={IdcardOutlined}
@@ -180,7 +180,7 @@ const DetailEmployee: NextPageWithLayout = ({
                   }
                 />
 
-                <span>Basic contact infor</span>
+                <span>Basic contact info</span>
                 <ItemInfor
                   title="Phone"
                   content={dataDetailUser?.user.phone ? `+${dataDetailUser.user.phone}` : undefined}
