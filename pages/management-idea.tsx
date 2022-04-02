@@ -100,16 +100,16 @@ const managementIdea: NextPageWithLayout = ({
           }
 
           const result = {
-            id_idea: item._id,
-            user_name: item.user_id.name,
-            email: item.user_id.email,
-            title: item.title,
-            description: item.description,
-            time: moment(item.createdAt).format('YYYY-MM-DD'),
-            view: item.view,
-            submission: item.submission_id,
-            category: item.category_id,
-            accept: item.accept,
+            id_idea: item?._id,
+            user_name: item?.user_id?.name,
+            email: item?.user_id?.email,
+            title: item?.title,
+            description: item?.description,
+            time: moment(item?.createdAt).format('YYYY-MM-DD'),
+            view: item?.view,
+            submission: item?.submission_id,
+            category: item?.category_id,
+            accept: item?.accept,
             file,
           };
           data.push(result);
@@ -156,19 +156,19 @@ const managementIdea: NextPageWithLayout = ({
         getExcel(AllIdeas?.ideas);
         const result = AllIdeas?.ideas.map((idea) => {
           return {
-            key: idea._id,
+            key: idea?._id,
             email_avatar: {
-              email: idea.user_id.email,
-              avatar: idea.user_id.avatar.url,
+              email: idea?.user_id?.email,
+              avatar: idea?.user_id?.avatar?.url,
             },
-            title: idea.title,
-            view: idea.view,
-            time: moment(idea.createdAt).format('YYYY-MM-DD'),
-            submission: idea.submission_id,
-            accept: idea.accept,
+            title: idea?.title,
+            view: idea?.view,
+            time: moment(idea?.createdAt).format('YYYY-MM-DD'),
+            submission: idea?.submission_id,
+            accept: idea?.accept,
             detail: '',
             remove: '',
-            cloudinary_id: idea.cloudinary_id,
+            cloudinary_id: idea?.cloudinary_id,
           };
         });
         return setDataSource(result);
