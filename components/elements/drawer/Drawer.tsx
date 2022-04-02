@@ -5,6 +5,7 @@ import {
   CloudUploadOutlined,
   FolderViewOutlined,
   HomeOutlined,
+  StockOutlined,
   TeamOutlined,
   UploadOutlined,
   UserOutlined
@@ -147,7 +148,7 @@ export const Drawer = ({ onClose, ...props }: IProps) => {
 
           <Menu.Item
             key="2"
-            icon={<TeamOutlined />}
+            icon={<StockOutlined/>}
             onClick={onClose}
             style={{
               display: isShowByRole.qa_manager ? 'block' : 'none',
