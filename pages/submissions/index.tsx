@@ -1,14 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import {
-  Button,
-  Card as AntCard,
-  DatePicker,
-  Input,
-  message,
-  Pagination,
-  Row,
-  Space
-} from 'antd';
+import { Button, Card as AntCard, DatePicker, Input, message, Pagination, Row, Space } from 'antd';
 import axios, { AxiosError } from 'axios';
 import { BreadCrumb, Card } from 'components/elements/common';
 import { DrawerImg, DrawerSubm } from 'components/elements/drawer';
@@ -31,7 +22,6 @@ interface submisionPage {
   detailUser: IDetailUser;
 }
 const index: NextPageWithLayout = ({ result, detailUser }: submisionPage) => {
-
   const [isOpen, setIsopen] = UseState(false);
   const [isOpenSlImg, setIsOpenSlImg] = UseState(false);
   const [imgs, setImgs] = UseState<string[] | null>(null);
@@ -48,11 +38,11 @@ const index: NextPageWithLayout = ({ result, detailUser }: submisionPage) => {
   let timeOutSearch: NodeJS.Timeout, timeOutSearchTime: NodeJS.Timeout;
 
   // darkmode
-  const { color, handleLoadPage} = UseContext(GlobalContext);
+  const { color, handleLoadPage } = UseContext(GlobalContext);
 
-  UseEffect(()=> {
-    handleLoadPage(false)
-  }, [])
+  UseEffect(() => {
+    handleLoadPage(false);
+  }, []);
 
   const [idDelete, setIdDelete] = UseState('');
   UseEffect(() => {
@@ -222,14 +212,20 @@ const index: NextPageWithLayout = ({ result, detailUser }: submisionPage) => {
       <Head>
         <title>All Submissions</title>
       </Head>
-      <BreadCrumb data={[{url: '/', label: 'Home'}]} main={{label: 'Submissions', url: '/submissions'}}/>
+      <BreadCrumb
+        data={[{ url: '/', label: 'Home' }]}
+        main={{ label: 'Submissions', url: '/submissions' }}
+      />
       <AntCard
         title={<span className={`${color}`}>Submissions</span>}
         extra={
           <Space size={15} key={'func_submission'}>
-            <Button key={'add_sumission'} onClick={() => setIsopen(true)} type="link">
-              Add new
-            </Button>
+            {dataUser?.user.role == 'qa_manager' && (
+              <Button key={'add_sumission'} onClick={() => setIsopen(true)} type="link">
+                Add new
+              </Button>
+            )}
+
             <Input
               placeholder="Search by name"
               style={{ borderRadius: 5 }}
@@ -249,7 +245,7 @@ const index: NextPageWithLayout = ({ result, detailUser }: submisionPage) => {
             />
           </Space>
         }
-        className='card-b shadow-l'
+        className="card-b shadow-l"
       >
         <DrawerSubm
           imgSubmission={imgSubmission}
@@ -289,7 +285,6 @@ const index: NextPageWithLayout = ({ result, detailUser }: submisionPage) => {
           <Space direction="vertical" align="end">
             {dataSubmissions?.page_Index && (
               <Pagination
-              
                 onChange={(pageSl) => {
                   setPage(pageSl);
                 }}
