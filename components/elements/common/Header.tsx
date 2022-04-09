@@ -1,4 +1,10 @@
-import { AlertOutlined, LogoutOutlined, MenuOutlined, ProfileOutlined, TeamOutlined } from '@ant-design/icons';
+import {
+  AlertOutlined,
+  LogoutOutlined,
+  MenuOutlined,
+  ProfileOutlined,
+  TeamOutlined,
+} from '@ant-design/icons';
 import {
   Avatar,
   Button,
@@ -21,6 +27,7 @@ import { useMutation } from 'react-query';
 import { postData } from 'utils/fetchData';
 import { Drawer } from '../drawer';
 import { BsMoon, BsSun } from 'react-icons/bs';
+import { LinkSpin } from './LinkSpin';
 
 const { Header } = Layout;
 
@@ -68,7 +75,7 @@ export const HeaderComponent = () => {
 
   //Handle logout
   const onLogout = () => {
-    handleLoadPage(true)
+    handleLoadPage(true);
     logoutMutation.mutate();
   };
 
@@ -99,21 +106,15 @@ export const HeaderComponent = () => {
       </Space>
       <Divider />
       <Menu.Item icon={<ProfileOutlined />} key="1">
-        <Link href={'/profile'}>
-          <a onClick={()=> handleLoadPage(true)}>Profile</a>
-        </Link>
+        <LinkSpin url={'/profile'} name="Profile" />
       </Menu.Item>
       {dataUser && dataUser.user.role !== 'admin' && (
         <>
           <Menu.Item icon={<AlertOutlined />} key="2">
-            <Link href={'/my-ideas'}>
-              <a onClick={()=> handleLoadPage(true)}>My ideas</a>
-            </Link>
+            <LinkSpin url={'/my-ideas'} name="My ideas" />
           </Menu.Item>
           <Menu.Item icon={<TeamOutlined />} key="2">
-            <Link href={'/my-department'} >
-              <a onClick={()=> handleLoadPage(true)}>My Department</a>
-            </Link>
+            <LinkSpin url={'/my-department'} name="My Department" />
           </Menu.Item>
         </>
       )}
