@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   env: {
     // url
-    API_URL:   'https://cmsserverhht.herokuapp.com',
+    API_URL:   'https://enterprise-server.herokuapp.com',
     CLIENT_URL: 'https://enterpriseweb.vercel.app',
     // API_URL: 'http://localhost:4000',
     // CLIENT_URL: 'http://localhost:3000',
