@@ -254,7 +254,7 @@ const DetailSubmission: NextPageWithLayout = ({
         setIsLoadUpFile(true);
 
         //Up files
-        files = await uploadFile(filesUpload, [dataUser?.user._id, cloudinary_id, detailIdea.idea.submission_id], false, `${dataUser?.user.email}-${cloudinary_id}`);
+        files = await uploadFile(filesUpload, [detailIdea.idea.submission_id, dataUser?.user._id, cloudinary_id], false, `${dataUser?.user.email}-${cloudinary_id}`);
         setIsLoadUpFile(false);
 
         //Concact new files with old files upload
