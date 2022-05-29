@@ -1,6 +1,6 @@
 # Enterprise web:
 ---------------------
-With this CMS web system, you can create, manage, modify and publish your content and ideas easily with a friendly interface. Help collect employees' contributions to be able to solve a specific problem by creating a submission.
+With this enterprise web system adopting agile scrum working practices, you can create, manage, modify and publish your content and ideas easily with a friendly interface. Help collect employees' contributions to be able to solve a specific problem by creating a submission. This website was built during my studies at the FPT Greenwich University.
 #### Languages, frameworks and libraries used to develop the project:
 - Nodejs
 - Expressjs
