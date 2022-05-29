@@ -11,7 +11,7 @@ With this CMS web system, you can create, manage, modify and publish your conten
 - Other libraries
 #### Link demo:
 - <a href="https://enterpriseweb.vercel.app">Link demo</a>
-- <a href="https://www.youtube.com/watch?v=0K3cml6ivE4&t=1742s">youtube</a>
+- <a href="https://www.youtube.com/watch?v=0K3cml6ivE4">youtube</a>
 #### Images:
 ![image](https://user-images.githubusercontent.com/84957563/170859380-b7c25195-47a1-4545-9763-04c3919ad88b.png)
 ![image](https://user-images.githubusercontent.com/84957563/170859308-f494f701-a89c-47b2-a39e-b736e2cb8b3c.png)
